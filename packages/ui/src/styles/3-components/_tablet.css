@@ -1,0 +1,52 @@
+/**
+ * WebOS Tablet Mode Styles - 平板模式样式
+ */
+
+/* 平板模式基础变量 */
+.os-tablet-mode {
+  --os-touch-target-size: 44px;
+  --os-taskbar-height: var(--os-taskbar-height-tablet);
+  --os-window-header-height: var(--os-window-header-height-tablet);
+}
+
+/* 大触摸目标 */
+.os-large-touch-targets button,
+.os-large-touch-targets .os-taskbar-start {
+  min-width: var(--os-touch-target-size);
+  min-height: var(--os-touch-target-size);
+}
+
+/* 禁用悬停效果（触摸设备） */
+.os-no-hover button:hover,
+.os-no-hover .os-taskbar-app:hover,
+.os-no-hover .os-start-menu-app:hover,
+.os-no-hover .os-desktop-icon:hover {
+  background: inherit;
+}
+
+.os-no-hover button:active,
+.os-no-hover .os-taskbar-app:active,
+.os-no-hover .os-start-menu-app:active,
+.os-no-hover .os-desktop-icon:active {
+  background: var(--os-color-bg-tertiary);
+  opacity: 0.8;
+}
+
+/* 平板模式滚动条优化 */
+.os-tablet-mode ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.os-tablet-mode ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.os-tablet-mode ::-webkit-scrollbar-thumb {
+  background: rgba(128, 128, 128, 0.5);
+  border-radius: var(--os-radius-full);
+}
+
+.os-tablet-mode ::-webkit-scrollbar-thumb:active {
+  background: rgba(128, 128, 128, 0.7);
+}

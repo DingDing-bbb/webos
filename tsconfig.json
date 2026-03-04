@@ -1,0 +1,40 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "baseUrl": ".",
+    "paths": {
+      "@kernel": ["packages/kernel/src"],
+      "@kernel/*": ["packages/kernel/src/*"],
+      "@i18n/*": ["packages/i18n/src/*"],
+      "@ui": ["packages/ui/src"],
+      "@ui/*": ["packages/ui/src/*"],
+      "@oobe": ["packages/oobe/src"],
+      "@oobe/*": ["packages/oobe/src/*"],
+      "@bootloader": ["packages/bootloader/src"],
+      "@bootloader/*": ["packages/bootloader/src/*"],
+      "@recovery": ["packages/recovery/src"],
+      "@recovery/*": ["packages/recovery/src/*"],
+      "@app/*": ["packages/apps/*"]
+    },
+    "types": ["webpack-env"]
+  },
+  "include": [
+    "src/**/*",
+    "packages/**/*",
+    "global.d.ts"
+  ],
+  "exclude": ["node_modules", "dist"]
+}
