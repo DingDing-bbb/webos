@@ -2,25 +2,7 @@
  * 文件管理器应用
  */
 import React, { useState, useEffect } from 'react';
-import { registerApp } from '../../registry';
 import { FileManagerIcon } from './icon';
-
-// 注册应用
-registerApp({
-  id: 'com.os.filemanager',
-  name: 'Files',
-  nameKey: 'app.fileManager',
-  description: 'File management application',
-  descriptionKey: 'app.fileManagerDesc',
-  version: '1.0.0',
-  category: 'system',
-  icon: FileManagerIcon,
-  component: FileManager,
-  defaultWidth: 700,
-  defaultHeight: 450,
-  minWidth: 400,
-  minHeight: 300,
-});
 
 // 文件系统节点类型
 interface FileNode {
@@ -219,6 +201,23 @@ export const FileManager: React.FC = () => {
       </div>
     </div>
   );
+};
+
+// 应用信息
+export const appInfo = {
+  id: 'com.os.filemanager',
+  name: 'Files',
+  nameKey: 'app.fileManager',
+  description: 'File management application',
+  descriptionKey: 'app.fileManagerDesc',
+  version: '1.0.0',
+  category: 'system' as const,
+  icon: FileManagerIcon,
+  component: FileManager,
+  defaultWidth: 700,
+  defaultHeight: 450,
+  minWidth: 400,
+  minHeight: 300,
 };
 
 export default FileManager;

@@ -2,26 +2,7 @@
  * 时钟应用
  */
 import React, { useState, useEffect, useCallback } from 'react';
-import { registerApp } from '../../registry';
 import { ClockIcon } from './icon';
-
-// 注册应用
-registerApp({
-  id: 'com.os.clock',
-  name: 'Clock',
-  nameKey: 'app.clock',
-  description: 'Clock and alarm application',
-  descriptionKey: 'app.clockDesc',
-  version: '1.0.0',
-  category: 'utilities',
-  icon: ClockIcon,
-  component: Clock,
-  defaultWidth: 400,
-  defaultHeight: 350,
-  minWidth: 300,
-  minHeight: 250,
-  singleton: true,
-});
 
 interface AlarmInfo {
   id: string;
@@ -40,9 +21,7 @@ export const Clock: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTime(new Date());
-    }, 1000);
+    const timer = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
 
@@ -71,15 +50,12 @@ export const Clock: React.FC = () => {
     const alarmTime = new Date();
     alarmTime.setHours(parseInt(alarmHour), parseInt(alarmMinute), 0, 0);
 
-    // 如果时间已过，设置为明天
     if (alarmTime <= now) {
       alarmTime.setDate(alarmTime.getDate() + 1);
     }
 
     const alarmId = window.webos?.time.setAlarm(alarmTime, () => {
-      window.webos?.notify.show(t('notify.alarm'), formatTime(alarmTime), {
-        duration: 10000
-      });
+      window.webos?.notify.show(t('notify.alarm'), formatTime(alarmTime), { duration: 10000 });
       setAlarms(prev => prev.filter(a => a.id !== alarmId));
     });
 
@@ -105,7 +81,6 @@ export const Clock: React.FC = () => {
       gap: '24px',
       background: 'var(--os-color-bg)',
     }}>
-      {/* 时间显示 */}
       <div style={{ textAlign: 'center' }}>
         <div style={{
           fontSize: '64px',
@@ -125,7 +100,6 @@ export const Clock: React.FC = () => {
         </div>
       </div>
 
-      {/* 闹钟列表 */}
       {alarms.length > 0 && (
         <div style={{
           width: '100%',
@@ -150,9 +124,7 @@ export const Clock: React.FC = () => {
               marginBottom: '4px',
               borderRadius: '4px'
             }}>
-              <span style={{ fontFamily: 'monospace' }}>
-                {formatTime(alarm.time)}
-              </span>
+              <span style={{ fontFamily: 'monospace' }}>{formatTime(alarm.time)}</span>
               <button
                 onClick={() => handleClearAlarm(alarm.id)}
                 style={{
@@ -171,7 +143,6 @@ export const Clock: React.FC = () => {
         </div>
       )}
 
-      {/* 设置闹钟按钮 */}
       <button
         onClick={() => setShowAlarmForm(!showAlarmForm)}
         style={{
@@ -187,7 +158,6 @@ export const Clock: React.FC = () => {
         {t('clock.setAlarm')}
       </button>
 
-      {/* 闹钟表单 */}
       {showAlarmForm && (
         <div style={{
           display: 'flex',
@@ -251,6 +221,23 @@ export const Clock: React.FC = () => {
       )}
     </div>
   );
+};
+
+// 应用信息
+export const appInfo = {
+  id: 'com.os.clock',
+  name: 'Clock',
+  nameKey: 'app.clock',
+  description: 'Clock and alarm application',
+  version: '1.0.0',
+  category: 'utilities' as const,
+  icon: ClockIcon,
+  component: Clock,
+  defaultWidth: 400,
+  defaultHeight: 350,
+  minWidth: 300,
+  minHeight: 250,
+  singleton: true,
 };
 
 export default Clock;
