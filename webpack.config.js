@@ -38,7 +38,8 @@ export default (env, argv) => {
         '@bootloader': path.resolve(__dirname, 'packages/bootloader/src'),
         '@recovery': path.resolve(__dirname, 'packages/recovery/src'),
         '@tablet': path.resolve(__dirname, 'packages/tablet/src'),
-        '@app': path.resolve(__dirname, 'packages/apps')
+        '@app': path.resolve(__dirname, 'packages/apps'),
+        '@apps': path.resolve(__dirname, 'packages/apps')
       }
     },
     module: {

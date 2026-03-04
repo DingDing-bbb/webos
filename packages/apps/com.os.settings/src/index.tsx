@@ -1,9 +1,30 @@
-// 设置应用 - 完整版
-
+/**
+ * 设置应用
+ */
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import './styles.css';
+import { registerApp } from '../../registry';
+import { SettingsIcon } from './icon';
 import type { LocaleConfig } from '@kernel/types';
 import type { WallpaperType } from '@ui';
+
+// 注册应用
+registerApp({
+  id: 'com.os.settings',
+  name: 'Settings',
+  nameKey: 'app.settings',
+  description: 'System settings',
+  descriptionKey: 'app.settingsDesc',
+  version: '1.0.0',
+  category: 'system',
+  icon: SettingsIcon,
+  component: Settings,
+  defaultWidth: 800,
+  defaultHeight: 500,
+  minWidth: 600,
+  minHeight: 400,
+  singleton: true,
+});
 
 interface SettingsProps {
   windowId?: string;

@@ -11,11 +11,8 @@ import { RecoveryMode } from '@recovery';
 import type { WindowState } from '@kernel/types';
 import type { BootStatus } from '@bootloader';
 
-// 导入应用
-import { FileManager } from '@app/com.os.filemanager/src';
-import { Clock } from '@app/com.os.clock/src';
-import { Terminal } from '@app/com.os.terminal/src';
-import { Settings } from '@app/com.os.settings/src';
+// 导入应用（会自动注册）
+import { getAllApps } from '@apps';
 
 // 设置全局错误处理
 setupGlobalErrorHandler();
@@ -25,12 +22,10 @@ initWebOS();
 
 // 简单的平板模式检测
 const checkTabletMode = (): boolean => {
-  // 检查本地存储
   const saved = localStorage.getItem('webos-tablet-mode');
   if (saved !== null) {
     return saved === 'true';
   }
-  // 检测触摸设备
   const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
   return isTouch;
 };
@@ -65,12 +60,13 @@ const App: React.FC = () => {
   const [isTabletMode, setIsTabletMode] = React.useState(initialTabletMode);
   const windowContainerRef = React.useRef<HTMLDivElement | null>(null);
 
-  // 初始化错误状态
   const [initError, setInitError] = React.useState<{ message: string; canRetry: boolean } | null>(null);
   const [isRetrying, setIsRetrying] = React.useState(false);
 
-  // 壁纸状态
   const [wallpaperConfig, setWallpaperConfig] = React.useState<WallpaperConfig>({ type: 'soft' });
+
+  // 获取所有已注册的应用
+  const registeredApps = React.useMemo(() => getAllApps(), []);
 
   // 订阅 bootloader 状态
   React.useEffect(() => {
@@ -104,20 +100,14 @@ const App: React.FC = () => {
     } else if (bootComplete) {
       setOobeComplete(true);
       
-      // 检查用户账户状态
       if (window.webos) {
-        // 尝试自动登录
         const autoLoginResult = window.webos.user.tryAutoLogin();
         
         if (!autoLoginResult.success) {
-          // 自动登录失败，检查是否有正式账户
           if (!window.webos.user.hasUsers()) {
-            // 没有正式账户，这是初始化失败的情况
-            // 创建临时账户
             const tempUser = window.webos.user.createTemporaryUser('System initialization failed');
             window.webos.user.login(tempUser.username, '');
             
-            // 设置初始化错误状态
             setInitError({
               message: 'Failed to load user data. Using temporary session.',
               canRetry: true
@@ -182,7 +172,6 @@ const App: React.FC = () => {
   React.useEffect(() => {
     if (!isTabletMode || !windowContainerRef.current) return;
 
-    // 触摸拖动处理
     const handleTouchStart = (e: TouchEvent) => {
       const target = e.target as HTMLElement;
       const header = target.closest('.os-window-header');
@@ -246,7 +235,6 @@ const App: React.FC = () => {
       window.webos.boot.completeOOBE();
     }
     
-    // 保存并应用平板模式设置
     if (data.tabletMode !== undefined) {
       localStorage.setItem('webos-tablet-mode', String(data.tabletMode));
       applyTabletMode(data.tabletMode);
@@ -257,32 +245,26 @@ const App: React.FC = () => {
     setOobeComplete(true);
   };
 
-  // 打开应用
-  const openApp = (appId: string, title: string) => {
-    if (!window.webos) return;
-
-    const appComponents: Record<string, React.FC> = {
-      'com.os.filemanager': FileManager,
-      'com.os.clock': Clock,
-      'com.os.terminal': Terminal,
-      'com.os.settings': Settings
-    };
-
-    const AppComponent = appComponents[appId];
-    if (!AppComponent) return;
+  // 打开应用 - 使用注册中心
+  const openApp = (appId: string) => {
+    const appInfo = registeredApps.find(app => app.id === appId);
+    if (!appInfo || !window.webos) return;
 
     const container = document.createElement('div');
     container.style.cssText = 'width:100%;height:100%';
     
     const root = createRoot(container);
-    root.render(<AppComponent />);
+    root.render(React.createElement(appInfo.component));
 
-    // 平板模式下窗口更大
-    const width = isTabletMode ? Math.min(900, window.innerWidth - 40) : (appId === 'com.os.settings' ? 800 : 700);
-    const height = isTabletMode ? Math.min(600, window.innerHeight - 100) : (appId === 'com.os.settings' ? 500 : 450);
+    const width = isTabletMode 
+      ? Math.min(appInfo.defaultWidth || 700, window.innerWidth - 40) 
+      : appInfo.defaultWidth || 700;
+    const height = isTabletMode 
+      ? Math.min(appInfo.defaultHeight || 450, window.innerHeight - 100) 
+      : appInfo.defaultHeight || 450;
 
     window.webos.window.open(appId, {
-      title,
+      title: window.webos.t(appInfo.nameKey) || appInfo.name,
       width,
       height,
       appId,
@@ -324,23 +306,18 @@ const App: React.FC = () => {
     await bootloader.resetSystem();
   };
 
-  // 重试初始化（从临时账户切换到正式账户）
+  // 重试初始化
   const handleRetryInit = async () => {
     if (!window.webos) return;
     
     setIsRetrying(true);
-    
-    // 模拟重试延迟
     await new Promise(resolve => setTimeout(resolve, 1000));
     
-    // 检查是否有正式账户
     if (window.webos.user.hasUsers()) {
-      // 有正式账户，清除临时账户并重新登录
       window.webos.user.clearTemporaryUser();
       window.webos.user.logout();
       setInitError(null);
     } else {
-      // 仍然没有正式账户
       setInitError({
         message: 'No user account found. Please reset the system.',
         canRetry: false
@@ -355,13 +332,13 @@ const App: React.FC = () => {
     setInitError(null);
   };
 
-  // 开始菜单应用列表
-  const startMenuApps = [
-    { id: 'com.os.filemanager', name: window.webos?.t('app.fileManager') || 'File Manager', onClick: () => openApp('com.os.filemanager', 'File Manager') },
-    { id: 'com.os.clock', name: window.webos?.t('app.clock') || 'Clock', onClick: () => openApp('com.os.clock', 'Clock') },
-    { id: 'com.os.terminal', name: window.webos?.t('app.terminal') || 'Terminal', onClick: () => openApp('com.os.terminal', 'Terminal') },
-    { id: 'com.os.settings', name: window.webos?.t('app.settings') || 'Settings', onClick: () => openApp('com.os.settings', 'Settings') }
-  ];
+  // 开始菜单应用列表 - 从注册中心获取
+  const startMenuApps = registeredApps.map(app => ({
+    id: app.id,
+    name: window.webos?.t(app.nameKey) || app.name,
+    icon: React.createElement(app.icon, { size: 24 }),
+    onClick: () => openApp(app.id)
+  }));
 
   // 渲染恢复模式
   if (showRecovery) {
@@ -394,13 +371,11 @@ const App: React.FC = () => {
     return <OOBE onComplete={handleOOBEComplete} />;
   }
 
-  // 任务栏高度（平板模式更大）
   const taskbarHeight = isTabletMode ? 56 : 48;
 
   // 渲染桌面
   return (
     <>
-      {/* 初始化错误横幅 */}
       {initError && (
         <div className="os-init-error-banner">
           <div className="os-init-error-content">
@@ -440,7 +415,12 @@ const App: React.FC = () => {
       />
       
       <Desktop 
-        onOpenApp={openApp}
+        apps={registeredApps.map(app => ({
+          id: app.id,
+          name: window.webos?.t(app.nameKey) || app.name,
+          icon: React.createElement(app.icon, { size: 48 }),
+          onDoubleClick: () => openApp(app.id)
+        }))}
         wallpaper={wallpaperConfig}
       />
       
@@ -455,13 +435,12 @@ const App: React.FC = () => {
         isOpen={isStartMenuOpen}
         onClose={() => setIsStartMenuOpen(false)}
         apps={startMenuApps}
-        onSettings={() => openApp('com.os.settings', 'Settings')}
+        onSettings={() => openApp('com.os.settings')}
         onShutdown={handleShutdown}
       />
       
       <NotificationContainer />
       
-      {/* 错误处理组件 */}
       <ErrorDialogContainer />
       <BlueScreenContainer />
     </>
