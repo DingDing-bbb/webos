@@ -12,7 +12,7 @@ import type { WindowState } from '@kernel/types';
 import type { BootStatus } from '@bootloader';
 
 // 导入应用（会自动注册）
-import { getAllApps } from '@apps';
+import { getRegisteredApps } from '@apps';
 
 // 设置全局错误处理
 setupGlobalErrorHandler();
@@ -66,7 +66,7 @@ const App: React.FC = () => {
   const [wallpaperConfig, setWallpaperConfig] = React.useState<WallpaperConfig>({ type: 'soft' });
 
   // 获取所有已注册的应用
-  const registeredApps = React.useMemo(() => getAllApps(), []);
+  const registeredApps = React.useMemo(() => getRegisteredApps(), []);
 
   // 订阅 bootloader 状态
   React.useEffect(() => {
