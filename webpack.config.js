@@ -12,7 +12,7 @@ const __dirname = path.dirname(__filename);
 
 // 系统配置 - 修改此处可全局更改系统名称
 const OS_NAME = 'WebOS';
-const OS_VERSION = '1.0.0';
+const OS_VERSION = '1.0.1';
 
 export default (env, argv) => {
   const isProduction = argv.mode === 'production';

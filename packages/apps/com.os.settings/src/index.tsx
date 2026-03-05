@@ -54,10 +54,10 @@ const TIMEZONES = [
 
 // 日期格式
 const DATE_FORMATS = [
-  { id: 'YYYY-MM-DD', label: '2024-01-15' },
-  { id: 'DD/MM/YYYY', label: '15/01/2024' },
-  { id: 'MM/DD/YYYY', label: '01/15/2024' },
-  { id: 'DD-MM-YYYY', label: '15-01-2024' },
+  { id: 'YYYY-MM-DD', label: '2026-03-05' },
+  { id: 'DD/MM/YYYY', label: '05/03/2026' },
+  { id: 'MM/DD/YYYY', label: '03/05/2026' },
+  { id: 'DD-MM-YYYY', label: '05-03-2026' },
 ];
 
 // 时间格式
@@ -769,7 +769,7 @@ export const Settings: React.FC<SettingsProps> = () => {
       </div>
 
       <div className="about-copyright">
-        <p>© 2024 WebOS Project</p>
+        <p>© {new Date().getFullYear()} WebOS Project</p>
         <p>{t('about.openSource')}</p>
       </div>
     </div>
