@@ -1,5 +1,5 @@
 /**
- * 文件管理器图标
+ * 文件管理器图标 - 简洁版
  */
 import React from 'react';
 import type { IconProps } from '../../registry';
@@ -13,20 +13,8 @@ export const FileManagerIcon: React.FC<IconProps> = ({ size = 48, className, sty
     className={className}
     style={style}
   >
-    <path
-      d="M4 12C4 9.79 5.79 8 8 8H18L22 12H40C42.21 12 44 13.79 44 16V36C44 38.21 42.21 40 40 40H8C5.79 40 4 38.21 4 36V12Z"
-      fill="#FFC107"
-    />
-    <path
-      d="M4 16H44V36C44 38.21 42.21 40 40 40H8C5.79 40 4 38.21 4 36V16Z"
-      fill="#FFD54F"
-    />
-    <path
-      d="M14 24H34M14 30H26"
-      stroke="#FFA000"
-      strokeWidth="2"
-      strokeLinecap="round"
-    />
+    <path d="M4 12C4 9.79 5.79 8 8 8H18L22 12H40C42.21 12 44 13.79 44 16V36C44 38.21 42.21 40 40 40H8C5.79 40 4 38.21 4 36V12Z" fill="#FFC107"/>
+    <path d="M4 16H44V36C44 38.21 42.21 40 40 40H8C5.79 40 4 38.21 4 36V16Z" fill="#FFD54F"/>
   </svg>
 );
 
