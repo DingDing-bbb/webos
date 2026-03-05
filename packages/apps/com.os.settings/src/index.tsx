@@ -11,25 +11,6 @@ interface SettingsProps {
   windowId?: string;
 }
 
-// 应用信息
-export const appInfo: AppInfo = {
-  id: 'com.os.settings',
-  name: 'Settings',
-  nameKey: 'app.settings',
-  description: 'System settings and preferences',
-  descriptionKey: 'app.settings.desc',
-  version: '1.0.0',
-  category: 'system',
-  icon: SettingsIcon,
-  component: Settings,
-  defaultWidth: 800,
-  defaultHeight: 550,
-  minWidth: 600,
-  minHeight: 400,
-  resizable: true,
-  singleton: true
-};
-
 type SettingsSection = 'system' | 'language' | 'datetime' | 'display' | 'wallpaper' | 'storage' | 'recovery' | 'about';
 
 // 预设壁纸列表
@@ -894,5 +875,24 @@ const AboutIcon = () => (
     <line x1="12" y1="8" x2="12.01" y2="8"/>
   </svg>
 );
+
+// 应用信息 - 放在组件定义之后
+export const appInfo: AppInfo = {
+  id: 'com.os.settings',
+  name: 'Settings',
+  nameKey: 'app.settings',
+  description: 'System settings and preferences',
+  descriptionKey: 'app.settings.desc',
+  version: '1.0.0',
+  category: 'system',
+  icon: SettingsIcon,
+  component: Settings,
+  defaultWidth: 800,
+  defaultHeight: 550,
+  minWidth: 600,
+  minHeight: 400,
+  resizable: true,
+  singleton: true
+};
 
 export default Settings;

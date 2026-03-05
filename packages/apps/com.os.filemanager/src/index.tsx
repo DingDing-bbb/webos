@@ -9,25 +9,6 @@ interface FileManagerProps {
   windowId?: string;
 }
 
-// 应用信息
-export const appInfo: AppInfo = {
-  id: 'com.os.filemanager',
-  name: 'Files',
-  nameKey: 'app.fileManager',
-  description: 'File system browser',
-  descriptionKey: 'app.fileManager.desc',
-  version: '1.0.0',
-  category: 'system',
-  icon: FileManagerIcon,
-  component: FileManager,
-  defaultWidth: 700,
-  defaultHeight: 450,
-  minWidth: 500,
-  minHeight: 300,
-  resizable: true,
-  singleton: false
-};
-
 // 图标组件
 const FolderIcon = () => (
   <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -245,5 +226,24 @@ function createTextEditorContent(filePath: string, content: string, fileName: st
     </script>
   `;
 }
+
+// 应用信息 - 放在组件定义之后
+export const appInfo: AppInfo = {
+  id: 'com.os.filemanager',
+  name: 'Files',
+  nameKey: 'app.fileManager',
+  description: 'File system browser',
+  descriptionKey: 'app.fileManager.desc',
+  version: '1.0.0',
+  category: 'system',
+  icon: FileManagerIcon,
+  component: FileManager,
+  defaultWidth: 700,
+  defaultHeight: 450,
+  minWidth: 500,
+  minHeight: 300,
+  resizable: true,
+  singleton: false
+};
 
 export default FileManager;

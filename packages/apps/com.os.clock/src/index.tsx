@@ -8,25 +8,6 @@ interface ClockProps {
   windowId?: string;
 }
 
-// 应用信息
-export const appInfo: AppInfo = {
-  id: 'com.os.clock',
-  name: 'Clock',
-  nameKey: 'app.clock',
-  description: 'Digital clock with alarm',
-  descriptionKey: 'app.clock.desc',
-  version: '1.0.0',
-  category: 'utilities',
-  icon: ClockIcon,
-  component: Clock,
-  defaultWidth: 400,
-  defaultHeight: 350,
-  minWidth: 300,
-  minHeight: 250,
-  resizable: true,
-  singleton: true
-};
-
 export const Clock: React.FC<ClockProps> = () => {
   const [time, setTime] = useState(new Date());
   const [alarms, setAlarms] = useState<Array<{ id: string; time: Date }>>([]);
@@ -47,20 +28,20 @@ export const Clock: React.FC<ClockProps> = () => {
   }, []);
 
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString([], { 
-      hour: '2-digit', 
-      minute: '2-digit', 
+    return date.toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
       second: '2-digit',
-      hour12: false 
+      hour12: false
     });
   };
 
   const formatDate = (date: Date) => {
-    return date.toLocaleDateString([], { 
-      weekday: 'long', 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
+    return date.toLocaleDateString([], {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
     });
   };
 
@@ -71,7 +52,6 @@ export const Clock: React.FC<ClockProps> = () => {
     const alarmTime = new Date();
     alarmTime.setHours(parseInt(alarmHour), parseInt(alarmMinute), 0, 0);
 
-    // 如果时间已过，设置为明天
     if (alarmTime <= now) {
       alarmTime.setDate(alarmTime.getDate() + 1);
     }
@@ -98,19 +78,18 @@ export const Clock: React.FC<ClockProps> = () => {
   };
 
   return (
-    <div style={{ 
-      display: 'flex', 
-      flexDirection: 'column', 
-      alignItems: 'center', 
+    <div style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
       justifyContent: 'center',
       height: '100%',
       padding: '24px',
       gap: '24px'
     }}>
-      {/* 时间显示 */}
       <div style={{ textAlign: 'center' }}>
-        <div style={{ 
-          fontSize: '64px', 
+        <div style={{
+          fontSize: '64px',
           fontWeight: '200',
           fontFamily: 'monospace',
           letterSpacing: '4px',
@@ -118,7 +97,7 @@ export const Clock: React.FC<ClockProps> = () => {
         }}>
           {formatTime(time)}
         </div>
-        <div style={{ 
+        <div style={{
           fontSize: '16px',
           color: 'var(--os-color-text-secondary)',
           marginTop: '8px'
@@ -127,9 +106,8 @@ export const Clock: React.FC<ClockProps> = () => {
         </div>
       </div>
 
-      {/* 闹钟列表 */}
       {alarms.length > 0 && (
-        <div style={{ 
+        <div style={{
           width: '100%',
           maxWidth: '300px',
           borderTop: '1px solid var(--os-color-border)',
@@ -139,7 +117,7 @@ export const Clock: React.FC<ClockProps> = () => {
             {t('clock.setAlarm')}
           </h3>
           {alarms.map(alarm => (
-            <div 
+            <div
               key={alarm.id}
               style={{
                 display: 'flex',
@@ -170,7 +148,6 @@ export const Clock: React.FC<ClockProps> = () => {
         </div>
       )}
 
-      {/* 设置闹钟按钮 */}
       <button
         onClick={() => setShowAlarmForm(!showAlarmForm)}
         style={{
@@ -183,7 +160,6 @@ export const Clock: React.FC<ClockProps> = () => {
         {t('clock.setAlarm')}
       </button>
 
-      {/* 闹钟设置表单 */}
       {showAlarmForm && (
         <div style={{
           display: 'flex',
@@ -240,6 +216,25 @@ export const Clock: React.FC<ClockProps> = () => {
       )}
     </div>
   );
+};
+
+// 应用信息 - 放在组件定义之后
+export const appInfo: AppInfo = {
+  id: 'com.os.clock',
+  name: 'Clock',
+  nameKey: 'app.clock',
+  description: 'Digital clock with alarm',
+  descriptionKey: 'app.clock.desc',
+  version: '1.0.0',
+  category: 'utilities',
+  icon: ClockIcon,
+  component: Clock,
+  defaultWidth: 400,
+  defaultHeight: 350,
+  minWidth: 300,
+  minHeight: 250,
+  resizable: true,
+  singleton: true
 };
 
 export default Clock;

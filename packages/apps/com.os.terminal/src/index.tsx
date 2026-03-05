@@ -8,25 +8,6 @@ interface TerminalProps {
   windowId?: string;
 }
 
-// 应用信息
-export const appInfo: AppInfo = {
-  id: 'com.os.terminal',
-  name: 'Terminal',
-  nameKey: 'app.terminal',
-  description: 'Command line interface',
-  descriptionKey: 'app.terminal.desc',
-  version: '1.0.0',
-  category: 'development',
-  icon: TerminalIcon,
-  component: Terminal,
-  defaultWidth: 700,
-  defaultHeight: 450,
-  minWidth: 400,
-  minHeight: 300,
-  resizable: true,
-  singleton: false
-};
-
 interface TerminalLine {
   type: 'input' | 'output' | 'error';
   content: string;
@@ -297,6 +278,25 @@ export const Terminal: React.FC<TerminalProps> = () => {
       </div>
     </div>
   );
+};
+
+// 应用信息 - 放在组件定义之后
+export const appInfo: AppInfo = {
+  id: 'com.os.terminal',
+  name: 'Terminal',
+  nameKey: 'app.terminal',
+  description: 'Command line interface',
+  descriptionKey: 'app.terminal.desc',
+  version: '1.0.0',
+  category: 'development',
+  icon: TerminalIcon,
+  component: Terminal,
+  defaultWidth: 700,
+  defaultHeight: 450,
+  minWidth: 400,
+  minHeight: 300,
+  resizable: true,
+  singleton: false
 };
 
 export default Terminal;
