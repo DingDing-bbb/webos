@@ -367,6 +367,55 @@ export const Settings: React.FC<SettingsProps> = () => {
         </div>
         <p className="settings-hint">{t('settings.tabletModeHint')}</p>
       </div>
+
+      <div className="settings-group">
+        <label className="settings-label">{t('settings.autoUpdate')}</label>
+        <div className="settings-toggle" onClick={() => {
+          const newEnabled = !autoUpdateEnabled;
+          setAutoUpdateEnabled(newEnabled);
+          updateManager.setAutoUpdate(newEnabled);
+        }}>
+          <div className={`toggle-track ${autoUpdateEnabled ? 'active' : ''}`}>
+            <div className="toggle-thumb" />
+          </div>
+          <span className="toggle-label">{autoUpdateEnabled ? t('common.enabled') : t('common.disabled')}</span>
+        </div>
+        <p className="settings-hint">{t('settings.autoUpdateHint')}</p>
+      </div>
+
+      <div className="settings-group">
+        <label className="settings-label">{t('settings.currentVersion')}</label>
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: '12px',
+          marginTop: '8px'
+        }}>
+          <span style={{ 
+            fontFamily: 'monospace',
+            fontSize: '14px',
+            color: 'var(--os-color-text)'
+          }}>
+            v{__OS_VERSION__}
+          </span>
+          <button
+            className="settings-button secondary"
+            onClick={() => updateManager.checkForUpdate()}
+            disabled={updateStatus.isChecking}
+            style={{
+              padding: '6px 12px',
+              fontSize: '13px'
+            }}
+          >
+            {updateStatus.isChecking ? t('settings.checking') : t('settings.checkUpdate')}
+          </button>
+        </div>
+        {updateStatus.lastCheckTime && (
+          <p className="settings-hint" style={{ marginTop: '4px' }}>
+            {t('settings.lastCheckTime')}: {new Date(updateStatus.lastCheckTime).toLocaleString()}
+          </p>
+        )}
+      </div>
     </div>
   );
 

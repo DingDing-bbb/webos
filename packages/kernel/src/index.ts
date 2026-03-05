@@ -7,3 +7,4 @@ export * from './core/api';
 export * from './core/resourceLoader';
 export * from './core/errorHandler';
 export { initWebOS, createWebOSAPI } from './core/api';
+export { updateManager } from './core/managers/updateManager';

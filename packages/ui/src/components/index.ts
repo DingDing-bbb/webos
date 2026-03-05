@@ -6,3 +6,4 @@ export { BootScreen } from './Boot';
 export { NotificationContainer } from './Notification';
 export { ErrorDialog, ErrorDialogContainer } from './ErrorDialog';
 export { BlueScreen, BlueScreenContainer } from './BlueScreen';
+export { UpdateNotification } from './UpdateNotification';

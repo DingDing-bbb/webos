@@ -3,22 +3,24 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { initWebOS } from '@kernel';
-import { BootScreen, Desktop, Taskbar, StartMenu, NotificationContainer, ErrorDialogContainer, BlueScreenContainer } from '@ui';
+import { BootScreen, Desktop, Taskbar, StartMenu, NotificationContainer, ErrorDialogContainer, BlueScreenContainer, UpdateNotification } from '@ui';
 import type { WallpaperConfig, WallpaperType } from '@ui';
 import { OOBE } from '@oobe';
 import { bootloader, setupGlobalErrorHandler } from '@bootloader';
 import { RecoveryMode } from '@recovery';
 import type { WindowState } from '@kernel/types';
 import type { BootStatus } from '@bootloader';
-
-// 导入应用（会自动注册）
 import { getRegisteredApps } from '@apps';
+import { updateManager, type UpdateStatus } from '@kernel/core/managers/updateManager';
 
 // 设置全局错误处理
 setupGlobalErrorHandler();
 
 // 初始化 WebOS API
 initWebOS();
+
+// 初始化更新管理器
+updateManager.init();
 
 // 简单的平板模式检测
 const checkTabletMode = (): boolean => {
@@ -65,8 +67,22 @@ const App: React.FC = () => {
 
   const [wallpaperConfig, setWallpaperConfig] = React.useState<WallpaperConfig>({ type: 'soft' });
 
+  // 更新状态
+  const [updateStatus, setUpdateStatus] = React.useState<UpdateStatus>(updateManager.getStatus());
+  const [showUpdateNotification, setShowUpdateNotification] = React.useState(false);
+
   // 获取所有已注册的应用
   const registeredApps = React.useMemo(() => getRegisteredApps(), []);
+
+  // 订阅更新状态
+  React.useEffect(() => {
+    return updateManager.subscribe((status) => {
+      setUpdateStatus(status);
+      if (status.hasUpdate && !updateManager.getConfig().autoUpdate) {
+        setShowUpdateNotification(true);
+      }
+    });
+  }, []);
 
   // 订阅 bootloader 状态
   React.useEffect(() => {
@@ -443,6 +459,21 @@ const App: React.FC = () => {
       
       <ErrorDialogContainer />
       <BlueScreenContainer />
+
+      {/* 更新通知 */}
+      {showUpdateNotification && updateStatus.hasUpdate && updateStatus.latestVersion && (
+        <UpdateNotification
+          currentVersion={updateStatus.currentVersion}
+          latestVersion={updateStatus.latestVersion}
+          isUpdating={updateStatus.isUpdating}
+          onUpdate={() => updateManager.applyUpdate()}
+          onSkip={() => {
+            updateManager.skipUpdate();
+            setShowUpdateNotification(false);
+          }}
+          onClose={() => setShowUpdateNotification(false)}
+        />
+      )}
     </>
   );
 };
