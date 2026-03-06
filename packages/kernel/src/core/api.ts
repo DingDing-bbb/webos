@@ -81,7 +81,8 @@ export function createWebOSAPI(): WebOSAPI {
       getAllUsers: () => userManager.getAllUsers(),
       getRealUsers: () => userManager.getRealUsers(),
       hasUsers: () => userManager.hasUsers(),
-      createUser: (username: string, password: string, options?: { role?: UserRole; isRoot?: boolean }) =>
+      getUser: (username: string) => userManager.getUser(username),
+      createUser: (username: string, password: string, options?: { role?: UserRole; isRoot?: boolean; displayName?: string }) =>
         userManager.createUser(username, password, options),
       login: (username: string, password: string) => userManager.login(username, password),
       logout: () => userManager.logout(),
@@ -89,6 +90,8 @@ export function createWebOSAPI(): WebOSAPI {
       isRoot: () => userManager.isRoot(),
       isAdmin: () => userManager.isAdmin(),
       hasPermission: (permission: Permission) => userManager.hasPermission(permission),
+      tryAutoLogin: () => userManager.tryAutoLogin(),
+      subscribe: (callback: () => void) => userManager.subscribe(callback),
       authenticate: (password: string) => {
         const currentUser = userManager.getCurrentUser();
         if (!currentUser) return false;
@@ -99,64 +102,11 @@ export function createWebOSAPI(): WebOSAPI {
         }
         return false;
       },
-      requestPrivilege: async (reason: string): Promise<boolean> => {
-        return new Promise((resolve) => {
-          const dialog = document.createElement('div');
-          dialog.className = 'os-auth-dialog-overlay';
-          dialog.innerHTML = `
-            <div class="os-auth-dialog">
-              <div class="os-auth-dialog-header">
-                <h3>${i18n.t('auth.password')}</h3>
-              </div>
-              <div class="os-auth-dialog-body">
-                <p>${reason}</p>
-                <input type="password" class="os-auth-input" placeholder="${i18n.t('auth.password')}" />
-                <div class="os-auth-dialog-error" style="display: none;">${i18n.t('auth.incorrect')}</div>
-              </div>
-              <div class="os-auth-dialog-footer">
-                <button class="os-auth-btn cancel">${i18n.t('auth.cancel')}</button>
-                <button class="os-auth-btn submit">${i18n.t('auth.submit')}</button>
-              </div>
-            </div>
-          `;
-
-          const input = dialog.querySelector('.os-auth-input') as HTMLInputElement;
-          const errorEl = dialog.querySelector('.os-auth-dialog-error') as HTMLElement;
-          const submitBtn = dialog.querySelector('.os-auth-btn.submit') as HTMLButtonElement;
-          const cancelBtn = dialog.querySelector('.os-auth-btn.cancel') as HTMLButtonElement;
-
-          const close = (result: boolean) => {
-            dialog.remove();
-            resolve(result);
-          };
-
-          submitBtn.addEventListener('click', () => {
-            const rootUser = userManager.getUser('root');
-            if (rootUser && userManager.login('root', input.value).success) {
-              close(true);
-            } else {
-              errorEl.style.display = 'block';
-              input.classList.add('error');
-            }
-          });
-
-          cancelBtn.addEventListener('click', () => close(false));
-          input.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') submitBtn.click();
-            if (e.key === 'Escape') close(false);
-          });
-
-          document.body.appendChild(dialog);
-          input.focus();
-        });
-      },
       createTemporaryUser: (reason?: string) => userManager.createTemporaryUser(reason),
       hasTemporaryUser: () => userManager.hasTemporaryUser(),
       getTemporaryUserInfo: () => userManager.getTemporaryUserInfo(),
       clearTemporaryUser: () => userManager.clearTemporaryUser(),
-      isTemporarySession: () => userManager.isTemporarySession(),
-      tryAutoLogin: () => userManager.tryAutoLogin(),
-      subscribe: (callback: () => void) => userManager.subscribe(callback)
+      isTemporarySession: () => userManager.isTemporarySession()
     },
 
     i18n: {

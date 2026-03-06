@@ -2,8 +2,7 @@
 
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { initWebOS } from '@kernel';
-import { BootScreen, Desktop, Taskbar, StartMenu, NotificationContainer, ErrorDialogContainer, BlueScreenContainer, UpdateNotification, LockScreen } from '@ui';
+import { BootScreen, Desktop, Taskbar, StartMenu, NotificationContainer, ErrorDialogContainer, BlueScreenContainer, UpdateNotification } from '@ui';
 import type { WallpaperConfig, WallpaperType } from '@ui';
 import { OOBE } from '@oobe';
 import { bootloader, setupGlobalErrorHandler } from '@bootloader';
@@ -15,12 +14,6 @@ import { updateManager, type UpdateStatus } from '@kernel';
 
 // 设置全局错误处理
 setupGlobalErrorHandler();
-
-// 初始化 WebOS API
-initWebOS();
-
-// 初始化更新管理器
-updateManager.init();
 
 // 简单的平板模式检测
 const checkTabletMode = (): boolean => {
@@ -45,16 +38,382 @@ const applyTabletMode = (enabled: boolean) => {
 const initialTabletMode = checkTabletMode();
 applyTabletMode(initialTabletMode);
 
+// 初始化 WebOS API
+import { initWebOS } from '@kernel';
+initWebOS();
+
+// 初始化更新管理器
+updateManager.init();
+
 // 监听开始菜单滑动事件
 window.addEventListener('tablet:openStartMenu', () => {
   window.dispatchEvent(new CustomEvent('startmenu:toggle'));
 });
 
+// 锁屏组件（简化版）
+const SimpleLockScreen: React.FC<{
+  onLogin: (username: string, password: string) => Promise<{ success: boolean; error?: string }>;
+}> = ({ onLogin }) => {
+  const [password, setPassword] = React.useState('');
+  const [error, setError] = React.useState<string | null>(null);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [currentTime, setCurrentTime] = React.useState(new Date());
+  const [selectedUser, setSelectedUser] = React.useState<{ username: string; displayName: string } | null>(null);
+  const [showUserList, setShowUserList] = React.useState(false);
+
+  // 获取用户列表
+  const users = React.useMemo(() => {
+    return window.webos?.user.getRealUsers() || [];
+  }, []);
+
+  // 默认选择第一个用户
+  React.useEffect(() => {
+    if (users.length > 0 && !selectedUser) {
+      setSelectedUser({
+        username: users[0].username,
+        displayName: users[0].displayName || users[0].username
+      });
+    }
+  }, [users, selectedUser]);
+
+  // 更新时间
+  React.useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const handleLogin = async () => {
+    if (!selectedUser) return;
+    
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const result = await onLogin(selectedUser.username, password);
+      if (!result.success) {
+        setError(result.error || 'Login failed');
+        setPassword('');
+      }
+    } catch {
+      setError('An error occurred during login');
+      setPassword('');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !isLoading && password) {
+      handleLogin();
+    }
+  };
+
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
+  const formatDate = (date: Date) => {
+    return date.toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric' });
+  };
+
+  return (
+    <div 
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        zIndex: 99998,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
+        fontFamily: 'system-ui, -apple-system, sans-serif'
+      }}
+    >
+      {/* 时间显示 */}
+      <div style={{ textAlign: 'center', marginBottom: '2rem', opacity: selectedUser ? 0.3 : 1 }}>
+        <div style={{ 
+          fontSize: '5rem', 
+          fontWeight: 200, 
+          color: 'white', 
+          textShadow: '0 2px 10px rgba(0,0,0,0.3)',
+          lineHeight: 1
+        }}>
+          {formatTime(currentTime)}
+        </div>
+        <div style={{ 
+          fontSize: '1.25rem', 
+          color: 'rgba(255,255,255,0.8)', 
+          marginTop: '0.5rem',
+          textShadow: '0 1px 5px rgba(0,0,0,0.3)'
+        }}>
+          {formatDate(currentTime)}
+        </div>
+      </div>
+
+      {/* 点击提示或登录面板 */}
+      {!selectedUser ? (
+        <div 
+          onClick={() => users.length > 0 && setSelectedUser({
+            username: users[0].username,
+            displayName: users[0].displayName || users[0].username
+          })}
+          style={{
+            color: 'rgba(255,255,255,0.7)',
+            fontSize: '0.9rem',
+            marginTop: '2rem',
+            cursor: 'pointer',
+            padding: '1rem 2rem',
+            border: '1px solid rgba(255,255,255,0.2)',
+            borderRadius: '8px',
+            background: 'rgba(0,0,0,0.2)'
+          }}
+        >
+          Click to sign in
+        </div>
+      ) : (
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          padding: '2rem 3rem',
+          background: 'rgba(0, 0, 0, 0.4)',
+          borderRadius: '16px',
+          backdropFilter: 'blur(20px)'
+        }}>
+          {/* 用户头像 */}
+          <div style={{
+            width: '100px',
+            height: '100px',
+            borderRadius: '50%',
+            background: 'rgba(255, 255, 255, 0.1)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginBottom: '1rem',
+            border: '3px solid rgba(255, 255, 255, 0.2)'
+          }}>
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </div>
+
+          {/* 用户名 */}
+          <div style={{
+            fontSize: '1.5rem',
+            color: 'white',
+            marginBottom: '1.5rem'
+          }}>
+            {selectedUser.displayName}
+          </div>
+
+          {/* 密码输入 */}
+          <div style={{ width: '280px', marginBottom: '1rem' }}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              background: 'rgba(255, 255, 255, 0.1)',
+              borderRadius: '8px',
+              padding: '0 1rem',
+              border: '1px solid rgba(255, 255, 255, 0.2)'
+            }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+              <input
+                type={showPassword ? 'text' : 'password'}
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                onKeyDown={handleKeyDown}
+                autoFocus
+                disabled={isLoading}
+                style={{
+                  flex: 1,
+                  background: 'transparent',
+                  border: 'none',
+                  padding: '0.875rem 0.75rem',
+                  color: 'white',
+                  fontSize: '1rem',
+                  outline: 'none'
+                }}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  padding: '0.25rem',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center'
+                }}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="2">
+                  {showPassword ? (
+                    <>
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                      <circle cx="12" cy="12" r="3"/>
+                    </>
+                  ) : (
+                    <>
+                      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                      <line x1="1" y1="1" x2="23" y2="23"/>
+                    </>
+                  )}
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          {/* 错误提示 */}
+          {error && (
+            <div style={{ color: '#ff6b6b', fontSize: '0.875rem', marginBottom: '1rem' }}>
+              {error}
+            </div>
+          )}
+
+          {/* 登录按钮 */}
+          <button
+            type="button"
+            onClick={handleLogin}
+            disabled={isLoading || !password}
+            style={{
+              width: '280px',
+              padding: '0.875rem',
+              background: 'rgba(255, 255, 255, 0.9)',
+              color: '#333',
+              border: 'none',
+              borderRadius: '8px',
+              fontSize: '1rem',
+              fontWeight: 500,
+              cursor: isLoading || !password ? 'not-allowed' : 'pointer',
+              opacity: !password ? 0.6 : 1
+            }}
+          >
+            {isLoading ? 'Signing in...' : 'Sign in'}
+          </button>
+
+          {/* 多用户切换 */}
+          {users.length > 1 && (
+            <button
+              type="button"
+              onClick={() => setShowUserList(!showUserList)}
+              style={{
+                marginTop: '1rem',
+                background: 'transparent',
+                border: '1px solid rgba(255,255,255,0.3)',
+                color: 'rgba(255,255,255,0.8)',
+                padding: '0.5rem 1rem',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontSize: '0.875rem'
+              }}
+            >
+              Switch User
+            </button>
+          )}
+
+          {/* 用户列表 */}
+          {showUserList && users.length > 1 && (
+            <div style={{
+              marginTop: '1rem',
+              background: 'rgba(0,0,0,0.3)',
+              borderRadius: '8px',
+              padding: '0.5rem',
+              minWidth: '200px'
+            }}>
+              {users.map(user => (
+                <button
+                  key={user.username}
+                  type="button"
+                  onClick={() => {
+                    setSelectedUser({
+                      username: user.username,
+                      displayName: user.displayName || user.username
+                    });
+                    setShowUserList(false);
+                    setPassword('');
+                    setError(null);
+                  }}
+                  style={{
+                    display: 'block',
+                    width: '100%',
+                    padding: '0.5rem 1rem',
+                    background: selectedUser?.username === user.username ? 'rgba(255,255,255,0.1)' : 'transparent',
+                    border: 'none',
+                    color: 'white',
+                    textAlign: 'left',
+                    cursor: 'pointer',
+                    borderRadius: '4px'
+                  }}
+                >
+                  {user.displayName || user.username}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* 系统信息 */}
+      <div style={{
+        position: 'absolute',
+        bottom: '2rem',
+        display: 'flex',
+        gap: '1rem',
+        color: 'rgba(255, 255, 255, 0.5)',
+        fontSize: '0.75rem'
+      }}>
+        <span>{__OS_NAME__}</span>
+        <span>v{__OS_VERSION__}</span>
+      </div>
+
+      {/* 重启按钮 */}
+      <div style={{
+        position: 'absolute',
+        bottom: '2rem',
+        right: '2rem'
+      }}>
+        <button
+          type="button"
+          onClick={() => window.location.reload()}
+          title="Restart"
+          style={{
+            width: '44px',
+            height: '44px',
+            borderRadius: '50%',
+            background: 'rgba(255, 255, 255, 0.1)',
+            border: 'none',
+            color: 'rgba(255, 255, 255, 0.7)',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M23 4v6h-6"/>
+            <path d="M1 20v-6h6"/>
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  );
+};
+
 // 应用组件
 const App: React.FC = () => {
   const [bootStatus, setBootStatus] = React.useState<BootStatus>(bootloader.getStatus());
   const [bootComplete, setBootComplete] = React.useState(false);
-  const [oobeComplete, setOobeComplete] = React.useState(false);
   const [showOOBE, setShowOOBE] = React.useState(false);
   const [showRecovery, setShowRecovery] = React.useState(false);
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
@@ -62,9 +421,6 @@ const App: React.FC = () => {
   const [isStartMenuOpen, setIsStartMenuOpen] = React.useState(false);
   const [isTabletMode, setIsTabletMode] = React.useState(initialTabletMode);
   const windowContainerRef = React.useRef<HTMLDivElement | null>(null);
-
-  const [initError, setInitError] = React.useState<{ message: string; canRetry: boolean } | null>(null);
-  const [isRetrying, setIsRetrying] = React.useState(false);
 
   const [wallpaperConfig, setWallpaperConfig] = React.useState<WallpaperConfig>({ type: 'soft' });
 
@@ -110,29 +466,18 @@ const App: React.FC = () => {
     return () => window.removeEventListener('startmenu:toggle', handleToggle);
   }, []);
 
-  // 监听锁屏事件
+  // 检查 OOBE 状态
   React.useEffect(() => {
-    const handleLockScreen = () => {
-      handleLock();
-    };
-    window.addEventListener('system:lock', handleLockScreen);
-    return () => window.removeEventListener('system:lock', handleLockScreen);
-  }, []);
-
-  // 检查 OOBE 状态和用户账户
-  React.useEffect(() => {
-    if (bootComplete && window.webos && !window.webos.boot.isOOBEComplete()) {
-      setShowOOBE(true);
-    } else if (bootComplete) {
-      setOobeComplete(true);
-
-      // 检查是否有保存的有效会话
-      if (window.webos) {
-        const autoLoginResult = window.webos.user.tryAutoLogin();
-        if (autoLoginResult.success) {
+    if (bootComplete && window.webos) {
+      const oobeDone = window.webos.boot.isOOBEComplete();
+      if (!oobeDone) {
+        setShowOOBE(true);
+      } else {
+        // 尝试自动登录
+        const result = window.webos.user.tryAutoLogin();
+        if (result.success) {
           setIsLoggedIn(true);
         }
-        // 不再自动创建临时用户，用户必须登录
       }
     }
   }, [bootComplete]);
@@ -158,7 +503,7 @@ const App: React.FC = () => {
         setWallpaperConfig({ type: savedType });
       }
     }
-  }, [oobeComplete]);
+  }, [isLoggedIn]);
 
   // 监听壁纸更改事件
   React.useEffect(() => {
@@ -187,63 +532,9 @@ const App: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // 为新窗口启用触摸支持（平板模式）
-  React.useEffect(() => {
-    if (!isTabletMode || !windowContainerRef.current) return;
-
-    const handleTouchStart = (e: TouchEvent) => {
-      const target = e.target as HTMLElement;
-      const header = target.closest('.os-window-header');
-      if (!header) return;
-      if (target.closest('.os-window-controls')) return;
-      
-      const windowEl = header.closest('.os-window') as HTMLElement;
-      if (!windowEl) return;
-      
-      const touch = e.touches[0];
-      const startX = touch.clientX;
-      const startY = touch.clientY;
-      const startLeft = windowEl.offsetLeft;
-      const startTop = windowEl.offsetTop;
-      
-      windowEl.classList.add('os-window-dragging');
-      
-      const handleTouchMove = (moveEvent: TouchEvent) => {
-        const moveTouch = moveEvent.touches[0];
-        const deltaX = moveTouch.clientX - startX;
-        const deltaY = moveTouch.clientY - startY;
-        
-        windowEl.style.left = (startLeft + deltaX) + 'px';
-        windowEl.style.top = (startTop + deltaY) + 'px';
-      };
-      
-      const handleTouchEnd = () => {
-        windowEl.classList.remove('os-window-dragging');
-        document.removeEventListener('touchmove', handleTouchMove);
-        document.removeEventListener('touchend', handleTouchEnd);
-      };
-      
-      document.addEventListener('touchmove', handleTouchMove, { passive: true });
-      document.addEventListener('touchend', handleTouchEnd);
-    };
-
-    windowContainerRef.current.addEventListener('touchstart', handleTouchStart, { passive: true });
-    
-    return () => {
-      windowContainerRef.current?.removeEventListener('touchstart', handleTouchStart);
-    };
-  }, [isTabletMode, oobeComplete]);
-
   // 处理 OOBE 完成
   const handleOOBEComplete = (data: { username: string; password: string; language: string; systemName?: string; tabletMode?: boolean }) => {
     if (window.webos) {
-      const webos = window.webos as {
-        createUser?: (username: string, password: string, isRoot?: boolean) => void;
-        login?: (username: string, password: string) => boolean;
-        i18n: { setLocale: (locale: string) => void };
-        config: { setSystemName: (name: string) => void };
-        boot: { completeOOBE: () => void };
-      };
       // 创建用户账户
       const result = window.webos.user.createUser(data.username, data.password, { isRoot: false });
       if (result.success) {
@@ -253,10 +544,16 @@ const App: React.FC = () => {
         window.webos.user.login(data.username, data.password);
         setIsLoggedIn(true);
       }
-      webos.i18n.setLocale(data.language);
+      
+      // 设置语言
+      window.webos.i18n.setLocale(data.language);
+      
+      // 设置系统名称
       if (data.systemName) {
         window.webos.config.setSystemName(data.systemName);
       }
+      
+      // 完成OOBE
       window.webos.boot.completeOOBE();
     }
 
@@ -267,7 +564,6 @@ const App: React.FC = () => {
     }
 
     setShowOOBE(false);
-    setOobeComplete(true);
   };
 
   // 处理登录
@@ -294,11 +590,11 @@ const App: React.FC = () => {
   // 处理关机
   const handleShutdown = () => {
     handleLock();
-    (window.webos?.boot as { reset?: () => void }).reset?.();
+    bootloader.reset();
     window.location.reload();
   };
 
-  // 打开应用 - 使用注册中心
+  // 打开应用
   const openApp = (appId: string) => {
     const appInfo = registeredApps.find(app => app.id === appId);
     if (!appInfo || !window.webos) return;
@@ -353,33 +649,7 @@ const App: React.FC = () => {
     await bootloader.resetSystem();
   };
 
-  // 重试初始化
-  const handleRetryInit = async () => {
-    if (!window.webos) return;
-    
-    setIsRetrying(true);
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    if (window.webos.user.hasUsers()) {
-      window.webos.user.clearTemporaryUser();
-      window.webos.user.logout();
-      setInitError(null);
-    } else {
-      setInitError({
-        message: 'No user account found. Please reset the system.',
-        canRetry: false
-      });
-    }
-    
-    setIsRetrying(false);
-  };
-
-  // 关闭错误提示
-  const handleCloseInitError = () => {
-    setInitError(null);
-  };
-
-  // 开始菜单应用列表 - 从注册中心获取
+  // 开始菜单应用列表
   const startMenuApps = registeredApps.map(app => ({
     id: app.id,
     name: window.webos?.t(app.nameKey) || app.name,
@@ -419,14 +689,8 @@ const App: React.FC = () => {
   }
 
   // 渲染登录界面
-  if (oobeComplete && !isLoggedIn) {
-    const users = window.webos?.user.getRealUsers() || [];
-    return (
-      <LockScreen
-        users={users}
-        onLogin={handleLogin}
-      />
-    );
+  if (!isLoggedIn) {
+    return <SimpleLockScreen onLogin={handleLogin} />;
   }
 
   const taskbarHeight = isTabletMode ? 56 : 48;
@@ -434,34 +698,6 @@ const App: React.FC = () => {
   // 渲染桌面
   return (
     <>
-      {initError && (
-        <div className="os-init-error-banner">
-          <div className="os-init-error-content">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-              <line x1="12" y1="9" x2="12" y2="13" />
-              <line x1="12" y1="17" x2="12.01" y2="17" />
-            </svg>
-            <span className="os-init-error-message">{initError.message}</span>
-            {initError.canRetry && (
-              <button
-                className="os-init-error-retry"
-                onClick={handleRetryInit}
-                disabled={isRetrying}
-              >
-                {isRetrying ? 'Retrying...' : 'Retry'}
-              </button>
-            )}
-            <button className="os-init-error-close" onClick={handleCloseInitError}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-            </button>
-          </div>
-        </div>
-      )}
-
       <div
         ref={(el) => {
           if (el && window.webos) {
@@ -469,7 +705,7 @@ const App: React.FC = () => {
             windowContainerRef.current = el;
           }
         }}
-        style={{ position: 'absolute', top: initError ? 48 : 0, left: 0, right: 0, bottom: taskbarHeight, overflow: 'hidden', transition: 'top 0.3s ease' }}
+        style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: taskbarHeight, overflow: 'hidden' }}
       />
       
       <Desktop 
@@ -503,7 +739,7 @@ const App: React.FC = () => {
       <ErrorDialogContainer />
       <BlueScreenContainer />
 
-      {/* 更新通知 - 仅在生产环境显示 */}
+      {/* 更新通知 */}
       {showUpdateNotification && updateStatus.hasUpdate && (
         <UpdateNotification
           currentVersion={updateStatus.currentVersion}
