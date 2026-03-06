@@ -52,12 +52,16 @@ export const LockScreen: React.FC<LockScreenProps> = ({
   isTemporarySession,
   temporaryUserInfo
 }) => {
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  // 如果只有一个用户，默认选中
+  const [selectedUser, setSelectedUser] = useState<User | null>(
+    users.length === 1 ? users[0] : null
+  );
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [showUserSelector, setShowUserSelector] = useState(false);
 
   // 更新时间
   useEffect(() => {
@@ -65,12 +69,13 @@ export const LockScreen: React.FC<LockScreenProps> = ({
     return () => clearInterval(timer);
   }, []);
 
-  // 默认选择第一个用户
-  useEffect(() => {
-    if (users.length > 0 && !selectedUser) {
+  // 点击任意位置进入密码输入
+  const handleScreenClick = () => {
+    if (!selectedUser && users.length > 0) {
       setSelectedUser(users[0]);
     }
-  }, [users, selectedUser]);
+    setShowUserSelector(false);
+  };
 
   const handleLogin = useCallback(async () => {
     if (!selectedUser) return;
@@ -107,15 +112,24 @@ export const LockScreen: React.FC<LockScreenProps> = ({
     return date.toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric' });
   };
 
+  // 是否显示密码输入界面
+  const showLoginPanel = selectedUser !== null;
+
+  // 选择用户
+  const handleSelectUser = (user: User) => {
+    setSelectedUser(user);
+    setShowUserSelector(false);
+  };
+
   return (
-    <div className="os-lock-screen">
+    <div className="os-lock-screen" onClick={handleScreenClick}>
       {/* 背景壁纸 */}
       <div className="os-wallpaper os-wallpaper-lock" />
-      
+
       {/* 主内容 */}
       <div className="os-lock-content">
-        {/* 时间显示 */}
-        <div className="os-lock-time">
+        {/* 时间显示 - 始终显示 */}
+        <div className="os-lock-time" style={{ opacity: showLoginPanel ? 0.3 : 1 }}>
           <div className="os-lock-clock">{formatTime(currentTime)}</div>
           <div className="os-lock-date">{formatDate(currentTime)}</div>
         </div>
@@ -132,14 +146,21 @@ export const LockScreen: React.FC<LockScreenProps> = ({
           </div>
         )}
 
-        {/* 用户选择 / 登录表单 */}
-        {selectedUser ? (
-          <div className="os-lock-user-panel">
+        {/* 提示点击 */}
+        {!showLoginPanel && (
+          <div className="os-lock-hint" style={{ userSelect: 'none' }}>
+            Click anywhere to sign in
+          </div>
+        )}
+
+        {/* 登录面板 */}
+        {showLoginPanel && selectedUser && (
+          <div className="os-lock-user-panel" onClick={(e) => e.stopPropagation()}>
             {/* 用户头像 */}
             <div className="os-lock-avatar" style={{ userSelect: 'none' }}>
               <UserIcon />
             </div>
-            
+
             {/* 用户名 */}
             <div className="os-lock-username" style={{ userSelect: 'none' }}>
               {selectedUser.displayName || selectedUser.username}
@@ -190,49 +211,42 @@ export const LockScreen: React.FC<LockScreenProps> = ({
                 'Sign in'
               )}
             </button>
-
-            {/* 返回用户选择 */}
-            {users.length > 1 && (
-              <button
-                type="button"
-                className="os-lock-back-btn"
-                onClick={() => setSelectedUser(null)}
-              >
-                Back to user selection
-              </button>
-            )}
           </div>
-        ) : (
-          <div className="os-lock-user-list">
-            <div className="os-lock-users-title" style={{ userSelect: 'none' }}>Select a user</div>
-            
-            <div className="os-lock-users">
-              {users.map((user) => (
-                <button
-                  type="button"
-                  key={user.username}
-                  className="os-lock-user-card"
-                  onClick={() => setSelectedUser(user)}
-                  style={{ cursor: 'pointer', userSelect: 'none' }}
-                >
-                  <div className="os-lock-user-avatar">
-                    <UserIcon />
-                  </div>
-                  <div className="os-lock-user-name">
-                    {user.displayName || user.username}
-                  </div>
-                </button>
-              ))}
-            </div>
+        )}
 
-            {/* 访客登录 */}
-            {onGuestLogin && (
+        {/* 用户选择器 - 左下角 */}
+        {users.length > 1 && (
+          <div className="os-lock-user-selector" onClick={(e) => e.stopPropagation()}>
+            {showUserSelector ? (
+              <div className="os-lock-user-dropdown">
+                {users.map((user) => (
+                  <button
+                    type="button"
+                    key={user.username}
+                    className={`os-lock-user-option ${selectedUser?.username === user.username ? 'active' : ''}`}
+                    onClick={() => handleSelectUser(user)}
+                  >
+                    <div className="os-lock-user-option-avatar">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                      </svg>
+                    </div>
+                    <span>{user.displayName || user.username}</span>
+                  </button>
+                ))}
+              </div>
+            ) : (
               <button
                 type="button"
-                className="os-lock-guest-btn"
-                onClick={onGuestLogin}
+                className="os-lock-switch-user-btn"
+                onClick={() => setShowUserSelector(true)}
               >
-                Continue as Guest
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                  <circle cx="12" cy="7" r="4"/>
+                </svg>
+                <span>Switch User</span>
               </button>
             )}
           </div>
@@ -246,8 +260,9 @@ export const LockScreen: React.FC<LockScreenProps> = ({
       </div>
 
       {/* 电源选项 */}
-      <div className="os-lock-power">
+      <div className="os-lock-power" onClick={(e) => e.stopPropagation()}>
         <button
+          type="button"
           className="os-lock-power-btn"
           onClick={() => window.location.reload()}
           title="Restart"
