@@ -195,6 +195,76 @@ export function initWebOS(): void {
   // 暴露到全局
   (window as unknown as { webos: WebOSAPI }).webos = api;
   
+  // 添加控制台强制重置功能
+  (window as unknown as { webosReset: () => void }).webosReset = async () => {
+    console.log('[WebOS] Force reset initiated...');
+    
+    // 1. 清除所有 localStorage
+    localStorage.clear();
+    console.log('[WebOS] localStorage cleared');
+    
+    // 2. 清除 sessionStorage
+    sessionStorage.clear();
+    console.log('[WebOS] sessionStorage cleared');
+    
+    // 3. 清除所有 Cache API 缓存
+    if ('caches' in window) {
+      const cacheNames = await caches.keys();
+      await Promise.all(cacheNames.map(name => caches.delete(name)));
+      console.log('[WebOS] Cache API cleared');
+    }
+    
+    // 4. 清除 IndexedDB
+    if ('indexedDB' in window) {
+      try {
+        const databases = await indexedDB.databases();
+        await Promise.all(
+          databases.map(db => {
+            if (db.name) {
+              return new Promise<void>((resolve) => {
+                const request = indexedDB.deleteDatabase(db.name);
+                request.onsuccess = () => resolve();
+                request.onerror = () => resolve();
+                request.onblocked = () => resolve();
+              });
+            }
+            return Promise.resolve();
+          })
+        );
+        console.log('[WebOS] IndexedDB cleared');
+      } catch {
+        console.log('[WebOS] IndexedDB clear skipped (not supported)');
+      }
+    }
+    
+    // 5. 注销 Service Worker
+    if ('serviceWorker' in navigator) {
+      try {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(registrations.map(reg => reg.unregister()));
+        console.log('[WebOS] Service Workers unregistered');
+      } catch {
+        console.log('[WebOS] Service Worker unregister skipped');
+      }
+    }
+    
+    // 6. 清除 cookies
+    try {
+      document.cookie.split(';').forEach(cookie => {
+        const name = cookie.split('=')[0].trim();
+        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+      });
+      console.log('[WebOS] Cookies cleared');
+    } catch {
+      console.log('[WebOS] Cookie clear skipped');
+    }
+    
+    console.log('[WebOS] Reset complete! Reloading...');
+    window.location.reload();
+  };
+  
+  console.log('[WebOS] System initialized. Type `webosReset()` in console to force reset system.');
+  
   // 设置通知容器
   const createNotificationContainer = () => {
     const container = document.createElement('div');

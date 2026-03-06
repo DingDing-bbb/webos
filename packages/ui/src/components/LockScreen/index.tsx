@@ -136,12 +136,12 @@ export const LockScreen: React.FC<LockScreenProps> = ({
         {selectedUser ? (
           <div className="os-lock-user-panel">
             {/* 用户头像 */}
-            <div className="os-lock-avatar">
+            <div className="os-lock-avatar" style={{ userSelect: 'none' }}>
               <UserIcon />
             </div>
             
             {/* 用户名 */}
-            <div className="os-lock-username">
+            <div className="os-lock-username" style={{ userSelect: 'none' }}>
               {selectedUser.displayName || selectedUser.username}
             </div>
 
@@ -179,6 +179,7 @@ export const LockScreen: React.FC<LockScreenProps> = ({
 
             {/* 登录按钮 */}
             <button
+              type="button"
               className="os-lock-login-btn"
               onClick={handleLogin}
               disabled={isLoading || !password}
@@ -193,6 +194,7 @@ export const LockScreen: React.FC<LockScreenProps> = ({
             {/* 返回用户选择 */}
             {users.length > 1 && (
               <button
+                type="button"
                 className="os-lock-back-btn"
                 onClick={() => setSelectedUser(null)}
               >
@@ -202,14 +204,16 @@ export const LockScreen: React.FC<LockScreenProps> = ({
           </div>
         ) : (
           <div className="os-lock-user-list">
-            <div className="os-lock-users-title">Select a user</div>
+            <div className="os-lock-users-title" style={{ userSelect: 'none' }}>Select a user</div>
             
             <div className="os-lock-users">
               {users.map((user) => (
-                <div
+                <button
+                  type="button"
                   key={user.username}
                   className="os-lock-user-card"
                   onClick={() => setSelectedUser(user)}
+                  style={{ cursor: 'pointer', userSelect: 'none' }}
                 >
                   <div className="os-lock-user-avatar">
                     <UserIcon />
@@ -217,13 +221,14 @@ export const LockScreen: React.FC<LockScreenProps> = ({
                   <div className="os-lock-user-name">
                     {user.displayName || user.username}
                   </div>
-                </div>
+                </button>
               ))}
             </div>
 
             {/* 访客登录 */}
             {onGuestLogin && (
               <button
+                type="button"
                 className="os-lock-guest-btn"
                 onClick={onGuestLogin}
               >

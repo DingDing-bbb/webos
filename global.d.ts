@@ -6,6 +6,11 @@ declare const __OS_VERSION__: string;
 declare const __BUILD_TIME__: string;
 declare const __DEV__: boolean;
 
+// 全局函数
+interface Window {
+  webosReset: () => Promise<void>;
+}
+
 // 模块声明
 declare module '@kernel' {
   export function initWebOS(): void;

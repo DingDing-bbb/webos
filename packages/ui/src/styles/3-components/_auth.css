@@ -369,6 +369,12 @@
   cursor: pointer;
   transition: all 0.2s ease;
   min-width: 120px;
+  border: none;
+  outline: none;
+  font-family: inherit;
+  font-size: inherit;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .os-lock-user-card:hover {
