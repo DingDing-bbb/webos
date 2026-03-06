@@ -264,19 +264,45 @@ export class UserManager {
 
   // ==================== 认证 ====================
 
+  // 登录失败计数
+  private loginAttempts: Map<string, { count: number; lockedUntil: number | null }> = new Map();
+  private readonly MAX_LOGIN_ATTEMPTS = 5;
+  private readonly LOCKOUT_DURATION = 5 * 60 * 1000; // 5分钟
+
   /**
-   * 登录
+   * 登录（支持安全密码验证）
    */
-  login(username: string, password: string): { success: boolean; error?: string } {
+  async login(username: string, password: string): Promise<{ success: boolean; error?: string }> {
+    // 检查是否被锁定
+    const attemptInfo = this.loginAttempts.get(username);
+    if (attemptInfo?.lockedUntil && Date.now() < attemptInfo.lockedUntil) {
+      const remaining = Math.ceil((attemptInfo.lockedUntil - Date.now()) / 60000);
+      return { success: false, error: `Account locked. Try again in ${remaining} minutes.` };
+    }
+
     const user = this.users.get(username);
 
     if (!user) {
-      return { success: false, error: 'User not found' };
+      this.recordLoginFailure(username);
+      return { success: false, error: 'Invalid username or password' };
     }
 
-    if (!this.verifyPassword(password, user.password)) {
-      return { success: false, error: 'Invalid password' };
+    // 使用异步密码验证
+    const isValid = await this.verifyPasswordAsync(password, user.password);
+    
+    if (!isValid) {
+      // 尝试旧格式验证（向后兼容）
+      const isLegacyValid = this.hashPasswordLegacy(password) === user.password;
+      if (!isLegacyValid) {
+        this.recordLoginFailure(username);
+        return { success: false, error: 'Invalid username or password' };
+      }
+      // 迁移到新格式
+      await this.migrateUserPassword(user, password);
     }
+
+    // 登录成功，清除失败记录
+    this.loginAttempts.delete(username);
 
     // 更新最后登录时间
     user.lastLogin = new Date();
@@ -293,6 +319,51 @@ export class UserManager {
     this.notifyListeners();
 
     return { success: true };
+  }
+
+  /**
+   * 记录登录失败
+   */
+  private recordLoginFailure(username: string): void {
+    const info = this.loginAttempts.get(username) || { count: 0, lockedUntil: null };
+    info.count++;
+    
+    if (info.count >= this.MAX_LOGIN_ATTEMPTS) {
+      info.lockedUntil = Date.now() + this.LOCKOUT_DURATION;
+    }
+    
+    this.loginAttempts.set(username, info);
+  }
+
+  /**
+   * 迁移用户密码到新格式
+   */
+  private async migrateUserPassword(user: User, password: string): Promise<void> {
+    user.password = await this.hashPassword(password);
+    this.users.set(user.username, user);
+    this.saveToStorage();
+  }
+
+  /**
+   * 检查账户是否被锁定
+   */
+  isAccountLocked(username: string): { locked: boolean; remainingMinutes?: number } {
+    const info = this.loginAttempts.get(username);
+    if (info?.lockedUntil && Date.now() < info.lockedUntil) {
+      return {
+        locked: true,
+        remainingMinutes: Math.ceil((info.lockedUntil - Date.now()) / 60000)
+      };
+    }
+    return { locked: false };
+  }
+
+  /**
+   * 重置账户锁定状态（需要管理员权限）
+   */
+  unlockAccount(username: string): boolean {
+    this.loginAttempts.delete(username);
+    return true;
   }
 
   /**
@@ -463,18 +534,52 @@ export class UserManager {
 
   // ==================== 密码处理 ====================
 
+  private PASSWORD_SALT = 'webos_secure_salt_2024';
+
   /**
-   * 简单密码哈希（实际生产应使用更强的加密）
+   * 安全密码哈希 - 使用 Web Crypto API (SHA-256)
    */
-  private hashPassword(password: string): string {
-    // 简单的哈希实现（浏览器环境）
+  private async hashPassword(password: string): Promise<string> {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(password + this.PASSWORD_SALT);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    // 转换为十六进制字符串
+    return Array.from(new Uint8Array(hashBuffer))
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('');
+  }
+
+  /**
+   * 验证密码（异步）
+   */
+  private async verifyPasswordAsync(password: string, hashedPassword: string): Promise<boolean> {
+    const newHash = await this.hashPassword(password);
+    return newHash === hashedPassword;
+  }
+
+  /**
+   * 验证密码（同步，用于向后兼容旧格式）
+   */
+  private verifyPassword(password: string, hashedPassword: string): boolean {
+    // 检测新格式（64字符十六进制）
+    if (/^[a-f0-9]{64}$/.test(hashedPassword)) {
+      // 新格式需要异步验证，      console.warn('[UserManager] New password format requires async verification');
+      return false;
+    }
+    // 旧格式兼容
+    return this.hashPasswordLegacy(password) === hashedPassword;
+  }
+
+  /**
+   * 旧版密码哈希（向后兼容）
+   */
+  private hashPasswordLegacy(password: string): string {
     let hash = 0;
     for (let i = 0; i < password.length; i++) {
       const char = password.charCodeAt(i);
       hash = ((hash << 5) - hash) + char;
       hash = hash & hash;
     }
-    // 加盐
     const salt = 'webos_salt_2024';
     let salted = password + salt;
     let hash2 = 0;
@@ -483,13 +588,6 @@ export class UserManager {
       hash2 = hash2 & hash2;
     }
     return `${hash}_${hash2}`;
-  }
-
-  /**
-   * 验证密码
-   */
-  private verifyPassword(password: string, hashedPassword: string): boolean {
-    return this.hashPassword(password) === hashedPassword;
   }
 
   /**

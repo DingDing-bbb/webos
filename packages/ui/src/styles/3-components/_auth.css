@@ -135,3 +135,349 @@
     background: var(--os-input-bg-secondary);
   }
 }
+
+/* ========================================
+   锁屏样式 - Lock Screen
+   ======================================== */
+
+.os-lock-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 99998;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.os-wallpaper-lock {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+.os-lock-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  min-height: 300px;
+}
+
+.os-lock-time {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.os-lock-clock {
+  font-size: 5rem;
+  font-weight: 200;
+  color: white;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  line-height: 1;
+}
+
+.os-lock-date {
+  font-size: 1.25rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin-top: 0.5rem;
+  text-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
+}
+
+.os-lock-warning {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.25rem;
+  background: rgba(255, 180, 0, 0.2);
+  border: 1px solid rgba(255, 180, 0, 0.4);
+  border-radius: var(--os-radius-md);
+  color: white;
+  font-size: 0.875rem;
+  margin-bottom: 1.5rem;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.os-lock-user-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 3rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: calc(var(--os-radius-lg) * 2);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.os-lock-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  color: white;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+}
+
+.os-lock-username {
+  font-size: 1.5rem;
+  color: white;
+  margin-bottom: 1.5rem;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.os-lock-password-container {
+  width: 280px;
+  margin-bottom: 1rem;
+}
+
+.os-lock-password-wrapper {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--os-radius-md);
+  padding: 0 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.2s ease;
+}
+
+.os-lock-password-wrapper:focus-within {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.os-lock-password-wrapper svg {
+  color: rgba(255, 255, 255, 0.6);
+  flex-shrink: 0;
+}
+
+.os-lock-password {
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: 0.875rem 0.75rem;
+  color: white;
+  font-size: 1rem;
+  outline: none;
+}
+
+.os-lock-password::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.os-lock-toggle-password {
+  background: transparent;
+  border: none;
+  padding: 0.25rem;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.os-lock-toggle-password:hover {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.os-lock-error {
+  color: #ff6b6b;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.os-lock-login-btn {
+  width: 280px;
+  padding: 0.875rem;
+  background: rgba(255, 255, 255, 0.9);
+  color: #333;
+  border: none;
+  border-radius: var(--os-radius-md);
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+}
+
+.os-lock-login-btn:hover:not(:disabled) {
+  background: white;
+}
+
+.os-lock-login-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.os-lock-back-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.875rem;
+  cursor: pointer;
+  margin-top: 1rem;
+  padding: 0.5rem;
+}
+
+.os-lock-back-btn:hover {
+  color: white;
+}
+
+.os-lock-user-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.os-lock-users-title {
+  font-size: 1.25rem;
+  color: white;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.os-lock-users {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.os-lock-user-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: calc(var(--os-radius-lg) * 2);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 120px;
+}
+
+.os-lock-user-card:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.os-lock-user-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.75rem;
+  color: white;
+}
+
+.os-lock-user-name {
+  color: white;
+  font-size: 0.9rem;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.os-lock-guest-btn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.8);
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--os-radius-md);
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.os-lock-guest-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.5);
+  color: white;
+}
+
+.os-lock-system-info {
+  position: absolute;
+  bottom: 2rem;
+  display: flex;
+  gap: 1rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.75rem;
+}
+
+.os-lock-power {
+  position: absolute;
+  bottom: 2rem;
+  right: 2rem;
+}
+
+.os-lock-power-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.os-lock-power-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+/* 加载动画 */
+.os-lock-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  border-top-color: #333;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .os-lock-clock {
+    font-size: 3.5rem;
+  }
+
+  .os-lock-user-panel {
+    padding: 1.5rem 2rem;
+  }
+
+  .os-lock-password-container,
+  .os-lock-login-btn {
+    width: 260px;
+  }
+
+  .os-lock-users {
+    flex-direction: column;
+    align-items: center;
+  }
+}

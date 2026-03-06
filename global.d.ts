@@ -30,9 +30,9 @@ declare module '@ui' {
   export const NotificationContainer: React.FC;
   export const ErrorDialogContainer: React.FC;
   export const BlueScreenContainer: React.FC;
-  export const Login: React.FC<{
+  export const LockScreen: React.FC<{
     users: import('./packages/kernel/src/types').User[];
-    onLogin: (username: string, password: string) => { success: boolean; error?: string };
+    onLogin: (username: string, password: string) => Promise<{ success: boolean; error?: string }>;
     onGuestLogin?: () => void;
     isTemporarySession?: boolean;
     temporaryUserInfo?: { username: string; password: string; reason: string } | null;
