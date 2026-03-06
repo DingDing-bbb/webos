@@ -1,0 +1,7 @@
+{
+  "name": "@webos/tablet",
+  "version": "1.0.0",
+  "description": "Tablet and touch device support for WebOS",
+  "main": "src/index.ts",
+  "types": "src/index.ts"
+}

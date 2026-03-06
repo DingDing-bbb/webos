@@ -1,0 +1,111 @@
+/**
+ * WebOS Desktop Styles - 桌面样式
+ */
+
+/* 桌面容器 */
+.os-desktop {
+  position: relative;
+  width: 100%;
+  height: calc(100% - var(--os-taskbar-height));
+  overflow: hidden;
+  background: var(--os-color-bg-secondary);
+}
+
+/* 桌面图标容器 */
+.os-desktop-icons {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: var(--os-spacing-sm);
+  padding: var(--os-spacing-md);
+  height: 100%;
+}
+
+/* 桌面图标 */
+.os-desktop-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 80px;
+  padding: var(--os-spacing-sm);
+  cursor: pointer;
+  border: 1px solid transparent;
+  background: transparent;
+  transition: background-color var(--os-transition-fast);
+}
+
+.os-desktop-icon:hover {
+  background: var(--os-color-hover);
+}
+
+.os-desktop-icon:active {
+  background: var(--os-color-active);
+}
+
+.os-desktop-icon.selected {
+  background: var(--os-color-selected);
+  border-color: var(--os-color-primary);
+}
+
+/* 桌面图标图片 */
+.os-desktop-icon-image {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--os-spacing-xs);
+}
+
+.os-desktop-icon-image svg {
+  width: 32px;
+  height: 32px;
+}
+
+/* 桌面图标标签 */
+.os-desktop-icon-label {
+  font-size: var(--os-font-size-xs);
+  color: var(--os-color-text);
+  text-align: center;
+  word-break: break-word;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+/* 桌面模式标记 */
+.os-desktop-mode {
+  /* 桌面模式特定样式 */
+}
+
+/* ========================================
+   平板模式
+   ======================================== */
+
+.os-tablet-mode {
+  --os-taskbar-height: var(--os-taskbar-height-tablet);
+  --os-window-header-height: var(--os-window-header-height-tablet);
+}
+
+/* 大触摸目标 */
+.os-large-touch-targets .os-desktop-icon {
+  min-height: var(--os-touch-target-size);
+  padding: var(--os-spacing-md);
+}
+
+/* 禁用悬停效果（触摸设备） */
+.os-no-hover .os-desktop-icon:hover {
+  background: transparent;
+}
+
+.os-no-hover .os-desktop-icon:active {
+  background: var(--os-color-bg-tertiary);
+  opacity: 0.8;
+}
