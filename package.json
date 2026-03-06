@@ -5,7 +5,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "webpack serve --mode development",
+    "dev": "webpack serve --mode development --no-hot --no-live-reload --no-client-overlay",
     "build": "webpack --mode production",
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx"
   },

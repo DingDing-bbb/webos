@@ -4,6 +4,7 @@
 declare const __OS_NAME__: string;
 declare const __OS_VERSION__: string;
 declare const __BUILD_TIME__: string;
+declare const __DEV__: boolean;
 
 // 模块声明
 declare module '@kernel' {

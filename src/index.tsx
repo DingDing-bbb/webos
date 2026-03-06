@@ -460,11 +460,11 @@ const App: React.FC = () => {
       <ErrorDialogContainer />
       <BlueScreenContainer />
 
-      {/* 更新通知 */}
-      {showUpdateNotification && updateStatus.hasUpdate && updateStatus.latestVersion && (
+      {/* 更新通知 - 仅在生产环境显示 */}
+      {showUpdateNotification && updateStatus.hasUpdate && (
         <UpdateNotification
           currentVersion={updateStatus.currentVersion}
-          latestVersion={updateStatus.latestVersion}
+          latestVersion={updateStatus.latestBuildTime || updateStatus.currentVersion}
           isUpdating={updateStatus.isUpdating}
           onUpdate={() => updateManager.applyUpdate()}
           onSkip={() => {

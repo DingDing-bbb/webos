@@ -82,7 +82,8 @@ export default (env, argv) => {
       new webpack.DefinePlugin({
         __OS_NAME__: JSON.stringify(OS_NAME),
         __OS_VERSION__: JSON.stringify(OS_VERSION),
-        __BUILD_TIME__: JSON.stringify(new Date().toISOString())
+        __BUILD_TIME__: JSON.stringify(new Date().toISOString()),
+        __DEV__: JSON.stringify(!isProduction)  // 开发模式标识
       }),
       new MiniCssExtractPlugin({
         filename: isProduction ? '[name].[contenthash].css' : '[name].css'
@@ -137,13 +138,14 @@ export default (env, argv) => {
       port: 3000,
       host: '0.0.0.0',
       allowedHosts: 'all',
-      hot: true,
+      hot: false,
+      liveReload: false,
       historyApiFallback: true,
+      watchFiles: [],  // 禁用文件监视导致的刷新
       client: {
-        overlay: {
-          errors: true,
-          warnings: false
-        }
+        overlay: false,  // 完全禁用 overlay，避免任何自动行为
+        progress: false,
+        reconnect: false  // 禁用断线重连
       }
     },
     devtool: isProduction ? 'source-map' : 'eval-source-map'

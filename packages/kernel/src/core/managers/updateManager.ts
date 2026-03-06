@@ -127,12 +127,8 @@ class UpdateManager {
 
       this.notify();
 
-      // 只有生产环境才自动更新（开发环境每次构建时间都不同）
-      const isDev = window.location.hostname === 'localhost' || 
-                    window.location.hostname === '127.0.0.1' ||
-                    window.location.port === '3000';
-      
-      if (hasUpdate && this.config.autoUpdate && !isDev) {
+      // 自动更新（仅生产环境，__DEV__ 此时已确保为 false）
+      if (hasUpdate && this.config.autoUpdate) {
         this.applyUpdate();
       }
 
@@ -190,36 +186,37 @@ class UpdateManager {
    * 初始化 - 启动时检查更新
    */
   async init(): Promise<void> {
-    // 注册 Service Worker
+    // 开发模式不启用更新功能
+    if (__DEV__) {
+      console.log('[UpdateManager] Development mode - update system disabled');
+      
+      // 清理可能存在的旧 Service Worker
+      if ('serviceWorker' in navigator) {
+        try {
+          const registrations = await navigator.serviceWorker.getRegistrations();
+          for (const reg of registrations) {
+            await reg.unregister();
+          }
+        } catch {
+          // 忽略错误
+        }
+      }
+      return;
+    }
+
+    // 生产模式：注册 Service Worker 并检查更新
     await this.registerServiceWorker();
 
-    // 只在生产环境检查更新（开发环境每次构建时间都不同）
-    // 可以通过判断是否是 localhost 或者通过环境变量判断
-    const isDev = window.location.hostname === 'localhost' || 
-                  window.location.hostname === '127.0.0.1' ||
-                  window.location.port === '3000';
-    
-    if (!isDev) {
-      // 生产环境：延迟检查更新
-      setTimeout(() => {
-        this.checkForUpdate();
-      }, 5000);
-    }
+    setTimeout(() => {
+      this.checkForUpdate();
+    }, 5000);
   }
 
   /**
    * 注册 Service Worker
    */
   private async registerServiceWorker(): Promise<void> {
-    // 开发环境不注册 Service Worker（避免 HMR 冲突）
-    const isDev = window.location.hostname === 'localhost' || 
-                  window.location.hostname === '127.0.0.1' ||
-                  window.location.port === '3000';
-    
-    if (isDev) {
-      console.log('[UpdateManager] Development mode - skipping Service Worker registration');
-      return;
-    }
+    if (__DEV__) return;
 
     if (!('serviceWorker' in navigator)) {
       console.warn('Service Worker not supported');
@@ -235,7 +232,6 @@ class UpdateManager {
         if (newWorker) {
           newWorker.addEventListener('statechange', () => {
             if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-              // 有新版本可用
               if (this.config.autoUpdate) {
                 newWorker.postMessage({ type: 'SKIP_WAITING' });
               } else {
