@@ -3,7 +3,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { initWebOS } from '@kernel';
-import { BootScreen, Desktop, Taskbar, StartMenu, NotificationContainer, ErrorDialogContainer, BlueScreenContainer, UpdateNotification } from '@ui';
+import { BootScreen, Desktop, Taskbar, StartMenu, NotificationContainer, ErrorDialogContainer, BlueScreenContainer, UpdateNotification, LockScreen } from '@ui';
 import type { WallpaperConfig, WallpaperType } from '@ui';
 import { OOBE } from '@oobe';
 import { bootloader, setupGlobalErrorHandler } from '@bootloader';
@@ -57,6 +57,7 @@ const App: React.FC = () => {
   const [oobeComplete, setOobeComplete] = React.useState(false);
   const [showOOBE, setShowOOBE] = React.useState(false);
   const [showRecovery, setShowRecovery] = React.useState(false);
+  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
   const [windows, setWindows] = React.useState<WindowState[]>([]);
   const [isStartMenuOpen, setIsStartMenuOpen] = React.useState(false);
   const [isTabletMode, setIsTabletMode] = React.useState(initialTabletMode);
@@ -109,27 +110,29 @@ const App: React.FC = () => {
     return () => window.removeEventListener('startmenu:toggle', handleToggle);
   }, []);
 
+  // 监听锁屏事件
+  React.useEffect(() => {
+    const handleLockScreen = () => {
+      handleLock();
+    };
+    window.addEventListener('system:lock', handleLockScreen);
+    return () => window.removeEventListener('system:lock', handleLockScreen);
+  }, []);
+
   // 检查 OOBE 状态和用户账户
   React.useEffect(() => {
     if (bootComplete && window.webos && !window.webos.boot.isOOBEComplete()) {
       setShowOOBE(true);
     } else if (bootComplete) {
       setOobeComplete(true);
-      
+
+      // 检查是否有保存的有效会话
       if (window.webos) {
         const autoLoginResult = window.webos.user.tryAutoLogin();
-        
-        if (!autoLoginResult.success) {
-          if (!window.webos.user.hasUsers()) {
-            const tempUser = window.webos.user.createTemporaryUser('System initialization failed');
-            window.webos.user.login(tempUser.username, '');
-            
-            setInitError({
-              message: 'Failed to load user data. Using temporary session.',
-              canRetry: true
-            });
-          }
+        if (autoLoginResult.success) {
+          setIsLoggedIn(true);
         }
+        // 不再自动创建临时用户，用户必须登录
       }
     }
   }, [bootComplete]);
@@ -241,24 +244,58 @@ const App: React.FC = () => {
         config: { setSystemName: (name: string) => void };
         boot: { completeOOBE: () => void };
       };
-      webos.createUser?.(data.username, data.password);
-      webos.createUser?.('root', data.password, true);
-      webos.login?.(data.username, data.password);
+      // 创建用户账户
+      const result = window.webos.user.createUser(data.username, data.password, { isRoot: false });
+      if (result.success) {
+        // 创建root用户
+        window.webos.user.createUser('root', data.password, { isRoot: true });
+        // 登录用户
+        window.webos.user.login(data.username, data.password);
+        setIsLoggedIn(true);
+      }
       webos.i18n.setLocale(data.language);
       if (data.systemName) {
         window.webos.config.setSystemName(data.systemName);
       }
       window.webos.boot.completeOOBE();
     }
-    
+
     if (data.tabletMode !== undefined) {
       localStorage.setItem('webos-tablet-mode', String(data.tabletMode));
       applyTabletMode(data.tabletMode);
       setIsTabletMode(data.tabletMode);
     }
-    
+
     setShowOOBE(false);
     setOobeComplete(true);
+  };
+
+  // 处理登录
+  const handleLogin = async (username: string, password: string): Promise<{ success: boolean; error?: string }> => {
+    if (!window.webos) {
+      return { success: false, error: 'System not initialized' };
+    }
+
+    const result = window.webos.user.login(username, password);
+    if (result.success) {
+      setIsLoggedIn(true);
+    }
+    return result;
+  };
+
+  // 处理锁屏
+  const handleLock = () => {
+    if (window.webos) {
+      window.webos.user.logout();
+    }
+    setIsLoggedIn(false);
+  };
+
+  // 处理关机
+  const handleShutdown = () => {
+    handleLock();
+    (window.webos?.boot as { reset?: () => void }).reset?.();
+    window.location.reload();
   };
 
   // 打开应用 - 使用注册中心
@@ -295,12 +332,6 @@ const App: React.FC = () => {
     if (win?.isMinimized) {
       window.webos?.window.restore(windowId);
     }
-  };
-
-  // 处理关机
-  const handleShutdown = () => {
-    (window.webos?.boot as { reset?: () => void }).reset?.();
-    window.location.reload();
   };
 
   // 处理恢复模式操作
@@ -387,6 +418,17 @@ const App: React.FC = () => {
     return <OOBE onComplete={handleOOBEComplete} />;
   }
 
+  // 渲染登录界面
+  if (oobeComplete && !isLoggedIn) {
+    const users = window.webos?.user.getRealUsers() || [];
+    return (
+      <LockScreen
+        users={users}
+        onLogin={handleLogin}
+      />
+    );
+  }
+
   const taskbarHeight = isTabletMode ? 56 : 48;
 
   // 渲染桌面
@@ -452,6 +494,7 @@ const App: React.FC = () => {
         onClose={() => setIsStartMenuOpen(false)}
         apps={startMenuApps}
         onSettings={() => openApp('com.os.settings')}
+        onLock={handleLock}
         onShutdown={handleShutdown}
       />
       

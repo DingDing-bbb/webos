@@ -93,6 +93,7 @@ interface StartMenuProps {
   }>;
   onSettings: () => void;
   onShutdown: () => void;
+  onLock?: () => void;
 }
 
 export const StartMenu: React.FC<StartMenuProps> = ({
@@ -100,7 +101,8 @@ export const StartMenu: React.FC<StartMenuProps> = ({
   onClose,
   apps,
   onSettings,
-  onShutdown
+  onShutdown,
+  onLock
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -161,6 +163,11 @@ export const StartMenu: React.FC<StartMenuProps> = ({
           <button onClick={() => { onSettings(); onClose(); }}>
             {window.webos?.t('menu.settings') || 'Settings'}
           </button>
+          {onLock && (
+            <button onClick={() => { onLock(); onClose(); }}>
+              {window.webos?.t('menu.lock') || 'Lock'}
+            </button>
+          )}
           <button onClick={onShutdown}>
             {window.webos?.t('menu.shutdown') || 'Shut Down'}
           </button>

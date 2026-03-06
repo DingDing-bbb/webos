@@ -6,6 +6,7 @@ import type { LocaleConfig } from '@kernel/types';
 interface OOBEData {
   username: string;
   password: string;
+  confirmPassword: string;
   language: string;
   systemName: string;
   tabletMode: boolean;
@@ -24,6 +25,7 @@ export const OOBE: React.FC<OOBEProps> = ({ onComplete }) => {
   const [formData, setFormData] = useState<OOBEData>({
     username: '',
     password: '',
+    confirmPassword: '',
     language: 'en',
     systemName: '',
     tabletMode: false,
@@ -70,9 +72,22 @@ export const OOBE: React.FC<OOBEProps> = ({ onComplete }) => {
     if (currentStep === 'user') {
       if (!formData.username.trim()) {
         newErrors.username = t('oobe.usernameRequired');
+      } else if (formData.username.length < 2) {
+        newErrors.username = 'Username must be at least 2 characters';
+      } else if (!/^[a-z_][a-z0-9_-]*$/i.test(formData.username)) {
+        newErrors.username = 'Username contains invalid characters';
       }
+
       if (!formData.password) {
         newErrors.password = t('oobe.passwordRequired');
+      } else if (formData.password.length < 4) {
+        newErrors.password = 'Password must be at least 4 characters';
+      }
+
+      if (!formData.confirmPassword) {
+        newErrors.confirmPassword = 'Please confirm your password';
+      } else if (formData.password !== formData.confirmPassword) {
+        newErrors.confirmPassword = 'Passwords do not match';
       }
     }
 
@@ -164,7 +179,7 @@ export const OOBE: React.FC<OOBEProps> = ({ onComplete }) => {
           <div className="os-oobe-error">{errors.username}</div>
         )}
       </div>
-      
+
       <div className="os-oobe-field">
         <label className="os-oobe-label">{t('oobe.setPassword')}</label>
         <input
@@ -176,6 +191,20 @@ export const OOBE: React.FC<OOBEProps> = ({ onComplete }) => {
         />
         {errors.password && (
           <div className="os-oobe-error">{errors.password}</div>
+        )}
+      </div>
+
+      <div className="os-oobe-field">
+        <label className="os-oobe-label">Confirm Password</label>
+        <input
+          type="password"
+          className="os-oobe-input"
+          placeholder="Enter password again"
+          value={formData.confirmPassword}
+          onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+        />
+        {errors.confirmPassword && (
+          <div className="os-oobe-error">{errors.confirmPassword}</div>
         )}
       </div>
 

@@ -141,7 +141,7 @@ export class UserManager {
 
     const user: User = {
       username,
-      password: this.hashPassword(password),
+      password: this.hashPasswordLegacy(password),
       role,
       isRoot: options?.isRoot || role === 'root',
       homeDir: role === 'root' ? '/root' : `/home/${username}`,
@@ -199,7 +199,7 @@ export class UserManager {
 
     const user: User = {
       username: tempUsername,
-      password: this.hashPassword(tempPassword),
+      password: this.hashPasswordLegacy(tempPassword),
       role: 'guest',
       isRoot: false,
       homeDir: '/tmp/guest',
@@ -270,9 +270,9 @@ export class UserManager {
   private readonly LOCKOUT_DURATION = 5 * 60 * 1000; // 5分钟
 
   /**
-   * 登录（支持安全密码验证）
+   * 登录（同步密码验证）
    */
-  async login(username: string, password: string): Promise<{ success: boolean; error?: string }> {
+  login(username: string, password: string): { success: boolean; error?: string } {
     // 检查是否被锁定
     const attemptInfo = this.loginAttempts.get(username);
     if (attemptInfo?.lockedUntil && Date.now() < attemptInfo.lockedUntil) {
@@ -287,18 +287,12 @@ export class UserManager {
       return { success: false, error: 'Invalid username or password' };
     }
 
-    // 使用异步密码验证
-    const isValid = await this.verifyPasswordAsync(password, user.password);
-    
+    // 使用同步密码验证（legacy格式）
+    const isValid = this.hashPasswordLegacy(password) === user.password;
+
     if (!isValid) {
-      // 尝试旧格式验证（向后兼容）
-      const isLegacyValid = this.hashPasswordLegacy(password) === user.password;
-      if (!isLegacyValid) {
-        this.recordLoginFailure(username);
-        return { success: false, error: 'Invalid username or password' };
-      }
-      // 迁移到新格式
-      await this.migrateUserPassword(user, password);
+      this.recordLoginFailure(username);
+      return { success: false, error: 'Invalid username or password' };
     }
 
     // 登录成功，清除失败记录
@@ -431,7 +425,7 @@ export class UserManager {
 
     // 更新字段
     if (updates.displayName) user.displayName = updates.displayName;
-    if (updates.password) user.password = this.hashPassword(updates.password);
+    if (updates.password) user.password = this.hashPasswordLegacy(updates.password);
     if (updates.permissions) user.permissions = updates.permissions;
     if (updates.role) {
       user.role = updates.role;
@@ -488,7 +482,7 @@ export class UserManager {
       return { success: false, error: 'Invalid old password' };
     }
 
-    user.password = this.hashPassword(newPassword);
+    user.password = this.hashPasswordLegacy(newPassword);
     this.users.set(username, user);
     this.saveToStorage();
 
