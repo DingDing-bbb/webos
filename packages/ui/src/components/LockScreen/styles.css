@@ -1,0 +1,727 @@
+/**
+ * @fileoverview Lock Screen Styles
+ * @module @ui/components/LockScreen/styles
+ *
+ * Modern lock screen styling inspired by macOS and Windows 11.
+ * Features smooth animations, glassmorphism, and responsive design.
+ *
+ * @design-tokens
+ * - Primary: #42a5f5 (Blue)
+ * - Background: Linear gradient dark theme
+ * - Border radius: 12px (cards), 50% (avatars)
+ * - Transitions: 0.2s - 0.3s ease
+ */
+
+/* ============================================
+   Container & Background
+   ============================================ */
+
+.lockscreen-container {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.lockscreen-background {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    #0a0a0f 0%,
+    #1a1a2e 50%,
+    #16213e 100%
+  );
+  z-index: -1;
+}
+
+/* Ambient glow effects */
+.lockscreen-background::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      circle at 20% 80%,
+      rgba(120, 119, 198, 0.15) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 80% 20%,
+      rgba(66, 165, 245, 0.1) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 50% 50%,
+      rgba(66, 165, 245, 0.05) 0%,
+      transparent 70%
+    );
+  animation: ambient-pulse 8s ease-in-out infinite;
+}
+
+@keyframes ambient-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* ============================================
+   Content Layout
+   ============================================ */
+
+.lockscreen-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: white;
+  position: relative;
+  z-index: 1;
+}
+
+/* ============================================
+   User Selection View
+   ============================================ */
+
+.lockscreen-user-select {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  animation: fade-slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Clock Display */
+.lockscreen-time {
+  text-align: center;
+  margin-bottom: 80px;
+  animation: fade-slide-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+}
+
+.lockscreen-time-display {
+  font-size: clamp(64px, 15vw, 96px);
+  font-weight: 200;
+  letter-spacing: -2px;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+  line-height: 1;
+}
+
+.lockscreen-date-display {
+  font-size: clamp(18px, 3vw, 24px);
+  font-weight: 300;
+  opacity: 0.8;
+  margin-top: 8px;
+}
+
+/* User List */
+.lockscreen-users {
+  text-align: center;
+}
+
+.lockscreen-users-title {
+  font-size: clamp(24px, 4vw, 32px);
+  font-weight: 300;
+  margin-bottom: 40px;
+  opacity: 0.9;
+  animation: fade-slide-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+}
+
+.lockscreen-users-list {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* User Card */
+.lockscreen-user-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 20px;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  min-width: 120px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  animation: fade-scale-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.lockscreen-user-card:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateY(-4px) scale(1.02);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.lockscreen-user-card:active {
+  transform: translateY(-2px) scale(1);
+}
+
+/* Avatar */
+.lockscreen-user-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #42a5f5 0%, #1976d2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  font-weight: 500;
+  color: white;
+  box-shadow:
+    0 4px 20px rgba(66, 165, 245, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.lockscreen-user-card:hover .lockscreen-user-avatar {
+  transform: scale(1.05);
+}
+
+.lockscreen-user-avatar.large {
+  width: 120px;
+  height: 120px;
+  font-size: 48px;
+  box-shadow:
+    0 8px 32px rgba(66, 165, 245, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.lockscreen-user-name {
+  font-size: 16px;
+  font-weight: 400;
+  opacity: 0.9;
+}
+
+/* Guest Button */
+.lockscreen-guest-btn {
+  margin-top: 32px;
+  padding: 12px 24px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  animation: fade-slide-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
+}
+
+.lockscreen-guest-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* ============================================
+   Password Input View
+   ============================================ */
+
+.lockscreen-password {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  animation: fade-scale-in 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  padding: 20px;
+}
+
+/* Back Button */
+.lockscreen-back-btn {
+  position: absolute;
+  top: -60px;
+  left: 0;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: white;
+  transition: all 0.2s ease;
+}
+
+.lockscreen-back-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateX(-2px);
+}
+
+/* Selected User Display */
+.lockscreen-password-user {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  animation: fade-slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Password Form */
+.lockscreen-password-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  padding: 0 20px;
+  animation: fade-slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+}
+
+.lockscreen-password-input {
+  width: 100%;
+  max-width: 320px;
+  padding: 16px 24px;
+  font-size: 18px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  color: white;
+  text-align: center;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.lockscreen-password-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.lockscreen-password-input:focus {
+  border-color: rgba(66, 165, 245, 0.6);
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 0 0 4px rgba(66, 165, 245, 0.1),
+    0 4px 20px rgba(66, 165, 245, 0.2);
+}
+
+.lockscreen-password-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Error Message */
+.lockscreen-error {
+  color: #ef5350;
+  font-size: 14px;
+  text-align: center;
+  padding: 12px 16px;
+  background: rgba(239, 83, 80, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(239, 83, 80, 0.2);
+  max-width: 300px;
+  animation: shake 0.4s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-8px); }
+  40%, 80% { transform: translateX(8px); }
+}
+
+/* Submit Button */
+.lockscreen-submit-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #42a5f5 0%, #1976d2 100%);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow:
+    0 4px 20px rgba(66, 165, 245, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.lockscreen-submit-btn:hover:not(:disabled) {
+  transform: scale(1.08);
+  box-shadow:
+    0 6px 25px rgba(66, 165, 245, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.lockscreen-submit-btn:active:not(:disabled) {
+  transform: scale(1);
+}
+
+.lockscreen-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Keyboard Hint */
+.lockscreen-hint {
+  font-size: 13px;
+  opacity: 0.5;
+  margin-top: 8px;
+  animation: fade-slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+}
+
+/* ============================================
+   Loading States
+   ============================================ */
+
+.lockscreen-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lockscreen-spinner {
+  width: 24px;
+  height: 24px;
+  animation: spin 1s linear infinite;
+}
+
+.lockscreen-spinner-large {
+  width: 48px;
+  height: 48px;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top-color: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* ============================================
+   Development Mode
+   ============================================ */
+
+.lockscreen-dev-badge {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  padding: 6px 12px;
+  background: rgba(239, 83, 80, 0.2);
+  border: 1px solid rgba(239, 83, 80, 0.4);
+  border-radius: 6px;
+  color: #ef5350;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  z-index: 10;
+  animation: pulse-warning 2s ease-in-out infinite;
+}
+
+@keyframes pulse-warning {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* Reset Button */
+.lockscreen-reset-btn {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: rgba(239, 83, 80, 0.15);
+  border: 1px solid rgba(239, 83, 80, 0.3);
+  border-radius: 8px;
+  color: #ef5350;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.lockscreen-reset-btn:hover {
+  background: rgba(239, 83, 80, 0.25);
+  border-color: rgba(239, 83, 80, 0.5);
+}
+
+.lockscreen-reset-btn.confirm {
+  background: rgba(239, 83, 80, 0.3);
+  border-color: #ef5350;
+  animation: pulse-danger 0.8s ease-in-out infinite;
+}
+
+.lockscreen-reset-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@keyframes pulse-danger {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 83, 80, 0.4); }
+  50% { transform: scale(1.02); box-shadow: 0 0 0 8px rgba(239, 83, 80, 0); }
+}
+
+/* ============================================
+   Animations
+   ============================================ */
+
+@keyframes fade-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ============================================
+   Responsive Design
+   ============================================ */
+
+@media (max-width: 768px) {
+  .lockscreen-time {
+    margin-bottom: 60px;
+  }
+
+  .lockscreen-user-card {
+    padding: 16px;
+    min-width: 100px;
+  }
+
+  .lockscreen-user-avatar {
+    width: 64px;
+    height: 64px;
+    font-size: 28px;
+  }
+
+  .lockscreen-user-avatar.large {
+    width: 100px;
+    height: 100px;
+    font-size: 40px;
+  }
+
+  .lockscreen-back-btn {
+    top: -50px;
+    width: 40px;
+    height: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .lockscreen-users-list {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .lockscreen-user-card {
+    width: 100%;
+    max-width: 200px;
+  }
+}
+
+/* ============================================
+   OS-specific Styles (Legacy Support)
+   ============================================ */
+
+.os-lock-screen {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%);
+  color: #fff;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.os-lock-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px;
+  max-width: 400px;
+  width: 100%;
+}
+
+.os-lock-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.os-lock-input {
+  width: 100%;
+  padding: 16px 20px;
+  font-size: 16px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 2px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  color: #fff;
+  outline: none;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.os-lock-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.os-lock-input:focus {
+  border-color: rgba(66, 165, 245, 0.6);
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 0 4px rgba(66, 165, 245, 0.1);
+}
+
+.os-lock-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 14px 24px;
+  font-size: 15px;
+  font-weight: 500;
+  background: linear-gradient(135deg, #42a5f5 0%, #1976d2 100%);
+  border: none;
+  border-radius: 12px;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 20px rgba(66, 165, 245, 0.3);
+}
+
+.os-lock-submit:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(66, 165, 245, 0.4);
+}
+
+.os-lock-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.os-lock-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #ef5350;
+  font-size: 14px;
+  padding: 12px;
+  background: rgba(239, 83, 80, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(239, 83, 80, 0.2);
+}
+
+.os-lock-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Switch Account Button */
+.os-lock-switch-account {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.os-lock-switch-account:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Dev Badge */
+.os-lock-dev-badge {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  padding: 6px 12px;
+  background: rgba(239, 83, 80, 0.2);
+  border: 1px solid rgba(239, 83, 80, 0.4);
+  border-radius: 6px;
+  color: #ef5350;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  z-index: 10;
+}
+
+/* Reset Button */
+.os-lock-reset-btn {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: rgba(239, 83, 80, 0.15);
+  border: 1px solid rgba(239, 83, 80, 0.3);
+  border-radius: 8px;
+  color: #ef5350;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.os-lock-reset-btn:hover {
+  background: rgba(239, 83, 80, 0.25);
+  border-color: rgba(239, 83, 80, 0.5);
+}
+
+.os-lock-reset-btn.confirm {
+  background: rgba(239, 83, 80, 0.3);
+  border-color: #ef5350;
+  animation: pulse-danger 0.8s ease-in-out infinite;
+}
+
+.os-lock-reset-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

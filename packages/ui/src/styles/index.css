@@ -1,0 +1,51 @@
+/**
+ * WebOS Styles - 主入口文件
+ *
+ * CSS架构采用ITCSS（Inverted Triangle CSS）分层方法：
+ *
+ * 1. Foundations  - 设计令牌、变量、重置
+ * 2. Themes       - 主题（浅色/深色）
+ * 3. Components   - 组件样式
+ * 4. Utilities    - 工具类、动画
+ *
+ * 导入顺序很重要！后面的样式会覆盖前面的样式。
+ */
+
+/* ========================================
+   1. 基础层 - Foundations
+   ======================================== */
+@import './1-foundations/_variables.css';
+@import './1-foundations/_reset.css';
+
+/* ========================================
+   2. 主题层 - Themes
+   ======================================== */
+@import './2-themes/_light.css';
+@import './2-themes/_dark.css';
+
+/* ========================================
+   3. 组件层 - Components
+   ======================================== */
+@import './3-components/_boot.css';
+@import './3-components/_desktop.css';
+@import './3-components/_taskbar.css';
+@import './3-components/_window.css';
+@import './3-components/_start-menu.css';
+@import './3-components/_notification.css';
+@import './3-components/_oobe.css';
+@import './3-components/_auth.css';
+@import './3-components/_error.css';
+@import './3-components/_tablet.css';
+
+/* ========================================
+   4. 工具层 - Utilities
+   ======================================== */
+@import './4-utilities/_animations.css';
+@import './4-utilities/_utilities.css';
+
+/* ========================================
+   5. 第三方/覆盖层 - Vendor Overrides
+   ======================================== */
+
+/* 壁纸系统（独立模块） */
+@import './wallpaper.css';

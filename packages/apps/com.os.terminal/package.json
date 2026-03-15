@@ -1,0 +1,15 @@
+{
+  "name": "@app/com.os.terminal",
+  "version": "1.0.0",
+  "description": "WebOS Terminal - Command line interface",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.tsx",
+  "types": "./src/index.tsx",
+  "author": "WebOS Team",
+  "category": "development",
+  "keywords": ["webos", "app", "terminal", "cli", "shell"],
+  "dependencies": {
+    "@webos/apps": "workspace:*"
+  }
+}

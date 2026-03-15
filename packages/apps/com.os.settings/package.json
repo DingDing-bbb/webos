@@ -1,0 +1,15 @@
+{
+  "name": "@app/com.os.settings",
+  "version": "1.0.0",
+  "description": "WebOS Settings Application - System configuration",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.tsx",
+  "types": "./src/index.tsx",
+  "author": "WebOS Team",
+  "category": "system",
+  "keywords": ["webos", "app", "settings", "configuration"],
+  "dependencies": {
+    "@webos/apps": "workspace:*"
+  }
+}

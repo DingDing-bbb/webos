@@ -1,0 +1,365 @@
+/**
+ * @fileoverview Desktop Environment Styles
+ * @module @ui/styles/components/desktop
+ *
+ * Desktop and icon styling with drag-and-drop support,
+ * context menus, and responsive design.
+ */
+
+/* ============================================
+   Desktop Container
+   ============================================ */
+
+.os-desktop {
+  position: relative;
+  width: 100%;
+  height: calc(100% - var(--os-taskbar-height, 48px));
+  overflow: hidden;
+  background: var(--os-color-bg-secondary);
+  user-select: none;
+}
+
+/* ============================================
+   Desktop Icons Container
+   ============================================ */
+
+.os-desktop-icons {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+}
+
+/* ============================================
+   Desktop Icon
+   ============================================ */
+
+.os-desktop-icon {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 80px;
+  padding: 8px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  background: transparent;
+  border-radius: var(--os-radius-sm, 6px);
+  transition:
+    background-color 0.15s ease,
+    transform 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.os-desktop-icon:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.os-desktop-icon:active {
+  background: rgba(255, 255, 255, 0.15);
+  transform: scale(0.98);
+}
+
+.os-desktop-icon.selected {
+  background: rgba(66, 165, 245, 0.2);
+  border-color: rgba(66, 165, 245, 0.5);
+}
+
+.os-desktop-icon.dragging {
+  opacity: 0.8;
+  transform: scale(1.05);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  z-index: 100;
+}
+
+.os-desktop-icon:focus {
+  outline: none;
+  background: rgba(66, 165, 245, 0.15);
+  border-color: rgba(66, 165, 245, 0.4);
+}
+
+.os-desktop-icon:focus-visible {
+  outline: 2px solid rgba(66, 165, 245, 0.8);
+  outline-offset: 2px;
+}
+
+/* Icon Image */
+.os-desktop-icon-image {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+  pointer-events: none;
+}
+
+.os-desktop-icon-image svg {
+  width: 36px;
+  height: 36px;
+}
+
+.os-desktop-icon-image img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+}
+
+/* Icon Label */
+.os-desktop-icon-label {
+  font-size: 11px;
+  color: var(--os-color-text, #fff);
+  text-align: center;
+  word-break: break-word;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+
+/* Selected icon label - white background for readability */
+.os-desktop-icon.selected .os-desktop-icon-label {
+  text-shadow: none;
+}
+
+/* ============================================
+   Context Menu
+   ============================================ */
+
+.os-context-menu {
+  position: fixed;
+  z-index: 10000;
+  min-width: 180px;
+  max-width: 280px;
+  padding: 6px 0;
+  background: rgba(40, 40, 50, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--os-radius-md, 10px);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(0, 0, 0, 0.1);
+  animation: context-menu-appear 0.15s ease;
+}
+
+@keyframes context-menu-appear {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.os-context-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 14px;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 13px;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.1s ease;
+}
+
+.os-context-menu-item:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.os-context-menu-item:active:not(:disabled) {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.os-context-menu-item:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.os-context-menu-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  opacity: 0.9;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.os-context-menu-label {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.os-context-menu-shortcut {
+  font-size: 11px;
+  opacity: 0.5;
+  margin-left: auto;
+  padding-left: 16px;
+}
+
+.os-context-menu-divider {
+  height: 1px;
+  margin: 6px 12px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* ============================================
+   Selection Box (Multi-select)
+   ============================================ */
+
+.os-selection-box {
+  position: absolute;
+  border: 1px solid rgba(66, 165, 245, 0.6);
+  background: rgba(66, 165, 245, 0.1);
+  pointer-events: none;
+  z-index: 50;
+}
+
+/* ============================================
+   Desktop Drop Zone
+   ============================================ */
+
+.os-desktop.drag-over {
+  background: rgba(66, 165, 245, 0.05);
+}
+
+.os-desktop.drag-over::after {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border: 2px dashed rgba(66, 165, 245, 0.4);
+  border-radius: 8px;
+  pointer-events: none;
+}
+
+/* ============================================
+   Tablet Mode
+   ============================================ */
+
+.os-tablet-mode .os-desktop-icon {
+  width: 90px;
+  padding: 12px;
+}
+
+.os-tablet-mode .os-desktop-icon-image {
+  width: 56px;
+  height: 56px;
+}
+
+.os-tablet-mode .os-desktop-icon-image svg,
+.os-tablet-mode .os-desktop-icon-image img {
+  width: 44px;
+  height: 44px;
+}
+
+.os-tablet-mode .os-desktop-icon-label {
+  font-size: 12px;
+}
+
+.os-tablet-mode .os-context-menu-item {
+  padding: 12px 16px;
+}
+
+/* Disable hover on touch devices */
+.os-no-hover .os-desktop-icon:hover {
+  background: transparent;
+}
+
+.os-no-hover .os-desktop-icon:active {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* ============================================
+   Dark Theme Adjustments
+   ============================================ */
+
+[data-theme="dark"] .os-context-menu {
+  background: rgba(30, 30, 40, 0.95);
+}
+
+/* ============================================
+   Light Theme Adjustments
+   ============================================ */
+
+[data-theme="light"] .os-desktop-icon-label {
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+}
+
+[data-theme="light"] .os-context-menu {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(0, 0, 0, 0.1);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] .os-context-menu-item {
+  color: rgba(0, 0, 0, 0.85);
+}
+
+[data-theme="light"] .os-context-menu-item:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] .os-context-menu-divider {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+/* ============================================
+   Animations
+   ============================================ */
+
+@keyframes icon-bounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.os-desktop-icon.bouncing {
+  animation: icon-bounce 0.3s ease;
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+
+@media (max-width: 768px) {
+  .os-desktop-icon {
+    width: 70px;
+  }
+
+  .os-desktop-icon-image {
+    width: 40px;
+    height: 40px;
+  }
+
+  .os-desktop-icon-image svg,
+  .os-desktop-icon-image img {
+    width: 30px;
+    height: 30px;
+  }
+
+  .os-desktop-icon-label {
+    font-size: 10px;
+  }
+
+  .os-context-menu {
+    min-width: 160px;
+  }
+}
