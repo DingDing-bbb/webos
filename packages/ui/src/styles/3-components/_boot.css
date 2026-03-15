@@ -1,0 +1,101 @@
+/**
+ * WebOS Boot Screen Styles - 启动画面样式
+ */
+
+/* 启动画面容器 */
+.os-boot-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--os-z-boot);
+  transition: opacity var(--os-duration-slower) var(--os-ease-default),
+              visibility var(--os-duration-slower) var(--os-ease-default);
+}
+
+.os-boot-screen.hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* 启动Logo */
+.os-boot-logo {
+  font-size: var(--os-font-size-4xl);
+  font-weight: var(--os-font-weight-light);
+  color: var(--os-color-white);
+  letter-spacing: 8px;
+  margin-bottom: var(--os-spacing-2xl);
+  animation: bootLogoFadeIn 1s var(--os-ease-out);
+}
+
+/* 进度条容器 */
+.os-boot-progress-container {
+  width: 200px;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--os-radius-sm);
+  overflow: hidden;
+}
+
+/* 进度条 */
+.os-boot-progress {
+  height: 100%;
+  background: linear-gradient(90deg, #4ade80, #60a5fa);
+  width: 0%;
+  transition: width var(--os-duration-slow) var(--os-ease-out);
+  border-radius: var(--os-radius-sm);
+}
+
+/* 启动文字 */
+.os-boot-text {
+  margin-top: var(--os-spacing-lg);
+  font-size: var(--os-font-size-sm);
+  color: rgba(255, 255, 255, 0.6);
+  min-height: 20px;
+}
+
+/* 启动错误 */
+.os-boot-error {
+  margin-top: var(--os-spacing-md);
+  padding: var(--os-spacing-sm) var(--os-spacing-md);
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: var(--os-radius-sm);
+  color: #ef4444;
+  font-size: var(--os-font-size-sm);
+  max-width: 300px;
+  text-align: center;
+}
+
+/* 重试按钮 */
+.os-boot-retry {
+  padding: var(--os-spacing-sm) var(--os-spacing-lg);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--os-color-white);
+  border-radius: var(--os-radius-sm);
+  cursor: pointer;
+  transition: all var(--os-transition-normal);
+}
+
+.os-boot-retry:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* 动画 */
+@keyframes bootLogoFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

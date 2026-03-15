@@ -1,0 +1,315 @@
+/**
+ * WebOS OOBE Styles - 开箱即用体验样式
+ */
+
+/* OOBE 容器 */
+.os-oobe {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--os-z-boot);
+}
+
+/* OOBE 内容框 */
+.os-oobe-container {
+  width: 480px;
+  background: var(--os-color-bg);
+  padding: var(--os-spacing-xl);
+  box-shadow: var(--os-shadow-lg);
+  border-radius: var(--os-radius-xl);
+  animation: oobeContainerIn 0.4s var(--os-ease-out);
+}
+
+@keyframes oobeContainerIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* OOBE 头部 */
+.os-oobe-header {
+  text-align: center;
+  margin-bottom: var(--os-spacing-xl);
+}
+
+.os-oobe-logo {
+  font-size: var(--os-font-size-2xl);
+  font-weight: var(--os-font-weight-light);
+  margin-bottom: var(--os-spacing-md);
+  color: var(--os-color-primary);
+}
+
+.os-oobe-title {
+  font-size: var(--os-font-size-xl);
+  font-weight: var(--os-font-weight-medium);
+  margin-bottom: var(--os-spacing-xs);
+  animation: oobeTitleIn 0.3s var(--os-ease-out);
+}
+
+@keyframes oobeTitleIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.os-oobe-subtitle {
+  font-size: var(--os-font-size-md);
+  color: var(--os-color-text-secondary);
+}
+
+/* OOBE 内容区 */
+.os-oobe-content {
+  margin-bottom: var(--os-spacing-xl);
+  animation: oobeContentIn 0.3s var(--os-ease-out);
+}
+
+@keyframes oobeContentIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* OOBE 字段 */
+.os-oobe-field {
+  margin-bottom: var(--os-spacing-md);
+}
+
+.os-oobe-label {
+  display: block;
+  font-size: var(--os-font-size-sm);
+  margin-bottom: var(--os-spacing-xs);
+  font-weight: var(--os-font-weight-medium);
+}
+
+/* OOBE 输入框 */
+.os-oobe-input {
+  width: 100%;
+  padding: var(--os-spacing-sm);
+  border: 1px solid var(--os-color-border);
+  font-size: var(--os-font-size-md);
+  border-radius: var(--os-radius-sm);
+  transition: border-color var(--os-transition-fast), box-shadow var(--os-transition-fast);
+}
+
+.os-oobe-input:focus {
+  outline: none;
+  border-color: var(--os-color-primary);
+  box-shadow: 0 0 0 3px var(--os-color-primary-light);
+}
+
+/* OOBE 选择框 */
+.os-oobe-select {
+  width: 100%;
+  padding: var(--os-spacing-sm);
+  border: 1px solid var(--os-color-border);
+  font-size: var(--os-font-size-md);
+  background: var(--os-color-bg);
+  border-radius: var(--os-radius-sm);
+  transition: border-color var(--os-transition-fast), box-shadow var(--os-transition-fast);
+  cursor: pointer;
+}
+
+.os-oobe-select:focus {
+  outline: none;
+  border-color: var(--os-color-primary);
+  box-shadow: 0 0 0 3px var(--os-color-primary-light);
+}
+
+/* OOBE 按钮 */
+.os-oobe-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--os-spacing-md);
+}
+
+.os-oobe-btn {
+  padding: var(--os-spacing-sm) var(--os-spacing-lg);
+  font-size: var(--os-font-size-md);
+  border: 1px solid var(--os-color-border);
+  background: var(--os-color-bg-secondary);
+  border-radius: var(--os-radius-sm);
+  cursor: pointer;
+  transition: all var(--os-transition-fast);
+  position: relative;
+  overflow: hidden;
+}
+
+.os-oobe-btn:hover {
+  background: var(--os-color-bg-tertiary);
+  transform: translateY(-1px);
+}
+
+.os-oobe-btn:active {
+  transform: translateY(0);
+}
+
+.os-oobe-btn.primary {
+  background: var(--os-color-primary);
+  color: var(--os-color-white);
+  border-color: var(--os-color-primary);
+}
+
+.os-oobe-btn.primary:hover {
+  background: var(--os-color-primary-hover);
+  box-shadow: 0 4px 12px var(--os-color-primary-light);
+}
+
+.os-oobe-btn.primary:active {
+  box-shadow: none;
+}
+
+.os-oobe-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.os-oobe-btn.primary:disabled {
+  background: var(--os-color-primary);
+  opacity: 0.7;
+}
+
+/* OOBE 错误提示 */
+.os-oobe-error {
+  color: var(--os-color-danger);
+  font-size: var(--os-font-size-sm);
+  margin-top: var(--os-spacing-xs);
+  animation: oobeErrorShake 0.4s var(--os-ease-out);
+}
+
+@keyframes oobeErrorShake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-5px); }
+  40%, 80% { transform: translateX(5px); }
+}
+
+/* OOBE 步骤指示器 */
+.os-oobe-steps {
+  display: flex;
+  justify-content: center;
+  gap: var(--os-spacing-xs);
+  margin-bottom: var(--os-spacing-lg);
+}
+
+.os-oobe-step {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--os-color-border);
+  transition: all var(--os-transition-normal);
+}
+
+.os-oobe-step.active {
+  background: var(--os-color-primary);
+  transform: scale(1.3);
+}
+
+.os-oobe-step.completed {
+  background: var(--os-color-success);
+}
+
+/* OOBE 模式选择卡片 */
+.os-oobe-mode-card {
+  display: flex;
+  align-items: center;
+  gap: var(--os-spacing-md);
+  padding: var(--os-spacing-md);
+  border: 2px solid var(--os-color-border);
+  border-radius: var(--os-radius-md);
+  cursor: pointer;
+  margin-bottom: var(--os-spacing-sm);
+  background: var(--os-color-bg);
+  transition: all var(--os-transition-normal);
+}
+
+.os-oobe-mode-card:hover {
+  border-color: var(--os-color-primary);
+  background: var(--os-color-primary-lighter);
+}
+
+.os-oobe-mode-card.selected {
+  border-color: var(--os-color-primary);
+  background: var(--os-color-primary-light);
+}
+
+.os-oobe-mode-radio {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid var(--os-color-border);
+  transition: all var(--os-transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.os-oobe-mode-card.selected .os-oobe-mode-radio {
+  border-width: 6px;
+  border-color: var(--os-color-primary);
+}
+
+/* ========================================
+   增强样式（毛玻璃）
+   ======================================== */
+
+@supports (backdrop-filter: blur(20px)) or (-webkit-backdrop-filter: blur(20px)) {
+  .os-oobe-container {
+    border-radius: var(--os-radius-xl);
+    background: var(--os-window-bg);
+    -webkit-backdrop-filter: blur(var(--os-glass-blur)) saturate(var(--os-glass-saturate));
+    backdrop-filter: blur(var(--os-glass-blur)) saturate(var(--os-glass-saturate));
+    border: 1px solid var(--os-glass-border);
+  }
+
+  .os-oobe-input,
+  .os-oobe-select {
+    border-radius: var(--os-radius-sm);
+    border: none;
+    background: var(--os-input-bg-secondary);
+  }
+
+  .os-oobe-input:focus,
+  .os-oobe-select:focus {
+    background: var(--os-color-active);
+    box-shadow: 0 0 0 2px var(--os-color-primary);
+  }
+
+  .os-oobe-btn {
+    border-radius: var(--os-radius-sm);
+    border: none;
+    background: var(--os-input-bg-secondary);
+  }
+
+  .os-oobe-btn:hover {
+    background: var(--os-color-hover);
+  }
+
+  .os-oobe-btn.primary {
+    background: var(--os-color-primary);
+  }
+
+  .os-oobe-btn.primary:hover {
+    background: var(--os-color-primary-hover);
+  }
+}
