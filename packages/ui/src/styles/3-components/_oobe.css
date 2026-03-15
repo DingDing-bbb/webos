@@ -1,35 +1,63 @@
 /**
- * WebOS OOBE Styles - 开箱即用体验样式
+ * @fileoverview OOBE (Out-of-Box Experience) Styles
+ * @module @ui/styles/components/oobe
+ *
+ * Modern first-time setup wizard styling.
+ * Inspired by macOS Setup Assistant and Windows 11 OOBE.
  */
 
-/* OOBE 容器 */
+/* ============================================
+   OOBE Container
+   ============================================ */
+
 .os-oobe {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  inset: 0;
+  z-index: var(--os-z-boot, 10000);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: var(--os-z-boot);
+  background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%);
+  overflow: hidden;
 }
 
-/* OOBE 内容框 */
+/* Background ambient effects */
+.os-oobe::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(66, 165, 245, 0.15), transparent),
+    radial-gradient(ellipse 60% 40% at 80% 100%, rgba(120, 119, 198, 0.1), transparent);
+  pointer-events: none;
+}
+
+/* ============================================
+   OOBE Content Container
+   ============================================ */
+
 .os-oobe-container {
-  width: 480px;
-  background: var(--os-color-bg);
-  padding: var(--os-spacing-xl);
-  box-shadow: var(--os-shadow-lg);
-  border-radius: var(--os-radius-xl);
-  animation: oobeContainerIn 0.4s var(--os-ease-out);
+  position: relative;
+  z-index: 1;
+  width: min(560px, 90vw);
+  max-height: 85vh;
+  padding: 48px;
+  background: rgba(30, 30, 45, 0.8);
+  backdrop-filter: blur(40px) saturate(150%);
+  -webkit-backdrop-filter: blur(40px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  box-shadow:
+    0 32px 64px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+  animation: oobe-container-in 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow-y: auto;
 }
 
-@keyframes oobeContainerIn {
+@keyframes oobe-container-in {
   from {
     opacity: 0;
-    transform: scale(0.95) translateY(10px);
+    transform: scale(0.96) translateY(20px);
   }
   to {
     opacity: 1;
@@ -37,27 +65,54 @@
   }
 }
 
-/* OOBE 头部 */
-.os-oobe-header {
-  text-align: center;
-  margin-bottom: var(--os-spacing-xl);
+/* ============================================
+   Step Indicator
+   ============================================ */
+
+.os-oobe-steps {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 40px;
 }
 
-.os-oobe-logo {
-  font-size: var(--os-font-size-2xl);
-  font-weight: var(--os-font-weight-light);
-  margin-bottom: var(--os-spacing-md);
-  color: var(--os-color-primary);
+.os-oobe-step {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.os-oobe-step.active {
+  width: 24px;
+  border-radius: 4px;
+  background: #42a5f5;
+}
+
+.os-oobe-step.completed {
+  background: #4ade80;
+}
+
+/* ============================================
+   Header
+   ============================================ */
+
+.os-oobe-header {
+  text-align: center;
+  margin-bottom: 36px;
 }
 
 .os-oobe-title {
-  font-size: var(--os-font-size-xl);
-  font-weight: var(--os-font-weight-medium);
-  margin-bottom: var(--os-spacing-xs);
-  animation: oobeTitleIn 0.3s var(--os-ease-out);
+  font-size: 28px;
+  font-weight: 600;
+  color: #fff;
+  margin: 0 0 8px;
+  letter-spacing: -0.5px;
+  animation: oobe-title-in 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes oobeTitleIn {
+@keyframes oobe-title-in {
   from {
     opacity: 0;
     transform: translateY(-10px);
@@ -68,21 +123,38 @@
   }
 }
 
-.os-oobe-subtitle {
-  font-size: var(--os-font-size-md);
-  color: var(--os-color-text-secondary);
+/* ============================================
+   Welcome Screen
+   ============================================ */
+
+.os-oobe-welcome {
+  text-align: center;
+  padding: 32px 0;
 }
 
-/* OOBE 内容区 */
+.os-oobe-welcome svg {
+  margin-bottom: 24px;
+}
+
+.os-oobe-welcome-desc {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* ============================================
+   Content Area
+   ============================================ */
+
 .os-oobe-content {
-  margin-bottom: var(--os-spacing-xl);
-  animation: oobeContentIn 0.3s var(--os-ease-out);
+  animation: oobe-content-in 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes oobeContentIn {
+@keyframes oobe-content-in {
   from {
     opacity: 0;
-    transform: translateX(20px);
+    transform: translateX(16px);
   }
   to {
     opacity: 1;
@@ -90,175 +162,148 @@
   }
 }
 
-/* OOBE 字段 */
+/* ============================================
+   Form Fields
+   ============================================ */
+
 .os-oobe-field {
-  margin-bottom: var(--os-spacing-md);
+  margin-bottom: 24px;
 }
 
 .os-oobe-label {
   display: block;
-  font-size: var(--os-font-size-sm);
-  margin-bottom: var(--os-spacing-xs);
-  font-weight: var(--os-font-weight-medium);
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-/* OOBE 输入框 */
+.os-oobe-optional {
+  text-transform: none;
+  font-weight: 400;
+  opacity: 0.5;
+  letter-spacing: 0;
+}
+
+.os-oobe-field-desc {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0 0 20px;
+  line-height: 1.5;
+}
+
+/* ============================================
+   Input Fields
+   ============================================ */
+
 .os-oobe-input {
   width: 100%;
-  padding: var(--os-spacing-sm);
-  border: 1px solid var(--os-color-border);
-  font-size: var(--os-font-size-md);
-  border-radius: var(--os-radius-sm);
-  transition: border-color var(--os-transition-fast), box-shadow var(--os-transition-fast);
+  padding: 14px 16px;
+  font-size: 15px;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.os-oobe-input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.os-oobe-input:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
 .os-oobe-input:focus {
-  outline: none;
-  border-color: var(--os-color-primary);
-  box-shadow: 0 0 0 3px var(--os-color-primary-light);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(66, 165, 245, 0.6);
+  box-shadow: 0 0 0 3px rgba(66, 165, 245, 0.15);
 }
 
-/* OOBE 选择框 */
+.os-oobe-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ============================================
+   Select Dropdown
+   ============================================ */
+
 .os-oobe-select {
   width: 100%;
-  padding: var(--os-spacing-sm);
-  border: 1px solid var(--os-color-border);
-  font-size: var(--os-font-size-md);
-  background: var(--os-color-bg);
-  border-radius: var(--os-radius-sm);
-  transition: border-color var(--os-transition-fast), box-shadow var(--os-transition-fast);
+  padding: 14px 16px;
+  font-size: 15px;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
   cursor: pointer;
+  outline: none;
+  transition: all 0.2s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.5)' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 40px;
+}
+
+.os-oobe-select:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
 .os-oobe-select:focus {
-  outline: none;
-  border-color: var(--os-color-primary);
-  box-shadow: 0 0 0 3px var(--os-color-primary-light);
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(66, 165, 245, 0.6);
+  box-shadow: 0 0 0 3px rgba(66, 165, 245, 0.15);
 }
 
-/* OOBE 按钮 */
-.os-oobe-actions {
-  display: flex;
-  justify-content: space-between;
-  gap: var(--os-spacing-md);
+.os-oobe-select option {
+  background: #1a1a2e;
+  color: #fff;
+  padding: 8px;
 }
 
-.os-oobe-btn {
-  padding: var(--os-spacing-sm) var(--os-spacing-lg);
-  font-size: var(--os-font-size-md);
-  border: 1px solid var(--os-color-border);
-  background: var(--os-color-bg-secondary);
-  border-radius: var(--os-radius-sm);
-  cursor: pointer;
-  transition: all var(--os-transition-fast);
-  position: relative;
-  overflow: hidden;
-}
+/* ============================================
+   Mode Selection Cards
+   ============================================ */
 
-.os-oobe-btn:hover {
-  background: var(--os-color-bg-tertiary);
-  transform: translateY(-1px);
-}
-
-.os-oobe-btn:active {
-  transform: translateY(0);
-}
-
-.os-oobe-btn.primary {
-  background: var(--os-color-primary);
-  color: var(--os-color-white);
-  border-color: var(--os-color-primary);
-}
-
-.os-oobe-btn.primary:hover {
-  background: var(--os-color-primary-hover);
-  box-shadow: 0 4px 12px var(--os-color-primary-light);
-}
-
-.os-oobe-btn.primary:active {
-  box-shadow: none;
-}
-
-.os-oobe-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.os-oobe-btn.primary:disabled {
-  background: var(--os-color-primary);
-  opacity: 0.7;
-}
-
-/* OOBE 错误提示 */
-.os-oobe-error {
-  color: var(--os-color-danger);
-  font-size: var(--os-font-size-sm);
-  margin-top: var(--os-spacing-xs);
-  animation: oobeErrorShake 0.4s var(--os-ease-out);
-}
-
-@keyframes oobeErrorShake {
-  0%, 100% { transform: translateX(0); }
-  20%, 60% { transform: translateX(-5px); }
-  40%, 80% { transform: translateX(5px); }
-}
-
-/* OOBE 步骤指示器 */
-.os-oobe-steps {
-  display: flex;
-  justify-content: center;
-  gap: var(--os-spacing-xs);
-  margin-bottom: var(--os-spacing-lg);
-}
-
-.os-oobe-step {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--os-color-border);
-  transition: all var(--os-transition-normal);
-}
-
-.os-oobe-step.active {
-  background: var(--os-color-primary);
-  transform: scale(1.3);
-}
-
-.os-oobe-step.completed {
-  background: var(--os-color-success);
-}
-
-/* OOBE 模式选择卡片 */
 .os-oobe-mode-card {
   display: flex;
   align-items: center;
-  gap: var(--os-spacing-md);
-  padding: var(--os-spacing-md);
-  border: 2px solid var(--os-color-border);
-  border-radius: var(--os-radius-md);
+  gap: 16px;
+  padding: 16px 20px;
+  margin-bottom: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 2px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
   cursor: pointer;
-  margin-bottom: var(--os-spacing-sm);
-  background: var(--os-color-bg);
-  transition: all var(--os-transition-normal);
+  transition: all 0.2s ease;
 }
 
 .os-oobe-mode-card:hover {
-  border-color: var(--os-color-primary);
-  background: var(--os-color-primary-lighter);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateX(4px);
 }
 
 .os-oobe-mode-card.selected {
-  border-color: var(--os-color-primary);
-  background: var(--os-color-primary-light);
+  background: rgba(66, 165, 245, 0.1);
+  border-color: rgba(66, 165, 245, 0.5);
 }
 
 .os-oobe-mode-radio {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  border: 2px solid var(--os-color-border);
-  transition: all var(--os-transition-fast);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  flex-shrink: 0;
+  transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -266,50 +311,322 @@
 
 .os-oobe-mode-card.selected .os-oobe-mode-radio {
   border-width: 6px;
-  border-color: var(--os-color-primary);
+  border-color: #42a5f5;
 }
 
-/* ========================================
-   增强样式（毛玻璃）
-   ======================================== */
+.os-oobe-mode-label {
+  font-size: 15px;
+  font-weight: 500;
+  color: #fff;
+}
 
-@supports (backdrop-filter: blur(20px)) or (-webkit-backdrop-filter: blur(20px)) {
+.os-oobe-mode-desc {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 2px;
+}
+
+.os-oobe-touch-hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 12px;
+  font-size: 13px;
+  color: #42a5f5;
+  background: rgba(66, 165, 245, 0.1);
+  border-radius: 8px;
+}
+
+/* ============================================
+   Error Messages
+   ============================================ */
+
+.os-oobe-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: #f87171;
+  background: rgba(248, 113, 113, 0.1);
+  border-radius: 8px;
+  animation: oobe-shake 0.4s ease;
+}
+
+@keyframes oobe-shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+
+/* ============================================
+   Complete Screen
+   ============================================ */
+
+.os-oobe-complete {
+  text-align: center;
+  padding: 40px 0;
+}
+
+.os-oobe-check-icon {
+  color: #4ade80;
+  animation: oobe-check-in 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes oobe-check-in {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.os-oobe-complete-desc {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 16px 0 0;
+}
+
+/* ============================================
+   Action Buttons
+   ============================================ */
+
+.os-oobe-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.os-oobe-btn {
+  flex: 1;
+  padding: 14px 24px;
+  font-size: 15px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.os-oobe-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+.os-oobe-btn:active {
+  transform: scale(0.98);
+}
+
+.os-oobe-btn.primary {
+  flex: 1.2;
+  background: linear-gradient(135deg, #42a5f5 0%, #1976d2 100%);
+  border: none;
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(66, 165, 245, 0.3);
+}
+
+.os-oobe-btn.primary:hover {
+  background: linear-gradient(135deg, #4fc3f7 0%, #1e88e5 100%);
+  box-shadow: 0 6px 24px rgba(66, 165, 245, 0.4);
+  transform: translateY(-1px);
+}
+
+.os-oobe-btn.primary:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.os-oobe-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* ============================================
+   Responsive Design
+   ============================================ */
+
+@media (max-width: 600px) {
   .os-oobe-container {
-    border-radius: var(--os-radius-xl);
-    background: var(--os-window-bg);
-    -webkit-backdrop-filter: blur(var(--os-glass-blur)) saturate(var(--os-glass-saturate));
-    backdrop-filter: blur(var(--os-glass-blur)) saturate(var(--os-glass-saturate));
-    border: 1px solid var(--os-glass-border);
+    width: 95vw;
+    padding: 32px 24px;
+    border-radius: 20px;
+  }
+
+  .os-oobe-title {
+    font-size: 24px;
   }
 
   .os-oobe-input,
   .os-oobe-select {
-    border-radius: var(--os-radius-sm);
-    border: none;
-    background: var(--os-input-bg-secondary);
+    padding: 12px 14px;
+    font-size: 16px; /* Prevent zoom on iOS */
   }
 
-  .os-oobe-input:focus,
-  .os-oobe-select:focus {
-    background: var(--os-color-active);
-    box-shadow: 0 0 0 2px var(--os-color-primary);
+  .os-oobe-actions {
+    flex-direction: column;
   }
 
   .os-oobe-btn {
-    border-radius: var(--os-radius-sm);
-    border: none;
-    background: var(--os-input-bg-secondary);
-  }
-
-  .os-oobe-btn:hover {
-    background: var(--os-color-hover);
+    width: 100%;
   }
 
   .os-oobe-btn.primary {
-    background: var(--os-color-primary);
+    flex: none;
+    order: -1;
   }
+}
 
-  .os-oobe-btn.primary:hover {
-    background: var(--os-color-primary-hover);
+/* ============================================
+   Light Theme
+   ============================================ */
+
+[data-theme="light"] .os-oobe {
+  background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);
+}
+
+[data-theme="light"] .os-oobe::before {
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(66, 165, 245, 0.1), transparent),
+    radial-gradient(ellipse 60% 40% at 80% 100%, rgba(120, 119, 198, 0.08), transparent);
+}
+
+[data-theme="light"] .os-oobe-container {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow:
+    0 32px 64px rgba(0, 0, 0, 0.1),
+    0 0 0 1px rgba(0, 0, 0, 0.05) inset;
+}
+
+[data-theme="light"] .os-oobe-title {
+  color: #1a1a2e;
+}
+
+[data-theme="light"] .os-oobe-welcome-desc,
+[data-theme="light"] .os-oobe-field-desc,
+[data-theme="light"] .os-oobe-complete-desc {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+[data-theme="light"] .os-oobe-label {
+  color: rgba(0, 0, 0, 0.7);
+}
+
+[data-theme="light"] .os-oobe-input,
+[data-theme="light"] .os-oobe-select {
+  color: #1a1a2e;
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .os-oobe-input::placeholder {
+  color: rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="light"] .os-oobe-input:hover,
+[data-theme="light"] .os-oobe-select:hover {
+  background: rgba(0, 0, 0, 0.06);
+  border-color: rgba(0, 0, 0, 0.15);
+}
+
+[data-theme="light"] .os-oobe-input:focus,
+[data-theme="light"] .os-oobe-select:focus {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(66, 165, 245, 0.6);
+}
+
+[data-theme="light"] .os-oobe-select option {
+  background: #fff;
+  color: #1a1a2e;
+}
+
+[data-theme="light"] .os-oobe-mode-card {
+  background: rgba(0, 0, 0, 0.02);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .os-oobe-mode-card:hover {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+[data-theme="light"] .os-oobe-mode-card.selected {
+  background: rgba(66, 165, 245, 0.08);
+  border-color: rgba(66, 165, 245, 0.4);
+}
+
+[data-theme="light"] .os-oobe-mode-radio {
+  border-color: rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="light"] .os-oobe-mode-label {
+  color: #1a1a2e;
+}
+
+[data-theme="light"] .os-oobe-mode-desc {
+  color: rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="light"] .os-oobe-step {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .os-oobe-btn {
+  color: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .os-oobe-btn:hover {
+  background: rgba(0, 0, 0, 0.08);
+  border-color: rgba(0, 0, 0, 0.15);
+  color: #1a1a2e;
+}
+
+[data-theme="light"] .os-oobe-error {
+  color: #dc2626;
+  background: rgba(220, 38, 38, 0.08);
+}
+
+/* ============================================
+   Animations
+   ============================================ */
+
+/* Staggered animation for form fields */
+.os-oobe-field:nth-child(1) { animation-delay: 0s; }
+.os-oobe-field:nth-child(2) { animation-delay: 0.05s; }
+.os-oobe-field:nth-child(3) { animation-delay: 0.1s; }
+.os-oobe-field:nth-child(4) { animation-delay: 0.15s; }
+
+/* Staggered animation for mode cards */
+.os-oobe-mode-card:nth-child(1) { animation-delay: 0s; }
+.os-oobe-mode-card:nth-child(2) { animation-delay: 0.05s; }
+.os-oobe-mode-card:nth-child(3) { animation-delay: 0.1s; }
+
+.os-oobe-mode-card {
+  animation: oobe-card-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes oobe-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
