@@ -1,0 +1,185 @@
+/**
+ * @fileoverview Container Component Styles
+ * @module @ui/components/Container/styles
+ *
+ * BEM-style CSS with CSS variables for theming.
+ * Supports both light and dark themes.
+ */
+
+/* ============================================
+   CSS Variables (Design Tokens)
+   ============================================ */
+
+:root {
+  /* Container sizes */
+  --container-sm: 640px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-xl: 1280px;
+  --container-2xl: 1536px;
+  
+  /* Default padding */
+  --container-padding: var(--spacing-md, 8px);
+}
+
+/* ============================================
+   Container Base Styles
+   ============================================ */
+
+.container {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+  padding-left: var(--container-padding);
+  padding-right: var(--container-padding);
+}
+
+/* ============================================
+   Size Modifiers
+   ============================================ */
+
+.container--sm {
+  max-width: var(--container-sm);
+}
+
+.container--md {
+  max-width: var(--container-md);
+}
+
+.container--lg {
+  max-width: var(--container-lg);
+}
+
+.container--xl {
+  max-width: var(--container-xl);
+}
+
+.container--2xl {
+  max-width: var(--container-2xl);
+}
+
+.container--full {
+  max-width: 100%;
+}
+
+/* ============================================
+   Content Centering
+   ============================================ */
+
+.container--center-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+}
+
+/* ============================================
+   Padding Variants
+   ============================================ */
+
+.container--padding-none {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.container--padding-xs {
+  padding-left: var(--spacing-xs, 2px);
+  padding-right: var(--spacing-xs, 2px);
+}
+
+.container--padding-sm {
+  padding-left: var(--spacing-sm, 4px);
+  padding-right: var(--spacing-sm, 4px);
+}
+
+.container--padding-md {
+  padding-left: var(--spacing-md, 8px);
+  padding-right: var(--spacing-md, 8px);
+}
+
+.container--padding-lg {
+  padding-left: var(--spacing-lg, 16px);
+  padding-right: var(--spacing-lg, 16px);
+}
+
+.container--padding-xl {
+  padding-left: var(--spacing-xl, 24px);
+  padding-right: var(--spacing-xl, 24px);
+}
+
+.container--padding-2xl {
+  padding-left: var(--spacing-2xl, 32px);
+  padding-right: var(--spacing-2xl, 32px);
+}
+
+.container--padding-3xl {
+  padding-left: var(--spacing-3xl, 48px);
+  padding-right: var(--spacing-3xl, 48px);
+}
+
+/* ============================================
+   Fluid Container
+   ============================================ */
+
+.container--fluid {
+  max-width: none;
+  width: 100%;
+}
+
+/* ============================================
+   Responsive Styles
+   ============================================ */
+
+/* Small screens (640px+) */
+@media (min-width: 640px) {
+  .container {
+    /* Default responsive adjustments */
+  }
+}
+
+/* Medium screens (768px+) */
+@media (min-width: 768px) {
+  .container {
+    padding-left: var(--spacing-lg, 16px);
+    padding-right: var(--spacing-lg, 16px);
+  }
+}
+
+/* Large screens (1024px+) */
+@media (min-width: 1024px) {
+  .container {
+    padding-left: var(--spacing-xl, 24px);
+    padding-right: var(--spacing-xl, 24px);
+  }
+}
+
+/* Extra large screens (1280px+) */
+@media (min-width: 1280px) {
+  .container {
+    padding-left: var(--spacing-2xl, 32px);
+    padding-right: var(--spacing-2xl, 32px);
+  }
+}
+
+/* ============================================
+   Theme Support
+   ============================================ */
+
+[data-theme="dark"] .container,
+.dark .container {
+  /* Dark theme specific styles if needed */
+}
+
+/* ============================================
+   Print Styles
+   ============================================ */
+
+@media print {
+  .container {
+    max-width: 100%;
+    padding-left: 0;
+    padding-right: 0;
+  }
+}

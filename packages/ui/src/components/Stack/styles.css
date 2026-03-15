@@ -1,0 +1,184 @@
+/**
+ * @fileoverview Stack Component Styles
+ * @module @ui/components/Stack/styles
+ *
+ * BEM-style CSS with CSS variables for theming.
+ * Supports both light and dark themes.
+ */
+
+/* ============================================
+   Stack Base Styles
+   ============================================ */
+
+.stack {
+  display: flex;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ============================================
+   Direction Modifiers
+   ============================================ */
+
+.stack--vertical {
+  flex-direction: column;
+}
+
+.stack--horizontal {
+  flex-direction: row;
+}
+
+.stack--inline {
+  display: inline-flex;
+}
+
+/* ============================================
+   Item Styles
+   ============================================ */
+
+.stack__item {
+  /* Item wrapper when shouldWrapChildren is true */
+  flex: 0 0 auto;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* ============================================
+   Divider Styles
+   ============================================ */
+
+.stack__divider {
+  flex: 0 0 auto;
+  align-self: stretch;
+}
+
+/* Vertical stack divider */
+.stack--vertical .stack__divider {
+  width: 100%;
+}
+
+/* Horizontal stack divider */
+.stack--horizontal .stack__divider {
+  height: 100%;
+}
+
+/* ============================================
+   Responsive Styles
+   ============================================ */
+
+/* Small screens (640px+) */
+@media (min-width: 640px) {
+  .stack--responsive\@sm {
+    /* Responsive direction changes applied via JS */
+  }
+}
+
+/* Medium screens (768px+) */
+@media (min-width: 768px) {
+  .stack--responsive\@md {
+    /* Responsive direction changes applied via JS */
+  }
+}
+
+/* Large screens (1024px+) */
+@media (min-width: 1024px) {
+  .stack--responsive\@lg {
+    /* Responsive direction changes applied via JS */
+  }
+}
+
+/* ============================================
+   Alignment Utilities
+   ============================================ */
+
+.stack--align-start {
+  align-items: flex-start;
+}
+
+.stack--align-end {
+  align-items: flex-end;
+}
+
+.stack--align-center {
+  align-items: center;
+}
+
+.stack--align-baseline {
+  align-items: baseline;
+}
+
+.stack--align-stretch {
+  align-items: stretch;
+}
+
+/* ============================================
+   Justify Utilities
+   ============================================ */
+
+.stack--justify-start {
+  justify-content: flex-start;
+}
+
+.stack--justify-end {
+  justify-content: flex-end;
+}
+
+.stack--justify-center {
+  justify-content: center;
+}
+
+.stack--justify-between {
+  justify-content: space-between;
+}
+
+.stack--justify-around {
+  justify-content: space-around;
+}
+
+.stack--justify-evenly {
+  justify-content: space-evenly;
+}
+
+/* ============================================
+   Wrap Utilities
+   ============================================ */
+
+.stack--wrap {
+  flex-wrap: wrap;
+}
+
+.stack--nowrap {
+  flex-wrap: nowrap;
+}
+
+.stack--wrap-reverse {
+  flex-wrap: wrap-reverse;
+}
+
+/* ============================================
+   Theme Support
+   ============================================ */
+
+[data-theme="dark"] .stack,
+.dark .stack {
+  /* Dark theme specific styles if needed */
+}
+
+/* ============================================
+   Print Styles
+   ============================================ */
+
+@media print {
+  .stack {
+    display: block;
+  }
+  
+  .stack--horizontal {
+    display: inline;
+  }
+  
+  .stack__divider {
+    display: none;
+  }
+}

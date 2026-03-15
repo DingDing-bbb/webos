@@ -1,0 +1,306 @@
+/**
+ * @fileoverview Tabs Component Styles
+ * @module @ui/components/Tabs/styles
+ *
+ * BEM naming convention:
+ * - .tabs (Block)
+ * - .tabs__list, .tabs__tab, .tabs__panel (Elements)
+ * - .tabs--line, .tabs--enclosed, .tabs--solid (Modifiers)
+ */
+
+/* ============================================
+   Tabs Container
+   ============================================ */
+
+.tabs {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* ============================================
+   Tab List
+   ============================================ */
+
+.tabs__list {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  position: relative;
+}
+
+/* Line variant */
+.tabs__list--line {
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Enclosed variant */
+.tabs__list--enclosed {
+  gap: 2px;
+  background-color: #f3f4f6;
+  padding: 4px;
+  border-radius: 8px;
+}
+
+/* Solid variant */
+.tabs__list--solid {
+  gap: 4px;
+}
+
+/* ============================================
+   Tab Button
+   ============================================ */
+
+.tabs__tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #6b7280;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+  white-space: nowrap;
+  user-select: none;
+  position: relative;
+}
+
+.tabs__tab:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: -2px;
+  z-index: 1;
+}
+
+/* Tab content */
+.tabs__tab-content {
+  line-height: 1;
+}
+
+/* Tab icon */
+.tabs__tab-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.tabs__tab-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Tab badge */
+.tabs__tab-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
+  background-color: #6b7280;
+  border-radius: 9999px;
+}
+
+/* ============================================
+   Line Variant
+   ============================================ */
+
+.tabs__tab--line {
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+
+.tabs__tab--line:hover {
+  color: #1f2937;
+  background-color: #f9fafb;
+}
+
+.tabs__tab--line.tabs__tab--active {
+  color: #3b82f6;
+  border-bottom-color: #3b82f6;
+}
+
+.tabs__tab--line.tabs__tab--disabled {
+  color: #d1d5db;
+  cursor: not-allowed;
+}
+
+/* ============================================
+   Enclosed Variant
+   ============================================ */
+
+.tabs__tab--enclosed {
+  border-radius: 6px;
+}
+
+.tabs__tab--enclosed:hover {
+  color: #1f2937;
+}
+
+.tabs__tab--enclosed.tabs__tab--active {
+  color: #1f2937;
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.tabs__tab--enclosed.tabs__tab--disabled {
+  color: #d1d5db;
+  cursor: not-allowed;
+}
+
+/* ============================================
+   Solid Variant
+   ============================================ */
+
+.tabs__tab--solid {
+  border-radius: 6px;
+}
+
+.tabs__tab--solid:hover {
+  background-color: #f3f4f6;
+}
+
+.tabs__tab--solid.tabs__tab--active {
+  color: #fff;
+  background-color: #3b82f6;
+}
+
+.tabs__tab--solid.tabs__tab--active .tabs__tab-badge {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+.tabs__tab--solid.tabs__tab--disabled {
+  color: #d1d5db;
+  cursor: not-allowed;
+}
+
+/* ============================================
+   Tab Panel
+   ============================================ */
+
+.tabs__panel {
+  padding: 16px 0;
+  outline: none;
+  animation: tab-panel-fade 0.2s ease;
+}
+
+.tabs__panel:focus-visible {
+  outline: none;
+}
+
+@keyframes tab-panel-fade {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================
+   Tab Panels Container
+   ============================================ */
+
+.tabs__panels {
+  flex: 1;
+  min-height: 0;
+}
+
+/* ============================================
+   Dark Theme Support
+   ============================================ */
+
+[data-theme='dark'] .tabs__list--line {
+  border-bottom-color: #374151;
+}
+
+[data-theme='dark'] .tabs__list--enclosed {
+  background-color: #1f2937;
+}
+
+[data-theme='dark'] .tabs__tab {
+  color: #9ca3af;
+}
+
+[data-theme='dark'] .tabs__tab-badge {
+  background-color: #4b5563;
+}
+
+/* Line variant dark */
+[data-theme='dark'] .tabs__tab--line:hover {
+  color: #f9fafb;
+  background-color: #1f2937;
+}
+
+[data-theme='dark'] .tabs__tab--line.tabs__tab--active {
+  color: #93c5fd;
+  border-bottom-color: #3b82f6;
+}
+
+[data-theme='dark'] .tabs__tab--line.tabs__tab--disabled {
+  color: #4b5563;
+}
+
+/* Enclosed variant dark */
+[data-theme='dark'] .tabs__tab--enclosed:hover {
+  color: #f9fafb;
+}
+
+[data-theme='dark'] .tabs__tab--enclosed.tabs__tab--active {
+  color: #f9fafb;
+  background-color: #374151;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme='dark'] .tabs__tab--enclosed.tabs__tab--disabled {
+  color: #4b5563;
+}
+
+/* Solid variant dark */
+[data-theme='dark'] .tabs__tab--solid:hover {
+  background-color: #374151;
+}
+
+[data-theme='dark'] .tabs__tab--solid.tabs__tab--active {
+  background-color: #3b82f6;
+}
+
+[data-theme='dark'] .tabs__tab--solid.tabs__tab--disabled {
+  color: #4b5563;
+}
+
+[data-theme='dark'] .tabs__panel {
+  /* Panel styling is inherited */
+}
+
+/* ============================================
+   Accessibility
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .tabs__tab,
+  .tabs__panel {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* High contrast mode */
+@media (forced-colors: active) {
+  .tabs__tab--active {
+    outline: 2px solid Highlight;
+    outline-offset: -2px;
+  }
+
+  .tabs__tab--disabled {
+    opacity: 0.5;
+  }
+}

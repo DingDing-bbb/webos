@@ -1,0 +1,272 @@
+/**
+ * @fileoverview Avatar Component Styles
+ * @module @ui/components/Avatar/styles
+ *
+ * BEM naming convention:
+ * - .avatar (Block)
+ * - .avatar__image, .avatar__initials, .avatar__icon, .avatar__status (Elements)
+ * - .avatar--xs, .avatar--sm, .avatar--md, .avatar--lg, .avatar--xl (Modifiers)
+ * - .avatar--circle, .avatar--square (Modifiers)
+ * - .avatar--clickable (Modifier)
+ */
+
+/* ============================================
+   Avatar Block
+   ============================================ */
+
+.avatar {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+  user-select: none;
+  vertical-align: middle;
+  font-weight: 500;
+  line-height: 1;
+  color: #fff;
+  background-color: #6b7280;
+  box-sizing: border-box;
+}
+
+/* Shape variants */
+.avatar--circle {
+  border-radius: 50%;
+}
+
+.avatar--square {
+  border-radius: 8px;
+}
+
+/* Sizes */
+.avatar--xs {
+  width: 24px;
+  height: 24px;
+  font-size: 10px;
+}
+
+.avatar--sm {
+  width: 32px;
+  height: 32px;
+  font-size: 12px;
+}
+
+.avatar--md {
+  width: 40px;
+  height: 40px;
+  font-size: 14px;
+}
+
+.avatar--lg {
+  width: 56px;
+  height: 56px;
+  font-size: 20px;
+}
+
+.avatar--xl {
+  width: 80px;
+  height: 80px;
+  font-size: 28px;
+}
+
+/* Interactive state */
+.avatar--clickable {
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.avatar--clickable:hover {
+  transform: scale(1.05);
+}
+
+.avatar--clickable:active {
+  transform: scale(0.98);
+}
+
+.avatar--clickable:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* ============================================
+   Avatar Elements
+   ============================================ */
+
+.avatar__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.avatar__initials {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.avatar__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background-color: #4b5563;
+}
+
+/* ============================================
+   Avatar Status Indicator
+   ============================================ */
+
+.avatar__status {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 25%;
+  height: 25%;
+  min-width: 8px;
+  min-height: 8px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-sizing: border-box;
+  z-index: 1;
+}
+
+/* Status variants */
+.avatar__status--online {
+  background-color: #22c55e;
+  animation: status-pulse-online 2s ease-in-out infinite;
+}
+
+.avatar__status--offline {
+  background-color: #6b7280;
+}
+
+.avatar__status--busy {
+  background-color: #ef4444;
+}
+
+.avatar__status--away {
+  background-color: #f59e0b;
+}
+
+@keyframes status-pulse-online {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba(34, 197, 94, 0);
+  }
+}
+
+/* Custom status badge */
+.avatar__status-badge {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  z-index: 1;
+}
+
+/* ============================================
+   Avatar Group (Stacked)
+   ============================================ */
+
+.avatar-group {
+  display: inline-flex;
+  align-items: center;
+}
+
+.avatar-group__item {
+  position: relative;
+  transition: transform 0.15s ease;
+}
+
+.avatar-group__item:hover {
+  transform: translateY(-4px);
+  z-index: 100 !important;
+}
+
+/* Spacing variants */
+.avatar-group--tight .avatar-group__item:not(:first-child) {
+  margin-left: -12px;
+}
+
+.avatar-group--normal .avatar-group__item:not(:first-child) {
+  margin-left: -8px;
+}
+
+.avatar-group--loose .avatar-group__item:not(:first-child) {
+  margin-left: -4px;
+}
+
+/* Overflow indicator */
+.avatar-group__overflow {
+  background-color: #6b7280 !important;
+  border: 2px solid #fff;
+  box-sizing: border-box;
+}
+
+/* ============================================
+   Dark Theme Support
+   ============================================ */
+
+[data-theme='dark'] .avatar__status {
+  border-color: #1f2937;
+}
+
+[data-theme='dark'] .avatar-group__overflow {
+  border-color: #1f2937;
+}
+
+/* ============================================
+   Responsive Adjustments
+   ============================================ */
+
+@media (max-width: 640px) {
+  .avatar--xl {
+    width: 64px;
+    height: 64px;
+    font-size: 22px;
+  }
+
+  .avatar--lg {
+    width: 48px;
+    height: 48px;
+    font-size: 18px;
+  }
+}
+
+/* ============================================
+   Accessibility
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .avatar--clickable {
+    transition: none;
+  }
+
+  .avatar__status--online {
+    animation: none;
+  }
+
+  .avatar-group__item {
+    transition: none;
+  }
+}
+
+/* High contrast mode */
+@media (forced-colors: active) {
+  .avatar {
+    border: 2px solid currentColor;
+  }
+
+  .avatar__status {
+    border: 2px solid currentColor;
+  }
+}

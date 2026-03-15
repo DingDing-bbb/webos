@@ -1,0 +1,359 @@
+/**
+ * @fileoverview List Component Styles
+ * @module @ui/components/List/styles
+ *
+ * BEM naming convention:
+ * - .list (Block)
+ * - .list-item (Block)
+ * - .list-item__icon, .list-item__content, .list-item__primary, .list-item__secondary, .list-item__trailing, .list-item__action, .list-item__nested (Elements)
+ * - .list--sm, .list--md, .list--lg (Modifiers)
+ * - .list-item--interactive, .list-item--selected, .list-item--disabled (Modifiers)
+ */
+
+/* ============================================
+   List Block
+   ============================================ */
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  background-color: transparent;
+}
+
+/* Bordered variant */
+.list--bordered {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* ============================================
+   List Sizes
+   ============================================ */
+
+/* Small */
+.list--sm .list-item {
+  padding: 6px 8px;
+}
+
+.list--sm .list-item__primary {
+  font-size: 13px;
+}
+
+.list--sm .list-item__secondary {
+  font-size: 11px;
+}
+
+.list--sm .list-item__icon {
+  width: 28px;
+  height: 28px;
+}
+
+/* Medium (default) */
+.list--md .list-item {
+  padding: 10px 12px;
+}
+
+.list--md .list-item__primary {
+  font-size: 14px;
+}
+
+.list--md .list-item__secondary {
+  font-size: 12px;
+}
+
+.list--md .list-item__icon {
+  width: 36px;
+  height: 36px;
+}
+
+/* Large */
+.list--lg .list-item {
+  padding: 14px 16px;
+}
+
+.list--lg .list-item__primary {
+  font-size: 15px;
+}
+
+.list--lg .list-item__secondary {
+  font-size: 13px;
+}
+
+.list--lg .list-item__icon {
+  width: 44px;
+  height: 44px;
+}
+
+/* ============================================
+   List Item
+   ============================================ */
+
+.list-item {
+  position: relative;
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.list-item__container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+/* Divider between items */
+.list--divider .list-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: #e5e7eb;
+}
+
+.list--divider .list-item--with-icon::after {
+  left: 60px;
+}
+
+/* ============================================
+   List Item Elements
+   ============================================ */
+
+.list-item__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background-color: #f3f4f6;
+  color: #6b7280;
+  overflow: hidden;
+}
+
+.list-item__icon img,
+.list-item__icon svg {
+  width: 60%;
+  height: 60%;
+  object-fit: cover;
+}
+
+.list-item__content {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.list-item__primary {
+  color: #111827;
+  font-weight: 500;
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.list-item__secondary {
+  color: #6b7280;
+  line-height: 1.4;
+  margin-top: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.list-item__trailing {
+  flex-shrink: 0;
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.list-item__action {
+  flex-shrink: 0;
+  margin-left: 8px;
+}
+
+.list-item__nested {
+  margin-top: 4px;
+  padding-left: 20px;
+}
+
+/* ============================================
+   List Item States
+   ============================================ */
+
+.list-item--interactive {
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.list-item--interactive:hover {
+  background-color: #f3f4f6;
+}
+
+.list-item--interactive:active {
+  background-color: #e5e7eb;
+}
+
+.list-item--interactive:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: -2px;
+  background-color: #f3f4f6;
+}
+
+.list-item--selected {
+  background-color: #eff6ff;
+}
+
+.list-item--selected.list-item--interactive:hover {
+  background-color: #dbeafe;
+}
+
+.list-item--selected .list-item__primary {
+  color: #1d4ed8;
+}
+
+.list-item--disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* ============================================
+   List Divider
+   ============================================ */
+
+.list-divider {
+  height: 1px;
+  background-color: #e5e7eb;
+  margin: 8px 0;
+  padding: 0;
+}
+
+/* ============================================
+   List Header
+   ============================================ */
+
+.list-header {
+  padding: 8px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background-color: #f9fafb;
+}
+
+.list-header--sticky {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+/* ============================================
+   Empty State
+   ============================================ */
+
+.list-empty {
+  padding: 32px 16px;
+  text-align: center;
+  color: #6b7280;
+}
+
+.list-empty__icon {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 12px;
+  color: #d1d5db;
+}
+
+.list-empty__text {
+  font-size: 14px;
+}
+
+/* ============================================
+   Dark Theme Support
+   ============================================ */
+
+[data-theme='dark'] .list--bordered {
+  border-color: #374151;
+}
+
+[data-theme='dark'] .list--divider .list-item:not(:last-child)::after {
+  background-color: #374151;
+}
+
+[data-theme='dark'] .list-item__icon {
+  background-color: #374151;
+  color: #9ca3af;
+}
+
+[data-theme='dark'] .list-item__primary {
+  color: #f9fafb;
+}
+
+[data-theme='dark'] .list-item__secondary {
+  color: #9ca3af;
+}
+
+[data-theme='dark'] .list-item__trailing {
+  color: #9ca3af;
+}
+
+[data-theme='dark'] .list-item--interactive:hover {
+  background-color: #374151;
+}
+
+[data-theme='dark'] .list-item--interactive:active {
+  background-color: #4b5563;
+}
+
+[data-theme='dark'] .list-item--interactive:focus-visible {
+  background-color: #374151;
+}
+
+[data-theme='dark'] .list-item--selected {
+  background-color: rgba(59, 130, 246, 0.2);
+}
+
+[data-theme='dark'] .list-item--selected.list-item--interactive:hover {
+  background-color: rgba(59, 130, 246, 0.3);
+}
+
+[data-theme='dark'] .list-item--selected .list-item__primary {
+  color: #93c5fd;
+}
+
+[data-theme='dark'] .list-divider {
+  background-color: #374151;
+}
+
+[data-theme='dark'] .list-header {
+  color: #9ca3af;
+  background-color: #1f2937;
+}
+
+/* ============================================
+   Accessibility
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .list-item--interactive {
+    transition: none;
+  }
+}
+
+/* High contrast mode */
+@media (forced-colors: active) {
+  .list-item--selected {
+    outline: 2px solid Highlight;
+  }
+
+  .list-item--interactive:focus-visible {
+    outline: 2px solid Highlight;
+    outline-offset: -2px;
+  }
+}

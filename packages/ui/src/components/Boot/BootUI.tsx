@@ -41,7 +41,7 @@ interface BootUIProps {
  * @returns {JSX.Element} Boot screen UI
  */
 export const BootUI: React.FC<BootUIProps> = ({
-  progress,
+  progress: _progress,
   statusText,
   error,
   onRetry,

@@ -1,0 +1,237 @@
+/**
+ * @fileoverview Badge Component Styles
+ * @module @ui/components/Badge/styles
+ *
+ * BEM naming convention:
+ * - .badge (Block)
+ * - .badge__icon, .badge__content, .badge__dot (Elements)
+ * - .badge--sm, .badge--md, .badge--lg (Modifiers)
+ * - .badge--solid, .badge--subtle, .badge--outline (Modifiers)
+ */
+
+/* ============================================
+   Badge Block
+   ============================================ */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-weight: 500;
+  white-space: nowrap;
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  vertical-align: middle;
+  line-height: 1;
+  box-sizing: border-box;
+}
+
+/* Sizes */
+.badge--sm {
+  height: 20px;
+  padding: 0 8px;
+  font-size: 11px;
+}
+
+.badge--md {
+  height: 24px;
+  padding: 0 10px;
+  font-size: 12px;
+}
+
+.badge--lg {
+  height: 28px;
+  padding: 0 12px;
+  font-size: 13px;
+}
+
+/* ============================================
+   Badge Elements
+   ============================================ */
+
+.badge__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.badge--sm .badge__icon {
+  width: 12px;
+  height: 12px;
+}
+
+.badge--md .badge__icon {
+  width: 14px;
+  height: 14px;
+}
+
+.badge--lg .badge__icon {
+  width: 16px;
+  height: 16px;
+}
+
+.badge__content {
+  line-height: 1;
+}
+
+.badge__dot {
+  width: 6px;
+  height: 6px;
+  min-width: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ============================================
+   Dot Badge
+   ============================================ */
+
+.badge--dot {
+  width: 8px;
+  height: 8px;
+  min-width: 8px;
+  padding: 0;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ============================================
+   DotBadge (Wrapper with indicator)
+   ============================================ */
+
+.dot-badge {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.dot-badge__indicator {
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform: translate(50%, -50%);
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  box-shadow: 0 0 0 2px #fff;
+  white-space: nowrap;
+  line-height: 1;
+  z-index: 1;
+}
+
+.dot-badge__indicator--count {
+  min-width: 18px;
+}
+
+/* Dot only (no count) */
+.dot-badge__indicator:not(.dot-badge__indicator--count) {
+  width: 8px;
+  height: 8px;
+  min-width: 8px;
+  padding: 0;
+}
+
+/* ============================================
+   Variant Styles (Base for JS-driven colors)
+   ============================================ */
+
+/* Outline variant border */
+.badge--outline {
+  background-color: transparent !important;
+  border-width: 1px;
+  border-style: solid;
+}
+
+/* Subtle variant */
+.badge--subtle {
+  border-color: transparent;
+}
+
+/* Solid variant */
+.badge--solid {
+  border-color: transparent;
+}
+
+/* ============================================
+   Dark Theme Support
+   ============================================ */
+
+[data-theme='dark'] .badge--subtle.badge--primary {
+  background-color: rgba(59, 130, 246, 0.2);
+  color: #93c5fd;
+}
+
+[data-theme='dark'] .badge--subtle.badge--success {
+  background-color: rgba(34, 197, 94, 0.2);
+  color: #86efac;
+}
+
+[data-theme='dark'] .badge--subtle.badge--warning {
+  background-color: rgba(245, 158, 11, 0.2);
+  color: #fcd34d;
+}
+
+[data-theme='dark'] .badge--subtle.badge--error {
+  background-color: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+}
+
+[data-theme='dark'] .badge--subtle.badge--neutral {
+  background-color: rgba(107, 114, 128, 0.2);
+  color: #d1d5db;
+}
+
+[data-theme='dark'] .dot-badge__indicator {
+  box-shadow: 0 0 0 2px #1f2937;
+}
+
+/* ============================================
+   Animation
+   ============================================ */
+
+.dot-badge__indicator {
+  animation: badge-pop 0.2s ease-out;
+}
+
+@keyframes badge-pop {
+  0% {
+    transform: translate(50%, -50%) scale(0);
+  }
+  50% {
+    transform: translate(50%, -50%) scale(1.1);
+  }
+  100% {
+    transform: translate(50%, -50%) scale(1);
+  }
+}
+
+/* ============================================
+   Accessibility
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .dot-badge__indicator {
+    animation: none;
+  }
+}
+
+/* High contrast mode */
+@media (forced-colors: active) {
+  .badge {
+    border: 1px solid currentColor;
+  }
+
+  .dot-badge__indicator {
+    border: 1px solid currentColor;
+  }
+}

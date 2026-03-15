@@ -1,0 +1,268 @@
+/**
+ * @fileoverview Flex Component Styles
+ * @module @ui/components/Flex/styles
+ *
+ * BEM-style CSS with CSS variables for theming.
+ * Supports both light and dark themes.
+ */
+
+/* ============================================
+   Flex Base Styles
+   ============================================ */
+
+.flex {
+  display: flex;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+
+.flex--inline {
+  display: inline-flex;
+}
+
+/* ============================================
+   Direction Modifiers
+   ============================================ */
+
+.flex--row-reverse {
+  flex-direction: row-reverse;
+}
+
+.flex--column {
+  flex-direction: column;
+}
+
+.flex--column-reverse {
+  flex-direction: column-reverse;
+}
+
+/* ============================================
+   Wrap Modifiers
+   ============================================ */
+
+.flex--wrap {
+  flex-wrap: wrap;
+}
+
+.flex--wrap-reverse {
+  flex-wrap: wrap-reverse;
+}
+
+/* ============================================
+   Flex Item Base Styles
+   ============================================ */
+
+.flex__item {
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* ============================================
+   Flex Item Modifiers
+   ============================================ */
+
+.flex__item--grow {
+  flex-grow: 1;
+}
+
+.flex__item--no-shrink {
+  flex-shrink: 0;
+}
+
+/* ============================================
+   Align Self Utilities
+   ============================================ */
+
+.flex__item--align-auto {
+  align-self: auto;
+}
+
+.flex__item--align-start {
+  align-self: flex-start;
+}
+
+.flex__item--align-end {
+  align-self: flex-end;
+}
+
+.flex__item--align-center {
+  align-self: center;
+}
+
+.flex__item--align-baseline {
+  align-self: baseline;
+}
+
+.flex__item--align-stretch {
+  align-self: stretch;
+}
+
+/* ============================================
+   Justify Content Utilities
+   ============================================ */
+
+.flex--justify-start {
+  justify-content: flex-start;
+}
+
+.flex--justify-end {
+  justify-content: flex-end;
+}
+
+.flex--justify-center {
+  justify-content: center;
+}
+
+.flex--justify-between {
+  justify-content: space-between;
+}
+
+.flex--justify-around {
+  justify-content: space-around;
+}
+
+.flex--justify-evenly {
+  justify-content: space-evenly;
+}
+
+/* ============================================
+   Align Items Utilities
+   ============================================ */
+
+.flex--align-start {
+  align-items: flex-start;
+}
+
+.flex--align-end {
+  align-items: flex-end;
+}
+
+.flex--align-center {
+  align-items: center;
+}
+
+.flex--align-baseline {
+  align-items: baseline;
+}
+
+.flex--align-stretch {
+  align-items: stretch;
+}
+
+/* ============================================
+   Align Content Utilities
+   ============================================ */
+
+.flex--align-content-start {
+  align-content: flex-start;
+}
+
+.flex--align-content-end {
+  align-content: flex-end;
+}
+
+.flex--align-content-center {
+  align-content: center;
+}
+
+.flex--align-content-between {
+  align-content: space-between;
+}
+
+.flex--align-content-around {
+  align-content: space-around;
+}
+
+.flex--align-content-stretch {
+  align-content: stretch;
+}
+
+/* ============================================
+   Responsive Styles
+   ============================================ */
+
+/* Small screens (640px+) */
+@media (min-width: 640px) {
+  .flex--row\@sm {
+    flex-direction: row;
+  }
+  
+  .flex--column\@sm {
+    flex-direction: column;
+  }
+  
+  .flex--wrap\@sm {
+    flex-wrap: wrap;
+  }
+}
+
+/* Medium screens (768px+) */
+@media (min-width: 768px) {
+  .flex--row\@md {
+    flex-direction: row;
+  }
+  
+  .flex--column\@md {
+    flex-direction: column;
+  }
+  
+  .flex--wrap\@md {
+    flex-wrap: wrap;
+  }
+}
+
+/* Large screens (1024px+) */
+@media (min-width: 1024px) {
+  .flex--row\@lg {
+    flex-direction: row;
+  }
+  
+  .flex--column\@lg {
+    flex-direction: column;
+  }
+  
+  .flex--wrap\@lg {
+    flex-wrap: wrap;
+  }
+}
+
+/* Extra large screens (1280px+) */
+@media (min-width: 1280px) {
+  .flex--row\@xl {
+    flex-direction: row;
+  }
+  
+  .flex--column\@xl {
+    flex-direction: column;
+  }
+  
+  .flex--wrap\@xl {
+    flex-wrap: wrap;
+  }
+}
+
+/* ============================================
+   Theme Support
+   ============================================ */
+
+[data-theme="dark"] .flex,
+.dark .flex {
+  /* Dark theme specific styles if needed */
+}
+
+/* ============================================
+   Print Styles
+   ============================================ */
+
+@media print {
+  .flex {
+    display: block;
+  }
+  
+  .flex--inline {
+    display: inline;
+  }
+}

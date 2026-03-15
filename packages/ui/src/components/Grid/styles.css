@@ -1,0 +1,451 @@
+/**
+ * @fileoverview Grid Component Styles
+ * @module @ui/components/Grid/styles
+ *
+ * BEM-style CSS with CSS variables for theming.
+ * Supports both light and dark themes.
+ */
+
+/* ============================================
+   Grid Base Styles
+   ============================================ */
+
+.grid {
+  display: grid;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.grid--inline {
+  display: inline-grid;
+}
+
+/* ============================================
+   Grid Item Base Styles
+   ============================================ */
+
+.grid__item {
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* ============================================
+   Column Span Utilities
+   ============================================ */
+
+.grid__item--col-span-1 {
+  grid-column: span 1 / span 1;
+}
+
+.grid__item--col-span-2 {
+  grid-column: span 2 / span 2;
+}
+
+.grid__item--col-span-3 {
+  grid-column: span 3 / span 3;
+}
+
+.grid__item--col-span-4 {
+  grid-column: span 4 / span 4;
+}
+
+.grid__item--col-span-5 {
+  grid-column: span 5 / span 5;
+}
+
+.grid__item--col-span-6 {
+  grid-column: span 6 / span 6;
+}
+
+.grid__item--col-span-full {
+  grid-column: 1 / -1;
+}
+
+/* ============================================
+   Row Span Utilities
+   ============================================ */
+
+.grid__item--row-span-1 {
+  grid-row: span 1 / span 1;
+}
+
+.grid__item--row-span-2 {
+  grid-row: span 2 / span 2;
+}
+
+.grid__item--row-span-3 {
+  grid-row: span 3 / span 3;
+}
+
+.grid__item--row-span-4 {
+  grid-row: span 4 / span 4;
+}
+
+.grid__item--row-span-full {
+  grid-row: 1 / -1;
+}
+
+/* ============================================
+   Justify Self Utilities
+   ============================================ */
+
+.grid__item--justify-auto {
+  justify-self: auto;
+}
+
+.grid__item--justify-start {
+  justify-self: start;
+}
+
+.grid__item--justify-end {
+  justify-self: end;
+}
+
+.grid__item--justify-center {
+  justify-self: center;
+}
+
+.grid__item--justify-stretch {
+  justify-self: stretch;
+}
+
+/* ============================================
+   Align Self Utilities
+   ============================================ */
+
+.grid__item--align-auto {
+  align-self: auto;
+}
+
+.grid__item--align-start {
+  align-self: start;
+}
+
+.grid__item--align-end {
+  align-self: end;
+}
+
+.grid__item--align-center {
+  align-self: center;
+}
+
+.grid__item--align-stretch {
+  align-self: stretch;
+}
+
+/* ============================================
+   Justify Items Utilities
+   ============================================ */
+
+.grid--justify-items-start {
+  justify-items: start;
+}
+
+.grid--justify-items-end {
+  justify-items: end;
+}
+
+.grid--justify-items-center {
+  justify-items: center;
+}
+
+.grid--justify-items-stretch {
+  justify-items: stretch;
+}
+
+/* ============================================
+   Align Items Utilities
+   ============================================ */
+
+.grid--align-items-start {
+  align-items: start;
+}
+
+.grid--align-items-end {
+  align-items: end;
+}
+
+.grid--align-items-center {
+  align-items: center;
+}
+
+.grid--align-items-stretch {
+  align-items: stretch;
+}
+
+/* ============================================
+   Justify Content Utilities
+   ============================================ */
+
+.grid--justify-content-start {
+  justify-content: start;
+}
+
+.grid--justify-content-end {
+  justify-content: end;
+}
+
+.grid--justify-content-center {
+  justify-content: center;
+}
+
+.grid--justify-content-stretch {
+  justify-content: stretch;
+}
+
+.grid--justify-content-around {
+  justify-content: space-around;
+}
+
+.grid--justify-content-between {
+  justify-content: space-between;
+}
+
+.grid--justify-content-evenly {
+  justify-content: space-evenly;
+}
+
+/* ============================================
+   Align Content Utilities
+   ============================================ */
+
+.grid--align-content-start {
+  align-content: start;
+}
+
+.grid--align-content-end {
+  align-content: end;
+}
+
+.grid--align-content-center {
+  align-content: center;
+}
+
+.grid--align-content-stretch {
+  align-content: stretch;
+}
+
+.grid--align-content-around {
+  align-content: space-around;
+}
+
+.grid--align-content-between {
+  align-content: space-between;
+}
+
+.grid--align-content-evenly {
+  align-content: space-evenly;
+}
+
+/* ============================================
+   Auto Flow Utilities
+   ============================================ */
+
+.grid--flow-row {
+  grid-auto-flow: row;
+}
+
+.grid--flow-column {
+  grid-auto-flow: column;
+}
+
+.grid--flow-dense {
+  grid-auto-flow: dense;
+}
+
+.grid--flow-row-dense {
+  grid-auto-flow: row dense;
+}
+
+.grid--flow-column-dense {
+  grid-auto-flow: column dense;
+}
+
+/* ============================================
+   Common Grid Templates
+   ============================================ */
+
+.grid--cols-1 {
+  grid-template-columns: repeat(1, 1fr);
+}
+
+.grid--cols-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.grid--cols-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.grid--cols-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.grid--cols-6 {
+  grid-template-columns: repeat(6, 1fr);
+}
+
+.grid--cols-12 {
+  grid-template-columns: repeat(12, 1fr);
+}
+
+/* ============================================
+   Responsive Styles
+   ============================================ */
+
+/* Small screens (640px+) */
+@media (min-width: 640px) {
+  .grid--cols-1\@sm {
+    grid-template-columns: repeat(1, 1fr);
+  }
+  
+  .grid--cols-2\@sm {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .grid--cols-3\@sm {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .grid--cols-4\@sm {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  
+  .grid__item--col-span-1\@sm {
+    grid-column: span 1 / span 1;
+  }
+  
+  .grid__item--col-span-2\@sm {
+    grid-column: span 2 / span 2;
+  }
+  
+  .grid__item--col-span-3\@sm {
+    grid-column: span 3 / span 3;
+  }
+}
+
+/* Medium screens (768px+) */
+@media (min-width: 768px) {
+  .grid--cols-1\@md {
+    grid-template-columns: repeat(1, 1fr);
+  }
+  
+  .grid--cols-2\@md {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .grid--cols-3\@md {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .grid--cols-4\@md {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  
+  .grid--cols-6\@md {
+    grid-template-columns: repeat(6, 1fr);
+  }
+  
+  .grid__item--col-span-1\@md {
+    grid-column: span 1 / span 1;
+  }
+  
+  .grid__item--col-span-2\@md {
+    grid-column: span 2 / span 2;
+  }
+  
+  .grid__item--col-span-3\@md {
+    grid-column: span 3 / span 3;
+  }
+  
+  .grid__item--col-span-4\@md {
+    grid-column: span 4 / span 4;
+  }
+}
+
+/* Large screens (1024px+) */
+@media (min-width: 1024px) {
+  .grid--cols-2\@lg {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .grid--cols-3\@lg {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .grid--cols-4\@lg {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  
+  .grid--cols-6\@lg {
+    grid-template-columns: repeat(6, 1fr);
+  }
+  
+  .grid--cols-12\@lg {
+    grid-template-columns: repeat(12, 1fr);
+  }
+  
+  .grid__item--col-span-1\@lg {
+    grid-column: span 1 / span 1;
+  }
+  
+  .grid__item--col-span-2\@lg {
+    grid-column: span 2 / span 2;
+  }
+  
+  .grid__item--col-span-4\@lg {
+    grid-column: span 4 / span 4;
+  }
+  
+  .grid__item--col-span-6\@lg {
+    grid-column: span 6 / span 6;
+  }
+  
+  .grid__item--col-span-8\@lg {
+    grid-column: span 8 / span 8;
+  }
+}
+
+/* Extra large screens (1280px+) */
+@media (min-width: 1280px) {
+  .grid--cols-4\@xl {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  
+  .grid--cols-6\@xl {
+    grid-template-columns: repeat(6, 1fr);
+  }
+  
+  .grid--cols-12\@xl {
+    grid-template-columns: repeat(12, 1fr);
+  }
+}
+
+/* ============================================
+   Theme Support
+   ============================================ */
+
+[data-theme="dark"] .grid,
+.dark .grid {
+  /* Dark theme specific styles if needed */
+}
+
+/* ============================================
+   Print Styles
+   ============================================ */
+
+@media print {
+  .grid {
+    display: block;
+  }
+  
+  .grid--inline {
+    display: inline-block;
+  }
+  
+  .grid__item {
+    margin-bottom: 1rem;
+  }
+}

@@ -145,7 +145,7 @@ export const SecureLockScreen: React.FC<SecureLockScreenProps> = ({
   };
 
   // 处理解锁
-  const handleUnlock = async (e: React.FormEvent) => {
+  const _handleUnlock = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!onUnlock) return;
 

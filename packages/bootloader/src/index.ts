@@ -395,7 +395,9 @@ class Bootloader {
   }
 }
 
+export { Bootloader };
 export const bootloader = new Bootloader();
+export type BootloaderType = typeof bootloader;
 
 // 全局错误处理器
 export function setupGlobalErrorHandler() {

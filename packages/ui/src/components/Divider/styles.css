@@ -1,0 +1,388 @@
+/**
+ * @fileoverview Divider Component Styles
+ * @module @ui/components/Divider/styles
+ *
+ * BEM-style CSS with CSS variables for theming.
+ * Supports both light and dark themes.
+ */
+
+/* ============================================
+   CSS Variables (Design Tokens)
+   ============================================ */
+
+:root {
+  /* Divider colors - Light Theme */
+  --divider-color: var(--color-border, #e5e7eb);
+  --divider-color-primary: var(--color-primary, #42a5f5);
+  --divider-color-secondary: var(--color-secondary, #1976d2);
+  --divider-color-muted: #d1d5db;
+  
+  /* Divider thickness */
+  --divider-thickness: 1px;
+  
+  /* Label styling */
+  --divider-label-color: var(--color-text-muted, #6b7280);
+  --divider-label-bg: var(--color-surface, #ffffff);
+  --divider-label-padding: var(--spacing-md, 8px);
+  --divider-label-font-size: 14px;
+}
+
+/* Dark Theme */
+[data-theme="dark"],
+.dark {
+  --divider-color: var(--color-border, #374151);
+  --divider-color-primary: var(--color-primary, #42a5f5);
+  --divider-color-secondary: var(--color-secondary, #64b5f6);
+  --divider-color-muted: #4b5563;
+  
+  --divider-label-color: var(--color-text-muted, #9ca3af);
+  --divider-label-bg: var(--color-surface, #1a1a2e);
+}
+
+/* ============================================
+   Divider Base Styles
+   ============================================ */
+
+.divider {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: inherit;
+}
+
+/* ============================================
+   Orientation: Horizontal
+   ============================================ */
+
+.divider--horizontal {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  flex-direction: row;
+}
+
+.divider--horizontal:not(.divider--with-label) {
+  border-top: var(--divider-thickness) var(--divider-style, solid) var(--divider-color);
+  height: 0;
+}
+
+/* ============================================
+   Orientation: Vertical
+   ============================================ */
+
+.divider--vertical {
+  display: inline-flex;
+  align-items: stretch;
+  flex-direction: column;
+  height: 100%;
+  width: auto;
+  align-self: stretch;
+}
+
+.divider--vertical:not(.divider--with-label) {
+  border-left: var(--divider-thickness) var(--divider-style, solid) var(--divider-color);
+  width: 0;
+}
+
+.divider--vertical.divider--flex-item {
+  align-self: stretch;
+  height: auto;
+}
+
+/* ============================================
+   Variant: Solid (Default)
+   ============================================ */
+
+.divider--solid {
+  --divider-style: solid;
+}
+
+/* ============================================
+   Variant: Dashed
+   ============================================ */
+
+.divider--dashed {
+  --divider-style: dashed;
+}
+
+.divider--horizontal.divider--dashed:not(.divider--with-label) {
+  border-top-style: dashed;
+}
+
+.divider--vertical.divider--dashed:not(.divider--with-label) {
+  border-left-style: dashed;
+}
+
+/* ============================================
+   Variant: Dotted
+   ============================================ */
+
+.divider--dotted {
+  --divider-style: dotted;
+}
+
+.divider--horizontal.divider--dotted:not(.divider--with-label) {
+  border-top-style: dotted;
+}
+
+.divider--vertical.divider--dotted:not(.divider--with-label) {
+  border-left-style: dotted;
+}
+
+/* ============================================
+   Variant: Gradient
+   ============================================ */
+
+.divider--gradient:not(.divider--with-label) {
+  border: none;
+}
+
+.divider--horizontal.divider--gradient:not(.divider--with-label) {
+  height: var(--divider-thickness);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--divider-color) 50%,
+    transparent 100%
+  );
+}
+
+.divider--vertical.divider--gradient:not(.divider--with-label) {
+  width: var(--divider-thickness);
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    var(--divider-color) 50%,
+    transparent 100%
+  );
+}
+
+/* ============================================
+   Color Variants
+   ============================================ */
+
+.divider--primary {
+  --divider-color: var(--divider-color-primary);
+}
+
+.divider--secondary {
+  --divider-color: var(--divider-color-secondary);
+}
+
+.divider--muted {
+  --divider-color: var(--divider-color-muted);
+}
+
+/* ============================================
+   With Label Styles
+   ============================================ */
+
+.divider--with-label {
+  border: none;
+  gap: 0;
+}
+
+.divider__line {
+  flex: 1;
+  background-color: var(--divider-color);
+}
+
+.divider--horizontal .divider__line {
+  height: var(--divider-thickness);
+}
+
+.divider--vertical .divider__line {
+  width: var(--divider-thickness);
+}
+
+.divider--dashed .divider__line {
+  background: repeating-linear-gradient(
+    90deg,
+    var(--divider-color) 0px,
+    var(--divider-color) 4px,
+    transparent 4px,
+    transparent 8px
+  );
+}
+
+.divider--vertical.divider--dashed .divider__line {
+  background: repeating-linear-gradient(
+    180deg,
+    var(--divider-color) 0px,
+    var(--divider-color) 4px,
+    transparent 4px,
+    transparent 8px
+  );
+}
+
+.divider--dotted .divider__line {
+  background: repeating-linear-gradient(
+    90deg,
+    var(--divider-color) 0px,
+    var(--divider-color) 2px,
+    transparent 2px,
+    transparent 6px
+  );
+}
+
+.divider--vertical.divider--dotted .divider__line {
+  background: repeating-linear-gradient(
+    180deg,
+    var(--divider-color) 0px,
+    var(--divider-color) 2px,
+    transparent 2px,
+    transparent 6px
+  );
+}
+
+.divider--gradient .divider__line--before {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--divider-color) 100%
+  );
+}
+
+.divider--gradient .divider__line--after {
+  background: linear-gradient(
+    90deg,
+    var(--divider-color) 0%,
+    transparent 100%
+  );
+}
+
+.divider--vertical.divider--gradient .divider__line--before {
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    var(--divider-color) 100%
+  );
+}
+
+.divider--vertical.divider--gradient .divider__line--after {
+  background: linear-gradient(
+    180deg,
+    var(--divider-color) 0%,
+    transparent 100%
+  );
+}
+
+/* ============================================
+   Label Styles
+   ============================================ */
+
+.divider__label {
+  color: var(--divider-label-color);
+  font-size: var(--divider-label-font-size);
+  font-weight: 500;
+  padding: 0 var(--divider-label-padding);
+  background-color: var(--divider-label-bg);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.divider--vertical .divider__label {
+  padding: var(--divider-label-padding) 0;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+
+/* ============================================
+   Label Position: Left
+   ============================================ */
+
+.divider--label-left .divider__line--before {
+  flex: 0;
+  min-width: var(--spacing-md, 8px);
+}
+
+.divider--label-left .divider__line--after {
+  flex: 1;
+}
+
+/* ============================================
+   Label Position: Right
+   ============================================ */
+
+.divider--label-right .divider__line--before {
+  flex: 1;
+}
+
+.divider--label-right .divider__line--after {
+  flex: 0;
+  min-width: var(--spacing-md, 8px);
+}
+
+/* ============================================
+   Flex Item
+   ============================================ */
+
+.divider--flex-item {
+  align-self: stretch;
+}
+
+.divider--horizontal.divider--flex-item {
+  width: auto;
+}
+
+.divider--vertical.divider--flex-item {
+  height: auto;
+}
+
+/* ============================================
+   Thickness Variants
+   ============================================ */
+
+.divider[style*="--divider-thickness: 1px"] {
+  --divider-thickness: 1px;
+}
+
+.divider[style*="--divider-thickness: 2px"] {
+  --divider-thickness: 2px;
+}
+
+.divider[style*="--divider-thickness: 4px"] {
+  --divider-thickness: 4px;
+}
+
+/* ============================================
+   Responsive Styles
+   ============================================ */
+
+@media (max-width: 640px) {
+  .divider--vertical.divider--with-label {
+    writing-mode: horizontal-tb;
+  }
+  
+  .divider--vertical .divider__label {
+    writing-mode: horizontal-tb;
+    padding: 0 var(--divider-label-padding);
+  }
+}
+
+/* ============================================
+   Print Styles
+   ============================================ */
+
+@media print {
+  .divider {
+    border-color: #000 !important;
+  }
+  
+  .divider__label {
+    background-color: transparent !important;
+  }
+}
+
+/* ============================================
+   Animation Support
+   ============================================ */
+
+.divider--animated .divider__line {
+  transition: flex 0.3s ease;
+}
+
+.divider--animated:hover .divider__line--before,
+.divider--animated:hover .divider__line--after {
+  flex: 0.5;
+}

@@ -195,6 +195,7 @@ export function createWebOSAPI(): WebOSAPI {
         getEncryptedData: (key: string) => secureUserManager.getEncryptedData(key),
         resetSystem: (password: string) => secureUserManager.resetSystem(password),
         resetAndReinit: () => secureUserManager.resetAndReinit(),
+        getTotalUserCount: () => secureUserManager.getTotalUserCount(),
         subscribe: (callback: () => void) => secureUserManager.subscribe(callback)
       }
     },

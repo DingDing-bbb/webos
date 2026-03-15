@@ -1,0 +1,408 @@
+/**
+ * @fileoverview Table Component Styles
+ * @module @ui/components/Table/styles
+ *
+ * BEM naming convention:
+ * - .table (Block)
+ * - .table__thead, .table__tbody, .table__tfoot, .table__tr, .table__th, .table__td (Elements)
+ * - .table--sm, .table--md, .table--lg (Modifiers)
+ * - .table--striped (Modifier)
+ */
+
+/* ============================================
+   Table Wrapper (Responsive)
+   ============================================ */
+
+.table__wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db transparent;
+}
+
+.table__wrapper::-webkit-scrollbar {
+  height: 8px;
+}
+
+.table__wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.table__wrapper::-webkit-scrollbar-thumb {
+  background-color: #d1d5db;
+  border-radius: 4px;
+}
+
+.table__wrapper::-webkit-scrollbar-thumb:hover {
+  background-color: #9ca3af;
+}
+
+/* ============================================
+   Table Block
+   ============================================ */
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  font-size: 14px;
+  text-align: left;
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Sizes */
+.table--sm {
+  font-size: 13px;
+}
+
+.table--lg {
+  font-size: 15px;
+}
+
+/* ============================================
+   Table Head
+   ============================================ */
+
+.table__thead {
+  background-color: #f9fafb;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+/* ============================================
+   Table Body
+   ============================================ */
+
+.table__tbody {
+  background-color: #fff;
+}
+
+.table__tbody .table__tr {
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.table__tbody .table__tr:last-child {
+  border-bottom: none;
+}
+
+/* ============================================
+   Table Foot
+   ============================================ */
+
+.table__tfoot {
+  background-color: #f9fafb;
+  border-top: 2px solid #e5e7eb;
+  font-weight: 600;
+}
+
+/* ============================================
+   Table Row
+   ============================================ */
+
+.table__tr {
+  transition: background-color 0.15s ease;
+}
+
+/* Hoverable rows */
+.table__tr--hoverable:hover {
+  background-color: #f3f4f6;
+}
+
+/* Selected row */
+.table__tr--selected {
+  background-color: #eff6ff;
+}
+
+.table__tr--selected:hover {
+  background-color: #dbeafe;
+}
+
+/* Disabled row */
+.table__tr--disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* Focusable row */
+.table__tr[tabindex='0']:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: -2px;
+}
+
+/* ============================================
+   Table Header Cell
+   ============================================ */
+
+.table__th {
+  padding: 12px 16px;
+  font-weight: 600;
+  color: #374151;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+/* Size variants */
+.table--sm .table__th {
+  padding: 8px 12px;
+}
+
+.table--lg .table__th {
+  padding: 16px 20px;
+}
+
+/* Alignment */
+.table__th--left {
+  text-align: left;
+}
+
+.table__th--center {
+  text-align: center;
+}
+
+.table__th--right {
+  text-align: right;
+}
+
+/* Sortable header */
+.table__th--sortable {
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.table__th--sortable:hover {
+  background-color: #f3f4f6;
+  color: #111827;
+}
+
+.table__th--sortable:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: -2px;
+}
+
+/* Sorted header */
+.table__th--sorted {
+  color: #3b82f6;
+}
+
+/* Header content wrapper */
+.table__th-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Sort icon */
+.table__sort-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: #9ca3af;
+  transition: color 0.15s ease;
+}
+
+.table__th--sorted .table__sort-icon {
+  color: #3b82f6;
+}
+
+.table__sort-icon--asc svg {
+  transform: rotate(0deg);
+}
+
+.table__sort-icon--desc svg {
+  transform: rotate(0deg);
+}
+
+/* ============================================
+   Table Data Cell
+   ============================================ */
+
+.table__td {
+  padding: 12px 16px;
+  color: #1f2937;
+  vertical-align: middle;
+}
+
+/* Size variants */
+.table--sm .table__td {
+  padding: 8px 12px;
+}
+
+.table--lg .table__td {
+  padding: 16px 20px;
+}
+
+/* Alignment */
+.table__td--left {
+  text-align: left;
+}
+
+.table__td--center {
+  text-align: center;
+}
+
+.table__td--right {
+  text-align: right;
+}
+
+/* ============================================
+   Striped Rows
+   ============================================ */
+
+.table--striped .table__tbody .table__tr:nth-child(even) {
+  background-color: #f9fafb;
+}
+
+.table--striped .table__tbody .table__tr:nth-child(even):hover {
+  background-color: #f3f4f6;
+}
+
+.table--striped .table__tbody .table__tr--selected:nth-child(even) {
+  background-color: #eff6ff;
+}
+
+/* ============================================
+   Fixed Header
+   ============================================ */
+
+.table--fixed-header .table__thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+/* ============================================
+   Empty State
+   ============================================ */
+
+.table__empty {
+  padding: 48px 16px;
+  text-align: center;
+  color: #6b7280;
+}
+
+.table__empty-icon {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 16px;
+  color: #d1d5db;
+}
+
+.table__empty-text {
+  font-size: 14px;
+}
+
+/* ============================================
+   Loading State
+   ============================================ */
+
+.table__loading {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+}
+
+/* ============================================
+   Dark Theme Support
+   ============================================ */
+
+[data-theme='dark'] .table {
+  background-color: #1f2937;
+}
+
+[data-theme='dark'] .table__wrapper {
+  scrollbar-color: #4b5563 transparent;
+}
+
+[data-theme='dark'] .table__wrapper::-webkit-scrollbar-thumb {
+  background-color: #4b5563;
+}
+
+[data-theme='dark'] .table__thead {
+  background-color: #111827;
+  border-bottom-color: #374151;
+}
+
+[data-theme='dark'] .table__tbody {
+  background-color: #1f2937;
+}
+
+[data-theme='dark'] .table__tbody .table__tr {
+  border-bottom-color: #374151;
+}
+
+[data-theme='dark'] .table__tfoot {
+  background-color: #111827;
+  border-top-color: #374151;
+}
+
+[data-theme='dark'] .table__tr--hoverable:hover {
+  background-color: #374151;
+}
+
+[data-theme='dark'] .table__tr--selected {
+  background-color: rgba(59, 130, 246, 0.2);
+}
+
+[data-theme='dark'] .table__tr--selected:hover {
+  background-color: rgba(59, 130, 246, 0.3);
+}
+
+[data-theme='dark'] .table__th {
+  color: #d1d5db;
+}
+
+[data-theme='dark'] .table__th--sortable:hover {
+  background-color: #374151;
+  color: #f9fafb;
+}
+
+[data-theme='dark'] .table__td {
+  color: #e5e7eb;
+}
+
+[data-theme='dark'] .table--striped .table__tbody .table__tr:nth-child(even) {
+  background-color: #111827;
+}
+
+[data-theme='dark'] .table--striped .table__tbody .table__tr:nth-child(even):hover {
+  background-color: #374151;
+}
+
+[data-theme='dark'] .table--striped .table__tbody .table__tr--selected:nth-child(even) {
+  background-color: rgba(59, 130, 246, 0.2);
+}
+
+[data-theme='dark'] .table__sort-icon {
+  color: #6b7280;
+}
+
+/* ============================================
+   Accessibility
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .table__tr,
+  .table__th--sortable,
+  .table__sort-icon {
+    transition: none;
+  }
+}
+
+/* High contrast mode */
+@media (forced-colors: active) {
+  .table,
+  .table__th,
+  .table__td {
+    border: 1px solid currentColor;
+  }
+
+  .table__tr--selected {
+    outline: 2px solid Highlight;
+  }
+}

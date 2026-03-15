@@ -1,0 +1,334 @@
+/**
+ * @fileoverview Card Component Styles
+ * @module @ui/components/Card/styles
+ *
+ * BEM naming convention:
+ * - .card (Block)
+ * - .card__header, .card__body, .card__footer, .card__image (Elements)
+ * - .card--default, .card--outlined, .card--elevated, .card--glass (Modifiers)
+ */
+
+/* ============================================
+   Card Block
+   ============================================ */
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 12px;
+  background-color: #ffffff;
+  color: #1f2937;
+  transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+  box-sizing: border-box;
+}
+
+/* Variants */
+.card--default {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.card--outlined {
+  border: 1px solid #e5e7eb;
+  box-shadow: none;
+}
+
+.card--elevated {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.card--glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* States */
+.card--hoverable:hover {
+  box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transform: translateY(-2px);
+}
+
+.card--clickable {
+  cursor: pointer;
+}
+
+.card--clickable:active {
+  transform: translateY(0);
+}
+
+.card--clickable:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+.card--selected {
+  border: 2px solid #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.card--disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.card--full-width {
+  width: 100%;
+}
+
+/* ============================================
+   Card Header
+   ============================================ */
+
+.card__header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+}
+
+.card__header-avatar {
+  flex-shrink: 0;
+}
+
+.card__header-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.card__header-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.card__header-subtitle {
+  font-size: 13px;
+  color: #6b7280;
+  margin-top: 2px;
+  line-height: 1.4;
+}
+
+.card__header-action {
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+/* ============================================
+   Card Body
+   ============================================ */
+
+.card__body {
+  flex: 1;
+  padding: 16px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #374151;
+}
+
+/* First body after header (reduce padding) */
+.card__header + .card__body {
+  padding-top: 0;
+}
+
+/* ============================================
+   Card Footer
+   ============================================ */
+
+.card__footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border-top: 1px solid #f3f4f6;
+  background-color: #fafafa;
+}
+
+/* Footer alignment */
+.card__footer--left {
+  justify-content: flex-start;
+}
+
+.card__footer--center {
+  justify-content: center;
+}
+
+.card__footer--right {
+  justify-content: flex-end;
+}
+
+.card__footer--between {
+  justify-content: space-between;
+}
+
+/* ============================================
+   Card Image
+   ============================================ */
+
+.card__image-wrapper {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Position variants */
+.card__image--top {
+  order: -1;
+}
+
+.card__image--bottom {
+  order: 1;
+}
+
+/* Aspect ratios */
+.card__image--auto {
+  /* Natural size */
+}
+
+.card__image--square {
+  aspect-ratio: 1 / 1;
+}
+
+.card__image--video {
+  aspect-ratio: 16 / 9;
+}
+
+.card__image--wide {
+  aspect-ratio: 21 / 9;
+}
+
+.card__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Object fit variants */
+.card__image--cover {
+  object-fit: cover;
+}
+
+.card__image--contain {
+  object-fit: contain;
+}
+
+.card__image--fill {
+  object-fit: fill;
+}
+
+/* Image overlay */
+.card__image-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
+  color: #fff;
+}
+
+/* ============================================
+   Dark Theme Support
+   ============================================ */
+
+[data-theme='dark'] .card {
+  background-color: #1f2937;
+  color: #f3f4f6;
+}
+
+[data-theme='dark'] .card--default {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+}
+
+[data-theme='dark'] .card--outlined {
+  border-color: #374151;
+}
+
+[data-theme='dark'] .card--elevated {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme='dark'] .card--glass {
+  background: rgba(31, 41, 55, 0.7);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme='dark'] .card--hoverable:hover {
+  box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme='dark'] .card__header-title {
+  color: #f9fafb;
+}
+
+[data-theme='dark'] .card__header-subtitle {
+  color: #9ca3af;
+}
+
+[data-theme='dark'] .card__body {
+  color: #d1d5db;
+}
+
+[data-theme='dark'] .card__footer {
+  border-top-color: #374151;
+  background-color: #111827;
+}
+
+/* ============================================
+   Responsive Design
+   ============================================ */
+
+@media (max-width: 640px) {
+  .card {
+    border-radius: 8px;
+  }
+
+  .card__header {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .card__header-title {
+    font-size: 15px;
+  }
+
+  .card__body {
+    padding: 12px;
+    font-size: 13px;
+  }
+
+  .card__footer {
+    padding: 10px 12px;
+    gap: 6px;
+  }
+}
+
+/* ============================================
+   Accessibility
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    transition: none;
+  }
+
+  .card--hoverable:hover {
+    transform: none;
+  }
+}
+
+/* High contrast mode */
+@media (forced-colors: active) {
+  .card {
+    border: 2px solid currentColor;
+  }
+
+  .card--selected {
+    border-width: 3px;
+  }
+}

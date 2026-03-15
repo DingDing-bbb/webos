@@ -1,0 +1,296 @@
+/**
+ * @fileoverview Input Component Styles
+ * @module @ui/components/Input/styles
+ *
+ * Input styling with support for sizes, states, prefix/suffix,
+ * and clearable functionality.
+ *
+ * @design-tokens
+ * - Primary: #42a5f5 (Blue)
+ * - Error: #ef5350 (Red)
+ * - Success: #4caf50 (Green)
+ * - Border radius: 8px
+ * - Transitions: 0.2s ease
+ */
+
+/* ============================================
+   Base Input Container
+   ============================================ */
+
+.input {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  width: 100%;
+  background: var(--input-bg, rgba(255, 255, 255, 0.08));
+  border: 1px solid var(--input-border, rgba(255, 255, 255, 0.12));
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  color: var(--input-color, inherit);
+}
+
+.input:hover:not(.input--disabled):not(.input--readonly) {
+  border-color: var(--input-border-hover, rgba(255, 255, 255, 0.2));
+}
+
+.input:focus-within:not(.input--disabled):not(.input--readonly) {
+  border-color: var(--input-focus-border, rgba(66, 165, 245, 0.6));
+  box-shadow: 0 0 0 3px var(--input-focus-shadow, rgba(66, 165, 245, 0.15));
+  background: var(--input-focus-bg, rgba(255, 255, 255, 0.1));
+}
+
+/* ============================================
+   Sizes
+   ============================================ */
+
+.input--sm {
+  height: 32px;
+  font-size: 13px;
+}
+
+.input--sm .input__field {
+  padding: 0 10px;
+}
+
+.input--sm .input__prefix,
+.input--sm .input__suffix {
+  padding: 0 8px;
+}
+
+.input--sm .input__clear {
+  width: 14px;
+  height: 14px;
+  right: 8px;
+}
+
+.input--md {
+  height: 40px;
+  font-size: 14px;
+}
+
+.input--md .input__field {
+  padding: 0 12px;
+}
+
+.input--md .input__prefix,
+.input--md .input__suffix {
+  padding: 0 10px;
+}
+
+.input--md .input__clear {
+  width: 16px;
+  height: 16px;
+  right: 10px;
+}
+
+.input--lg {
+  height: 48px;
+  font-size: 16px;
+}
+
+.input--lg .input__field {
+  padding: 0 16px;
+}
+
+.input--lg .input__prefix,
+.input--lg .input__suffix {
+  padding: 0 12px;
+}
+
+.input--lg .input__clear {
+  width: 18px;
+  height: 18px;
+  right: 12px;
+}
+
+/* ============================================
+   Input Field
+   ============================================ */
+
+.input__field {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.input__field::placeholder {
+  color: var(--input-placeholder, rgba(255, 255, 255, 0.4));
+}
+
+.input__field:disabled {
+  cursor: not-allowed;
+}
+
+.input__field[readonly] {
+  cursor: default;
+}
+
+/* Adjust padding when prefix/suffix exists */
+.input--has-prefix .input__field {
+  padding-left: 0;
+}
+
+.input--has-suffix .input__field {
+  padding-right: 0;
+}
+
+/* ============================================
+   Prefix & Suffix
+   ============================================ */
+
+.input__prefix,
+.input__suffix {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--input-affix-color, rgba(255, 255, 255, 0.6));
+  flex-shrink: 0;
+}
+
+.input__prefix {
+  border-right: 1px solid var(--input-affix-border, rgba(255, 255, 255, 0.1));
+}
+
+.input__suffix {
+  border-left: 1px solid var(--input-affix-border, rgba(255, 255, 255, 0.1));
+}
+
+/* ============================================
+   Clear Button
+   ============================================ */
+
+.input__clear {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--input-clear-color, rgba(255, 255, 255, 0.4));
+  transition: color 0.2s ease;
+  opacity: 0;
+}
+
+.input:hover .input__clear {
+  opacity: 1;
+}
+
+.input__clear:hover {
+  color: var(--input-clear-hover, rgba(255, 255, 255, 0.8));
+}
+
+.input__clear svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* ============================================
+   States
+   ============================================ */
+
+/* Disabled */
+.input--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: var(--input-disabled-bg, rgba(255, 255, 255, 0.04));
+}
+
+.input--disabled .input__field {
+  cursor: not-allowed;
+}
+
+/* Readonly */
+.input--readonly {
+  background: var(--input-readonly-bg, rgba(255, 255, 255, 0.04));
+}
+
+/* Error */
+.input--error {
+  border-color: var(--input-error-border, rgba(239, 83, 80, 0.6));
+  background: var(--input-error-bg, rgba(239, 83, 80, 0.05));
+}
+
+.input--error:hover:not(.input--disabled) {
+  border-color: var(--input-error-border-hover, rgba(239, 83, 80, 0.8));
+}
+
+.input--error:focus-within:not(.input--disabled) {
+  border-color: var(--input-error-border, #ef5350);
+  box-shadow: 0 0 0 3px var(--input-error-shadow, rgba(239, 83, 80, 0.15));
+}
+
+/* Success */
+.input--success {
+  border-color: var(--input-success-border, rgba(76, 175, 80, 0.6));
+  background: var(--input-success-bg, rgba(76, 175, 80, 0.05));
+}
+
+.input--success:hover:not(.input--disabled) {
+  border-color: var(--input-success-border-hover, rgba(76, 175, 80, 0.8));
+}
+
+.input--success:focus-within:not(.input--disabled) {
+  border-color: var(--input-success-border, #4caf50);
+  box-shadow: 0 0 0 3px var(--input-success-shadow, rgba(76, 175, 80, 0.15));
+}
+
+/* ============================================
+   Light Theme
+   ============================================ */
+
+:root[data-theme='light'] .input {
+  --input-bg: rgba(0, 0, 0, 0.04);
+  --input-border: rgba(0, 0, 0, 0.12);
+  --input-border-hover: rgba(0, 0, 0, 0.2);
+  --input-focus-border: rgba(66, 165, 245, 0.6);
+  --input-focus-shadow: rgba(66, 165, 245, 0.15);
+  --input-focus-bg: rgba(0, 0, 0, 0.06);
+  --input-color: rgba(0, 0, 0, 0.87);
+  --input-placeholder: rgba(0, 0, 0, 0.4);
+  --input-affix-color: rgba(0, 0, 0, 0.6);
+  --input-affix-border: rgba(0, 0, 0, 0.1);
+  --input-clear-color: rgba(0, 0, 0, 0.4);
+  --input-clear-hover: rgba(0, 0, 0, 0.8);
+  --input-disabled-bg: rgba(0, 0, 0, 0.02);
+  --input-readonly-bg: rgba(0, 0, 0, 0.02);
+  --input-error-border: rgba(239, 83, 80, 0.6);
+  --input-error-bg: rgba(239, 83, 80, 0.05);
+  --input-success-border: rgba(76, 175, 80, 0.6);
+  --input-success-bg: rgba(76, 175, 80, 0.05);
+}
+
+/* ============================================
+   Accessibility
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .input,
+  .input__clear {
+    transition: none;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .input {
+    border-width: 2px;
+  }
+
+  .input__clear {
+    opacity: 1;
+  }
+}
+
+/* Focus visible for keyboard navigation */
+.input:focus-within:focus-visible {
+  outline: 2px solid var(--input-focus-border, #42a5f5);
+  outline-offset: 2px;
+}

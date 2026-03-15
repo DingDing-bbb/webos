@@ -1,0 +1,357 @@
+/**
+ * @fileoverview Radio Component Styles
+ * @module @ui/components/Radio/styles
+ *
+ * Radio styling with support for button variants,
+ * radio groups, and disabled state.
+ *
+ * @design-tokens
+ * - Primary: #42a5f5 (Blue)
+ * - Border radius: 50% (circle), 6px (button)
+ * - Transitions: 0.2s ease
+ */
+
+/* ============================================
+   Base Radio Container
+   ============================================ */
+
+.radio {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  color: var(--radio-color, inherit);
+}
+
+/* ============================================
+   Hidden Input
+   ============================================ */
+
+.radio__input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  margin: 0;
+  padding: 0;
+}
+
+/* ============================================
+   Radio Circle (Default Variant)
+   ============================================ */
+
+.radio__circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: var(--radio-bg, rgba(255, 255, 255, 0.08));
+  border: 2px solid var(--radio-border, rgba(255, 255, 255, 0.3));
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.radio__dot {
+  width: 0;
+  height: 0;
+  background: var(--radio-dot-color, #42a5f5);
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+/* Hover state */
+.radio:hover:not(.radio--disabled) .radio__circle {
+  border-color: var(--radio-border-hover, rgba(66, 165, 245, 0.6));
+  background: var(--radio-bg-hover, rgba(255, 255, 255, 0.12));
+}
+
+/* Focus state */
+.radio__input:focus-visible + .radio__circle {
+  outline: 2px solid var(--radio-focus-outline, rgba(66, 165, 245, 0.5));
+  outline-offset: 2px;
+}
+
+/* Checked state */
+.radio__circle--checked {
+  border-color: var(--radio-checked-border, #42a5f5);
+}
+
+.radio__circle--checked .radio__dot {
+  background: var(--radio-dot-color, #42a5f5);
+}
+
+.radio:hover:not(.radio--disabled) .radio__circle--checked {
+  border-color: var(--radio-checked-border-hover, #1976d2);
+}
+
+/* ============================================
+   Button Variant
+   ============================================ */
+
+.radio--button {
+  margin: 0;
+}
+
+.radio__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  background: var(--radio-button-bg, rgba(255, 255, 255, 0.08));
+  border: 1px solid var(--radio-button-border, rgba(255, 255, 255, 0.12));
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+/* Hover state for button */
+.radio--button:hover:not(.radio--disabled) .radio__button {
+  background: var(--radio-button-bg-hover, rgba(255, 255, 255, 0.12));
+  border-color: var(--radio-button-border-hover, rgba(255, 255, 255, 0.2));
+}
+
+/* Focus state for button */
+.radio--button .radio__input:focus-visible + .radio__button {
+  outline: 2px solid var(--radio-focus-outline, rgba(66, 165, 245, 0.5));
+  outline-offset: 2px;
+}
+
+/* Checked state for button */
+.radio--button.radio--checked .radio__button {
+  background: var(--radio-button-checked-bg, rgba(66, 165, 245, 0.15));
+  border-color: var(--radio-button-checked-border, rgba(66, 165, 245, 0.4));
+  color: var(--radio-button-checked-color, #42a5f5);
+}
+
+.radio--button:hover:not(.radio--disabled).radio--checked .radio__button {
+  background: var(--radio-button-checked-bg-hover, rgba(66, 165, 245, 0.2));
+  border-color: var(--radio-button-checked-border-hover, rgba(66, 165, 245, 0.5));
+}
+
+/* ============================================
+   Sizes
+   ============================================ */
+
+/* Small */
+.radio--sm .radio__circle {
+  width: 16px;
+  height: 16px;
+}
+
+.radio--sm .radio__circle--checked .radio__dot {
+  width: 8px;
+  height: 8px;
+}
+
+.radio--sm .radio__label {
+  font-size: 13px;
+}
+
+.radio--sm.radio--button .radio__button {
+  height: 28px;
+  font-size: 13px;
+  padding: 0 12px;
+}
+
+/* Medium */
+.radio--md .radio__circle {
+  width: 20px;
+  height: 20px;
+}
+
+.radio--md .radio__circle--checked .radio__dot {
+  width: 10px;
+  height: 10px;
+}
+
+.radio--md .radio__label {
+  font-size: 14px;
+}
+
+.radio--md.radio--button .radio__button {
+  height: 36px;
+  font-size: 14px;
+  padding: 0 16px;
+}
+
+/* Large */
+.radio--lg .radio__circle {
+  width: 24px;
+  height: 24px;
+}
+
+.radio--lg .radio__circle--checked .radio__dot {
+  width: 12px;
+  height: 12px;
+}
+
+.radio--lg .radio__label {
+  font-size: 16px;
+}
+
+.radio--lg.radio--button .radio__button {
+  height: 44px;
+  font-size: 16px;
+  padding: 0 20px;
+}
+
+/* ============================================
+   Label
+   ============================================ */
+
+.radio__label {
+  line-height: 1.4;
+  transition: color 0.2s ease;
+}
+
+.radio:hover:not(.radio--disabled) .radio__label {
+  color: var(--radio-label-hover, inherit);
+}
+
+/* ============================================
+   Disabled State
+   ============================================ */
+
+.radio--disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.radio--disabled .radio__circle {
+  cursor: not-allowed;
+  background: var(--radio-disabled-bg, rgba(255, 255, 255, 0.04));
+  border-color: var(--radio-disabled-border, rgba(255, 255, 255, 0.15));
+}
+
+.radio--disabled .radio__circle--checked {
+  border-color: var(--radio-disabled-checked-border, rgba(66, 165, 245, 0.4));
+}
+
+.radio--disabled .radio__circle--checked .radio__dot {
+  background: var(--radio-disabled-dot, rgba(66, 165, 245, 0.4));
+}
+
+.radio--disabled.radio--button .radio__button {
+  background: var(--radio-disabled-bg, rgba(255, 255, 255, 0.04));
+  border-color: var(--radio-disabled-border, rgba(255, 255, 255, 0.12));
+}
+
+/* ============================================
+   Radio Group
+   ============================================ */
+
+.radio-group {
+  display: inline-flex;
+  flex-wrap: wrap;
+}
+
+.radio-group--horizontal {
+  flex-direction: row;
+  gap: 16px;
+}
+
+.radio-group--vertical {
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Button group styling */
+.radio-group--button.radio-group--horizontal {
+  gap: 0;
+}
+
+.radio-group--button.radio-group--horizontal .radio {
+  margin-left: -1px;
+}
+
+.radio-group--button.radio-group--horizontal .radio:first-child {
+  margin-left: 0;
+}
+
+.radio-group--button.radio-group--horizontal .radio:first-child .radio__button {
+  border-radius: 6px 0 0 6px;
+}
+
+.radio-group--button.radio-group--horizontal .radio:last-child .radio__button {
+  border-radius: 0 6px 6px 0;
+}
+
+/* ============================================
+   Light Theme
+   ============================================ */
+
+:root[data-theme='light'] .radio {
+  --radio-bg: rgba(0, 0, 0, 0.04);
+  --radio-border: rgba(0, 0, 0, 0.25);
+  --radio-border-hover: rgba(66, 165, 245, 0.6);
+  --radio-bg-hover: rgba(0, 0, 0, 0.08);
+  --radio-checked-border: #42a5f5;
+  --radio-checked-border-hover: #1976d2;
+  --radio-dot-color: #42a5f5;
+  --radio-focus-outline: rgba(66, 165, 245, 0.5);
+  --radio-button-bg: rgba(0, 0, 0, 0.04);
+  --radio-button-border: rgba(0, 0, 0, 0.12);
+  --radio-button-bg-hover: rgba(0, 0, 0, 0.08);
+  --radio-button-border-hover: rgba(0, 0, 0, 0.2);
+  --radio-button-checked-bg: rgba(66, 165, 245, 0.1);
+  --radio-button-checked-border: rgba(66, 165, 245, 0.4);
+  --radio-button-checked-color: #1976d2;
+  --radio-button-checked-bg-hover: rgba(66, 165, 245, 0.15);
+  --radio-button-checked-border-hover: rgba(66, 165, 245, 0.5);
+  --radio-disabled-bg: rgba(0, 0, 0, 0.02);
+  --radio-disabled-border: rgba(0, 0, 0, 0.12);
+  --radio-disabled-checked-border: rgba(66, 165, 245, 0.4);
+  --radio-disabled-dot: rgba(66, 165, 245, 0.4);
+}
+
+/* ============================================
+   Accessibility
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .radio__circle,
+  .radio__dot,
+  .radio__button,
+  .radio__label {
+    transition: none;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .radio__circle {
+    border-width: 3px;
+  }
+
+  .radio__circle--checked {
+    border-color: white;
+  }
+
+  .radio--button.radio--checked .radio__button {
+    border-width: 2px;
+    font-weight: 600;
+  }
+}
+
+/* ============================================
+   Animation
+   ============================================ */
+
+@keyframes radio-scale {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.radio__circle--checked .radio__dot {
+  animation: radio-scale 0.2s ease;
+}

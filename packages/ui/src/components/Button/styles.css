@@ -1,0 +1,335 @@
+/**
+ * @fileoverview Button Component Styles
+ * @module @ui/components/Button/styles
+ *
+ * Button styles with BEM naming convention.
+ * Supports variants, sizes, states, and cursor glow effect.
+ */
+
+/* ============================================
+   Base Button
+   ============================================ */
+
+.os-button {
+  /* Reset */
+  appearance: none;
+  border: none;
+  background: transparent;
+  margin: 0;
+  padding: 0;
+  
+  /* Base styles */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--os-spacing-sm);
+  font-family: var(--os-font-family);
+  font-weight: var(--os-font-weight-medium);
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  overflow: hidden;
+  outline: none;
+  
+  /* Transitions */
+  transition: 
+    background-color var(--os-transition-fast),
+    border-color var(--os-transition-fast),
+    box-shadow var(--os-transition-fast),
+    transform var(--os-transition-fast),
+    opacity var(--os-transition-fast);
+  
+  /* Focus visible */
+  &:focus-visible {
+    outline: 2px solid var(--os-color-primary);
+    outline-offset: 2px;
+  }
+  
+  /* Cursor glow effect container */
+  &::before {
+    content: '';
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(
+      circle,
+      rgba(255, 255, 255, 0.3) 0%,
+      rgba(255, 255, 255, 0) 70%
+    );
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0;
+    transform: translate(-50%, -50%);
+    transition: opacity var(--os-transition-fast);
+  }
+  
+  &:hover::before {
+    opacity: 1;
+  }
+}
+
+/* ============================================
+   Size Variants
+   ============================================ */
+
+.os-button--xs {
+  height: 24px;
+  padding: 0 var(--os-spacing-sm);
+  font-size: var(--os-font-size-xs);
+  border-radius: var(--os-radius-sm);
+  gap: var(--os-spacing-xs);
+}
+
+.os-button--sm {
+  height: 32px;
+  padding: 0 var(--os-spacing-md);
+  font-size: var(--os-font-size-sm);
+  border-radius: var(--os-radius-sm);
+  gap: var(--os-spacing-xs);
+}
+
+.os-button--md {
+  height: 40px;
+  padding: 0 var(--os-spacing-lg);
+  font-size: var(--os-font-size-md);
+  border-radius: var(--os-radius-md);
+}
+
+.os-button--lg {
+  height: 48px;
+  padding: 0 var(--os-spacing-xl);
+  font-size: var(--os-font-size-lg);
+  border-radius: var(--os-radius-lg);
+  gap: var(--os-spacing-md);
+}
+
+/* ============================================
+   Style Variants
+   ============================================ */
+
+/* Primary Button */
+.os-button--primary {
+  background: linear-gradient(135deg, var(--os-color-primary) 0%, var(--os-color-primary-hover) 100%);
+  color: var(--os-color-white);
+  box-shadow: 0 2px 8px rgba(0, 120, 212, 0.25);
+  
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, var(--os-color-primary-hover) 0%, var(--os-color-primary-active) 100%);
+    box-shadow: 0 4px 16px rgba(0, 120, 212, 0.35);
+    transform: translateY(-1px);
+  }
+  
+  &:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 1px 4px rgba(0, 120, 212, 0.2);
+  }
+  
+  /* Cursor glow for primary */
+  &::before {
+    background: radial-gradient(
+      circle,
+      rgba(255, 255, 255, 0.4) 0%,
+      rgba(255, 255, 255, 0) 70%
+    );
+  }
+}
+
+/* Secondary Button */
+.os-button--secondary {
+  background: var(--os-color-bg-secondary);
+  color: var(--os-color-text);
+  border: 1px solid var(--os-color-border);
+  
+  &:hover:not(:disabled) {
+    background: var(--os-color-bg-tertiary);
+    border-color: var(--os-color-primary);
+  }
+  
+  &:active:not(:disabled) {
+    background: var(--os-color-border);
+  }
+}
+
+/* Ghost Button */
+.os-button--ghost {
+  background: transparent;
+  color: var(--os-color-text);
+  
+  &:hover:not(:disabled) {
+    background: var(--os-color-hover);
+  }
+  
+  &:active:not(:disabled) {
+    background: var(--os-color-active);
+  }
+}
+
+/* Danger Button */
+.os-button--danger {
+  background: linear-gradient(135deg, var(--os-color-danger) 0%, var(--os-color-danger-hover) 100%);
+  color: var(--os-color-white);
+  box-shadow: 0 2px 8px rgba(209, 52, 56, 0.25);
+  
+  &:hover:not(:disabled) {
+    box-shadow: 0 4px 16px rgba(209, 52, 56, 0.35);
+    transform: translateY(-1px);
+  }
+  
+  &:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 1px 4px rgba(209, 52, 56, 0.2);
+  }
+}
+
+/* Link Button */
+.os-button--link {
+  background: transparent;
+  color: var(--os-color-primary);
+  padding: 0;
+  height: auto;
+  
+  &:hover:not(:disabled) {
+    color: var(--os-color-primary-hover);
+    text-decoration: underline;
+  }
+  
+  &:active:not(:disabled) {
+    color: var(--os-color-primary-active);
+  }
+  
+  &:focus-visible {
+    outline-offset: 4px;
+  }
+  
+  /* No glow effect for link buttons */
+  &::before {
+    display: none;
+  }
+}
+
+/* ============================================
+   States
+   ============================================ */
+
+.os-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.os-button--loading {
+  color: transparent;
+  pointer-events: none;
+}
+
+/* ============================================
+   Icon Styles
+   ============================================ */
+
+.os-button__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.os-button__icon--left {
+  margin-right: calc(var(--os-spacing-xs) * -1);
+}
+
+.os-button__icon--right {
+  margin-left: calc(var(--os-spacing-xs) * -1);
+}
+
+/* Icon only button */
+.os-button--icon-only {
+  padding: 0;
+  aspect-ratio: 1;
+}
+
+.os-button--icon-only.os-button--xs {
+  width: 24px;
+  padding: 0;
+}
+
+.os-button--icon-only.os-button--sm {
+  width: 32px;
+  padding: 0;
+}
+
+.os-button--icon-only.os-button--md {
+  width: 40px;
+  padding: 0;
+}
+
+.os-button--icon-only.os-button--lg {
+  width: 48px;
+  padding: 0;
+}
+
+/* ============================================
+   Loading Spinner
+   ============================================ */
+
+.os-button__spinner {
+  position: absolute;
+  width: 1em;
+  height: 1em;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: os-button-spin 0.8s linear infinite;
+}
+
+@keyframes os-button-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ============================================
+   Block (Full Width)
+   ============================================ */
+
+.os-button--block {
+  width: 100%;
+}
+
+/* ============================================
+   Dark Theme Adjustments
+   ============================================ */
+
+[data-theme="dark"] {
+  .os-button--primary {
+    box-shadow: 0 2px 8px rgba(96, 165, 250, 0.2);
+    
+    &:hover:not(:disabled) {
+      box-shadow: 0 4px 16px rgba(96, 165, 250, 0.3);
+    }
+  }
+  
+  .os-button--secondary {
+    background: var(--os-color-bg-secondary);
+    border-color: var(--os-color-border);
+    
+    &:hover:not(:disabled) {
+      background: var(--os-color-bg-tertiary);
+      border-color: var(--os-color-primary);
+    }
+  }
+  
+  .os-button--ghost {
+    &:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.1);
+    }
+    
+    &:active:not(:disabled) {
+      background: rgba(255, 255, 255, 0.15);
+    }
+  }
+}

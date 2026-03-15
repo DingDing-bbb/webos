@@ -27,7 +27,8 @@ export { updateManager } from './core/managers/updateManager';
 // 安全模块
 export * from './core/crypto';
 export * from './core/secureStorage';
-export { secureUserManager, SecureUserManagerState, LoginResult } from './core/secureUserManager';
+export { secureUserManager } from './core/secureUserManager';
+export type { SecureUserManagerState, LoginResult } from './core/secureUserManager';
 
 // 导出文件系统包
 export * from '../fs/src';

@@ -1,0 +1,359 @@
+/**
+ * @fileoverview IconButton Component Styles
+ * @module @ui/components/IconButton/styles
+ *
+ * Icon button styles with BEM naming convention.
+ * Supports circular/square shapes, sizes, variants, and tooltip.
+ */
+
+/* ============================================
+   Base IconButton
+   ============================================ */
+
+.os-icon-button {
+  /* Reset */
+  appearance: none;
+  border: none;
+  background: transparent;
+  margin: 0;
+  padding: 0;
+  
+  /* Base styles */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  outline: none;
+  flex-shrink: 0;
+  
+  /* Transitions */
+  transition: 
+    background-color var(--os-transition-fast),
+    border-color var(--os-transition-fast),
+    box-shadow var(--os-transition-fast),
+    transform var(--os-transition-fast),
+    opacity var(--os-transition-fast);
+  
+  /* Focus visible */
+  &:focus-visible {
+    outline: 2px solid var(--os-color-primary);
+    outline-offset: 2px;
+  }
+}
+
+/* ============================================
+   Size Variants
+   ============================================ */
+
+.os-icon-button--xs {
+  width: 24px;
+  height: 24px;
+  font-size: var(--os-font-size-sm);
+}
+
+.os-icon-button--sm {
+  width: 32px;
+  height: 32px;
+  font-size: var(--os-font-size-md);
+}
+
+.os-icon-button--md {
+  width: 40px;
+  height: 40px;
+  font-size: var(--os-font-size-lg);
+}
+
+.os-icon-button--lg {
+  width: 48px;
+  height: 48px;
+  font-size: var(--os-font-size-xl);
+}
+
+/* ============================================
+   Shape Variants
+   ============================================ */
+
+.os-icon-button--circle {
+  border-radius: 50%;
+}
+
+.os-icon-button--square {
+  border-radius: var(--os-radius-md);
+}
+
+/* ============================================
+   Style Variants
+   ============================================ */
+
+/* Default Button */
+.os-icon-button--default {
+  background: var(--os-color-bg-secondary);
+  color: var(--os-color-text);
+  border: 1px solid var(--os-color-border);
+  
+  &:hover:not(:disabled) {
+    background: var(--os-color-bg-tertiary);
+    border-color: var(--os-color-primary);
+  }
+  
+  &:active:not(:disabled) {
+    background: var(--os-color-border);
+    transform: scale(0.96);
+  }
+}
+
+/* Primary Button */
+.os-icon-button--primary {
+  background: linear-gradient(135deg, var(--os-color-primary) 0%, var(--os-color-primary-hover) 100%);
+  color: var(--os-color-white);
+  box-shadow: 0 2px 8px rgba(0, 120, 212, 0.25);
+  
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, var(--os-color-primary-hover) 0%, var(--os-color-primary-active) 100%);
+    box-shadow: 0 4px 12px rgba(0, 120, 212, 0.35);
+    transform: translateY(-1px);
+  }
+  
+  &:active:not(:disabled) {
+    transform: translateY(0) scale(0.98);
+    box-shadow: 0 1px 4px rgba(0, 120, 212, 0.2);
+  }
+}
+
+/* Ghost Button */
+.os-icon-button--ghost {
+  background: transparent;
+  color: var(--os-color-text-secondary);
+  
+  &:hover:not(:disabled) {
+    background: var(--os-color-hover);
+    color: var(--os-color-text);
+  }
+  
+  &:active:not(:disabled) {
+    background: var(--os-color-active);
+    transform: scale(0.95);
+  }
+}
+
+/* ============================================
+   States
+   ============================================ */
+
+.os-icon-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.os-icon-button--loading {
+  pointer-events: none;
+  
+  & > *:not(.os-icon-button__spinner) {
+    opacity: 0;
+  }
+}
+
+/* ============================================
+   Loading Spinner
+   ============================================ */
+
+.os-icon-button__spinner {
+  position: absolute;
+  width: 1em;
+  height: 1em;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: os-icon-button-spin 0.8s linear infinite;
+}
+
+@keyframes os-icon-button-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ============================================
+   Tooltip
+   ============================================ */
+
+.os-icon-button__tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  padding: var(--os-spacing-xs) var(--os-spacing-sm);
+  background: var(--os-color-bg-overlay);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--os-color-border-light);
+  border-radius: var(--os-radius-sm);
+  color: var(--os-color-text);
+  font-size: var(--os-font-size-xs);
+  font-weight: var(--os-font-weight-normal);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: 
+    opacity var(--os-transition-fast),
+    transform var(--os-transition-fast),
+    visibility var(--os-transition-fast);
+  box-shadow: var(--os-shadow-md);
+  z-index: var(--os-z-tooltip);
+}
+
+/* Tooltip arrow */
+.os-icon-button__tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: var(--os-color-bg-overlay);
+}
+
+/* Show tooltip on hover/focus */
+.os-icon-button:hover .os-icon-button__tooltip,
+.os-icon-button:focus .os-icon-button__tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Tooltip position variants */
+.os-icon-button__tooltip--top {
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+}
+
+.os-icon-button__tooltip--bottom {
+  top: calc(100% + 8px);
+  bottom: auto;
+  left: 50%;
+  transform: translateX(-50%) translateY(-4px);
+}
+
+.os-icon-button__tooltip--bottom::after {
+  top: auto;
+  bottom: 100%;
+  border-top-color: transparent;
+  border-bottom-color: var(--os-color-bg-overlay);
+}
+
+.os-icon-button:hover .os-icon-button__tooltip--bottom,
+.os-icon-button:focus .os-icon-button__tooltip--bottom {
+  transform: translateX(-50%) translateY(0);
+}
+
+.os-icon-button__tooltip--left {
+  right: calc(100% + 8px);
+  left: auto;
+  bottom: auto;
+  top: 50%;
+  transform: translateY(-50%) translateX(4px);
+}
+
+.os-icon-button__tooltip--left::after {
+  top: 50%;
+  left: auto;
+  right: -12px;
+  transform: translateY(-50%);
+  border-top-color: transparent;
+  border-left-color: var(--os-color-bg-overlay);
+}
+
+.os-icon-button:hover .os-icon-button__tooltip--left,
+.os-icon-button:focus .os-icon-button__tooltip--left {
+  transform: translateY(-50%) translateX(0);
+}
+
+.os-icon-button__tooltip--right {
+  left: calc(100% + 8px);
+  bottom: auto;
+  top: 50%;
+  transform: translateY(-50%) translateX(-4px);
+}
+
+.os-icon-button__tooltip--right::after {
+  top: 50%;
+  left: -12px;
+  transform: translateY(-50%);
+  border-top-color: transparent;
+  border-right-color: var(--os-color-bg-overlay);
+}
+
+.os-icon-button:hover .os-icon-button__tooltip--right,
+.os-icon-button:focus .os-icon-button__tooltip--right {
+  transform: translateY(-50%) translateX(0);
+}
+
+/* ============================================
+   Icon Content
+   ============================================ */
+
+.os-icon-button__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform var(--os-transition-fast);
+}
+
+.os-icon-button:active:not(:disabled) .os-icon-button__icon {
+  transform: scale(0.9);
+}
+
+/* ============================================
+   Dark Theme Adjustments
+   ============================================ */
+
+[data-theme="dark"] {
+  .os-icon-button--primary {
+    box-shadow: 0 2px 8px rgba(96, 165, 250, 0.2);
+    
+    &:hover:not(:disabled) {
+      box-shadow: 0 4px 12px rgba(96, 165, 250, 0.3);
+    }
+  }
+  
+  .os-icon-button--ghost {
+    &:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.1);
+    }
+    
+    &:active:not(:disabled) {
+      background: rgba(255, 255, 255, 0.15);
+    }
+  }
+  
+  .os-icon-button__tooltip {
+    background: rgba(45, 45, 45, 0.95);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .os-icon-button__tooltip::after {
+    border-top-color: rgba(45, 45, 45, 0.95);
+  }
+  
+  .os-icon-button__tooltip--bottom::after {
+    border-top-color: transparent;
+    border-bottom-color: rgba(45, 45, 45, 0.95);
+  }
+  
+  .os-icon-button__tooltip--left::after {
+    border-top-color: transparent;
+    border-left-color: rgba(45, 45, 45, 0.95);
+  }
+  
+  .os-icon-button__tooltip--right::after {
+    border-top-color: transparent;
+    border-right-color: rgba(45, 45, 45, 0.95);
+  }
+}

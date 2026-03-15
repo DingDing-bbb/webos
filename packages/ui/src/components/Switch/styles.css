@@ -1,0 +1,336 @@
+/**
+ * @fileoverview Switch Component Styles
+ * @module @ui/components/Switch/styles
+ *
+ * Switch styling with support for sizes, labels,
+ * disabled state, and loading state.
+ *
+ * @design-tokens
+ * - Primary: #42a5f5 (Blue)
+ * - Track border radius: 12px
+ * - Thumb border radius: 50%
+ * - Transitions: 0.2s ease
+ */
+
+/* ============================================
+   Base Switch Container
+   ============================================ */
+
+.switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  color: var(--switch-color, inherit);
+}
+
+/* ============================================
+   Hidden Input
+   ============================================ */
+
+.switch__input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  margin: 0;
+  padding: 0;
+}
+
+/* ============================================
+   Track
+   ============================================ */
+
+.switch__track {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  background: var(--switch-track-bg, rgba(255, 255, 255, 0.15));
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+/* Hover state */
+.switch:hover:not(.switch--disabled):not(.switch--loading) .switch__track {
+  background: var(--switch-track-bg-hover, rgba(255, 255, 255, 0.2));
+}
+
+/* Focus state */
+.switch__input:focus-visible + .switch__track {
+  outline: 2px solid var(--switch-focus-outline, rgba(66, 165, 245, 0.5));
+  outline-offset: 2px;
+}
+
+/* Checked state */
+.switch__track--checked {
+  background: var(--switch-track-checked-bg, #42a5f5);
+}
+
+.switch:hover:not(.switch--disabled):not(.switch--loading) .switch__track--checked {
+  background: var(--switch-track-checked-bg-hover, #1976d2);
+}
+
+/* ============================================
+   Thumb
+   ============================================ */
+
+.switch__thumb {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--switch-thumb-bg, white);
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease, background 0.2s ease;
+  z-index: 1;
+}
+
+/* ============================================
+   Sizes
+   ============================================ */
+
+/* Small */
+.switch--sm .switch__track {
+  width: 36px;
+  height: 20px;
+  padding: 2px;
+}
+
+.switch--sm .switch__thumb {
+  width: 16px;
+  height: 16px;
+  left: 2px;
+}
+
+.switch--sm .switch__track--checked .switch__thumb {
+  transform: translateX(16px);
+}
+
+.switch--sm .switch__label {
+  font-size: 10px;
+  padding: 0 6px 0 20px;
+}
+
+.switch--sm .switch__label--checked {
+  padding: 0 20px 0 6px;
+}
+
+.switch--sm .switch__external-label {
+  font-size: 13px;
+}
+
+.switch--sm .switch__spinner svg {
+  width: 10px;
+  height: 10px;
+}
+
+/* Medium */
+.switch--md .switch__track {
+  width: 44px;
+  height: 24px;
+  padding: 2px;
+}
+
+.switch--md .switch__thumb {
+  width: 20px;
+  height: 20px;
+  left: 2px;
+}
+
+.switch--md .switch__track--checked .switch__thumb {
+  transform: translateX(20px);
+}
+
+.switch--md .switch__label {
+  font-size: 11px;
+  padding: 0 8px 0 24px;
+}
+
+.switch--md .switch__label--checked {
+  padding: 0 24px 0 8px;
+}
+
+.switch--md .switch__external-label {
+  font-size: 14px;
+}
+
+.switch--md .switch__spinner svg {
+  width: 12px;
+  height: 12px;
+}
+
+/* Large */
+.switch--lg .switch__track {
+  width: 56px;
+  height: 30px;
+  padding: 3px;
+}
+
+.switch--lg .switch__thumb {
+  width: 24px;
+  height: 24px;
+  left: 3px;
+}
+
+.switch--lg .switch__track--checked .switch__thumb {
+  transform: translateX(26px);
+}
+
+.switch--lg .switch__label {
+  font-size: 12px;
+  padding: 0 10px 0 28px;
+}
+
+.switch--lg .switch__label--checked {
+  padding: 0 28px 0 10px;
+}
+
+.switch--lg .switch__external-label {
+  font-size: 16px;
+}
+
+.switch--lg .switch__spinner svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ============================================
+   Internal Label
+   ============================================ */
+
+.switch__label {
+  position: absolute;
+  right: 0;
+  color: var(--switch-label-color, rgba(255, 255, 255, 0.7));
+  font-weight: 500;
+  line-height: 1;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.switch__label--checked {
+  right: auto;
+  left: 0;
+  color: var(--switch-label-checked-color, white);
+}
+
+/* ============================================
+   External Label
+   ============================================ */
+
+.switch__external-label {
+  line-height: 1.4;
+  transition: color 0.2s ease;
+}
+
+/* ============================================
+   Loading Spinner
+   ============================================ */
+
+.switch__spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--switch-spinner-color, #42a5f5);
+}
+
+.switch__spinner svg {
+  animation: switch-spin 1s linear infinite;
+}
+
+@keyframes switch-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.switch__track--checked .switch__spinner {
+  color: var(--switch-spinner-checked-color, #42a5f5);
+}
+
+/* ============================================
+   States
+   ============================================ */
+
+/* Disabled */
+.switch--disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.switch--disabled .switch__track {
+  cursor: not-allowed;
+  background: var(--switch-track-disabled-bg, rgba(255, 255, 255, 0.08));
+}
+
+.switch--disabled .switch__track--checked {
+  background: var(--switch-track-disabled-checked-bg, rgba(66, 165, 245, 0.4));
+}
+
+.switch--disabled .switch__thumb {
+  background: var(--switch-thumb-disabled-bg, rgba(255, 255, 255, 0.7));
+}
+
+/* Loading */
+.switch--loading {
+  cursor: wait;
+}
+
+.switch--loading .switch__track {
+  cursor: wait;
+}
+
+/* ============================================
+   Light Theme
+   ============================================ */
+
+:root[data-theme='light'] .switch {
+  --switch-track-bg: rgba(0, 0, 0, 0.15);
+  --switch-track-bg-hover: rgba(0, 0, 0, 0.2);
+  --switch-track-checked-bg: #42a5f5;
+  --switch-track-checked-bg-hover: #1976d2;
+  --switch-thumb-bg: white;
+  --switch-focus-outline: rgba(66, 165, 245, 0.5);
+  --switch-label-color: rgba(0, 0, 0, 0.6);
+  --switch-label-checked-color: white;
+  --switch-spinner-color: #42a5f5;
+  --switch-spinner-checked-color: white;
+  --switch-track-disabled-bg: rgba(0, 0, 0, 0.08);
+  --switch-track-disabled-checked-bg: rgba(66, 165, 245, 0.4);
+  --switch-thumb-disabled-bg: rgba(255, 255, 255, 0.7);
+}
+
+:root[data-theme='light'] .switch__thumb {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+/* ============================================
+   Accessibility
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .switch__track,
+  .switch__thumb,
+  .switch__label {
+    transition: none;
+  }
+
+  .switch__spinner svg {
+    animation: none;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .switch__track {
+    border: 2px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .switch__track--checked {
+    border-color: white;
+  }
+}

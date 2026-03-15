@@ -105,10 +105,10 @@ function loadBookmarks(): Bookmark[] {
   }
 }
 
-function saveBookmark(bookmark: Bookmark): void {
-  const bookmarks = loadBookmarks();
-  bookmarks.push(bookmark);
-  localStorage.setItem('browser-bookmarks', JSON.stringify(bookmarks));
+function _saveBookmark(bookmark: Bookmark): void {
+  const _bookmarks = loadBookmarks();
+  _bookmarks.push(bookmark);
+  localStorage.setItem('browser-bookmarks', JSON.stringify(_bookmarks));
 }
 
 // ============================================

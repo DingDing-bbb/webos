@@ -1,0 +1,337 @@
+/**
+ * Progress Component Styles
+ * BEM naming convention
+ * Supports light and dark themes
+ */
+
+/* ==========================================================================
+   Linear Progress
+   ========================================================================== */
+
+.progress {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.progress__track {
+  flex: 1;
+  border-radius: 9999px;
+  overflow: hidden;
+  background: #e5e7eb;
+}
+
+@media (prefers-color-scheme: dark) {
+  .progress__track {
+    background: #374151;
+  }
+}
+
+/* Sizes */
+.progress--sm .progress__track {
+  height: 4px;
+}
+
+.progress--md .progress__track {
+  height: 8px;
+}
+
+.progress--lg .progress__track {
+  height: 12px;
+}
+
+/* ==========================================================================
+   Progress Fill
+   ========================================================================== */
+
+.progress__fill {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 0.3s ease;
+}
+
+/* Color variants */
+.progress--primary .progress__fill {
+  background: #3b82f6;
+}
+
+.progress--success .progress__fill {
+  background: #10b981;
+}
+
+.progress--warning .progress__fill {
+  background: #f59e0b;
+}
+
+.progress--danger .progress__fill {
+  background: #ef4444;
+}
+
+/* Striped */
+.progress__fill--striped {
+  background-image: linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.15) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.15) 75%,
+    transparent 75%,
+    transparent
+  );
+  background-size: 1rem 1rem;
+}
+
+/* Animated Stripes */
+.progress__fill--animated {
+  animation: progress-stripes 1s linear infinite;
+}
+
+@keyframes progress-stripes {
+  from {
+    background-position: 1rem 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+
+/* Indeterminate */
+.progress__fill--indeterminate {
+  width: 100% !important;
+  animation: progress-indeterminate 1.5s ease-in-out infinite;
+}
+
+@keyframes progress-indeterminate {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* ==========================================================================
+   Progress Label
+   ========================================================================== */
+
+.progress__label {
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 500;
+  color: #6b7280;
+  min-width: 36px;
+  text-align: right;
+}
+
+@media (prefers-color-scheme: dark) {
+  .progress__label {
+    color: #9ca3af;
+  }
+}
+
+/* ==========================================================================
+   Circular Progress
+   ========================================================================== */
+
+.circular-progress {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.circular-progress__svg {
+  display: block;
+}
+
+.circular-progress__track {
+  stroke: #e5e7eb;
+}
+
+@media (prefers-color-scheme: dark) {
+  .circular-progress__track {
+    stroke: #374151;
+  }
+}
+
+.circular-progress__fill {
+  transition: stroke-dashoffset 0.3s ease;
+}
+
+/* Color variants */
+.circular-progress--primary .circular-progress__fill {
+  stroke: #3b82f6;
+}
+
+.circular-progress--success .circular-progress__fill {
+  stroke: #10b981;
+}
+
+.circular-progress--warning .circular-progress__fill {
+  stroke: #f59e0b;
+}
+
+.circular-progress--danger .circular-progress__fill {
+  stroke: #ef4444;
+}
+
+/* Indeterminate Animation */
+.circular-progress--indeterminate .circular-progress__svg {
+  animation: circular-rotate 1.4s linear infinite;
+}
+
+.circular-progress--indeterminate .circular-progress__fill {
+  animation: circular-dash 1.4s ease-in-out infinite;
+  stroke-dasharray: 80px, 200px;
+  stroke-dashoffset: 0;
+}
+
+@keyframes circular-rotate {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes circular-dash {
+  0% {
+    stroke-dasharray: 1px, 200px;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 100px, 200px;
+    stroke-dashoffset: -15px;
+  }
+  100% {
+    stroke-dasharray: 100px, 200px;
+    stroke-dashoffset: -125px;
+  }
+}
+
+/* Circular Label */
+.circular-progress__label {
+  position: absolute;
+  font-size: 12px;
+  font-weight: 600;
+  color: #374151;
+}
+
+@media (prefers-color-scheme: dark) {
+  .circular-progress__label {
+    color: #f3f4f6;
+  }
+}
+
+/* ==========================================================================
+   Progress Group
+   ========================================================================== */
+
+.progress-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.progress-group__item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.progress-group__label {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+@media (prefers-color-scheme: dark) {
+  .progress-group__label {
+    color: #9ca3af;
+  }
+}
+
+/* ==========================================================================
+   Segmented Progress
+   ========================================================================== */
+
+.segmented-progress {
+  display: flex;
+  width: 100%;
+}
+
+/* Sizes */
+.segmented-progress--sm .segmented-progress__segment {
+  height: 4px;
+}
+
+.segmented-progress--md .segmented-progress__segment {
+  height: 8px;
+}
+
+.segmented-progress--lg .segmented-progress__segment {
+  height: 12px;
+}
+
+.segmented-progress__segment {
+  flex: 1;
+  border-radius: 9999px;
+  background: #e5e7eb;
+  transition: background-color 0.2s;
+}
+
+@media (prefers-color-scheme: dark) {
+  .segmented-progress__segment {
+    background: #374151;
+  }
+}
+
+.segmented-progress__segment--filled {
+  /* Color variants */
+}
+
+.segmented-progress__segment--filled.progress--primary,
+.segmented-progress--primary .segmented-progress__segment--filled {
+  background: #3b82f6;
+}
+
+.segmented-progress__segment--filled.progress--success,
+.segmented-progress--success .segmented-progress__segment--filled {
+  background: #10b981;
+}
+
+.segmented-progress__segment--filled.progress--warning,
+.segmented-progress--warning .segmented-progress__segment--filled {
+  background: #f59e0b;
+}
+
+.segmented-progress__segment--filled.progress--danger,
+.segmented-progress--danger .segmented-progress__segment--filled {
+  background: #ef4444;
+}
+
+/* ==========================================================================
+   Accessibility
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .progress__fill,
+  .circular-progress__fill,
+  .segmented-progress__segment {
+    transition: none;
+  }
+
+  .progress__fill--animated {
+    animation: none;
+  }
+
+  .progress__fill--indeterminate {
+    animation: none;
+    transform: none;
+    width: 50% !important;
+  }
+
+  .circular-progress--indeterminate .circular-progress__svg,
+  .circular-progress--indeterminate .circular-progress__fill {
+    animation: none;
+  }
+}

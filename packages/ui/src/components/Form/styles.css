@@ -1,0 +1,242 @@
+/**
+ * @fileoverview Form Component Styles
+ * @module @ui/components/Form/styles
+ *
+ * Form styling with support for form items, labels,
+ * errors, and descriptions.
+ *
+ * @design-tokens
+ * - Error: #ef5350 (Red)
+ * - Label: rgba(255, 255, 255, 0.9)
+ * - Description: rgba(255, 255, 255, 0.5)
+ * - Spacing: 16px - 24px
+ */
+
+/* ============================================
+   Form Container
+   ============================================ */
+
+.form {
+  width: 100%;
+}
+
+/* ============================================
+   Form Item
+   ============================================ */
+
+.form-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+
+.form-item:last-child {
+  margin-bottom: 0;
+}
+
+.form-item__control {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* ============================================
+   Form Label
+   ============================================ */
+
+.form-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--form-label-color, rgba(255, 255, 255, 0.9));
+  line-height: 1.4;
+}
+
+.form-label__required {
+  color: var(--form-required-color, #ef5350);
+  margin-left: 2px;
+}
+
+/* ============================================
+   Form Error
+   ============================================ */
+
+.form-error {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--form-error-color, #ef5350);
+  line-height: 1.4;
+  animation: form-error-in 0.2s ease;
+}
+
+@keyframes form-error-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.form-error__icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.form-error__text {
+  flex: 1;
+}
+
+/* ============================================
+   Form Description
+   ============================================ */
+
+.form-description {
+  font-size: 12px;
+  color: var(--form-description-color, rgba(255, 255, 255, 0.5));
+  line-height: 1.5;
+}
+
+/* ============================================
+   Form Divider
+   ============================================ */
+
+.form-divider {
+  height: 1px;
+  background: var(--form-divider-bg, rgba(255, 255, 255, 0.1));
+  margin: 24px 0;
+}
+
+/* ============================================
+   Form Group
+   ============================================ */
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group__title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--form-group-title-color, rgba(255, 255, 255, 0.95));
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--form-divider-bg, rgba(255, 255, 255, 0.1));
+}
+
+.form-group__content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ============================================
+   Form Layout Utilities
+   ============================================ */
+
+.form--inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-end;
+}
+
+.form--inline .form-item {
+  margin-bottom: 0;
+  flex: 1;
+  min-width: 150px;
+}
+
+.form--horizontal .form-item {
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+}
+
+.form--horizontal .form-label {
+  min-width: 100px;
+  margin-bottom: 0;
+}
+
+.form--horizontal .form-item__control {
+  flex: 1;
+}
+
+.form--horizontal .form-error,
+.form--horizontal .form-description {
+  margin-left: 112px;
+}
+
+/* ============================================
+   Form States
+   ============================================ */
+
+.form-item--error .form-label {
+  color: var(--form-error-color, #ef5350);
+}
+
+/* ============================================
+   Light Theme
+   ============================================ */
+
+:root[data-theme='light'] .form {
+  --form-label-color: rgba(0, 0, 0, 0.87);
+  --form-required-color: #ef5350;
+  --form-error-color: #ef5350;
+  --form-description-color: rgba(0, 0, 0, 0.5);
+  --form-divider-bg: rgba(0, 0, 0, 0.1);
+  --form-group-title-color: rgba(0, 0, 0, 0.87);
+}
+
+/* ============================================
+   Accessibility
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .form-error {
+    animation: none;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .form-label {
+    font-weight: 600;
+  }
+
+  .form-error {
+    font-weight: 500;
+    background: rgba(239, 83, 80, 0.1);
+    padding: 4px 8px;
+    border-radius: 4px;
+  }
+}
+
+/* ============================================
+   Responsive Design
+   ============================================ */
+
+@media (max-width: 640px) {
+  .form--horizontal .form-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .form--horizontal .form-label {
+    min-width: auto;
+  }
+
+  .form--horizontal .form-error,
+  .form--horizontal .form-description {
+    margin-left: 0;
+  }
+}

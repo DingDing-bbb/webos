@@ -1,0 +1,225 @@
+/**
+ * @fileoverview Textarea Component Styles
+ * @module @ui/components/Textarea/styles
+ *
+ * Textarea styling with support for auto-resize, character count,
+ * and various states.
+ *
+ * @design-tokens
+ * - Primary: #42a5f5 (Blue)
+ * - Error: #ef5350 (Red)
+ * - Success: #4caf50 (Green)
+ * - Border radius: 8px
+ * - Transitions: 0.2s ease
+ */
+
+/* ============================================
+   Base Textarea Container
+   ============================================ */
+
+.textarea {
+  display: inline-flex;
+  flex-direction: column;
+  position: relative;
+  width: 100%;
+  background: var(--textarea-bg, rgba(255, 255, 255, 0.08));
+  border: 1px solid var(--textarea-border, rgba(255, 255, 255, 0.12));
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  color: var(--textarea-color, inherit);
+}
+
+.textarea:hover:not(.textarea--disabled):not(.textarea--readonly) {
+  border-color: var(--textarea-border-hover, rgba(255, 255, 255, 0.2));
+}
+
+.textarea:focus-within:not(.textarea--disabled):not(.textarea--readonly) {
+  border-color: var(--textarea-focus-border, rgba(66, 165, 245, 0.6));
+  box-shadow: 0 0 0 3px var(--textarea-focus-shadow, rgba(66, 165, 245, 0.15));
+  background: var(--textarea-focus-bg, rgba(255, 255, 255, 0.1));
+}
+
+/* ============================================
+   Sizes
+   ============================================ */
+
+.textarea--sm {
+  font-size: 13px;
+}
+
+.textarea--sm .textarea__field {
+  padding: 8px 10px;
+}
+
+.textarea--md {
+  font-size: 14px;
+}
+
+.textarea--md .textarea__field {
+  padding: 10px 12px;
+}
+
+.textarea--lg {
+  font-size: 16px;
+}
+
+.textarea--lg .textarea__field {
+  padding: 12px 16px;
+}
+
+/* ============================================
+   Textarea Field
+   ============================================ */
+
+.textarea__field {
+  width: 100%;
+  min-height: 80px;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.textarea--auto-resize .textarea__field {
+  resize: none;
+  overflow: hidden;
+}
+
+.textarea__field::placeholder {
+  color: var(--textarea-placeholder, rgba(255, 255, 255, 0.4));
+}
+
+.textarea__field:disabled {
+  cursor: not-allowed;
+}
+
+.textarea__field[readonly] {
+  cursor: default;
+}
+
+/* ============================================
+   Character Count
+   ============================================ */
+
+.textarea__count {
+  padding: 6px 10px;
+  font-size: 12px;
+  text-align: right;
+  color: var(--textarea-count-color, rgba(255, 255, 255, 0.5));
+  background: var(--textarea-count-bg, rgba(255, 255, 255, 0.02));
+  border-top: 1px solid var(--textarea-count-border, rgba(255, 255, 255, 0.06));
+  border-radius: 0 0 7px 7px;
+  margin: -1px;
+}
+
+.textarea__count--over {
+  color: var(--textarea-count-over-color, #ef5350);
+  background: var(--textarea-count-over-bg, rgba(239, 83, 80, 0.1));
+}
+
+/* ============================================
+   States
+   ============================================ */
+
+/* Disabled */
+.textarea--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: var(--textarea-disabled-bg, rgba(255, 255, 255, 0.04));
+}
+
+.textarea--disabled .textarea__field {
+  cursor: not-allowed;
+}
+
+/* Readonly */
+.textarea--readonly {
+  background: var(--textarea-readonly-bg, rgba(255, 255, 255, 0.04));
+}
+
+/* Error */
+.textarea--error {
+  border-color: var(--textarea-error-border, rgba(239, 83, 80, 0.6));
+  background: var(--textarea-error-bg, rgba(239, 83, 80, 0.05));
+}
+
+.textarea--error:hover:not(.textarea--disabled) {
+  border-color: var(--textarea-error-border-hover, rgba(239, 83, 80, 0.8));
+}
+
+.textarea--error:focus-within:not(.textarea--disabled) {
+  border-color: var(--textarea-error-border, #ef5350);
+  box-shadow: 0 0 0 3px var(--textarea-error-shadow, rgba(239, 83, 80, 0.15));
+}
+
+/* Success */
+.textarea--success {
+  border-color: var(--textarea-success-border, rgba(76, 175, 80, 0.6));
+  background: var(--textarea-success-bg, rgba(76, 175, 80, 0.05));
+}
+
+.textarea--success:hover:not(.textarea--disabled) {
+  border-color: var(--textarea-success-border-hover, rgba(76, 175, 80, 0.8));
+}
+
+.textarea--success:focus-within:not(.textarea--disabled) {
+  border-color: var(--textarea-success-border, #4caf50);
+  box-shadow: 0 0 0 3px var(--textarea-success-shadow, rgba(76, 175, 80, 0.15));
+}
+
+/* ============================================
+   Light Theme
+   ============================================ */
+
+:root[data-theme='light'] .textarea {
+  --textarea-bg: rgba(0, 0, 0, 0.04);
+  --textarea-border: rgba(0, 0, 0, 0.12);
+  --textarea-border-hover: rgba(0, 0, 0, 0.2);
+  --textarea-focus-border: rgba(66, 165, 245, 0.6);
+  --textarea-focus-shadow: rgba(66, 165, 245, 0.15);
+  --textarea-focus-bg: rgba(0, 0, 0, 0.06);
+  --textarea-color: rgba(0, 0, 0, 0.87);
+  --textarea-placeholder: rgba(0, 0, 0, 0.4);
+  --textarea-count-color: rgba(0, 0, 0, 0.5);
+  --textarea-count-bg: rgba(0, 0, 0, 0.02);
+  --textarea-count-border: rgba(0, 0, 0, 0.06);
+  --textarea-count-over-color: #ef5350;
+  --textarea-count-over-bg: rgba(239, 83, 80, 0.1);
+  --textarea-disabled-bg: rgba(0, 0, 0, 0.02);
+  --textarea-readonly-bg: rgba(0, 0, 0, 0.02);
+  --textarea-error-border: rgba(239, 83, 80, 0.6);
+  --textarea-error-bg: rgba(239, 83, 80, 0.05);
+  --textarea-success-border: rgba(76, 175, 80, 0.6);
+  --textarea-success-bg: rgba(76, 175, 80, 0.05);
+}
+
+/* ============================================
+   Accessibility
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .textarea {
+    transition: none;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .textarea {
+    border-width: 2px;
+  }
+
+  .textarea__count {
+    font-weight: 600;
+  }
+}
+
+/* Focus visible for keyboard navigation */
+.textarea:focus-within:focus-visible {
+  outline: 2px solid var(--textarea-focus-border, #42a5f5);
+  outline-offset: 2px;
+}

@@ -102,8 +102,6 @@ export class PersistentFileSystem {
    * 创建默认目录结构
    */
   private createDefaultStructure(): void {
-    const now = new Date().toISOString();
-    
     // 根目录
     this.insertNode({
       path: '/',
@@ -357,7 +355,6 @@ export class PersistentFileSystem {
     // 解析权限位
     const permStr = perms.substring(1); // 去掉类型位
     const ownerPerms = permStr.substring(0, 3);
-    const groupPerms = permStr.substring(3, 6);
     const otherPerms = permStr.substring(6, 9);
     
     const relevantPerms = isOwner ? ownerPerms : otherPerms;

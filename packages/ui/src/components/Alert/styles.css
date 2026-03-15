@@ -1,0 +1,449 @@
+/**
+ * Alert Component Styles
+ * BEM naming convention
+ * Supports light and dark themes
+ */
+
+/* ==========================================================================
+   Alert
+   ========================================================================== */
+
+.alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.alert--full {
+  width: 100%;
+}
+
+/* Type variants */
+.alert--info {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1e40af;
+}
+
+.alert--success {
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: #047857;
+}
+
+.alert--warning {
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  color: #b45309;
+}
+
+.alert--error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .alert--info {
+    background: rgba(59, 130, 246, 0.15);
+    border-color: rgba(59, 130, 246, 0.3);
+    color: #93c5fd;
+  }
+
+  .alert--success {
+    background: rgba(16, 185, 129, 0.15);
+    border-color: rgba(16, 185, 129, 0.3);
+    color: #6ee7b7;
+  }
+
+  .alert--warning {
+    background: rgba(245, 158, 11, 0.15);
+    border-color: rgba(245, 158, 11, 0.3);
+    color: #fcd34d;
+  }
+
+  .alert--error {
+    background: rgba(239, 68, 68, 0.15);
+    border-color: rgba(239, 68, 68, 0.3);
+    color: #fca5a5;
+  }
+}
+
+/* ==========================================================================
+   Alert Icon
+   ========================================================================== */
+
+.alert__icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+}
+
+.alert__icon-svg {
+  width: 20px;
+  height: 20px;
+}
+
+.alert--info .alert__icon-svg {
+  color: #3b82f6;
+}
+
+.alert--success .alert__icon-svg {
+  color: #10b981;
+}
+
+.alert--warning .alert__icon-svg {
+  color: #f59e0b;
+}
+
+.alert--error .alert__icon-svg {
+  color: #ef4444;
+}
+
+/* ==========================================================================
+   Alert Content
+   ========================================================================== */
+
+.alert__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.alert__title {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.alert__message {
+  opacity: 0.9;
+}
+
+.alert__action {
+  margin-top: 12px;
+}
+
+/* ==========================================================================
+   Alert Close Button
+   ========================================================================== */
+
+.alert__close {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+  color: inherit;
+}
+
+.alert__close:hover {
+  opacity: 1;
+}
+
+.alert__close:focus {
+  outline: none;
+  opacity: 1;
+}
+
+.alert__close svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ==========================================================================
+   Alert Action Button
+   ========================================================================== */
+
+.alert__action-button {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.alert__action-button--primary {
+  background: currentColor;
+  color: inherit;
+}
+
+.alert__action-button--primary {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.alert__action-button--primary:hover {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.alert__action-button--secondary {
+  background: transparent;
+  border: 1px solid currentColor;
+  opacity: 0.7;
+}
+
+.alert__action-button--secondary:hover {
+  opacity: 1;
+}
+
+/* ==========================================================================
+   Alert Link
+   ========================================================================== */
+
+.alert__link {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.alert__link:hover {
+  text-decoration-thickness: 2px;
+}
+
+.alert__link:focus {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+/* ==========================================================================
+   Inline Alert
+   ========================================================================== */
+
+.inline-alert {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.inline-alert--info {
+  background: #eff6ff;
+  color: #1e40af;
+}
+
+.inline-alert--success {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.inline-alert--warning {
+  background: #fffbeb;
+  color: #b45309;
+}
+
+.inline-alert--error {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+@media (prefers-color-scheme: dark) {
+  .inline-alert--info {
+    background: rgba(59, 130, 246, 0.2);
+    color: #93c5fd;
+  }
+
+  .inline-alert--success {
+    background: rgba(16, 185, 129, 0.2);
+    color: #6ee7b7;
+  }
+
+  .inline-alert--warning {
+    background: rgba(245, 158, 11, 0.2);
+    color: #fcd34d;
+  }
+
+  .inline-alert--error {
+    background: rgba(239, 68, 68, 0.2);
+    color: #fca5a5;
+  }
+}
+
+/* ==========================================================================
+   Alert Group
+   ========================================================================== */
+
+.alert-group {
+  display: flex;
+}
+
+.alert-group--vertical {
+  flex-direction: column;
+  gap: 12px;
+}
+
+.alert-group--horizontal {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* ==========================================================================
+   Banner Alert
+   ========================================================================== */
+
+.banner-alert {
+  width: 100%;
+}
+
+.banner-alert--info {
+  background: #eff6ff;
+  border-bottom: 1px solid #bfdbfe;
+  color: #1e40af;
+}
+
+.banner-alert--success {
+  background: #ecfdf5;
+  border-bottom: 1px solid #a7f3d0;
+  color: #047857;
+}
+
+.banner-alert--warning {
+  background: #fffbeb;
+  border-bottom: 1px solid #fde68a;
+  color: #b45309;
+}
+
+.banner-alert--error {
+  background: #fef2f2;
+  border-bottom: 1px solid #fecaca;
+  color: #b91c1c;
+}
+
+@media (prefers-color-scheme: dark) {
+  .banner-alert--info {
+    background: rgba(59, 130, 246, 0.15);
+    border-bottom-color: rgba(59, 130, 246, 0.3);
+    color: #93c5fd;
+  }
+
+  .banner-alert--success {
+    background: rgba(16, 185, 129, 0.15);
+    border-bottom-color: rgba(16, 185, 129, 0.3);
+    color: #6ee7b7;
+  }
+
+  .banner-alert--warning {
+    background: rgba(245, 158, 11, 0.15);
+    border-bottom-color: rgba(245, 158, 11, 0.3);
+    color: #fcd34d;
+  }
+
+  .banner-alert--error {
+    background: rgba(239, 68, 68, 0.15);
+    border-bottom-color: rgba(239, 68, 68, 0.3);
+    color: #fca5a5;
+  }
+}
+
+.banner-alert__container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 12px 16px;
+}
+
+.banner-alert__icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+}
+
+.banner-alert__icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.banner-alert--info .banner-alert__icon svg {
+  color: #3b82f6;
+}
+
+.banner-alert--success .banner-alert__icon svg {
+  color: #10b981;
+}
+
+.banner-alert--warning .banner-alert__icon svg {
+  color: #f59e0b;
+}
+
+.banner-alert--error .banner-alert__icon svg {
+  color: #ef4444;
+}
+
+.banner-alert__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.banner-alert__title {
+  font-weight: 600;
+}
+
+.banner-alert__message {
+  font-size: 14px;
+}
+
+.banner-alert__action {
+  flex-shrink: 0;
+}
+
+.banner-alert__close {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+  color: inherit;
+}
+
+.banner-alert__close:hover {
+  opacity: 1;
+}
+
+.banner-alert__close svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ==========================================================================
+   Accessibility
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .alert,
+  .banner-alert {
+    transition: none;
+  }
+}

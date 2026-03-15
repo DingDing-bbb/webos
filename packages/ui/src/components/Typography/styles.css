@@ -1,0 +1,335 @@
+/**
+ * @fileoverview Typography Component Styles
+ * @module @ui/components/Typography/styles
+ *
+ * Typography styles with BEM naming convention.
+ * Supports multiple elements, variants, colors, and truncation.
+ */
+
+/* ============================================
+   Base Typography
+   ============================================ */
+
+.os-typography {
+  margin: 0;
+  padding: 0;
+  font-family: var(--os-font-family);
+  color: var(--os-color-text);
+  line-height: var(--os-line-height-normal);
+}
+
+/* ============================================
+   Heading Styles
+   ============================================ */
+
+.os-typography--h1 {
+  font-size: var(--os-font-size-4xl);
+  font-weight: var(--os-font-weight-bold);
+  line-height: var(--os-line-height-tight);
+  letter-spacing: -0.02em;
+}
+
+.os-typography--h2 {
+  font-size: var(--os-font-size-3xl);
+  font-weight: var(--os-font-weight-bold);
+  line-height: var(--os-line-height-tight);
+  letter-spacing: -0.015em;
+}
+
+.os-typography--h3 {
+  font-size: var(--os-font-size-2xl);
+  font-weight: var(--os-font-weight-semibold);
+  line-height: var(--os-line-height-tight);
+  letter-spacing: -0.01em;
+}
+
+.os-typography--h4 {
+  font-size: var(--os-font-size-xl);
+  font-weight: var(--os-font-weight-semibold);
+  line-height: var(--os-line-height-tight);
+}
+
+.os-typography--h5 {
+  font-size: var(--os-font-size-lg);
+  font-weight: var(--os-font-weight-medium);
+  line-height: var(--os-line-height-normal);
+}
+
+.os-typography--h6 {
+  font-size: var(--os-font-size-md);
+  font-weight: var(--os-font-weight-medium);
+  line-height: var(--os-line-height-normal);
+}
+
+/* ============================================
+   Body Styles
+   ============================================ */
+
+.os-typography--body {
+  font-size: var(--os-font-size-md);
+  font-weight: var(--os-font-weight-normal);
+  line-height: var(--os-line-height-relaxed);
+}
+
+.os-typography--body-sm {
+  font-size: var(--os-font-size-sm);
+  font-weight: var(--os-font-weight-normal);
+  line-height: var(--os-line-height-relaxed);
+}
+
+.os-typography--body-lg {
+  font-size: var(--os-font-size-lg);
+  font-weight: var(--os-font-weight-normal);
+  line-height: var(--os-line-height-relaxed);
+}
+
+/* ============================================
+   Label Styles
+   ============================================ */
+
+.os-typography--label {
+  font-size: var(--os-font-size-sm);
+  font-weight: var(--os-font-weight-medium);
+  line-height: var(--os-line-height-normal);
+  display: inline-block;
+}
+
+.os-typography--label-lg {
+  font-size: var(--os-font-size-md);
+  font-weight: var(--os-font-weight-medium);
+  line-height: var(--os-line-height-normal);
+}
+
+/* ============================================
+   Caption & Overline Styles
+   ============================================ */
+
+.os-typography--caption {
+  font-size: var(--os-font-size-xs);
+  font-weight: var(--os-font-weight-normal);
+  line-height: var(--os-line-height-normal);
+  color: var(--os-color-text-secondary);
+}
+
+.os-typography--overline {
+  font-size: var(--os-font-size-2xs);
+  font-weight: var(--os-font-weight-semibold);
+  line-height: var(--os-line-height-normal);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--os-color-text-secondary);
+}
+
+/* ============================================
+   Code Styles
+   ============================================ */
+
+.os-typography--code {
+  font-family: var(--os-font-family-mono);
+  font-size: 0.9em;
+  font-weight: var(--os-font-weight-normal);
+  background: var(--os-color-bg-secondary);
+  padding: 0.125em 0.375em;
+  border-radius: var(--os-radius-sm);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ============================================
+   Color Variants
+   ============================================ */
+
+.os-typography--primary {
+  color: var(--os-color-primary);
+}
+
+.os-typography--secondary {
+  color: var(--os-color-text-secondary);
+}
+
+.os-typography--muted {
+  color: var(--os-color-text-muted);
+}
+
+.os-typography--danger {
+  color: var(--os-color-danger);
+}
+
+.os-typography--success {
+  color: var(--os-color-success);
+}
+
+.os-typography--warning {
+  color: var(--os-color-warning);
+}
+
+.os-typography--inherit {
+  color: inherit;
+}
+
+.os-typography--white {
+  color: var(--os-color-white);
+}
+
+.os-typography--black {
+  color: var(--os-color-black);
+}
+
+/* ============================================
+   Truncation
+   ============================================ */
+
+.os-typography--truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+  display: block;
+}
+
+/* Multi-line truncation (requires line-clamp) */
+.os-typography--clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.os-typography--clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.os-typography--clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.os-typography--clamp-4 {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ============================================
+   Text Alignment
+   ============================================ */
+
+.os-typography--align-left {
+  text-align: left;
+}
+
+.os-typography--align-center {
+  text-align: center;
+}
+
+.os-typography--align-right {
+  text-align: right;
+}
+
+.os-typography--align-justify {
+  text-align: justify;
+}
+
+/* ============================================
+   Text Transform
+   ============================================ */
+
+.os-typography--uppercase {
+  text-transform: uppercase;
+}
+
+.os-typography--lowercase {
+  text-transform: lowercase;
+}
+
+.os-typography--capitalize {
+  text-transform: capitalize;
+}
+
+/* ============================================
+   Font Weight
+   ============================================ */
+
+.os-typography--weight-light {
+  font-weight: var(--os-font-weight-light);
+}
+
+.os-typography--weight-normal {
+  font-weight: var(--os-font-weight-normal);
+}
+
+.os-typography--weight-medium {
+  font-weight: var(--os-font-weight-medium);
+}
+
+.os-typography--weight-semibold {
+  font-weight: var(--os-font-weight-semibold);
+}
+
+.os-typography--weight-bold {
+  font-weight: var(--os-font-weight-bold);
+}
+
+/* ============================================
+   Font Style
+   ============================================ */
+
+.os-typography--italic {
+  font-style: italic;
+}
+
+/* ============================================
+   Text Decoration
+   ============================================ */
+
+.os-typography--underline {
+  text-decoration: underline;
+}
+
+.os-typography--line-through {
+  text-decoration: line-through;
+}
+
+.os-typography--no-decoration {
+  text-decoration: none;
+}
+
+/* ============================================
+   No Wrap
+   ============================================ */
+
+.os-typography--no-wrap {
+  white-space: nowrap;
+}
+
+/* ============================================
+   Word Break
+   ============================================ */
+
+.os-typography--break-all {
+  word-break: break-all;
+}
+
+.os-typography--break-word {
+  word-break: break-word;
+}
+
+/* ============================================
+   Dark Theme Adjustments
+   ============================================ */
+
+[data-theme="dark"] {
+  .os-typography {
+    color: var(--os-color-text);
+  }
+  
+  .os-typography--code {
+    background: var(--os-color-bg-tertiary);
+  }
+}

@@ -1,0 +1,242 @@
+/**
+ * @fileoverview Icon Component Styles
+ * @module @ui/components/Icon/styles
+ *
+ * Icon styles with BEM naming convention.
+ * Supports sizes, colors, and rotation.
+ */
+
+/* ============================================
+   Base Icon
+   ============================================ */
+
+.os-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  vertical-align: middle;
+  line-height: 1;
+  
+  /* Smooth transitions */
+  transition: 
+    color var(--os-transition-fast),
+    transform var(--os-transition-fast);
+}
+
+/* SVG wrapper */
+.os-icon__svg {
+  width: 1em;
+  height: 1em;
+  fill: currentColor;
+  stroke: none;
+  
+  /* Prevent layout shift */
+  display: block;
+}
+
+/* ============================================
+   Size Variants
+   ============================================ */
+
+.os-icon--xs {
+  font-size: var(--os-font-size-sm);
+  width: var(--os-font-size-sm);
+  height: var(--os-font-size-sm);
+}
+
+.os-icon--sm {
+  font-size: var(--os-font-size-md);
+  width: var(--os-font-size-md);
+  height: var(--os-font-size-md);
+}
+
+.os-icon--md {
+  font-size: var(--os-font-size-lg);
+  width: var(--os-font-size-lg);
+  height: var(--os-font-size-lg);
+}
+
+.os-icon--lg {
+  font-size: var(--os-font-size-xl);
+  width: var(--os-font-size-xl);
+  height: var(--os-font-size-xl);
+}
+
+.os-icon--xl {
+  font-size: var(--os-font-size-2xl);
+  width: var(--os-font-size-2xl);
+  height: var(--os-font-size-2xl);
+}
+
+/* ============================================
+   Color Variants
+   ============================================ */
+
+.os-icon--primary {
+  color: var(--os-color-primary);
+}
+
+.os-icon--secondary {
+  color: var(--os-color-text-secondary);
+}
+
+.os-icon--muted {
+  color: var(--os-color-text-muted);
+}
+
+.os-icon--danger {
+  color: var(--os-color-danger);
+}
+
+.os-icon--success {
+  color: var(--os-color-success);
+}
+
+.os-icon--warning {
+  color: var(--os-color-warning);
+}
+
+.os-icon--inherit {
+  color: inherit;
+}
+
+.os-icon--white {
+  color: var(--os-color-white);
+}
+
+.os-icon--black {
+  color: var(--os-color-black);
+}
+
+/* ============================================
+   Rotation
+   ============================================ */
+
+.os-icon--rotate-45 {
+  transform: rotate(45deg);
+}
+
+.os-icon--rotate-90 {
+  transform: rotate(90deg);
+}
+
+.os-icon--rotate-135 {
+  transform: rotate(135deg);
+}
+
+.os-icon--rotate-180 {
+  transform: rotate(180deg);
+}
+
+.os-icon--rotate-225 {
+  transform: rotate(225deg);
+}
+
+.os-icon--rotate-270 {
+  transform: rotate(270deg);
+}
+
+.os-icon--rotate-315 {
+  transform: rotate(315deg);
+}
+
+/* Spin animation */
+.os-icon--spin {
+  animation: os-icon-spin 1s linear infinite;
+}
+
+@keyframes os-icon-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Pulse animation */
+.os-icon--pulse {
+  animation: os-icon-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes os-icon-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* ============================================
+   Icon States
+   ============================================ */
+
+.os-icon--interactive {
+  cursor: pointer;
+  
+  &:hover {
+    color: var(--os-color-primary);
+  }
+  
+  &:active {
+    transform: scale(0.9);
+  }
+}
+
+/* ============================================
+   Common Icons
+   ============================================ */
+
+/* Close/X icon */
+.os-icon--close {
+  stroke-width: 2;
+}
+
+/* Check icon */
+.os-icon--check {
+  stroke-width: 2;
+}
+
+/* Arrow icons */
+.os-icon--arrow-up,
+.os-icon--arrow-down,
+.os-icon--arrow-left,
+.os-icon--arrow-right {
+  stroke-width: 2;
+}
+
+/* ============================================
+   Inline with Text
+   ============================================ */
+
+.os-icon--inline {
+  position: relative;
+  top: -0.0625em; /* Slight adjustment for better alignment */
+  margin-right: var(--os-spacing-xs);
+}
+
+.os-icon--inline-end {
+  position: relative;
+  top: -0.0625em;
+  margin-left: var(--os-spacing-xs);
+}
+
+/* ============================================
+   Dark Theme Adjustments
+   ============================================ */
+
+[data-theme="dark"] {
+  .os-icon--primary {
+    color: var(--os-color-primary);
+  }
+  
+  .os-icon--secondary {
+    color: var(--os-color-text-secondary);
+  }
+  
+  .os-icon--muted {
+    color: var(--os-color-text-muted);
+  }
+}

@@ -1,0 +1,269 @@
+/**
+ * @fileoverview Tag Component Styles
+ * @module @ui/components/Tag/styles
+ *
+ * BEM naming convention:
+ * - .tag (Block)
+ * - .tag__icon, .tag__content, .tag__close (Elements)
+ * - .tag--sm, .tag--md (Modifiers)
+ * - .tag--solid, .tag--subtle, .tag--outline (Modifiers)
+ */
+
+/* ============================================
+   Tag Block
+   ============================================ */
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 500;
+  white-space: nowrap;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  vertical-align: middle;
+  line-height: 1.4;
+  box-sizing: border-box;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+/* Sizes */
+.tag--sm {
+  height: 22px;
+  padding: 0 6px;
+  font-size: 11px;
+}
+
+.tag--md {
+  height: 26px;
+  padding: 0 8px;
+  font-size: 12px;
+}
+
+/* ============================================
+   Tag Elements
+   ============================================ */
+
+.tag__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.tag--sm .tag__icon {
+  width: 12px;
+  height: 12px;
+}
+
+.tag--md .tag__icon {
+  width: 14px;
+  height: 14px;
+}
+
+.tag__content {
+  line-height: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tag__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin-left: 2px;
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  border-radius: 50%;
+}
+
+.tag--sm .tag__close {
+  width: 14px;
+  height: 14px;
+  font-size: 10px;
+}
+
+.tag--md .tag__close {
+  width: 16px;
+  height: 16px;
+  font-size: 11px;
+}
+
+.tag__close:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.tag__close:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 1px;
+}
+
+/* ============================================
+   Tag States
+   ============================================ */
+
+.tag--clickable {
+  cursor: pointer;
+}
+
+.tag--clickable:hover {
+  filter: brightness(0.95);
+}
+
+.tag--clickable:active {
+  filter: brightness(0.9);
+}
+
+.tag--clickable:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+.tag--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ============================================
+   Tag Variant Styles
+   ============================================ */
+
+.tag--outline {
+  background-color: transparent !important;
+  border-width: 1px;
+  border-style: solid;
+}
+
+.tag--subtle {
+  border-color: transparent;
+}
+
+.tag--solid {
+  border-color: transparent;
+}
+
+/* ============================================
+   Tag Group
+   ============================================ */
+
+.tag-group {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+.tag-group--wrap {
+  flex-wrap: wrap;
+}
+
+/* Gap variants */
+.tag-group--xs {
+  gap: 4px;
+}
+
+.tag-group--sm {
+  gap: 6px;
+}
+
+.tag-group--md {
+  gap: 8px;
+}
+
+.tag-group--lg {
+  gap: 12px;
+}
+
+/* ============================================
+   Dark Theme Support
+   ============================================ */
+
+[data-theme='dark'] .tag--subtle.tag--primary {
+  background-color: rgba(59, 130, 246, 0.2);
+  color: #93c5fd;
+}
+
+[data-theme='dark'] .tag--subtle.tag--success {
+  background-color: rgba(34, 197, 94, 0.2);
+  color: #86efac;
+}
+
+[data-theme='dark'] .tag--subtle.tag--warning {
+  background-color: rgba(245, 158, 11, 0.2);
+  color: #fcd34d;
+}
+
+[data-theme='dark'] .tag--subtle.tag--error {
+  background-color: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+}
+
+[data-theme='dark'] .tag--subtle.tag--neutral {
+  background-color: rgba(107, 114, 128, 0.2);
+  color: #d1d5db;
+}
+
+[data-theme='dark'] .tag--outline {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* ============================================
+   Animation
+   ============================================ */
+
+.tag {
+  animation: tag-appear 0.2s ease-out;
+}
+
+@keyframes tag-appear {
+  0% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Remove animation when closing */
+.tag--closing {
+  animation: tag-disappear 0.15s ease-in forwards;
+}
+
+@keyframes tag-disappear {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
+/* ============================================
+   Accessibility
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .tag,
+  .tag__close,
+  .tag--closing {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* High contrast mode */
+@media (forced-colors: active) {
+  .tag {
+    border: 1px solid currentColor;
+  }
+}
