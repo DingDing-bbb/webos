@@ -132,6 +132,8 @@ const App: React.FC = () => {
           secure?: { 
             isReady: () => boolean; 
             isInitialized: () => Promise<boolean>;
+            hasDatabase: () => Promise<boolean>;
+            hasDatabaseSync: () => boolean;
             isLocked: () => boolean;
             getCurrentUser: () => { username: string; displayName?: string } | null;
             getUserList: () => Promise<Array<{ username: string; displayName: string }>>;
@@ -139,31 +141,48 @@ const App: React.FC = () => {
         }).secure;
         
         if (!secure || !secure.isReady()) {
-          console.warn('[WebOS] Secure user manager not ready');
+          console.warn('[WebOS] Secure user manager not ready, waiting...');
           // 等待一下再检查
           setTimeout(() => {
-            if (window.webos?.user.hasUsers()) {
-              const users = window.webos.user.getRealUsers().map(u => ({
-                username: u.username,
-                displayName: u.displayName || u.username
-              }));
-              setLockScreenUsers(users);
+            // 使用 hasDatabaseSync 来检查是否有数据库（即使锁定也能检查）
+            const hasDb = secure?.hasDatabaseSync?.() ?? false;
+            if (hasDb) {
+              // 数据库存在，显示锁屏
+              const savedUsername = localStorage.getItem('webos-last-username');
+              const savedDisplayName = localStorage.getItem('webos-last-displayname') || savedUsername;
+              if (savedUsername) {
+                setLockScreenUsers([{ username: savedUsername, displayName: savedDisplayName || savedUsername }]);
+              } else {
+                setLockScreenUsers([]);
+              }
               setShowLockScreen(true);
             } else {
-              // 没有用户，重新 OOBE
-              console.warn('[WebOS] No users found, restarting OOBE...');
-              window.webos?.boot.reset();
-              window.location.reload();
+              // 没有数据库，检查传统用户管理器
+              if (window.webos?.user.hasUsers()) {
+                const users = window.webos.user.getRealUsers().map(u => ({
+                  username: u.username,
+                  displayName: u.displayName || u.username
+                }));
+                setLockScreenUsers(users);
+                setShowLockScreen(true);
+              } else {
+                // 真正没有用户，重新 OOBE
+                console.warn('[WebOS] No database and no users, restarting OOBE...');
+                window.webos?.boot.reset();
+                window.location.reload();
+              }
             }
           }, 500);
           return;
         }
         
-        // 检查是否有用户
-        const hasUsers = await secure.isInitialized();
+        // 检查是否有加密数据库（即使锁定也能检查）
+        const hasDatabase = await secure.hasDatabase();
         
-        if (hasUsers) {
-          // 数据库已初始化但锁定
+        if (hasDatabase) {
+          // 数据库存在，说明用户已设置
+          console.log('[WebOS] Database exists, showing lock screen');
+          
           // 从 localStorage 获取保存的用户名（因为数据库锁定时无法查询）
           const savedUsername = localStorage.getItem('webos-last-username');
           const savedDisplayName = localStorage.getItem('webos-last-displayname') || savedUsername;
@@ -180,22 +199,11 @@ const App: React.FC = () => {
             console.log('[WebOS] No saved username, user will need to enter manually');
           }
           
-          // 有用户，检查是否锁定
-          if (secure.isLocked()) {
-            // 系统锁定，显示登录界面
-            setShowLockScreen(true);
-          } else {
-            // 已解锁（可能是之前保存的会话）
-            const currentUser = secure.getCurrentUser();
-            if (currentUser) {
-              setIsLoggedIn(true);
-            } else {
-              setShowLockScreen(true);
-            }
-          }
+          // 数据库存在且锁定，显示登录界面
+          setShowLockScreen(true);
         } else {
-          // 没有用户且 OOBE 已完成，可能是数据损坏
-          console.warn('[WebOS] No users found but OOBE marked as complete. Re-initializing...');
+          // 没有数据库且 OOBE 已完成 - 这是错误状态
+          console.warn('[WebOS] No database found but OOBE marked as complete. Re-initializing...');
           window.webos?.boot.reset();
           window.location.reload();
         }
@@ -296,8 +304,8 @@ const App: React.FC = () => {
         const deltaX = moveTouch.clientX - startX;
         const deltaY = moveTouch.clientY - startY;
         
-        windowEl.style.left = (startLeft + deltaX) + 'px';
-        windowEl.style.top = (startTop + deltaY) + 'px';
+        windowEl.style.left = `${startLeft + deltaX}px`;
+        windowEl.style.top = `${startTop + deltaY}px`;
       };
       
       const handleTouchEnd = () => {
@@ -379,6 +387,7 @@ const App: React.FC = () => {
       if (!result.success) {
         console.error('[WebOS] Failed to create user:', result.error);
         // 显示错误给用户
+        // eslint-disable-next-line no-alert
         alert(`创建用户失败: ${result.error || '未知错误'}`);
         return;
       }
@@ -528,18 +537,17 @@ const App: React.FC = () => {
       }
       
       return result;
-    } else {
-      // 回退到旧的用户管理器
-      const result = window.webos.user.login(username, password);
-      
-      if (result.success) {
-        localStorage.setItem('webos-last-username', username);
-        setShowLockScreen(false);
-        setIsLoggedIn(true);
-      }
-      
-      return result;
     }
+    // 回退到旧的用户管理器
+    const result = window.webos.user.login(username, password);
+    
+    if (result.success) {
+      localStorage.setItem('webos-last-username', username);
+      setShowLockScreen(false);
+      setIsLoggedIn(true);
+    }
+    
+    return result;
   };
 
   // 开始菜单应用列表 - 从注册中心获取
@@ -685,7 +693,9 @@ const App: React.FC = () => {
 };
 
 // 渲染应用
-const root = createRoot(document.getElementById('root')!);
+const rootElement = document.getElementById('root');
+if (!rootElement) throw new Error('Root element not found');
+const root = createRoot(rootElement);
 root.render(
   <React.StrictMode>
     <App />

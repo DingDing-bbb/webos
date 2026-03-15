@@ -57,7 +57,6 @@ export const SecureLoginScreen: React.FC<SecureLoginScreenProps> = ({ onLoginSuc
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [visibleUsers, setVisibleUsers] = useState<Array<{ username: string; displayName: string; isRoot: boolean }>>([]);
-  const [allUserCount, setAllUserCount] = useState(0);
   const [showUserInput, setShowUserInput] = useState(false);
   const [showSwitchAccount, setShowSwitchAccount] = useState(false);
   const [devMode, setDevMode] = useState(false);
@@ -74,7 +73,6 @@ export const SecureLoginScreen: React.FC<SecureLoginScreenProps> = ({ onLoginSuc
     const totalCount = await secureUserManager.getTotalUserCount();
     
     setVisibleUsers(userList);
-    setAllUserCount(totalCount);
     
     if (userList.length === 1) {
       setUsername(userList[0].username);

@@ -216,6 +216,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
       document.addEventListener('mousedown', handleClickOutside);
       return () => document.removeEventListener('mousedown', handleClickOutside);
     }
+    return undefined;
   }, [trigger, state.visible, hide]);
 
   // Cleanup on unmount

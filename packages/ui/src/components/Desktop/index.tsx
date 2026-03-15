@@ -41,7 +41,10 @@ export type WallpaperType =
   | 'ocean'
   | 'forest'
   | 'catgirl-static'
-  | 'catgirl-animated';
+  | 'catgirl-animated'
+  | 'neko-image'
+  | 'amashiro-nachoneko'
+  | 'abstract-dreams';
 
 /**
  * Wallpaper configuration
@@ -128,6 +131,9 @@ interface DesktopProps {
 const PRESET_WALLPAPER_URLS: Record<string, string> = {
   'catgirl-static': '/wallpapers/catgirl-static.png',
   'catgirl-animated': '/wallpapers/catgirl-animated.mp4',
+  'neko-image': '/wallpapers/猫娘图片.png',
+  'amashiro-nachoneko': '/wallpapers/甘城&nachoneko.mp4',
+  'abstract-dreams': '/wallpapers/1347935.png',
 };
 
 /** Grid size for icon snapping */
@@ -144,13 +150,21 @@ const STORAGE_KEY = 'webos-desktop-state';
 // Wallpaper Component
 // ============================================================================
 
+/** Video wallpaper types */
+const VIDEO_WALLPAPER_TYPES = ['video', 'catgirl-animated', 'amashiro-nachoneko'] as const;
+
+/** Image wallpaper types */
+const IMAGE_WALLPAPER_TYPES = ['image', 'catgirl-static', 'neko-image', 'abstract-dreams'] as const;
+
 const Wallpaper: React.FC<{ config: WallpaperConfig }> = ({ config }) => {
   const { type, imageUrl, videoUrl, noAnimation } = config;
   const videoRef = useRef<HTMLVideoElement>(null);
 
+  const isVideoType = VIDEO_WALLPAPER_TYPES.includes(type as typeof VIDEO_WALLPAPER_TYPES[number]);
+  const isImageType = IMAGE_WALLPAPER_TYPES.includes(type as typeof IMAGE_WALLPAPER_TYPES[number]);
+
   useEffect(() => {
-    const isVideo = type === 'video' || type === 'catgirl-animated';
-    if (isVideo && videoRef.current) {
+    if (isVideoType && videoRef.current) {
       videoRef.current.play().catch(() => {
         if (videoRef.current) {
           videoRef.current.muted = true;
@@ -158,15 +172,11 @@ const Wallpaper: React.FC<{ config: WallpaperConfig }> = ({ config }) => {
         }
       });
     }
-  }, [type]);
+  }, [type, isVideoType]);
 
-  const actualImageUrl =
-    type === 'catgirl-static' ? PRESET_WALLPAPER_URLS['catgirl-static'] : imageUrl;
-  const actualVideoUrl =
-    type === 'catgirl-animated' ? PRESET_WALLPAPER_URLS['catgirl-animated'] : videoUrl;
-
-  const isVideoType = type === 'video' || type === 'catgirl-animated';
-  const isImageType = type === 'image' || type === 'catgirl-static';
+  // Get preset URL or use custom URL
+  const actualImageUrl = PRESET_WALLPAPER_URLS[type] || imageUrl;
+  const actualVideoUrl = PRESET_WALLPAPER_URLS[type] || videoUrl;
 
   const wallpaperClasses = [
     'os-wallpaper',
@@ -309,12 +319,11 @@ const DesktopIcon: React.FC<DesktopIconProps> = ({
   onContextMenu,
 }) => {
   const iconRef = useRef<HTMLDivElement>(null);
-  const [isDragging, setIsDragging] = useState(false);
 
   return (
     <div
       ref={iconRef}
-      className={`os-desktop-icon ${isSelected ? 'selected' : ''} ${isDragging ? 'dragging' : ''}`}
+      className={`os-desktop-icon ${isSelected ? 'selected' : ''}`}
       style={{
         left: position.x,
         top: position.y,

@@ -4,7 +4,7 @@
  * 基于EventTarget实现的进程间通信，确保消息序列化传输
  */
 
-import type { IPCMessage, ProcessType } from './messages';
+import type { IPCMessage } from './messages';
 
 type MessageHandler = (message: IPCMessage) => void;
 

@@ -189,3 +189,31 @@ Key Files Created:
 - packages/ui/src/components/Icon/index.tsx
 - packages/ui/src/components/Icon/styles.css
 - packages/ui/src/components/index.ts (updated exports)
+
+---
+Task ID: 6
+Agent: Main Agent
+Task: Fix OOBE running on every page reload
+
+Work Log:
+- Identified root cause: localStorage key inconsistency between bootloader and bootManager
+- bootloader.ts used 'webos-oobe-complete' key for OOBE check
+- bootManager.ts used 'webos-boot' key for state persistence
+- Found secondary issue: secure.isInitialized() returns false when database is locked
+- This caused system to incorrectly reset when database existed but was locked
+
+Changes Made:
+1. Fixed bootloader.ts to use 'webos-boot' key consistently (lines 84-85, 150-151, 384-385)
+2. Enhanced bootManager.ts with better error handling and verification
+3. Fixed src/index.tsx auth check to use hasDatabase() instead of isInitialized()
+
+Stage Summary:
+- OOBE state now persists correctly across page reloads
+- localStorage key 'webos-boot' is used consistently
+- Database existence check works even when database is locked
+- System no longer incorrectly resets on reload
+
+Key Files Modified:
+- packages/bootloader/src/index.ts - Fixed localStorage key consistency
+- packages/kernel/src/core/managers/bootManager.ts - Enhanced state persistence
+- src/index.tsx - Fixed auth check logic for locked database

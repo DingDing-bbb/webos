@@ -3,7 +3,7 @@
  * 支持首次设置、密码登录、系统锁定
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import './styles.css';
 
 // ============================================
@@ -145,7 +145,8 @@ export const SecureLockScreen: React.FC<SecureLockScreenProps> = ({
   };
 
   // 处理解锁
-  const _handleUnlock = async (e: React.FormEvent) => {
+  // Note: handleUnlock is currently unused but may be needed for lock screen functionality
+  const handleUnlock = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!onUnlock) return;
 
@@ -164,6 +165,9 @@ export const SecureLockScreen: React.FC<SecureLockScreenProps> = ({
       setIsLoading(false);
     }
   };
+
+  // For future use: unlock button
+  void handleUnlock;
 
   // 选择用户
   const handleSelectUser = (userUsername: string) => {

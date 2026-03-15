@@ -290,6 +290,7 @@ export interface WebOSAPI {
       getEncryptedData: (key: string) => Promise<string | null>;
       resetSystem: (password: string) => Promise<{ success: boolean; error?: string }>;
       resetAndReinit: () => Promise<void>;
+      getTotalUserCount: () => Promise<number>;
       subscribe: (callback: () => void) => () => void;
     };
   };

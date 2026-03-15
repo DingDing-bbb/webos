@@ -363,9 +363,8 @@ export class PersistentFileSystem {
       case 'read': return relevantPerms[0] === 'r';
       case 'write': return relevantPerms[1] === 'w';
       case 'execute': return relevantPerms[2] === 'x';
+      default: return false;
     }
-    
-    return false;
   }
 
   /**

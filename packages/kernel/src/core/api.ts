@@ -174,6 +174,8 @@ export function createWebOSAPI(): WebOSAPI {
       secure: {
         isReady: () => secureUserManager.isReady(),
         isInitialized: () => secureUserManager.isInitialized(),
+        hasDatabase: () => secureUserManager.hasDatabase(),
+        hasDatabaseSync: () => secureUserManager.hasDatabaseSync(),
         isLocked: () => secureUserManager.isLocked(),
         getState: () => secureUserManager.getState(),
         createFirstUser: (username: string, password: string, options?: { displayName?: string }) =>
@@ -184,7 +186,6 @@ export function createWebOSAPI(): WebOSAPI {
         unlock: (password: string) => secureUserManager.unlock(password),
         getCurrentUser: () => secureUserManager.getCurrentUser(),
         getUserList: (includeRoot?: boolean) => secureUserManager.getUserList(includeRoot),
-        getTotalUserCount: () => secureUserManager.getTotalUserCount(),
         changePassword: (oldPassword: string, newPassword: string) =>
           secureUserManager.changePassword(oldPassword, newPassword),
         updateDisplayName: (displayName: string) => secureUserManager.updateDisplayName(displayName),

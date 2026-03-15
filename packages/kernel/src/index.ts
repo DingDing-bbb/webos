@@ -28,7 +28,10 @@ export { updateManager } from './core/managers/updateManager';
 export * from './core/crypto';
 export * from './core/secureStorage';
 export { secureUserManager } from './core/secureUserManager';
-export type { SecureUserManagerState, LoginResult } from './core/secureUserManager';
+// Re-export types explicitly for ESM compatibility
+import type { SecureUserManagerState as _SecureUserManagerState, LoginResult as _LoginResult } from './core/secureUserManager';
+export type SecureUserManagerState = _SecureUserManagerState;
+export type LoginResult = _LoginResult;
 
 // 导出文件系统包
 export * from '../fs/src';

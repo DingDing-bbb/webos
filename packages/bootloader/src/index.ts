@@ -80,8 +80,9 @@ class Bootloader {
     const installPlugin = urlParams.get('installDevPlugin');
     
     if (installPlugin === 'true') {
-      // 检查是否在OOBE阶段
-      const isOOBE = !localStorage.getItem('webos-oobe-complete');
+      // 检查是否在OOBE阶段 - 使用与 bootManager 相同的键
+      const bootState = localStorage.getItem('webos-boot');
+      const isOOBE = !bootState || !JSON.parse(bootState).oobeComplete;
       
       if (isOOBE) {
         // OOBE阶段：直接安装
@@ -145,7 +146,9 @@ class Bootloader {
   installDevPlugin(requireAuth: boolean = true): { success: boolean; error?: string; requiresAuth?: boolean } {
     // 如果需要认证且不在OOBE阶段
     if (requireAuth) {
-      const isOOBE = !localStorage.getItem('webos-oobe-complete');
+      // 使用与 bootManager 相同的键
+      const bootState = localStorage.getItem('webos-boot');
+      const isOOBE = !bootState || !JSON.parse(bootState).oobeComplete;
       if (!isOOBE) {
         return { success: false, requiresAuth: true, error: 'Password verification required' };
       }
@@ -377,7 +380,9 @@ class Bootloader {
    * 检查是否在OOBE阶段
    */
   isOOBEMode(): boolean {
-    return !localStorage.getItem('webos-oobe-complete');
+    // 使用与 bootManager 相同的键
+    const bootState = localStorage.getItem('webos-boot');
+    return !bootState || !JSON.parse(bootState).oobeComplete;
   }
 
   /**

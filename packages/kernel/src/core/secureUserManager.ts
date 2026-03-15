@@ -124,8 +124,18 @@ class SecureUserManager {
   /** Current active session */
   private currentSession: UserSession | null = null;
 
-  /** Master key for database operations (memory only) */
-  private masterKey: string | null = null;
+  /** Master key for database operations (memory only, used for encryption) */
+  private _masterKey: string | null = null;
+  
+  /** Get the master key (internal use only) */
+  private get masterKey(): string | null {
+    return this._masterKey;
+  }
+  
+  /** Set the master key (internal use only) */
+  private set masterKey(value: string | null) {
+    this._masterKey = value;
+  }
 
   /** State change listeners */
   private listeners: Set<() => void> = new Set();

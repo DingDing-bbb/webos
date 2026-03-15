@@ -426,13 +426,13 @@ class OSWindow extends HTMLElement {
     }
   }
 
-  focus() {
+  override focus() {
     this.state.isActive = true;
     this.classList.add('active');
     this.setAttribute('data-active', 'true');
   }
 
-  blur() {
+  override blur() {
     this.state.isActive = false;
     this.classList.remove('active');
     this.removeAttribute('data-active');

@@ -136,7 +136,7 @@ export class HTMLParser {
     return doc;
   }
   
-  private _parseContent(html: string, doc: DocumentNode, head: ElementNode, body: ElementNode): void {
+  private _parseContent(html: string, doc: DocumentNode, _head: ElementNode, body: ElementNode): void {
     // 提取 title
     const titleMatch = html.match(/<title[^>]*>([^<]*)<\/title>/i);
     if (titleMatch) {
@@ -163,7 +163,7 @@ export class HTMLParser {
     const stack: ElementNode[] = [parent];
     
     while ((match = tagRegex.exec(html)) !== null) {
-      const [full, isClosing, tagName, attrs, text] = match;
+      const [, isClosing, tagName, attrs, text] = match;
       
       if (text) {
         // 文本内容
@@ -224,6 +224,8 @@ export class LayoutEngine {
   constructor(private viewportWidth: number, private viewportHeight: number) {}
   
   layout(root: ElementNode): LayoutBox {
+    // viewportHeight is used for potential max-height calculations
+    void this.viewportHeight;
     return this._layoutElement(root, 0, 0, this.viewportWidth);
   }
   
@@ -246,7 +248,6 @@ export class LayoutEngine {
     const children: LayoutBox[] = [];
     let currentY = y;
     let currentX = x;
-    let maxWidth = width;
     let totalHeight = 0;
     
     // 布局子节点
@@ -443,7 +444,7 @@ export class BrowserKernel {
     this._paintEngine = new PaintEngine();
   }
   
-  render(html: string, _url: string, viewportWidth: number, viewportHeight: number): RenderResult {
+  render(html: string, _url: string, _viewportWidth: number, _viewportHeight: number): RenderResult {
     console.log('[BrowserKernel] Rendering HTML');
     
     // 解析

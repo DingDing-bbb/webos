@@ -105,11 +105,14 @@ function loadBookmarks(): Bookmark[] {
   }
 }
 
-function _saveBookmark(bookmark: Bookmark): void {
+function saveBookmark(bookmark: Bookmark): void {
   const _bookmarks = loadBookmarks();
   _bookmarks.push(bookmark);
   localStorage.setItem('browser-bookmarks', JSON.stringify(_bookmarks));
 }
+
+// Bookmark function available for future use
+void saveBookmark;
 
 // ============================================
 // Component
@@ -132,7 +135,9 @@ export const BrowserApp: React.FC = () => {
   ]);
   const [activeTabId, setActiveTabId] = useState('tab-1');
   const [addressInput, setAddressInput] = useState('');
-  const [bookmarks] = useState<Bookmark[]>(loadBookmarks);
+  const [_bookmarks] = useState<Bookmark[]>(loadBookmarks);
+  // Bookmarks state for future bookmark UI
+  void _bookmarks;
   
   // Refs
   const canvasRef = useRef<HTMLCanvasElement>(null);

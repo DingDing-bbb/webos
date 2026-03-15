@@ -25,7 +25,7 @@ const WarningIcon = () => (
 const PackageIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
     <line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/>
-    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1.73 1l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
     <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
     <line x1="12" y1="22.08" x2="12" y2="12"/>
   </svg>
@@ -42,7 +42,7 @@ const NetworkIcon = () => (
 
 const CacheIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1.73 1l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
   </svg>
 );
 
@@ -97,7 +97,19 @@ export const RecoveryMode: React.FC<RecoveryModeProps> = ({
   const [canReset, setCanReset] = useState(false);
 
   useEffect(() => {
-    setCanReset(bootloader.canResetSystem());
+    // Check if developer plugin is installed which grants reset permission
+    const checkResetPermission = () => {
+      try {
+        // Use type assertion to access the full bootloader API
+        const bl = bootloader as typeof bootloader & {
+          isDevPluginInstalled?: () => boolean;
+        };
+        return typeof bl.isDevPluginInstalled === 'function' && bl.isDevPluginInstalled();
+      } catch {
+        return false;
+      }
+    };
+    setCanReset(checkResetPermission());
   }, []);
 
   const getErrorIcon = (type: BootError['type']): React.ReactNode => {
@@ -166,7 +178,7 @@ export const RecoveryMode: React.FC<RecoveryModeProps> = ({
             fontSize="24"
             fontWeight="300"
           >
-            {__OS_NAME__}
+            WebOS
           </text>
         </svg>
         <div style={{
@@ -427,7 +439,7 @@ export const RecoveryMode: React.FC<RecoveryModeProps> = ({
         color: '#444',
         fontSize: '11px'
       }}>
-        {__OS_NAME__} v{__OS_VERSION__} | Recovery Mode
+        WebOS v1.0.0 | Recovery Mode
         {canReset && ' | Dev Plugin Active'}
       </div>
     </div>

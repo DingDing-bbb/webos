@@ -1,20 +1,48 @@
 {
   "compilerOptions": {
+    // Modern JavaScript target
     "target": "ES2020",
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
     "moduleResolution": "bundler",
+    
+    // Module interop
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": false,
+    
+    // Output
     "noEmit": true,
     "jsx": "react-jsx",
+    
+    // Strict type checking - Maximum strictness
     "strict": true,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "useUnknownInCatchVariables": true,
+    "alwaysStrict": true,
+    
+    // Additional checks
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "exactOptionalPropertyTypes": false,
+    "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": false,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": false,
+    "allowUnusedLabels": false,
+    "allowUnreachableCode": false,
+    
+    // Path aliases
     "baseUrl": ".",
     "paths": {
       "@kernel": ["packages/kernel/src/index.ts"],
@@ -32,8 +60,12 @@
       "@app": ["packages/apps/index.ts"],
       "@app/*": ["packages/apps/*"],
       "@apps": ["packages/apps/index.ts"],
-      "@apps/*": ["packages/apps/*"]
+      "@apps/*": ["packages/apps/*"],
+      "@wallpapers": ["packages/wallpapers/src/index.ts"],
+      "@wallpapers/*": ["packages/wallpapers/src/*"]
     },
+    
+    // Types
     "types": ["webpack-env"]
   },
   "include": [
