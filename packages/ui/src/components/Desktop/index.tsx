@@ -567,47 +567,52 @@ export const Desktop: React.FC<DesktopProps> = ({
     setContextMenu((prev) => ({ ...prev, isOpen: false }));
   }, []);
 
+  // Translation helper
+  const t = useCallback((key: string): string => {
+    return window.webos?.t(key) || key;
+  }, []);
+
   // ========================================
   // Context Menu Actions
   // ========================================
   const desktopMenuItems: ContextMenuItem[] = [
     {
       id: 'refresh',
-      label: 'Refresh',
+      label: t('desktop.refresh'),
       icon: <RefreshIcon />,
       onClick: () => window.location.reload(),
     },
     { id: 'divider-1', label: '', divider: true },
     {
       id: 'new-folder',
-      label: 'New Folder',
+      label: t('desktop.newFolder'),
       icon: <FolderIcon />,
       shortcut: 'Ctrl+Shift+N',
       onClick: () => console.log('New folder'),
     },
     {
       id: 'new-file',
-      label: 'New File',
+      label: t('desktop.newFile'),
       icon: <FileIcon />,
       onClick: () => console.log('New file'),
     },
     { id: 'divider-2', label: '', divider: true },
     {
       id: 'settings',
-      label: 'Display Settings',
+      label: t('desktop.displaySettings'),
       icon: <SettingsIcon />,
       onClick: () => window.webos?.window.open('com.os.settings'),
     },
     {
       id: 'personalize',
-      label: 'Personalize',
+      label: t('desktop.personalize'),
       icon: <PaletteIcon />,
       onClick: () => console.log('Personalize'),
     },
     { id: 'divider-3', label: '', divider: true },
     {
       id: 'terminal',
-      label: 'Open Terminal',
+      label: t('desktop.openTerminal'),
       icon: <TerminalIcon />,
       shortcut: 'Ctrl+Alt+T',
       onClick: () => window.webos?.window.open('com.os.terminal'),
@@ -620,33 +625,33 @@ export const Desktop: React.FC<DesktopProps> = ({
       return [
         {
           id: 'open',
-          label: 'Open',
+          label: t('desktop.open'),
           icon: <OpenIcon />,
           onClick: () => icon?.onOpen(),
         },
         {
           id: 'open-new-window',
-          label: 'Open in New Window',
+          label: t('desktop.openInNewWindow'),
           icon: <WindowIcon />,
           onClick: () => icon?.onOpen(),
         },
         { id: 'divider-1', label: '', divider: true },
         {
           id: 'pin',
-          label: 'Pin to Taskbar',
+          label: t('desktop.pinToTaskbar'),
           icon: <PinIcon />,
           onClick: () => console.log('Pin:', iconId),
         },
         { id: 'divider-2', label: '', divider: true },
         {
           id: 'properties',
-          label: 'Properties',
+          label: t('desktop.properties'),
           icon: <InfoIcon />,
           onClick: () => console.log('Properties:', iconId),
         },
       ];
     },
-    [displayIcons]
+    [displayIcons, t]
   );
 
   // ========================================

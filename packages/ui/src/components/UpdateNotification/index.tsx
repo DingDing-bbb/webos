@@ -5,6 +5,11 @@
 
 import React from 'react';
 
+// 翻译助手
+const t = (key: string): string => {
+  return window.webos?.t(key) || key;
+};
+
 interface UpdateNotificationProps {
   onUpdate: () => void;
   onSkip: () => void;
@@ -59,7 +64,7 @@ export const UpdateNotification: React.FC<UpdateNotificationProps> = ({
         </div>
         <div>
           <div style={{ fontWeight: 600, color: 'var(--os-color-text)' }}>
-            发现新版本
+            {t('update.newVersion')}
           </div>
           <div style={{ fontSize: '12px', color: 'var(--os-color-text-secondary)' }}>
             v{currentVersion} → v{latestVersion}
@@ -91,7 +96,7 @@ export const UpdateNotification: React.FC<UpdateNotificationProps> = ({
         marginBottom: '16px',
         lineHeight: 1.5
       }}>
-        新版本已就绪，更新后即可使用最新功能。
+        {t('update.ready')}
       </div>
 
       <div style={{ display: 'flex', gap: '8px' }}>
@@ -110,7 +115,7 @@ export const UpdateNotification: React.FC<UpdateNotificationProps> = ({
             fontSize: '14px'
           }}
         >
-          稍后提醒
+          {t('update.remindLater')}
         </button>
         <button
           onClick={onUpdate}
@@ -141,9 +146,9 @@ export const UpdateNotification: React.FC<UpdateNotificationProps> = ({
                 borderRadius: '50%',
                 animation: 'spin 0.8s linear infinite'
               }}/>
-              更新中...
+              {t('update.updating')}
             </>
-          ) : '立即更新'}
+          ) : t('update.updateNow')}
         </button>
       </div>
 

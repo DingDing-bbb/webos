@@ -20,6 +20,13 @@ const isDevMode = (): boolean => {
   return params.get('dev') === '1' || params.get('dev') === 'true';
 };
 
+// 翻译助手
+const t = (key: string, params?: Record<string, string>): string => {
+  const translation = window.webos?.t(key, params);
+  if (translation && translation !== key) return translation;
+  return params?.defaultValue || key;
+};
+
 // 内嵌的加载动画
 const Spinner: React.FC<{ size?: number }> = ({ size = 20 }) => (
   <div style={{ display: 'inline-flex', width: size, height: size }}>
@@ -91,12 +98,12 @@ export const SecureLoginScreen: React.FC<SecureLoginScreenProps> = ({ onLoginSuc
     e.preventDefault();
     
     if (!username.trim()) {
-      setError('Please enter username');
+      setError(t('lock.enterUsername'));
       return;
     }
     
     if (!password) {
-      setError('Please enter password');
+      setError(t('lock.enterPassword'));
       return;
     }
 
@@ -109,11 +116,11 @@ export const SecureLoginScreen: React.FC<SecureLoginScreenProps> = ({ onLoginSuc
       if (result.success) {
         onLoginSuccess();
       } else {
-        setError(result.error || 'Login failed');
+        setError(result.error || t('lock.loginFailed'));
         setPassword('');
       }
     } catch (err) {
-      setError('An error occurred during login');
+      setError(t('lock.errorOccurred'));
       setPassword('');
     } finally {
       setIsLoading(false);
@@ -165,7 +172,7 @@ export const SecureLoginScreen: React.FC<SecureLoginScreenProps> = ({ onLoginSuc
       // 刷新页面
       window.location.reload();
     } catch (err) {
-      setError('Reset failed: ' + (err instanceof Error ? err.message : String(err)));
+      setError(t('lock.resetFailed') + ': ' + (err instanceof Error ? err.message : String(err)));
       setIsResetting(false);
     }
   };
@@ -243,7 +250,7 @@ export const SecureLoginScreen: React.FC<SecureLoginScreenProps> = ({ onLoginSuc
               <input
                 type="text"
                 className="os-lock-input"
-                placeholder="Username"
+                placeholder={t('lock.username')}
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 disabled={isLoading}
@@ -258,7 +265,7 @@ export const SecureLoginScreen: React.FC<SecureLoginScreenProps> = ({ onLoginSuc
               id="login-password"
               type="password"
               className="os-lock-input"
-              placeholder="Password"
+              placeholder={t('auth.password')}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               disabled={isLoading}
@@ -291,7 +298,7 @@ export const SecureLoginScreen: React.FC<SecureLoginScreenProps> = ({ onLoginSuc
                   <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
                   <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
                 </svg>
-                Login
+                {t('lock.login')}
               </>
             )}
           </button>
@@ -302,7 +309,7 @@ export const SecureLoginScreen: React.FC<SecureLoginScreenProps> = ({ onLoginSuc
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
           </svg>
-          Protected by PBKDF2 100K + AES-256-GCM
+          {t('lock.securityInfo')}
         </div>
       </div>
 
@@ -329,7 +336,7 @@ export const SecureLoginScreen: React.FC<SecureLoginScreenProps> = ({ onLoginSuc
             <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
             <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
           </svg>
-          Switch Account
+          {t('lock.switchAccount')}
         </button>
       )}
 
@@ -344,13 +351,13 @@ export const SecureLoginScreen: React.FC<SecureLoginScreenProps> = ({ onLoginSuc
           {isResetting ? (
             <Spinner size={16} />
           ) : showResetConfirm ? (
-            '⚠️ Click again to confirm reset'
+            '⚠️ ' + t('lock.confirmReset')
           ) : (
             <>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
               </svg>
-              Reset System
+              {t('lock.resetSystem')}
             </>
           )}
         </button>

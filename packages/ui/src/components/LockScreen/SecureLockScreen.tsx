@@ -27,6 +27,16 @@ export interface SecureLockScreenProps {
 type ScreenState = 'loading' | 'setup' | 'select-user' | 'enter-password' | 'unlock';
 
 // ============================================
+// 翻译助手
+// ============================================
+
+const t = (key: string, params?: Record<string, string>): string => {
+  const translation = window.webos?.t(key, params);
+  if (translation && translation !== key) return translation;
+  return params?.defaultValue || key;
+};
+
+// ============================================
 // 组件
 // ============================================
 
@@ -89,22 +99,22 @@ export const SecureLockScreen: React.FC<SecureLockScreenProps> = ({
 
     // 验证
     if (!username || username.length < 2) {
-      setError('Username must be at least 2 characters');
+      setError(t('lock.usernameMinLength'));
       return;
     }
 
     if (!/^[a-z_][a-z0-9_-]*$/i.test(username)) {
-      setError('Username contains invalid characters');
+      setError(t('lock.usernameInvalid'));
       return;
     }
 
     if (!password || password.length < 6) {
-      setError('Password must be at least 6 characters');
+      setError(t('lock.passwordMinLength'));
       return;
     }
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match');
+      setError(t('lock.passwordMismatch'));
       return;
     }
 
@@ -113,12 +123,12 @@ export const SecureLockScreen: React.FC<SecureLockScreenProps> = ({
     try {
       const result = await onSetup(username, password);
       if (!result.success) {
-        setError(result.error || 'Setup failed');
+        setError(result.error || t('lock.setupFailed'));
         setIsLoading(false);
       }
       // 成功后由父组件处理状态更新
     } catch (err) {
-      setError('Setup failed');
+      setError(t('lock.setupFailed'));
       setIsLoading(false);
     }
   };
@@ -134,12 +144,12 @@ export const SecureLockScreen: React.FC<SecureLockScreenProps> = ({
     try {
       const result = await onLogin(selectedUser, password);
       if (!result.success) {
-        setError(result.error || 'Login failed');
+        setError(result.error || t('lock.loginFailed'));
         setIsLoading(false);
         setPassword('');
       }
     } catch (err) {
-      setError('Login failed');
+      setError(t('lock.loginFailed'));
       setIsLoading(false);
     }
   };
@@ -156,12 +166,12 @@ export const SecureLockScreen: React.FC<SecureLockScreenProps> = ({
     try {
       const result = await onUnlock(password);
       if (!result.success) {
-        setError(result.error || 'Unlock failed');
+        setError(result.error || t('lock.unlockFailed'));
         setIsLoading(false);
         setPassword('');
       }
     } catch (err) {
-      setError('Unlock failed');
+      setError(t('lock.unlockFailed'));
       setIsLoading(false);
     }
   };
@@ -191,7 +201,7 @@ export const SecureLockScreen: React.FC<SecureLockScreenProps> = ({
       <div className="lockscreen-container">
         <div className="lockscreen-loading">
           <div className="lockscreen-spinner-large" />
-          <p>Loading...</p>
+          <p>{t('lock.loading')}</p>
         </div>
       </div>
     );
@@ -206,18 +216,18 @@ export const SecureLockScreen: React.FC<SecureLockScreenProps> = ({
           <div className="lockscreen-setup">
             <div className="lockscreen-setup-header">
               <div className="lockscreen-setup-icon">🔐</div>
-              <h1>Welcome to {systemName}</h1>
-              <p>Create your administrator account to get started</p>
+              <h1>{t('lock.welcome', { systemName })}</h1>
+              <p>{t('lock.createAccount')}</p>
             </div>
 
             <form onSubmit={handleSetup} className="lockscreen-setup-form">
               <div className="lockscreen-setup-field">
-                <label>Username</label>
+                <label>{t('lock.username')}</label>
                 <input
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  placeholder="Enter username"
+                  placeholder={t('lock.usernamePlaceholder')}
                   className="lockscreen-input"
                   autoFocus
                   disabled={isLoading}
@@ -225,25 +235,25 @@ export const SecureLockScreen: React.FC<SecureLockScreenProps> = ({
               </div>
 
               <div className="lockscreen-setup-field">
-                <label>Display Name (optional)</label>
+                <label>{t('lock.displayName')}</label>
                 <input
                   type="text"
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
-                  placeholder="Your display name"
+                  placeholder={t('lock.displayNamePlaceholder')}
                   className="lockscreen-input"
                   disabled={isLoading}
                 />
               </div>
 
               <div className="lockscreen-setup-field">
-                <label>Password</label>
+                <label>{t('lock.password')}</label>
                 <div className="lockscreen-password-field">
                   <input
                     type={showPassword ? 'text' : 'password'}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Create password (min 6 characters)"
+                    placeholder={t('lock.passwordPlaceholder')}
                     className="lockscreen-input"
                     disabled={isLoading}
                   />
@@ -258,12 +268,12 @@ export const SecureLockScreen: React.FC<SecureLockScreenProps> = ({
               </div>
 
               <div className="lockscreen-setup-field">
-                <label>Confirm Password</label>
+                <label>{t('lock.confirmPassword')}</label>
                 <input
                   type={showPassword ? 'text' : 'password'}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Confirm password"
+                  placeholder={t('lock.confirmPasswordPlaceholder')}
                   className="lockscreen-input"
                   disabled={isLoading}
                 />
@@ -283,17 +293,17 @@ export const SecureLockScreen: React.FC<SecureLockScreenProps> = ({
                     <svg className="lockscreen-spinner" viewBox="0 0 24 24">
                       <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="2" strokeDasharray="31.4 31.4" />
                     </svg>
-                    Creating...
+                    {t('lock.creating')}
                   </span>
                 ) : (
-                  'Create Account'
+                  t('lock.createAccountBtn')
                 )}
               </button>
             </form>
 
             <div className="lockscreen-setup-info">
-              <p>🔒 Your password will be hashed with PBKDF2 (100,000 iterations)</p>
-              <p>💾 Data is stored locally using IndexedDB</p>
+              <p>🔒 {t('lock.passwordHashed')}</p>
+              <p>💾 {t('lock.dataStored')}</p>
             </div>
           </div>
         </div>
@@ -329,7 +339,7 @@ export const SecureLockScreen: React.FC<SecureLockScreenProps> = ({
                       {user.displayName || user.username}
                     </div>
                     {user.role === 'root' && (
-                      <div className="lockscreen-user-badge">Admin</div>
+                      <div className="lockscreen-user-badge">{t('lock.admin')}</div>
                     )}
                   </div>
                 ))}
@@ -366,7 +376,7 @@ export const SecureLockScreen: React.FC<SecureLockScreenProps> = ({
               {currentUser?.displayName || selectedUser}
             </div>
             {currentUser?.role === 'root' && (
-              <div className="lockscreen-user-role">Administrator</div>
+              <div className="lockscreen-user-role">{t('lock.administrator')}</div>
             )}
           </div>
 
@@ -376,7 +386,7 @@ export const SecureLockScreen: React.FC<SecureLockScreenProps> = ({
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Password"
+                placeholder={t('auth.password')}
                 className="lockscreen-password-input"
                 autoFocus
                 disabled={isLoading}
@@ -415,7 +425,7 @@ export const SecureLockScreen: React.FC<SecureLockScreenProps> = ({
           </form>
 
           <div className="lockscreen-hint">
-            Press Enter to login
+            {t('lock.loginHint')}
           </div>
 
           <div className="lockscreen-security-info">
