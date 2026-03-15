@@ -634,7 +634,7 @@ const App: React.FC = () => {
           id: app.id,
           name: window.webos?.t(app.nameKey) || app.name,
           icon: React.createElement(app.icon, { size: 48 }),
-          onDoubleClick: () => openApp(app.id)
+          onOpen: () => openApp(app.id)
         }))}
         wallpaper={wallpaperConfig}
       />
