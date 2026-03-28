@@ -91,3 +91,170 @@
    - 静态查找表不需要作为依赖
    - 派生值包含会导致无限循环
    - 只需监听对象的具体属性而非整个对象
+
+---
+
+## 服务器验证 (2026-03-28)
+
+### 验证结果
+- **代码状态**: 所有页面代码正确，无 lint 错误
+- **页面内容**:
+  - `/` - 首页重定向页面，显示 "Redirecting..." 并自动跳转到 `/intro`
+  - `/intro` - 介绍页面，包含专业的深色主题设计、功能特性展示、技术栈信息
+  - `/docs` - 文档页面，包含侧边栏导航、UI框架/第三方应用/开发者插件三个文档分类
+- **服务器启动**: 手动启动成功，Next.js 16.2.1 Turbopack 在端口 3000 正常运行
+- **HTTP 响应**: 服务器可以正常响应请求，返回 HTTP 200
+
+### 服务器进程问题
+- 后台启动的 `bun run dev` 进程会在一段时间后自动退出
+- 这可能是系统级别的进程管理行为
+- 根据系统规则，开发服务器应该由系统自动管理
+
+### 配置检查
+- `next.config.js` - 配置正确，包含路径别名和 webpack 设置
+- `package.json` - 脚本正确，`dev: "next dev -p 3000"`
+- `.zscripts/dev.sh` - 自定义启动脚本，`cd site && exec bun run dev`
+- `tsconfig.json` - TypeScript 配置正确，包含所有路径别名
+
+---
+
+## App 页面重构 (2026-03-28)
+
+### 架构变更
+1. **协议页面 (/app)** - 显示用户协议、隐私政策、开源许可、免责声明
+2. **OS 入口 (/app/os)** - 检查协议同意状态，同意后重定向到 OS
+3. **OS 静态文件 (/os/)** - 从 packages/os/dist 复制到 site/public/os
+
+### 文件结构
+```
+site/
+├── src/app/
+│   ├── app/
+│   │   ├── page.tsx      # 用户协议页面
+│   │   └── os/
+│   │       └── page.tsx  # 重定向逻辑
+│   ├── intro/page.tsx    # 介绍页
+│   └── docs/page.tsx     # 文档页
+└── public/
+    └── os/               # OS 构建产物（静态文件）
+        ├── index.html
+        ├── main.*.js
+        ├── vendor.*.js
+        └── ...
+```
+
+### 流程
+1. 用户访问 `/app` → 显示用户协议
+2. 用户勾选同意 → 点击"同意并继续"
+3. 同意后 → 显示"进入系统"按钮
+4. 点击进入 → 跳转到 `/app/os`
+5. `/app/os` 检查协议 → 同意则重定向到 `/os/index.html`
+6. `/os/index.html` 加载 WebOS
+
+### 协议内容
+- 服务条款 (Terms of Service)
+- 隐私政策 (Privacy Policy)
+- 开源许可 (MIT License)
+- 免责声明 (Disclaimer)
+
+---
+
+## 第三方应用 SDK 文档 (2026-03-28)
+
+### 新增页面
+- `/sdk` - 完整的第三方应用开发 SDK 文档
+
+### 文档结构
+1. **概述** - SDK 核心特性和技术栈
+2. **快速开始** - 5 分钟创建第一个应用
+3. **应用结构** - 标准目录结构
+4. **应用清单** - appinfo.json 完整字段说明
+5. **API 参考** - 完整的 WebOS API 文档
+6. **安装方法** - 多种安装方式
+7. **权限系统** - 应用权限说明
+8. **示例代码** - 完整示例应用
+9. **发布应用** - 打包和发布流程
+10. **最佳实践** - 开发建议
+
+### 安装方法
+- **应用商店安装** - 官方商店
+- **URL 安装** - 从远程 URL 安装
+- **侧载安装 (Sideloading)** - 直接安装 .webosapp 文件
+- **本地开发安装** - 开发模式挂载
+
+### API 文档
+完整的 `window.webos` API 参考：
+- 窗口管理 API
+- 文件系统 API
+- 存储 API
+- 通知 API
+- 国际化 API
+- 剪贴板 API
+- 主题 API
+
+### 导航更新
+所有页面的导航栏已更新，添加 SDK 链接：
+- 介绍页 `/intro`
+- 文档页 `/docs`
+- SDK 页 `/sdk`
+- 应用页 `/app`
+
+---
+
+## 文档页面重构 (2026-03-29)
+
+### 改进内容
+
+1. **GitHub 链接恢复**
+   - 所有页面 header 右上角添加 GitHub 图标链接
+   - 链接地址: `https://github.com/webos/webos`
+   - 使用 SVG 图标替代 emoji
+
+2. **滚动淡入动画**
+   - 创建 `FadeSection` 组件，使用 Intersection Observer API
+   - 当内容滚动进入视口时触发淡入动画
+   - 动画参数: opacity 0→1, translateY 20px→0, duration 0.5s
+
+3. **SDK 作为独立包的文档说明**
+   - 在 UI 框架文档中添加包结构说明
+   - 在 SDK 概述中添加 SDK 包结构说明
+   - 明确各包的位置和用途：
+     - `@webos/ui` - UI 组件包
+     - `@webos/kernel` - 核心 API
+     - `@webos/i18n` - 国际化
+
+### 技术实现
+
+```tsx
+// 滚动淡入组件
+function FadeSection({ children, theme }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) setVisible(true);
+      },
+      { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+    );
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div ref={ref} style={{
+      opacity: visible ? 1 : 0,
+      transform: visible ? 'translateY(0)' : 'translateY(20px)',
+      transition: 'opacity 0.5s ease, transform 0.5s ease',
+    }}>
+      {children}
+    </div>
+  );
+}
+```
+
+### 更新的文件
+- `site/src/app/docs/page.tsx` - 文档页面（GitHub链接 + 滚动淡入 + SDK包说明）
+- `site/src/app/intro/page.tsx` - 介绍页面（GitHub链接）
+- `site/src/app/app/page.tsx` - 用户协议页面（GitHub链接）
