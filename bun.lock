@@ -95,6 +95,7 @@
         "style-loader": "^4.0.0",
         "tailwindcss": "^4.2.2",
         "typescript": "^6.0.2",
+        "webpack": "^5.105.4",
       },
     },
   },

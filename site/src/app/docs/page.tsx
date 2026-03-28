@@ -447,12 +447,8 @@ export default function DocsPage() {
     }
   }, [isPending, currentDocID]);
 
-  if (!mounted) {
-    return <div className="loading-screen" />;
-  }
-
   return (
-    <div className={`docs-page ${isDark ? 'dark' : 'light'}`}>
+    <div className={`docs-page ${isDark ? 'dark' : 'light'}`} suppressHydrationWarning>
       <style jsx global>{`
         .docs-page { min-height: 100vh; display: flex; flex-direction: column; font-family: system-ui, -apple-system, sans-serif; overscroll-behavior: none; }
         .docs-page.light { --bg: #fafafa; --text: #1a1a1a; --text-muted: rgba(0,0,0,0.5); --card-bg: rgba(0,0,0,0.02); --border: rgba(0,0,0,0.06); --header-bg: rgba(255,255,255,0.8); --code-bg: rgba(0,0,0,0.03); --skeleton-bg: linear-gradient(90deg, rgba(0,0,0,0.06) 25%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.06) 75%); }
