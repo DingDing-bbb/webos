@@ -1,0 +1,30 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@kernel": ["packages/kernel/src/index.ts"],
+      "@kernel/*": ["packages/kernel/src/*"],
+      "@i18n": ["packages/i18n/src/index.ts"],
+      "@i18n/*": ["packages/i18n/src/*"],
+      "@ui": ["packages/ui/src/index.ts"],
+      "@ui/*": ["packages/ui/src/*"],
+      "@oobe": ["packages/oobe/src/index.tsx"],
+      "@oobe/*": ["packages/oobe/src/*"],
+      "@bootloader": ["packages/bootloader/src/index.ts"],
+      "@bootloader/*": ["packages/bootloader/src/*"],
+      "@recovery": ["packages/recovery/src/index.tsx"],
+      "@recovery/*": ["packages/recovery/src/*"],
+      "@app": ["packages/apps/index.ts"],
+      "@app/*": ["packages/apps/*"],
+      "@apps": ["packages/apps/index.ts"],
+      "@apps/*": ["packages/apps/*"]
+    }
+  },
+  "include": [
+    "src/**/*",
+    "packages/**/*",
+    "global.d.ts"
+  ],
+  "exclude": ["node_modules", "dist"]
+}

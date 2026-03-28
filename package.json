@@ -1,0 +1,51 @@
+{
+  "name": "webos-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "WebOS - A web-based operating system",
+  "author": "DingDing-bbb",
+  "license": "MIT",
+  "workspaces": [
+    "packages/*",
+    "site"
+  ],
+  "scripts": {
+    "dev": "cd site && bun run dev",
+    "dev:os": "cd packages/os && bun run dev",
+    "build:os": "cd packages/os && bun run build",
+    "build:site": "cd site && bun run build",
+    "prebuild": "bun run build:os && bun run copy:os",
+    "copy:os": "rm -rf site/public/os && mkdir -p site/public/os && cp -r packages/os/dist/* site/public/os/",
+    "build": "bun run build:os && bun run copy:os && bun run build:site",
+    "lint": "eslint . --ext .ts,.tsx --report-unused-disable-directives --max-warnings 0",
+    "lint:fix": "eslint . --ext .ts,.tsx --fix",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf node_modules packages/*/node_modules site/node_modules packages/os/packages/*/node_modules && rm -rf .next packages/os/dist site/.next"
+  },
+  "dependencies": {
+    "lucide-react": "^1.7.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^25.5.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@types/webpack-env": "^1.18.8",
+    "eslint": "^10.1.0",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "typescript": "^6.0.2",
+    "typescript-eslint": "^8.57.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DingDing-bbb/webos.git"
+  },
+  "bugs": {
+    "url": "https://github.com/DingDing-bbb/webos/issues"
+  },
+  "homepage": "https://github.com/DingDing-bbb/webos#readme"
+}
