@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useTransition, memo, useMemo } from 'react';
+import { useState, useEffect, useCallback, useTransition, memo, useMemo, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 
 type DocID = 'framework' | 'sdk-overview' | 'sdk-quickstart' | 'sdk-structure' | 'sdk-manifest' | 'sdk-api' | 'sdk-install' | 'sdk-permissions' | 'sdk-examples' | 'sdk-publish' | 'sdk-bestpractices' | 'dev' | 'license';
@@ -329,6 +329,23 @@ window.webos.storage.remove('key');`} lang={lang} isDark={isDark} />
   return docs[docID] || <p>{c('内容编写中...', '內容編寫中...', 'Coming soon...')}</p>;
 }
 
+function DocSkeleton() {
+  return (
+    <div className="doc-skeleton">
+      <div className="skeleton-line skeleton-title" />
+      <div className="skeleton-line skeleton-text" style={{ width: '90%' }} />
+      <div className="skeleton-line skeleton-text" style={{ width: '75%' }} />
+      <div className="skeleton-line skeleton-text" style={{ width: '85%' }} />
+      <div className="skeleton-line skeleton-heading" />
+      <div className="skeleton-card-grid">
+        <div className="skeleton-card" />
+        <div className="skeleton-card" />
+      </div>
+      <div className="skeleton-line skeleton-code" />
+    </div>
+  );
+}
+
 const TOC_ITEMS: Record<string, { id: string; titleKey: [string, string, string] }[]> = {
   'framework': [
     { id: 'overview', titleKey: ['概述', '概述', 'Overview'] },
@@ -367,6 +384,8 @@ export default function DocsPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [showSkeleton, setShowSkeleton] = useState(false);
   
   const [lang, setLang] = useState<Lang>('zh');
   const [theme, setTheme] = useState<Theme>('light');
@@ -415,10 +434,18 @@ export default function DocsPage() {
   }, [theme]);
   
   const navigateToDoc = useCallback((docID: DocID) => {
+    setShowSkeleton(true);
     startTransition(() => {
       router.push(docID === defaultDocID ? '/docs' : `/docs?section=${docID}`, { scroll: false });
     });
   }, [router]);
+
+  useEffect(() => {
+    if (!isPending) {
+      const timer = setTimeout(() => setShowSkeleton(false), 50);
+      return () => clearTimeout(timer);
+    }
+  }, [isPending, currentDocID]);
 
   if (!mounted) {
     return <div className="loading-screen" />;
@@ -428,29 +455,37 @@ export default function DocsPage() {
     <div className={`docs-page ${isDark ? 'dark' : 'light'}`}>
       <style jsx global>{`
         .docs-page { min-height: 100vh; display: flex; flex-direction: column; font-family: system-ui, -apple-system, sans-serif; overscroll-behavior: none; }
-        .docs-page.light { --bg: #fafafa; --text: #1a1a1a; --text-muted: rgba(0,0,0,0.5); --card-bg: rgba(0,0,0,0.02); --border: rgba(0,0,0,0.06); --header-bg: rgba(255,255,255,0.8); --code-bg: rgba(0,0,0,0.03); }
-        .docs-page.dark { --bg: #0a0a0c; --text: #ffffff; --text-muted: rgba(255,255,255,0.5); --card-bg: rgba(255,255,255,0.03); --border: rgba(255,255,255,0.06); --header-bg: rgba(10,10,12,0.8); --code-bg: rgba(255,255,255,0.03); }
+        .docs-page.light { --bg: #fafafa; --text: #1a1a1a; --text-muted: rgba(0,0,0,0.5); --card-bg: rgba(0,0,0,0.02); --border: rgba(0,0,0,0.06); --header-bg: rgba(255,255,255,0.8); --code-bg: rgba(0,0,0,0.03); --skeleton-bg: linear-gradient(90deg, rgba(0,0,0,0.06) 25%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.06) 75%); }
+        .docs-page.dark { --bg: #0a0a0c; --text: #ffffff; --text-muted: rgba(255,255,255,0.5); --card-bg: rgba(255,255,255,0.03); --border: rgba(255,255,255,0.06); --header-bg: rgba(10,10,12,0.8); --code-bg: rgba(255,255,255,0.03); --skeleton-bg: linear-gradient(90deg, rgba(255,255,255,0.06) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.06) 75%); }
         .loading-screen { min-height: 100vh; background: var(--bg, #fafafa); }
         .docs-header { position: fixed; top: 0; left: 0; right: 0; z-index: 100; height: 56px; background: var(--header-bg); backdrop-filter: saturate(180%) blur(20px); -webkit-backdrop-filter: saturate(180%) blur(20px); border-bottom: 1px solid var(--border); }
         .docs-header-inner { max-width: 1400px; margin: 0 auto; padding: 0 24px; height: 100%; display: flex; align-items: center; justify-content: space-between; }
         .docs-logo { font-size: 17px; font-weight: 600; color: var(--text); text-decoration: none; }
         .docs-nav { display: flex; gap: 24px; }
-        .docs-nav a { font-size: 14px; color: var(--text-muted); text-decoration: none; }
+        .docs-nav a { font-size: 14px; color: var(--text-muted); text-decoration: none; transition: color 0.15s; }
+        .docs-nav a:hover { color: var(--text); }
         .docs-nav span { font-size: 14px; font-weight: 500; color: var(--text); }
         .docs-actions { display: flex; align-items: center; gap: 8px; }
-        .icon-btn { padding: 8px; background: transparent; border: none; color: var(--text-muted); cursor: pointer; display: flex; }
-        .lang-select { padding: 6px 12px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 13px; cursor: pointer; outline: none; }
+        .icon-btn { padding: 8px; background: transparent; border: none; color: var(--text-muted); cursor: pointer; display: flex; border-radius: 6px; transition: background 0.15s, color 0.15s; }
+        .icon-btn:hover { background: var(--card-bg); color: var(--text); }
+        .lang-select { padding: 6px 12px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 13px; cursor: pointer; outline: none; transition: border-color 0.15s; }
+        .lang-select:hover { border-color: var(--text-muted); }
         .lang-select option { background: var(--bg); }
         .sidebar { width: 240px; position: fixed; top: 56px; left: 0; bottom: 0; padding: 28px 20px; overflow: auto; overscroll-behavior: contain; border-right: 1px solid var(--border); background: var(--bg); }
         .sidebar-title { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; font-weight: 500; }
-        .sidebar-btn { width: 100%; padding: 10px 14px; background: transparent; border: none; border-radius: 8px; color: var(--text-muted); font-size: 14px; text-align: left; cursor: pointer; margin-bottom: 4px; }
+        .sidebar-btn { width: 100%; padding: 10px 14px; background: transparent; border: none; border-radius: 8px; color: var(--text-muted); font-size: 14px; text-align: left; cursor: pointer; margin-bottom: 4px; transition: background 0.15s, color 0.15s; }
+        .sidebar-btn:hover { background: var(--card-bg); color: var(--text); }
         .sidebar-btn.active { background: var(--card-bg); color: var(--text); }
         .sidebar-section { margin-top: 20px; margin-bottom: 12px; padding: 10px 14px; color: var(--text-muted); font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
         .sidebar-btn.sub { padding: 8px 14px 8px 24px; border-radius: 6px; margin-bottom: 2px; }
-        .main-content { flex: 1; margin-left: 240px; margin-right: 200px; padding: 40px 56px; max-width: 820px; opacity: 1; transition: opacity 0.15s ease; }
-        .main-content.pending { opacity: 0.6; }
+        .main-content { flex: 1; margin-left: 240px; margin-right: 200px; padding: 40px 56px; max-width: 820px; }
+        .content-wrapper { animation: fadeIn 0.2s ease; }
+        .content-wrapper.loading { animation: fadeOut 0.15s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
         .breadcrumb { display: flex; align-items: center; gap: 8px; margin-bottom: 24px; font-size: 13px; }
-        .breadcrumb a { color: var(--text-muted); text-decoration: none; }
+        .breadcrumb a { color: var(--text-muted); text-decoration: none; transition: color 0.15s; }
+        .breadcrumb a:hover { color: var(--text); }
         .breadcrumb span { color: var(--text); }
         .doc-title { font-size: 32px; font-weight: 700; margin-bottom: 28px; letter-spacing: -0.5px; }
         .doc-lead { font-size: 16px; color: var(--text-muted); line-height: 1.7; margin-bottom: 24px; }
@@ -460,34 +495,47 @@ export default function DocsPage() {
         .doc-content ul, .doc-content ol { color: var(--text-muted); padding-left: 22px; line-height: 2; margin-bottom: 16px; }
         .doc-content section { margin-bottom: 32px; }
         .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
-        .card { padding: 20px; background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); }
+        .card { padding: 20px; background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); transition: border-color 0.15s; }
+        .card:hover { border-color: var(--text-muted); }
         .card h4 { font-size: 16px; font-weight: 500; margin-bottom: 10px; }
         .card ul { padding-left: 18px; line-height: 1.6; margin: 0; }
-        .card.small { padding: 16px; font-size: 14px; }
+        .card.small { padding: 16px; font-size: 14px; color: var(--text-muted); }
         .tag-list { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 24px; }
         .tag { padding: 8px 14px; background: var(--card-bg); border-radius: 8px; font-size: 14px; color: var(--text-muted); }
         .code-block { position: relative; margin: 20px 0; border-radius: 12px; overflow: hidden; background: var(--code-bg); border: 1px solid var(--border); }
-        .code-block .copy-btn { position: absolute; top: 10px; right: 10px; padding: 6px 10px; background: transparent; border: 1px solid var(--border); border-radius: 6px; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 4px; color: var(--text-muted); }
-        .code-block .copy-btn:hover { background: var(--card-bg); }
+        .code-block .copy-btn { position: absolute; top: 10px; right: 10px; padding: 6px 10px; background: transparent; border: 1px solid var(--border); border-radius: 6px; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 4px; color: var(--text-muted); transition: background 0.15s, color 0.15s; }
+        .code-block .copy-btn:hover { background: var(--card-bg); color: var(--text); }
         .code-block pre { padding: 20px; margin: 0; overflow: auto; font-size: 13px; line-height: 1.6; color: var(--text); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
         .license-block { padding: 24px; background: var(--card-bg); border-radius: 12px; font-size: 13px; line-height: 1.8; color: var(--text-muted); font-family: ui-monospace, monospace; }
         .article-nav { display: flex; justify-content: space-between; margin-top: 56px; padding-top: 28px; border-top: 1px solid var(--border); }
-        .nav-btn { display: flex; flex-direction: column; padding: 16px 20px; background: transparent; border: 1px solid var(--border); border-radius: 12px; cursor: pointer; min-width: 180px; }
+        .nav-btn { display: flex; flex-direction: column; padding: 16px 20px; background: transparent; border: 1px solid var(--border); border-radius: 12px; cursor: pointer; min-width: 180px; transition: border-color 0.15s, background 0.15s; }
+        .nav-btn:hover { border-color: var(--text-muted); background: var(--card-bg); }
         .nav-btn.prev { align-items: flex-start; text-align: left; }
         .nav-btn.next { align-items: flex-end; text-align: right; }
         .nav-btn .label { display: flex; align-items: center; gap: 6px; color: var(--text-muted); font-size: 13px; margin-bottom: 6px; }
         .nav-btn .title { color: var(--text); font-size: 15px; font-weight: 500; }
         .toc-sidebar { width: 180px; position: fixed; top: 56px; right: 0; bottom: 0; padding: 100px 16px 32px; overflow: auto; overscroll-behavior: contain; }
         .toc-title { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; font-weight: 500; }
-        .toc-link { display: block; padding: 6px 10px; color: var(--text-muted); font-size: 13px; text-decoration: none; border-radius: 6px; margin-bottom: 2px; }
-        .toc-link:hover { background: var(--card-bg); }
+        .toc-link { display: block; padding: 6px 10px; color: var(--text-muted); font-size: 13px; text-decoration: none; border-radius: 6px; margin-bottom: 2px; transition: background 0.15s, color 0.15s; }
+        .toc-link:hover { background: var(--card-bg); color: var(--text); }
         .docs-footer { margin-left: 240px; margin-right: 200px; padding: 28px; border-top: 1px solid var(--border); text-align: center; }
         .docs-footer p { font-size: 13px; color: var(--text-muted); }
         .mobile-menu-btn { display: none; padding: 8px; background: transparent; border: none; color: var(--text-muted); cursor: pointer; }
-        .mobile-drawer { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.4); }
-        .mobile-drawer aside { width: 280px; height: 100%; padding: 24px; background: var(--bg); overflow: auto; overscroll-behavior: contain; }
+        .mobile-drawer { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.4); animation: fadeIn 0.15s ease; }
+        .mobile-drawer aside { width: 280px; height: 100%; padding: 24px; background: var(--bg); overflow: auto; overscroll-behavior: contain; animation: slideIn 0.2s ease; }
+        @keyframes slideIn { from { transform: translateX(-100%); } to { transform: translateX(0); } }
         .mobile-drawer-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
         .mobile-drawer-header span { font-size: 15px; font-weight: 500; }
+        .doc-skeleton { animation: skeleton-pulse 1.5s infinite; }
+        @keyframes skeleton-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+        .skeleton-line { height: 16px; background: var(--skeleton-bg); background-size: 200% 100%; animation: skeleton-shimmer 1.5s infinite; border-radius: 4px; margin-bottom: 12px; }
+        @keyframes skeleton-shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        .skeleton-title { height: 32px; width: 60%; margin-bottom: 24px; }
+        .skeleton-heading { height: 24px; width: 40%; margin-top: 32px; margin-bottom: 16px; }
+        .skeleton-text { height: 14px; }
+        .skeleton-code { height: 120px; border-radius: 12px; margin-top: 24px; }
+        .skeleton-card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin: 24px 0; }
+        .skeleton-card { height: 100px; background: var(--skeleton-bg); background-size: 200% 100%; animation: skeleton-shimmer 1.5s infinite; border-radius: 12px; }
         @media (max-width: 768px) {
           .docs-nav { display: none; }
           .mobile-menu-btn { display: flex; }
@@ -495,6 +543,7 @@ export default function DocsPage() {
           .main-content { margin-left: 0; margin-right: 0; padding: 28px 20px; }
           .toc-sidebar { display: none; }
           .docs-footer { margin-left: 0; margin-right: 0; }
+          .skeleton-card-grid { grid-template-columns: 1fr; }
         }
       `}</style>
       
@@ -561,33 +610,39 @@ export default function DocsPage() {
           </aside>
         )}
 
-        <main className={`main-content ${isPending ? 'pending' : ''}`}>
-          <div className="breadcrumb">
-            <a href="/docs">{t.breadcrumb.docs}</a>
-            <span style={{ color: 'var(--text-muted)' }}>/</span>
-            <span>{t.titles[currentDocID]}</span>
+        <main className="main-content" ref={contentRef}>
+          <div className={`content-wrapper ${isPending ? 'loading' : ''}`}>
+            <div className="breadcrumb">
+              <a href="/docs">{t.breadcrumb.docs}</a>
+              <span style={{ color: 'var(--text-muted)' }}>/</span>
+              <span>{t.titles[currentDocID]}</span>
+            </div>
+
+            <h1 className="doc-title">{t.titles[currentDocID]}</h1>
+
+            <div className="doc-content">
+              {showSkeleton && isPending ? (
+                <DocSkeleton />
+              ) : (
+                <DocContent docID={currentDocID} lang={lang} isDark={isDark} />
+              )}
+            </div>
+
+            <nav className="article-nav">
+              {prevDoc ? (
+                <button className="nav-btn prev" onClick={() => navigateToDoc(prevDoc)}>
+                  <span className="label"><ChevronLeft />{t.articleNav.prev}</span>
+                  <span className="title">{t.titles[prevDoc]}</span>
+                </button>
+              ) : <div />}
+              {nextDoc ? (
+                <button className="nav-btn next" onClick={() => navigateToDoc(nextDoc)}>
+                  <span className="label">{t.articleNav.next}<ChevronRight /></span>
+                  <span className="title">{t.titles[nextDoc]}</span>
+                </button>
+              ) : <div />}
+            </nav>
           </div>
-
-          <h1 className="doc-title">{t.titles[currentDocID]}</h1>
-
-          <div className="doc-content">
-            <DocContent docID={currentDocID} lang={lang} isDark={isDark} />
-          </div>
-
-          <nav className="article-nav">
-            {prevDoc ? (
-              <button className="nav-btn prev" onClick={() => navigateToDoc(prevDoc)}>
-                <span className="label"><ChevronLeft />{t.articleNav.prev}</span>
-                <span className="title">{t.titles[prevDoc]}</span>
-              </button>
-            ) : <div />}
-            {nextDoc ? (
-              <button className="nav-btn next" onClick={() => navigateToDoc(nextDoc)}>
-                <span className="label">{t.articleNav.next}<ChevronRight /></span>
-                <span className="title">{t.titles[nextDoc]}</span>
-              </button>
-            ) : <div />}
-          </nav>
         </main>
 
         {!isMobile && toc.length > 0 && (
