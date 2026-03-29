@@ -1,17 +1,13 @@
 /**
  * BootScreen - 启动界面组合组件
  * 
- * 执行真正的启动流程：
- * 1. 创建 BootController
- * 2. 执行初始化任务
- * 3. 显示进度和状态
- * 4. 完成后调用 onComplete
+ * 执行真正的启动流程
  */
 
 import React from 'react';
-import { BootController } from './index';
+import { BootController } from './controller';
 import { BootUI } from './ui';
-import type { BootResult } from './index';
+import type { BootResult } from './controller';
 
 // ============================================================================
 // Types

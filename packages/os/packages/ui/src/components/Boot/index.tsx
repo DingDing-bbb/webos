@@ -1,27 +1,50 @@
 /**
  * Boot Screen Component
  * 
- * 从 @bootloader 重新导出
+ * 从 @bootloader 重新导出所有内容
  */
 
-export { 
-  BootController, 
-  BootUI, 
+// 从 bootloader 导入
+import { 
+  BootController,
+  BootUI,
   BootScreen,
   bootloader,
   setupGlobalErrorHandler,
   BootManager
 } from '@bootloader';
 
-export type { 
-  BootResult, 
-  ProgressCallback,
+import type { 
+  BootTask,
+  ProgressCallback, 
+  BootResult,
   BootStatus,
   BootError,
   BootUIProps,
   BootScreenProps,
-  BootloaderPlugin,
-  BootTask
+  BootloaderPlugin
 } from '@bootloader';
 
+// 重新导出
+export { 
+  BootController,
+  BootUI,
+  BootScreen,
+  bootloader,
+  setupGlobalErrorHandler,
+  BootManager
+};
+
+export type { 
+  BootTask,
+  ProgressCallback, 
+  BootResult,
+  BootStatus,
+  BootError,
+  BootUIProps,
+  BootScreenProps,
+  BootloaderPlugin
+};
+
+// 默认导出
 export default BootScreen;

@@ -1,66 +1,43 @@
 /**
- * @fileoverview Boot Controller - Logic Only
- * @module @ui/components/Boot/BootController
- *
- * Handles system initialization without UI.
- * UI should be rendered separately using BootUI component.
- *
- * @architecture
- * ```
- * Boot Sequence:
- * ┌─────────────────────────────────────────────────────────┐
- * │  Stage 1: Kernel     - Core API initialization          │
- * │  Stage 2: Filesystem - Mount and verify FS structure    │
- * │  Stage 3: Services   - Load i18n, user profiles, time   │
- * │  Stage 4: Resources  - Fonts, icons, theme              │
- * │  Stage 5: Desktop    - Window manager, final prep       │
- * └─────────────────────────────────────────────────────────┘
- * ```
+ * BootController - 启动控制器
+ * 
+ * 执行真正的系统初始化任务
  */
 
 // ============================================================================
 // Types
 // ============================================================================
 
-/**
- * Represents a single initialization task
- */
-interface InitTask {
-  /** Unique task identifier */
+export interface BootTask {
   id: string;
-  /** Human-readable task name */
   name: string;
-  /** Weight for progress calculation */
   weight: number;
-  /** Task execution function */
   execute: () => Promise<void>;
 }
 
-/**
- * Progress callback type
- */
 export type ProgressCallback = (task: string, progress: number) => void;
 
-/**
- * Boot result type
- */
 export interface BootResult {
   success: boolean;
   error?: string;
 }
 
 // ============================================================================
-// System Initializer Class
+// BootController Class
 // ============================================================================
 
 /**
- * Manages the system initialization sequence.
- *
- * Tasks are executed in order with weighted progress tracking.
- * Each task can optionally verify system state before proceeding.
+ * 启动控制器
+ * 
+ * 执行真正的系统初始化任务：
+ * - Stage 1: Kernel - 内核初始化
+ * - Stage 2: Filesystem - 文件系统挂载
+ * - Stage 3: Services - 服务启动
+ * - Stage 4: Resources - 资源加载
+ * - Stage 5: Desktop - 桌面准备
  */
 export class BootController {
-  private tasks: InitTask[] = [];
+  private tasks: BootTask[] = [];
   private completedWeight = 0;
   private totalWeight = 0;
   private onProgress?: ProgressCallback;
@@ -69,9 +46,6 @@ export class BootController {
     this.registerTasks();
   }
 
-  /**
-   * Registers all initialization tasks in dependency order.
-   */
   private registerTasks(): void {
     // ========================================
     // Stage 1: Kernel Initialization (15%)
@@ -84,7 +58,7 @@ export class BootController {
         if (!window.webos) {
           throw new Error('Kernel initialization failed');
         }
-        await this.delay(50);
+        await this.delay(80);
       },
     });
 
@@ -97,7 +71,7 @@ export class BootController {
         if (!api.window || !api.fs || !api.i18n) {
           throw new Error('System APIs incomplete');
         }
-        await this.delay(30);
+        await this.delay(60);
       },
     });
 
@@ -113,7 +87,7 @@ export class BootController {
         if (rootFiles.length === 0) {
           throw new Error('Filesystem mount failed');
         }
-        await this.delay(20);
+        await this.delay(50);
       },
     });
 
@@ -130,7 +104,7 @@ export class BootController {
             fs.mkdir(dir);
           }
         }
-        await this.delay(30);
+        await this.delay(60);
       },
     });
 
@@ -142,7 +116,7 @@ export class BootController {
         if (!window.webos.fs.exists('/var/cache/apps')) {
           window.webos.fs.mkdir('/var/cache/apps');
         }
-        await this.delay(20);
+        await this.delay(40);
       },
     });
 
@@ -158,7 +132,7 @@ export class BootController {
         if (savedLocale) {
           window.webos.i18n.setLocale(savedLocale);
         }
-        await this.delay(30);
+        await this.delay(60);
       },
     });
 
@@ -169,9 +143,9 @@ export class BootController {
       execute: async () => {
         const bootState = localStorage.getItem('webos-boot');
         if (bootState) {
-          await this.delay(20);
+          await this.delay(30);
         }
-        await this.delay(20);
+        await this.delay(30);
       },
     });
 
@@ -181,7 +155,7 @@ export class BootController {
       weight: 5,
       execute: async () => {
         window.webos.time.getCurrent();
-        await this.delay(20);
+        await this.delay(40);
       },
     });
 
@@ -194,7 +168,7 @@ export class BootController {
       weight: 10,
       execute: async () => {
         await document.fonts.ready;
-        await this.delay(20);
+        await this.delay(40);
       },
     });
 
@@ -203,7 +177,7 @@ export class BootController {
       name: 'Loading icon set...',
       weight: 10,
       execute: async () => {
-        await this.delay(20);
+        await this.delay(50);
       },
     });
 
@@ -214,7 +188,7 @@ export class BootController {
       execute: async () => {
         const theme = window.webos.config.get<string>('theme') || 'light';
         document.documentElement.setAttribute('data-theme', theme);
-        await this.delay(20);
+        await this.delay(30);
       },
     });
 
@@ -226,7 +200,7 @@ export class BootController {
       name: 'Starting window manager...',
       weight: 8,
       execute: async () => {
-        await this.delay(30);
+        await this.delay(60);
       },
     });
 
@@ -235,38 +209,24 @@ export class BootController {
       name: 'Preparing desktop...',
       weight: 7,
       execute: async () => {
-        await this.delay(50);
+        await this.delay(80);
       },
     });
   }
 
-  /**
-   * Adds a task to the initialization queue.
-   */
-  private addTask(task: InitTask): void {
+  private addTask(task: BootTask): void {
     this.tasks.push(task);
     this.totalWeight += task.weight;
   }
 
-  /**
-   * Creates a promise that resolves after a delay.
-   */
   private delay(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
-  /**
-   * Sets the progress callback handler.
-   */
   setProgressHandler(handler: ProgressCallback): void {
     this.onProgress = handler;
   }
 
-  /**
-   * Executes all tasks in sequence.
-   *
-   * @returns Success status and optional error message
-   */
   async run(): Promise<BootResult> {
     this.completedWeight = 0;
 

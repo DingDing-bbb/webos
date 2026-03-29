@@ -512,3 +512,31 @@ Stage Summary:
 - 包含：BootController、BootManager、Bootloader 类
 - 包含：BootUI、LoadingScreen、BootScreen UI 组件
 - 保持向后兼容性，UI 包重新导出 bootloader 内容
+
+---
+Task ID: 2
+Agent: Main Agent
+Task: 完全重做启动流程
+
+Work Log:
+- 查看初始提交的启动流程代码
+- 重做 site/src/app/app/os/page.tsx - 只显示加载圈（spinner）
+- 重做 bootloader 包：
+  - BootController: 真正的初始化任务（5个阶段）
+  - BootManager: 启动状态管理
+  - Bootloader: 主类（插件管理、错误处理）
+- 重做 BootUI:
+  - Logo
+  - 加载动画（spinner）
+  - 状态文本
+  - 进度条
+  - 版本信息
+- 重做 BootScreen: 组合 BootController 和 BootUI
+- 更新 UI 包中的 Boot 组件重新导出 bootloader
+- 运行 lint 检查通过
+- 提交代码
+
+Stage Summary:
+- 启动流程: 加载圈 -> BootScreen(真正初始化) -> OOBE/LockScreen -> Desktop
+- BootController 执行真正的初始化任务，不是假的延迟
+- 提交: 42111f2
