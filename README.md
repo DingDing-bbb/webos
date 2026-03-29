@@ -454,8 +454,8 @@ bun run build
 | 类别 | 技术 |
 |------|------|
 | 运行时 | Bun |
-| 框架 | Next.js 15 / React 19 |
-| 语言 | TypeScript 5 |
+| 框架 | Next.js 16 / React 19 |
+| 语言 | TypeScript 6 |
 | 构建 | Webpack 5 / Turbopack |
 | 数据库 | sql.js (SQLite in WASM) |
 | 加密 | Web Crypto API (AES-256-GCM, PBKDF2) |

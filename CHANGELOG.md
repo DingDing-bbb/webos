@@ -4,11 +4,30 @@
 
 WebOS - 一个在浏览器中运行的操作系统，具有真实的操作系统体验。
 
-技术栈：React 19 + TypeScript + Next.js 15 + Bun
+技术栈：React 19 + TypeScript 6 + Next.js 16 + Bun
 
 ---
 
-## 当前版本: 1.0.0
+## 当前版本: 0.0.1-alpha
+
+### 最近更新 (2024-03)
+
+#### 项目结构优化
+- 删除无用的 `com.os.docs` 桌面应用
+- 更新 `.gitignore` 排除临时文件和日志
+- 添加 LICENSE、CONTRIBUTING.md、SECURITY.md
+- 添加 .github Issue/PR 模板
+- 添加 .editorconfig 统一编辑器配置
+
+#### UI 改进
+- OOBE 加载圈样式与登录界面保持一致
+- 登录界面采用 macOS/Windows 11 风格设计
+
+#### 版本更新
+- Next.js 15 → 16
+- TypeScript 5 → 6
+
+---
 
 ### 架构改进
 
