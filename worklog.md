@@ -489,3 +489,26 @@ BootUI 组件样式类名不正确，导致启动动画显示异常。
 ```
 9ab5c0b fix: Update BootUI component with proper class names
 ```
+
+---
+Task ID: 1
+Agent: Main Agent
+Task: 重构启动过程，整合到 bootloader 包
+
+Work Log:
+- 查看远程仓库历史提交，找到旧版本启动动画代码
+- 分析 bootloader 包原有结构
+- 重构 bootloader 包，添加 BootController、BootManager 类
+- 创建 ui.tsx 组件（BootUI、LoadingScreen）
+- 创建 screen.tsx 组合组件（BootScreen）
+- 更新 bootloader 的 package.json 添加 React peerDependency
+- 更新 OS 入口使用新的 bootloader 导入
+- 更新 UI 包中的 Boot 组件重新导出 bootloader 内容
+- 运行 lint 检查并修复问题
+- 提交代码
+
+Stage Summary:
+- bootloader 包现在负责完整的启动流程管理
+- 包含：BootController、BootManager、Bootloader 类
+- 包含：BootUI、LoadingScreen、BootScreen UI 组件
+- 保持向后兼容性，UI 包重新导出 bootloader 内容

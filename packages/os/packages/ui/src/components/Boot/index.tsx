@@ -1,17 +1,13 @@
 /**
- * @fileoverview Boot Screen Component
- * @module @ui/components/Boot
+ * Boot Screen Component
  * 
- * 从 @bootloader 重新导出启动相关组件
- * 保持向后兼容性
+ * 从 @bootloader 重新导出
  */
 
-// 从 bootloader 重新导出
 export { 
   BootController, 
   BootUI, 
   BootScreen,
-  LoadingScreen,
   bootloader,
   setupGlobalErrorHandler,
   BootManager
@@ -24,7 +20,8 @@ export type {
   BootError,
   BootUIProps,
   BootScreenProps,
-  BootloaderPlugin
+  BootloaderPlugin,
+  BootTask
 } from '@bootloader';
 
 export default BootScreen;

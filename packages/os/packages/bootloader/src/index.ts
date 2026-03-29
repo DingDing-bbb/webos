@@ -1,12 +1,20 @@
-// Bootloader - 启动引导加载器
-// 负责：启动动画、错误检测、恢复模式触发、插件管理、启动流程控制
+/**
+ * Bootloader - 系统引导加载器
+ * 
+ * 负责系统启动的完整流程：
+ * 1. 引导检测
+ * 2. 内核初始化
+ * 3. 文件系统挂载
+ * 4. 服务启动
+ * 5. 桌面准备
+ */
 
 // ============================================================================
 // Re-exports
 // ============================================================================
 
-// 重新导出 UI 组件
-export { BootUI, LoadingScreen } from './ui';
+// UI 组件
+export { BootUI } from './ui';
 export type { BootUIProps } from './ui';
 
 export { BootScreen } from './screen';
@@ -34,27 +42,15 @@ export interface BootStatus {
   canRecover: boolean;
 }
 
-// 插件接口
-export interface BootloaderPlugin {
-  id: string;
-  name: string;
-  version: string;
-  installedAt?: string;
-  permissions: string[];
-}
-
-// 启动任务
-interface InitTask {
+export interface BootTask {
   id: string;
   name: string;
   weight: number;
   execute: () => Promise<void>;
 }
 
-// 进度回调类型
 export type ProgressCallback = (task: string, progress: number) => void;
 
-// 启动结果类型
 export interface BootResult {
   success: boolean;
   error?: string;
@@ -135,17 +131,17 @@ export class BootManager {
 // ============================================================================
 
 /**
- * 管理系统初始化序列
+ * 启动控制器
  * 
- * 启动阶段:
- * - Stage 1: Kernel - 核心 API 初始化
- * - Stage 2: Filesystem - 挂载和验证文件系统结构
- * - Stage 3: Services - 加载 i18n、用户配置、时间
- * - Stage 4: Resources - 字体、图标、主题
- * - Stage 5: Desktop - 窗口管理器、最终准备
+ * 执行真正的系统初始化任务：
+ * - Stage 1: Kernel - 内核初始化
+ * - Stage 2: Filesystem - 文件系统挂载
+ * - Stage 3: Services - 服务启动
+ * - Stage 4: Resources - 资源加载
+ * - Stage 5: Desktop - 桌面准备
  */
 export class BootController {
-  private tasks: InitTask[] = [];
+  private tasks: BootTask[] = [];
   private completedWeight = 0;
   private totalWeight = 0;
   private onProgress?: ProgressCallback;
@@ -155,7 +151,9 @@ export class BootController {
   }
 
   private registerTasks(): void {
+    // ========================================
     // Stage 1: Kernel Initialization (15%)
+    // ========================================
     this.addTask({
       id: 'kernel.init',
       name: 'Initializing kernel...',
@@ -164,7 +162,7 @@ export class BootController {
         if (!window.webos) {
           throw new Error('Kernel initialization failed');
         }
-        await this.delay(50);
+        await this.delay(80);
       },
     });
 
@@ -177,11 +175,13 @@ export class BootController {
         if (!api.window || !api.fs || !api.i18n) {
           throw new Error('System APIs incomplete');
         }
-        await this.delay(30);
+        await this.delay(60);
       },
     });
 
+    // ========================================
     // Stage 2: Filesystem (20%)
+    // ========================================
     this.addTask({
       id: 'fs.root',
       name: 'Mounting root filesystem...',
@@ -191,7 +191,7 @@ export class BootController {
         if (rootFiles.length === 0) {
           throw new Error('Filesystem mount failed');
         }
-        await this.delay(20);
+        await this.delay(50);
       },
     });
 
@@ -208,7 +208,7 @@ export class BootController {
             fs.mkdir(dir);
           }
         }
-        await this.delay(30);
+        await this.delay(60);
       },
     });
 
@@ -220,11 +220,13 @@ export class BootController {
         if (!window.webos.fs.exists('/var/cache/apps')) {
           window.webos.fs.mkdir('/var/cache/apps');
         }
-        await this.delay(20);
+        await this.delay(40);
       },
     });
 
+    // ========================================
     // Stage 3: Services (25%)
+    // ========================================
     this.addTask({
       id: 'services.i18n',
       name: 'Loading language packs...',
@@ -234,7 +236,7 @@ export class BootController {
         if (savedLocale) {
           window.webos.i18n.setLocale(savedLocale);
         }
-        await this.delay(30);
+        await this.delay(60);
       },
     });
 
@@ -245,9 +247,9 @@ export class BootController {
       execute: async () => {
         const bootState = localStorage.getItem('webos-boot');
         if (bootState) {
-          await this.delay(20);
+          await this.delay(30);
         }
-        await this.delay(20);
+        await this.delay(30);
       },
     });
 
@@ -257,18 +259,20 @@ export class BootController {
       weight: 5,
       execute: async () => {
         window.webos.time.getCurrent();
-        await this.delay(20);
+        await this.delay(40);
       },
     });
 
+    // ========================================
     // Stage 4: Resources (25%)
+    // ========================================
     this.addTask({
       id: 'resources.fonts',
       name: 'Loading fonts...',
       weight: 10,
       execute: async () => {
         await document.fonts.ready;
-        await this.delay(20);
+        await this.delay(40);
       },
     });
 
@@ -277,7 +281,7 @@ export class BootController {
       name: 'Loading icon set...',
       weight: 10,
       execute: async () => {
-        await this.delay(20);
+        await this.delay(50);
       },
     });
 
@@ -288,17 +292,19 @@ export class BootController {
       execute: async () => {
         const theme = window.webos.config.get<string>('theme') || 'light';
         document.documentElement.setAttribute('data-theme', theme);
-        await this.delay(20);
+        await this.delay(30);
       },
     });
 
+    // ========================================
     // Stage 5: Desktop (15%)
+    // ========================================
     this.addTask({
       id: 'desktop.wm',
       name: 'Starting window manager...',
       weight: 8,
       execute: async () => {
-        await this.delay(30);
+        await this.delay(60);
       },
     });
 
@@ -307,12 +313,12 @@ export class BootController {
       name: 'Preparing desktop...',
       weight: 7,
       execute: async () => {
-        await this.delay(50);
+        await this.delay(80);
       },
     });
   }
 
-  private addTask(task: InitTask): void {
+  private addTask(task: BootTask): void {
     this.tasks.push(task);
     this.totalWeight += task.weight;
   }
@@ -356,6 +362,14 @@ export class BootController {
 // ============================================================================
 
 const PLUGINS_STORAGE_KEY = 'webos-bootloader-plugins';
+
+export interface BootloaderPlugin {
+  id: string;
+  name: string;
+  version: string;
+  installedAt?: string;
+  permissions: string[];
+}
 
 class Bootloader {
   private status: BootStatus = {
@@ -410,10 +424,8 @@ class Bootloader {
       const isOOBE = !localStorage.getItem('webos-oobe-complete');
       
       if (isOOBE) {
-        console.log('[Bootloader] OOBE mode: Installing dev plugin without password');
         this.installDevPluginInternal();
       } else {
-        console.log('[Bootloader] Non-OOBE mode: Dev plugin install requires password verification');
         sessionStorage.setItem('webos-pending-plugin-install', 'true');
       }
     }
@@ -448,7 +460,6 @@ class Bootloader {
       detail: { plugin }
     }));
 
-    console.log('[Bootloader] Developer plugin installed');
     return { success: true };
   }
 
@@ -483,7 +494,6 @@ class Bootloader {
       detail: { pluginId: 'com.webos.dev-plugin' }
     }));
 
-    console.log('[Bootloader] Developer plugin uninstalled');
     return { success: true };
   }
 

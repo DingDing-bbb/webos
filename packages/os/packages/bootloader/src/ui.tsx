@@ -1,8 +1,11 @@
 /**
- * @fileoverview Boot UI Components
- * @module @bootloader/ui
- * 
  * 启动界面 UI 组件
+ * 
+ * 显示真正的启动过程：
+ * - Logo
+ * - 加载动画
+ * - 状态文本
+ * - 进度条
  */
 
 import React from 'react';
@@ -12,33 +15,17 @@ import React from 'react';
 // ============================================================================
 
 export interface BootUIProps {
-  /** 当前进度 (0-100) */
   progress: number;
-  /** 状态文本 */
   statusText: string;
-  /** 错误消息 */
   error?: string | null;
-  /** 重试回调 */
   onRetry?: () => void;
-}
-
-export interface BootScreenProps {
-  /** 启动完成回调 */
-  onComplete: () => void;
-  /** 是否显示 UI */
-  showUI?: boolean;
 }
 
 // ============================================================================
 // Spinner Component
 // ============================================================================
 
-interface SpinnerProps {
-  size?: number;
-  color?: string;
-}
-
-const Spinner: React.FC<SpinnerProps> = ({ size = 40, color = 'white' }) => {
+function Spinner({ size = 40, color = 'white' }: { size?: number; color?: string }) {
   return (
     <div
       style={{
@@ -51,35 +38,18 @@ const Spinner: React.FC<SpinnerProps> = ({ size = 40, color = 'white' }) => {
       }}
     />
   );
-};
+}
 
 // ============================================================================
 // BootUI Component
 // ============================================================================
 
-/**
- * 启动界面 UI 组件
- * 
- * 显示:
- * - 大型 Logo
- * - 白色加载动画
- * - 状态文本
- * - 错误状态和重试选项
- */
 export const BootUI: React.FC<BootUIProps> = ({
-  progress: _progress,
+  progress,
   statusText,
   error,
   onRetry,
 }) => {
-  // 获取系统名称和版本
-  const osName = (typeof globalThis !== 'undefined' 
-    ? (globalThis as unknown as { __OS_NAME__?: string }).__OS_NAME__ 
-    : null) || 'WebOS';
-  const osVersion = (typeof globalThis !== 'undefined' 
-    ? (globalThis as unknown as { __OS_VERSION__?: string }).__OS_VERSION__ 
-    : null) || '0.0.1';
-
   // 错误状态
   if (error) {
     return (
@@ -131,7 +101,7 @@ export const BootUI: React.FC<BootUIProps> = ({
             fontWeight="700"
             letterSpacing="-1"
           >
-            {osName}
+            WebOS
           </text>
         </svg>
       </div>
@@ -146,117 +116,99 @@ export const BootUI: React.FC<BootUIProps> = ({
         {statusText}
       </div>
 
+      {/* 进度条 */}
+      <div className="os-boot-progress">
+        <div 
+          className="os-boot-progress-bar" 
+          style={{ width: `${progress}%` }}
+        />
+      </div>
+
       {/* 版本信息 */}
       <div className="os-boot-version">
-        v{osVersion}
-      </div>
-    </div>
-  );
-};
-
-// ============================================================================
-// LoadingScreen Component (早期版本风格)
-// ============================================================================
-
-/**
- * 加载界面 - 早期版本的启动动画
- * 
- * 显示 W Logo + 进度条
- */
-export const LoadingScreen: React.FC = () => {
-  const [progress, setProgress] = React.useState(0);
-
-  React.useEffect(() => {
-    const timer = setInterval(() => {
-      setProgress(p => Math.min(p + Math.random() * 15, 100));
-    }, 150);
-    return () => clearInterval(timer);
-  }, []);
-
-  return (
-    <div className="os-loading-screen">
-      <div className="os-loading-content">
-        {/* Logo */}
-        <div className="os-loading-logo">
-          <span className="os-loading-logo-text">W</span>
-        </div>
-
-        {/* 名称 */}
-        <h1 className="os-loading-title">WebOS</h1>
-        <p className="os-loading-subtitle">正在启动...</p>
-
-        {/* 进度条 */}
-        <div className="os-loading-progress-bar">
-          <div
-            className="os-loading-progress-fill"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
+        v0.0.1
       </div>
 
       {/* 内联样式 */}
       <style>{`
-        .os-loading-screen {
+        .os-boot-screen {
           position: fixed;
           top: 0;
           left: 0;
           right: 0;
           bottom: 0;
-          background: #09090b;
+          background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: center;
+          z-index: 9999;
         }
-        
-        .os-loading-content {
-          text-align: center;
+
+        .os-boot-logo {
+          margin-bottom: 32px;
         }
-        
-        .os-loading-logo {
-          width: 64px;
-          height: 64px;
+
+        .os-boot-spinner {
           margin-bottom: 24px;
-          border-radius: 12px;
-          background: #27272a;
-          display: flex;
-          align-items: center;
-          justify-content: center;
         }
-        
-        .os-loading-logo-text {
-          font-size: 20px;
-          font-weight: 600;
-          color: white;
-        }
-        
-        .os-loading-title {
-          font-size: 18px;
-          font-weight: 500;
-          color: white;
-          margin: 0 0 4px 0;
-        }
-        
-        .os-loading-subtitle {
+
+        .os-boot-text {
           font-size: 14px;
-          color: #71717a;
-          margin: 0 0 32px 0;
+          color: rgba(255, 255, 255, 0.7);
+          margin-bottom: 16px;
+          min-height: 20px;
         }
-        
-        .os-loading-progress-bar {
-          width: 160px;
-          height: 4px;
-          background: #27272a;
-          border-radius: 9999px;
+
+        .os-boot-progress {
+          width: 200px;
+          height: 3px;
+          background: rgba(255, 255, 255, 0.1);
+          border-radius: 2px;
           overflow: hidden;
         }
-        
-        .os-loading-progress-fill {
+
+        .os-boot-progress-bar {
           height: 100%;
           background: white;
-          transition: width 150ms ease;
+          transition: width 0.3s ease;
         }
-        
+
+        .os-boot-version {
+          position: absolute;
+          bottom: 20px;
+          font-size: 11px;
+          color: rgba(255, 255, 255, 0.4);
+        }
+
+        .os-boot-error {
+          margin-top: 16px;
+          padding: 8px 16px;
+          background: rgba(239, 68, 68, 0.1);
+          border: 1px solid rgba(239, 68, 68, 0.3);
+          border-radius: 4px;
+          color: #ef4444;
+          font-size: 14px;
+          max-width: 300px;
+          text-align: center;
+        }
+
+        .os-boot-retry {
+          margin-top: 16px;
+          padding: 10px 24px;
+          background: rgba(255, 255, 255, 0.1);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          color: white;
+          font-size: 13px;
+          border-radius: 4px;
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+
+        .os-boot-retry:hover {
+          background: rgba(255, 255, 255, 0.2);
+        }
+
         @keyframes os-boot-spin {
           from { transform: rotate(0deg); }
           to { transform: rotate(360deg); }

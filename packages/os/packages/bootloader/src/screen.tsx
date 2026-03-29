@@ -1,8 +1,11 @@
 /**
- * @fileoverview Boot Screen - 组合组件
- * @module @bootloader/screen
+ * BootScreen - 启动界面组合组件
  * 
- * 组合 BootController 和 BootUI
+ * 执行真正的启动流程：
+ * 1. 创建 BootController
+ * 2. 执行初始化任务
+ * 3. 显示进度和状态
+ * 4. 完成后调用 onComplete
  */
 
 import React from 'react';
@@ -15,9 +18,7 @@ import type { BootResult } from './index';
 // ============================================================================
 
 export interface BootScreenProps {
-  /** 启动完成回调 */
   onComplete: () => void;
-  /** 是否显示 UI */
   showUI?: boolean;
 }
 
@@ -25,12 +26,6 @@ export interface BootScreenProps {
 // BootScreen Component
 // ============================================================================
 
-/**
- * 组合启动界面组件
- * 
- * 组合 BootController 和 BootUI 用于简单使用。
- * 需要更多控制时，请分别使用 BootController 和 BootUI。
- */
 export const BootScreen: React.FC<BootScreenProps> = ({
   onComplete,
   showUI = true,
@@ -40,18 +35,22 @@ export const BootScreen: React.FC<BootScreenProps> = ({
   const [error, setError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
+    // 创建启动控制器
     const controller = new BootController();
 
+    // 设置进度回调
     controller.setProgressHandler((task, prog) => {
       setStatusText(task);
       setProgress(prog);
     });
 
+    // 执行启动任务
     controller.run().then((result: BootResult) => {
       if (result.success) {
         setStatusText('Welcome!');
         setProgress(100);
-        setTimeout(onComplete, 200);
+        // 短暂延迟后完成
+        setTimeout(onComplete, 300);
       } else {
         setError(result.error || 'Unknown error');
         setStatusText(`Error: ${result.error}`);
