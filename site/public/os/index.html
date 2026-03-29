@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><meta name="theme-color" content="#1a1a2e"><meta name="description" content="WebOS - A web-based operating system"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="WebOS"><meta name="format-detection" content="telephone=no"><title>WebOS</title><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="apple-touch-icon" href="/favicon.svg"><style>/* 初始加载样式 - 防止白屏闪烁 */
+<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover,shrink-to-fit=no"><meta name="theme-color" content="#1a1a2e"><meta name="description" content="WebOS - A web-based operating system"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="WebOS"><meta name="format-detection" content="telephone=no"><title>WebOS</title><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="apple-touch-icon" href="/favicon.svg"><style>/* 初始加载样式 - 防止白屏闪烁 */
     html, body {
       margin: 0;
       padding: 0;
@@ -17,9 +17,48 @@
       -webkit-tap-highlight-color: transparent;
       /* 禁用长按菜单 */
       -webkit-touch-callout: none;
+      /* 禁用双击缩放 - 关键！*/
+      touch-action: manipulation;
+      /* 禁用文本大小调整 */
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
     }
     #root {
       width: 100%;
       height: 100%;
       overscroll-behavior: none;
-    }</style><link rel="icon" href="./favicon.svg"><link href="./main.30eaf6bbaaf05ff3479e.css" rel="stylesheet"></head><body><div id="root"></div><script defer="defer" src="./vendor.172120666b9b09a21d12.js"></script><script defer="defer" src="./main.6092a3a22b629a915a5a.js"></script></body></html>
+      touch-action: manipulation;
+    }
+    /* 全局禁用双击缩放 */
+    *, *::before, *::after {
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }</style>
+    <!-- 内联JS阻止iOS双击缩放 -->
+    <script>
+    (function() {
+      document.addEventListener('touchstart', function(e) {
+        if (e.touches.length > 1) {
+          e.preventDefault();
+        }
+      }, { passive: false });
+      var lastTouchEnd = 0;
+      document.addEventListener('touchend', function(e) {
+        var now = Date.now();
+        if (now - lastTouchEnd <= 300) {
+          e.preventDefault();
+        }
+        lastTouchEnd = now;
+      }, { passive: false });
+      document.addEventListener('gesturestart', function(e) {
+        e.preventDefault();
+      }, { passive: false });
+      document.addEventListener('gesturechange', function(e) {
+        e.preventDefault();
+      }, { passive: false });
+      document.addEventListener('gestureend', function(e) {
+        e.preventDefault();
+      }, { passive: false });
+    })();
+    </script>
+    <link rel="icon" href="./favicon.svg"><link href="./main.30eaf6bbaaf05ff3479e.css" rel="stylesheet"></head><body><div id="root"></div><script defer="defer" src="./vendor.172120666b9b09a21d12.js"></script><script defer="defer" src="./main.6092a3a22b629a915a5a.js"></script></body></html>

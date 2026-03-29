@@ -35,6 +35,34 @@ function detectIOS(): boolean {
 
 // 全局iOS干扰操作禁用样式
 const iOSPreventionStyles = `
+  /* 全局禁用iOS干扰操作 - 必须应用于html和body */
+  html, body {
+    /* 禁用iOS橡皮筋效果 */
+    overscroll-behavior: none !important;
+    -webkit-overflow-scrolling: auto !important;
+    
+    /* 禁用iOS双击缩放 - 关键！*/
+    touch-action: manipulation !important;
+    
+    /* 禁用iOS长按选择和呼叫菜单 */
+    -webkit-touch-callout: none !important;
+    -webkit-user-select: none !important;
+    user-select: none !important;
+    
+    /* 禁用iOS点击高亮 */
+    -webkit-tap-highlight-color: transparent !important;
+    
+    /* 禁用文本大小调整 */
+    -webkit-text-size-adjust: 100% !important;
+    text-size-adjust: 100% !important;
+    
+    /* 防止页面整体滚动 */
+    overflow: hidden !important;
+    position: fixed !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+  
   /* 全局禁用iOS干扰操作 */
   .os-container {
     /* 禁用iOS橡皮筋效果 */
@@ -61,6 +89,11 @@ const iOSPreventionStyles = `
     position: fixed;
     width: 100%;
     height: 100%;
+  }
+  
+  /* 所有可能触发双击缩放的元素 */
+  *, *::before, *::after {
+    touch-action: manipulation;
   }
   
   /* 允许输入框正常选择文本 */
@@ -197,20 +230,32 @@ export default function OSPage() {
   useEffect(() => {
     if (!isIOS) return;
 
-    const preventDefaultTouch = (e: TouchEvent) => {
-      // 双指缩放
+    // 阻止双指缩放
+    const preventMultiTouch = (e: TouchEvent) => {
       if (e.touches.length > 1) {
         e.preventDefault();
       }
     };
 
+    // 阻止所有手势事件（包括双击缩放）
     const preventGesture = (e: Event) => {
       e.preventDefault();
     };
 
-    // 阻止双指缩放
-    document.addEventListener('touchstart', preventDefaultTouch, { passive: false });
-    document.addEventListener('touchmove', preventDefaultTouch, { passive: false });
+    // 阻止双击缩放 - 检测快速连续点击
+    let lastTouchEnd = 0;
+    const preventDoubleClick = (e: TouchEvent) => {
+      const now = Date.now();
+      if (now - lastTouchEnd <= 300) {
+        e.preventDefault();
+      }
+      lastTouchEnd = now;
+    };
+
+    // 添加事件监听
+    document.addEventListener('touchstart', preventMultiTouch, { passive: false });
+    document.addEventListener('touchmove', preventMultiTouch, { passive: false });
+    document.addEventListener('touchend', preventDoubleClick, { passive: false });
     
     // 阻止手势事件
     // @ts-expect-error - gesture events are not in the type definitions
@@ -220,15 +265,23 @@ export default function OSPage() {
     // @ts-expect-error - gesture events are not in the type definitions
     document.addEventListener('gestureend', preventGesture, { passive: false });
 
+    // 阻止双击事件
+    const preventDblClick = (e: MouseEvent) => {
+      e.preventDefault();
+    };
+    document.addEventListener('dblclick', preventDblClick, { passive: false });
+
     return () => {
-      document.removeEventListener('touchstart', preventDefaultTouch);
-      document.removeEventListener('touchmove', preventDefaultTouch);
+      document.removeEventListener('touchstart', preventMultiTouch);
+      document.removeEventListener('touchmove', preventMultiTouch);
+      document.removeEventListener('touchend', preventDoubleClick);
       // @ts-expect-error - gesture events are not in the type definitions
       document.removeEventListener('gesturestart', preventGesture);
       // @ts-expect-error - gesture events are not in the type definitions
       document.removeEventListener('gesturechange', preventGesture);
       // @ts-expect-error - gesture events are not in the type definitions
       document.removeEventListener('gestureend', preventGesture);
+      document.removeEventListener('dblclick', preventDblClick);
     };
   }, [isIOS]);
 
