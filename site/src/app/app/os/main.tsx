@@ -25,12 +25,30 @@ export default function OSMain() {
           status={props.recovery.status}
           onRetry={props.recovery.onRetry}
           onRecoverFromCache={props.recovery.onRecoverFromCache}
+          onReset={async () => {
+            // 重置系统
+            localStorage.clear();
+            sessionStorage.clear();
+            window.location.reload();
+          }}
         />
       );
     case 'oobe':
-      return <AuthStage type="oobe" />;
+      return (
+        <AuthStage 
+          type="oobe" 
+          onLoginSuccess={props.auth.onLoginSuccess}
+        />
+      );
     case 'lock':
-      return <AuthStage type="lock" {...props.auth} />;
+      return (
+        <AuthStage 
+          type="lock" 
+          users={props.auth.users}
+          systemName={props.auth.systemName}
+          onLoginSuccess={props.auth.onLoginSuccess}
+        />
+      );
     case 'desktop':
       return <DesktopStage {...props.desktop} />;
     default:

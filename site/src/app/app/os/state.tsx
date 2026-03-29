@@ -12,7 +12,11 @@ interface OSState {
   bootMessage: string;
   props: {
     boot: { complete: () => void };
-    auth: { users: Array<{ username: string; displayName: string }>; systemName: string };
+    auth: { 
+      users: Array<{ username: string; displayName: string }>; 
+      systemName: string;
+      onLoginSuccess: () => void;
+    };
     desktop: { containerRef: React.RefObject<HTMLDivElement> };
     recovery: {
       status: BootStatus;
@@ -91,11 +95,9 @@ export function useOSState(): OSState {
 
       if (!result.success) {
         console.error('[OS] Boot failed:', result.error);
-        // 检查是否进入恢复模式
         if (bootloader.isRecoveryMode()) {
           setStage('recovery');
         } else {
-          // 显示错误但继续
           setBootMessage(`Error: ${result.error}`);
           await new Promise(r => setTimeout(r, 2000));
         }
@@ -173,6 +175,12 @@ export function useOSState(): OSState {
     return () => { mounted = false; };
   }, []);
 
+  // 登录成功回调 - 直接切换到桌面，不刷新页面
+  const handleLoginSuccess = useCallback(() => {
+    console.log('[OS] Login successful, switching to desktop');
+    setStage('desktop');
+  }, []);
+
   // 恢复模式 - 重试
   const handleRetry = useCallback(async () => {
     setStage('boot');
@@ -217,7 +225,11 @@ export function useOSState(): OSState {
     bootMessage,
     props: {
       boot: { complete: () => {} },
-      auth: { users, systemName },
+      auth: { 
+        users, 
+        systemName, 
+        onLoginSuccess: handleLoginSuccess 
+      },
       desktop: { containerRef },
       recovery: {
         status: bootStatus,

@@ -6,9 +6,10 @@ interface AuthStageProps {
   type: 'oobe' | 'lock';
   users?: Array<{ username: string; displayName: string }>;
   systemName?: string;
+  onLoginSuccess?: () => void;
 }
 
-export function AuthStage({ type, users = [], systemName = 'WebOS' }: AuthStageProps) {
+export function AuthStage({ type, users = [], systemName = 'WebOS', onLoginSuccess }: AuthStageProps) {
   if (type === 'oobe') {
     return (
       <OOBE
@@ -17,6 +18,13 @@ export function AuthStage({ type, users = [], systemName = 'WebOS' }: AuthStageP
           localStorage.setItem('webos-last-displayname', data.username);
           if (data.theme) {
             localStorage.setItem('webos-theme', data.theme);
+            document.documentElement.setAttribute('data-theme', data.theme);
+          }
+          if (data.tabletMode !== undefined) {
+            localStorage.setItem('webos-tablet-mode', String(data.tabletMode));
+            if (data.tabletMode) {
+              document.documentElement.classList.add('os-tablet-mode');
+            }
           }
           if (window.webos) {
             window.webos.i18n.setLocale(data.language);
@@ -25,7 +33,10 @@ export function AuthStage({ type, users = [], systemName = 'WebOS' }: AuthStageP
             }
             window.webos.boot.completeOOBE();
           }
-          window.location.reload();
+          // OOBE 完成后直接进入桌面，不刷新页面
+          if (onLoginSuccess) {
+            onLoginSuccess();
+          }
         }}
       />
     );
@@ -38,16 +49,24 @@ export function AuthStage({ type, users = [], systemName = 'WebOS' }: AuthStageP
       onLogin={async (username, password) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const secure = (window.webos?.user as any)?.secure;
+        
         if (secure) {
           const result = await secure.login(username, password);
           if (result.success) {
             localStorage.setItem('webos-last-username', username);
-            window.location.reload();
+            // 登录成功后直接切换到桌面，不刷新页面
+            if (onLoginSuccess) {
+              onLoginSuccess();
+            }
           }
           return result;
         }
+        
+        // 没有安全用户管理器，直接登录成功
         localStorage.setItem('webos-last-username', username);
-        window.location.reload();
+        if (onLoginSuccess) {
+          onLoginSuccess();
+        }
         return { success: true };
       }}
     />

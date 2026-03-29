@@ -564,3 +564,26 @@ Stage Summary:
   - screen.tsx: BootScreen 组件
   - index.ts: 统一导出
 - 提交: a942aab
+
+---
+Task ID: 4
+Agent: Main Agent
+Task: 修复启动流程，解决 error 弹出问题
+
+Work Log:
+- 分析启动流程，发现 BootController 在内核初始化前就检查 window.webos
+- 更新 BootController：等待内核初始化完成，而不是立即检查
+- 更新 state.tsx：统一执行 BootController，传递进度和消息给 UI
+- 更新 boot.tsx：只显示 UI，不执行初始化逻辑
+- 更新 main.tsx：传递 bootProgress 和 bootMessage 给 BootStage
+- 运行 lint 检查通过
+- 提交代码
+
+Stage Summary:
+- 启动流程已修复，不再弹出 error
+- 启动流程：
+  1. page.tsx 显示加载圈
+  2. main.tsx 使用 useOSState
+  3. state.tsx 初始化内核并运行 BootController
+  4. BootStage 显示启动动画和进度
+- 提交: 4af0eab
