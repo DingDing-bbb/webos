@@ -458,3 +458,34 @@ sdk/packages/core/
 
 **新增文件：**
 1. `packages/os/packages/tablet/src/styles/touch.css`
+
+---
+
+## 启动动画修复 (2026-03-29)
+
+### 问题
+BootUI 组件样式类名不正确，导致启动动画显示异常。
+
+### 修复内容
+
+**BootUI.tsx 更新：**
+- 使用正确的 CSS 类名（`os-boot-screen`, `os-boot-logo`, `os-boot-spinner`, `os-boot-text`, `os-boot-version`）
+- 从 `@ui/config` 导入 `OS_NAME` 和 `OS_VERSION`
+- 添加错误状态处理和重试按钮
+- 保持与旧版本结构一致
+
+**样式类名对应：**
+| 类名 | 用途 |
+|------|------|
+| `os-boot-screen` | 启动屏幕容器 |
+| `os-boot-logo` | Logo 区域 |
+| `os-boot-spinner` | 加载动画区域 |
+| `os-boot-text` | 状态文本 |
+| `os-boot-version` | 版本信息 |
+| `os-boot-error` | 错误信息 |
+| `os-boot-retry` | 重试按钮 |
+
+### Git 提交
+```
+9ab5c0b fix: Update BootUI component with proper class names
+```
