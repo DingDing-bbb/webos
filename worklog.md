@@ -540,3 +540,27 @@ Stage Summary:
 - 启动流程: 加载圈 -> BootScreen(真正初始化) -> OOBE/LockScreen -> Desktop
 - BootController 执行真正的初始化任务，不是假的延迟
 - 提交: 42111f2
+
+---
+Task ID: 3
+Agent: Main Agent
+Task: 修复 BootScreen 循环依赖问题
+
+Work Log:
+- 发现 BootScreen 找不到变量的错误
+- 分析发现是循环依赖问题：screen.tsx -> index.ts -> screen.tsx
+- 创建独立的 controller.ts 文件
+- 更新 screen.tsx 从 controller.ts 导入
+- 删除 UI 包中旧的 BootController.ts 和 BootUI.tsx
+- 更新 Boot/index.tsx 使用正确的导入方式
+- 运行 lint 检查通过
+- 提交代码
+
+Stage Summary:
+- 循环依赖问题已解决
+- bootloader 包结构：
+  - controller.ts: BootController 类
+  - ui.tsx: BootUI 组件
+  - screen.tsx: BootScreen 组件
+  - index.ts: 统一导出
+- 提交: a942aab

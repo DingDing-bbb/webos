@@ -1,11 +1,19 @@
-// 启动阶段 - 自己导入需要的模块
-import { BootScreen } from '@ui';
+// 启动阶段 - 显示启动动画
+import { BootUI } from '@bootloader';
 import '@ui/styles/index.css';
 
 interface BootStageProps {
-  complete: () => void;
+  progress?: number;
+  message?: string;
+  complete?: () => void;
 }
 
-export function BootStage({ complete }: BootStageProps) {
-  return <BootScreen onComplete={complete} />;
+export function BootStage({ progress = 0, message = 'Starting...', complete: _complete }: BootStageProps) {
+  return (
+    <BootUI
+      progress={progress}
+      statusText={message}
+      onRetry={() => window.location.reload()}
+    />
+  );
 }

@@ -8,11 +8,17 @@ import { useOSState } from './state';
 import { RecoveryMode } from '@recovery';
 
 export default function OSMain() {
-  const { stage, props } = useOSState();
+  const { stage, bootProgress, bootMessage, props } = useOSState();
 
   switch (stage) {
     case 'boot':
-      return <BootStage {...props.boot} />;
+      return (
+        <BootStage 
+          progress={bootProgress} 
+          message={bootMessage}
+          complete={props.boot.complete} 
+        />
+      );
     case 'recovery':
       return (
         <RecoveryMode

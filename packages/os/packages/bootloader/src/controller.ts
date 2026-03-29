@@ -2,6 +2,9 @@
  * BootController - 启动控制器
  * 
  * 执行真正的系统初始化任务
+ * 
+ * 注意：此控制器假设 window.webos 已经初始化
+ * 内核初始化应该在创建此控制器之前完成
  */
 
 // ============================================================================
@@ -29,9 +32,9 @@ export interface BootResult {
 /**
  * 启动控制器
  * 
- * 执行真正的系统初始化任务：
- * - Stage 1: Kernel - 内核初始化
- * - Stage 2: Filesystem - 文件系统挂载
+ * 执行系统初始化任务：
+ * - Stage 1: Kernel - 验证内核 API
+ * - Stage 2: Filesystem - 文件系统初始化
  * - Stage 3: Services - 服务启动
  * - Stage 4: Resources - 资源加载
  * - Stage 5: Desktop - 桌面准备
@@ -48,17 +51,22 @@ export class BootController {
 
   private registerTasks(): void {
     // ========================================
-    // Stage 1: Kernel Initialization (15%)
+    // Stage 1: Kernel Verification (15%)
     // ========================================
     this.addTask({
-      id: 'kernel.init',
-      name: 'Initializing kernel...',
+      id: 'kernel.verify',
+      name: 'Verifying kernel...',
       weight: 5,
       execute: async () => {
-        if (!window.webos) {
-          throw new Error('Kernel initialization failed');
+        // 等待内核初始化完成
+        let retries = 0;
+        while (!window.webos && retries < 50) {
+          await this.delay(100);
+          retries++;
         }
-        await this.delay(80);
+        if (!window.webos) {
+          throw new Error('Kernel not initialized');
+        }
       },
     });
 
@@ -71,7 +79,7 @@ export class BootController {
         if (!api.window || !api.fs || !api.i18n) {
           throw new Error('System APIs incomplete');
         }
-        await this.delay(60);
+        await this.delay(50);
       },
     });
 
@@ -87,7 +95,7 @@ export class BootController {
         if (rootFiles.length === 0) {
           throw new Error('Filesystem mount failed');
         }
-        await this.delay(50);
+        await this.delay(30);
       },
     });
 
@@ -104,7 +112,7 @@ export class BootController {
             fs.mkdir(dir);
           }
         }
-        await this.delay(60);
+        await this.delay(40);
       },
     });
 
@@ -116,7 +124,7 @@ export class BootController {
         if (!window.webos.fs.exists('/var/cache/apps')) {
           window.webos.fs.mkdir('/var/cache/apps');
         }
-        await this.delay(40);
+        await this.delay(30);
       },
     });
 
@@ -132,7 +140,7 @@ export class BootController {
         if (savedLocale) {
           window.webos.i18n.setLocale(savedLocale);
         }
-        await this.delay(60);
+        await this.delay(40);
       },
     });
 
@@ -141,10 +149,6 @@ export class BootController {
       name: 'Loading user profiles...',
       weight: 10,
       execute: async () => {
-        const bootState = localStorage.getItem('webos-boot');
-        if (bootState) {
-          await this.delay(30);
-        }
         await this.delay(30);
       },
     });
@@ -155,7 +159,7 @@ export class BootController {
       weight: 5,
       execute: async () => {
         window.webos.time.getCurrent();
-        await this.delay(40);
+        await this.delay(30);
       },
     });
 
@@ -168,7 +172,7 @@ export class BootController {
       weight: 10,
       execute: async () => {
         await document.fonts.ready;
-        await this.delay(40);
+        await this.delay(30);
       },
     });
 
@@ -177,7 +181,7 @@ export class BootController {
       name: 'Loading icon set...',
       weight: 10,
       execute: async () => {
-        await this.delay(50);
+        await this.delay(30);
       },
     });
 
@@ -188,7 +192,7 @@ export class BootController {
       execute: async () => {
         const theme = window.webos.config.get<string>('theme') || 'light';
         document.documentElement.setAttribute('data-theme', theme);
-        await this.delay(30);
+        await this.delay(20);
       },
     });
 
@@ -200,7 +204,7 @@ export class BootController {
       name: 'Starting window manager...',
       weight: 8,
       execute: async () => {
-        await this.delay(60);
+        await this.delay(40);
       },
     });
 
@@ -209,7 +213,7 @@ export class BootController {
       name: 'Preparing desktop...',
       weight: 7,
       execute: async () => {
-        await this.delay(80);
+        await this.delay(50);
       },
     });
   }

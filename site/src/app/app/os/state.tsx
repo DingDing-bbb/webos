@@ -1,13 +1,15 @@
 'use client';
 
 import { useEffect, useState, useRef, useCallback } from 'react';
-import { bootloader, type BootStatus } from '@bootloader';
+import { bootloader, BootController, type BootStatus } from '@bootloader';
 
 type Stage = 'boot' | 'recovery' | 'oobe' | 'lock' | 'desktop';
 
 interface OSState {
   stage: Stage;
   bootStatus: BootStatus;
+  bootProgress: number;
+  bootMessage: string;
   props: {
     boot: { complete: () => void };
     auth: { users: Array<{ username: string; displayName: string }>; systemName: string };
@@ -33,6 +35,8 @@ export function useOSState(): OSState {
   const containerRef = useRef<HTMLDivElement>(null);
   const [stage, setStage] = useState<Stage>('boot');
   const [bootStatus, setBootStatus] = useState<BootStatus>(initialBootStatus);
+  const [bootProgress, setBootProgress] = useState(0);
+  const [bootMessage, setBootMessage] = useState('Starting...');
   const [users, setUsers] = useState<Array<{ username: string; displayName: string }>>([]);
   const [systemName, setSystemName] = useState('WebOS');
 
@@ -60,6 +64,7 @@ export function useOSState(): OSState {
 
     const boot = async () => {
       // 1. 初始化 WebOS API
+      setBootMessage('Initializing kernel...');
       const { initWebOS } = await import('@kernel');
       if (!mounted) return;
       initWebOS();
@@ -69,18 +74,41 @@ export function useOSState(): OSState {
         window.webos.setWindowContainer(containerRef.current);
       }
 
-      // 3. 运行 bootloader
-      const success = await bootloader.boot();
+      // 3. 运行启动控制器
+      const controller = new BootController();
+      
+      controller.setProgressHandler((task, progress) => {
+        if (mounted) {
+          setBootMessage(task);
+          setBootProgress(progress);
+        }
+      });
 
-      if (!mounted || !success) {
-        // bootloader.boot() 返回 false 时，检查是否进入恢复模式
+      setBootMessage('Starting boot sequence...');
+      const result = await controller.run();
+
+      if (!mounted) return;
+
+      if (!result.success) {
+        console.error('[OS] Boot failed:', result.error);
+        // 检查是否进入恢复模式
         if (bootloader.isRecoveryMode()) {
           setStage('recovery');
+        } else {
+          // 显示错误但继续
+          setBootMessage(`Error: ${result.error}`);
+          await new Promise(r => setTimeout(r, 2000));
         }
-        return;
       }
 
-      // 4. 检查是否有保存的会话状态
+      // 4. 完成启动
+      setBootMessage('Welcome!');
+      setBootProgress(100);
+      await new Promise(r => setTimeout(r, 300));
+
+      if (!mounted) return;
+
+      // 5. 检查是否有保存的会话状态
       if (window.webos?.fs?.exists('/tmp/.session')) {
         try {
           const content = window.webos.fs.read('/tmp/.session');
@@ -88,7 +116,6 @@ export function useOSState(): OSState {
             const session = JSON.parse(content);
             console.log('[OS] Restored session from /tmp:', session);
 
-            // 删除会话文件（一次性使用）
             window.webos.fs.delete('/tmp/.session');
 
             if (session.systemName) setSystemName(session.systemName);
@@ -99,7 +126,6 @@ export function useOSState(): OSState {
               }]);
             }
 
-            // 应用保存的设置
             if (session.theme) {
               document.documentElement.setAttribute('data-theme', session.theme);
             }
@@ -110,7 +136,6 @@ export function useOSState(): OSState {
               window.webos.i18n.setLocale(session.language);
             }
 
-            // 恢复到保存的阶段
             if (mounted) setStage(session.stage || 'desktop');
             return;
           }
@@ -119,7 +144,7 @@ export function useOSState(): OSState {
         }
       }
 
-      // 5. 正常流程
+      // 6. 正常流程
       if (!window.webos) {
         setStage('desktop');
         return;
@@ -151,9 +176,18 @@ export function useOSState(): OSState {
   // 恢复模式 - 重试
   const handleRetry = useCallback(async () => {
     setStage('boot');
-    const success = await bootloader.boot();
-    if (success) {
-      // 重新检查 OOBE 状态
+    setBootProgress(0);
+    setBootMessage('Retrying...');
+
+    const controller = new BootController();
+    controller.setProgressHandler((task, progress) => {
+      setBootMessage(task);
+      setBootProgress(progress);
+    });
+
+    const result = await controller.run();
+
+    if (result.success) {
       if (window.webos && !window.webos.boot.isOOBEComplete()) {
         setStage('oobe');
       } else {
@@ -179,6 +213,8 @@ export function useOSState(): OSState {
   return {
     stage,
     bootStatus,
+    bootProgress,
+    bootMessage,
     props: {
       boot: { complete: () => {} },
       auth: { users, systemName },
