@@ -348,3 +348,113 @@ sdk/packages/core/
 
 **修改文件：**
 - `packages/os/packages/apps/index.ts` - 注册文档应用
+
+---
+
+## 平板/触控模式实现 (2026-03-29)
+
+### 设计参考
+- Windows 11 设计原则 – 触控优化
+- Windows 触控手势指南
+- 触控交互 – 应用开发指南
+- 二合一设备交互规范
+- Windows 硬件兼容性规范 – 触控与传感器
+- Surface 设备交互设计参考
+
+### 设备检测器 (deviceDetector.ts)
+
+**设备类型：**
+- `desktop` - 桌面设备
+- `tablet` - 平板设备
+- `phone` - 手机设备
+- `twoInOne` - 二合一设备
+
+**输入模式：**
+- `mouse` - 鼠标输入
+- `touch` - 触摸输入
+- `pen` - 触笔输入
+
+**设备能力检测：**
+- 触摸支持
+- 触笔支持
+- 鼠标支持
+- 键盘支持
+- 加速度计
+- 陀螺仪
+
+### 手势识别器 (gestures.ts)
+
+**支持的手势：**
+- `tap` - 点击
+- `doubleTap` - 双击
+- `longPress` - 长按
+- `pressAndHold` - 按住
+- `swipe` - 滑动（支持方向检测）
+- `pinch` - 捏合
+- `stretch` - 拉伸
+- `pan` - 拖动
+- `rotate` - 旋转
+- `edgeSwipe` - 边缘滑动
+
+**配置参数：**
+- 点击判定阈值：10px / 200ms
+- 双击间隔：300ms
+- 长按判定：800ms
+- 滑动阈值：50px
+- 边缘区域：20px
+
+### 触摸处理器 (touchHandler.ts)
+
+**窗口触摸交互：**
+- 窗口拖动
+- 窗口缩放（四角 + 四边）
+- 双击标题栏最大化/还原
+- 触摸目标优化（最小 44px）
+
+### 平板模式管理器 (tabletMode.ts)
+
+**功能特性：**
+- 自动检测平板模式
+- 二合一设备模式切换
+- 大触摸目标（44px 最小）
+- 触摸反馈动画
+- 禁用悬停状态
+- 边缘手势
+- 任务栏自动隐藏
+- 触摸键盘自动显示
+
+**边缘手势配置：**
+- 左边缘滑动：打开开始菜单
+- 右边缘滑动：打开操作中心
+- 顶部滑动：全屏切换
+- 底部滑动：显示任务栏
+
+### 触控优化样式 (styles/touch.css)
+
+**样式模块：**
+- 平板模式基础变量
+- 大触摸目标样式
+- 触摸反馈样式
+- 禁用悬停状态
+- 窗口触摸交互
+- 任务栏自动隐藏
+- 开始菜单平板布局
+- 操作中心平板布局
+- 通知平板样式
+- 触摸键盘样式
+- 分屏视图样式
+- 滚动优化
+- 暗色主题适配
+- 响应式断点
+
+### 文件清单
+
+**修改文件：**
+1. `packages/os/packages/tablet/src/deviceDetector.ts`
+2. `packages/os/packages/tablet/src/gestures.ts`
+3. `packages/os/packages/tablet/src/touchHandler.ts`
+4. `packages/os/packages/tablet/src/tabletMode.ts`
+5. `packages/os/packages/tablet/src/index.ts`
+
+**新增文件：**
+1. `packages/os/packages/tablet/src/styles/touch.css`
