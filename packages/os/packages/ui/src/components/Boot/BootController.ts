@@ -270,8 +270,16 @@ export class BootController {
   async run(): Promise<BootResult> {
     this.completedWeight = 0;
 
+    // 检查 /tmp 是否有保存的会话状态
+    const sessionFile = '/tmp/.session';
+    
     for (const task of this.tasks) {
       try {
+        // 检查会话文件（只在第一个任务时检查）
+        if (task.id === 'kernel.init' && window.webos?.fs?.exists(sessionFile)) {
+          console.log('[BootController] Found session file in /tmp, will restore after boot');
+        }
+        
         await task.execute();
         this.completedWeight += task.weight;
 

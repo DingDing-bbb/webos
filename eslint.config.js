@@ -14,6 +14,11 @@ export default tseslint.config(
       '**/*.config.js',
       '**/*.config.ts',
       '**/next-env.d.ts',
+      // Skills 目录的脚本文件（独立工具，非核心代码）
+      'skills/**/*.js',
+      'skills/**/*.ts',
+      // packages/os 可能存在老的脚本
+      'packages/os/**/*.js',
     ],
   },
   js.configs.recommended,

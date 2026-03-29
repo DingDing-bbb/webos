@@ -5,6 +5,7 @@ import { BootStage } from './boot';
 import { AuthStage } from './auth';
 import { DesktopStage } from './desktop';
 import { useOSState } from './state';
+import { RecoveryMode } from '@recovery';
 
 export default function OSMain() {
   const { stage, props } = useOSState();
@@ -12,6 +13,14 @@ export default function OSMain() {
   switch (stage) {
     case 'boot':
       return <BootStage {...props.boot} />;
+    case 'recovery':
+      return (
+        <RecoveryMode
+          status={props.recovery.status}
+          onRetry={props.recovery.onRetry}
+          onRecoverFromCache={props.recovery.onRecoverFromCache}
+        />
+      );
     case 'oobe':
       return <AuthStage type="oobe" />;
     case 'lock':

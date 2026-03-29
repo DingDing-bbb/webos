@@ -36,6 +36,7 @@ export function AuthStage({ type, users = [], systemName = 'WebOS' }: AuthStageP
       users={users}
       systemName={systemName}
       onLogin={async (username, password) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const secure = (window.webos?.user as any)?.secure;
         if (secure) {
           const result = await secure.login(username, password);

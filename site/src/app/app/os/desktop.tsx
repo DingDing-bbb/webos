@@ -30,7 +30,7 @@ export function DesktopStage({ containerRef }: DesktopStageProps) {
   // 加载设置
   useEffect(() => {
     const saved = localStorage.getItem('webos-wallpaper-type');
-    if (saved) setWallpaper({ type: saved as any });
+    if (saved) setWallpaper({ type: saved as 'soft' | 'animated' | 'sunrise' | 'ocean' | 'forest' });
   }, []);
 
   // 打开应用

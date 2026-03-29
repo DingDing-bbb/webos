@@ -258,3 +258,93 @@ function FadeSection({ children, theme }) {
 - `site/src/app/docs/page.tsx` - 文档页面（GitHub链接 + 滚动淡入 + SDK包说明）
 - `site/src/app/intro/page.tsx` - 介绍页面（GitHub链接）
 - `site/src/app/app/page.tsx` - 用户协议页面（GitHub链接）
+
+---
+
+## SDK 完善与文档系统 (2026-03-29)
+
+### 任务概述
+1. 创建完整的 SDK 包用于打包应用
+2. 创建文档系统 - MD 文件可被解析展示
+
+### SDK Core 包创建
+
+创建了 `packages/os/packages/sdk/packages/core/` 子包：
+
+**文件结构：**
+```
+sdk/packages/core/
+├── src/
+│   ├── index.ts      # 主入口，导出所有功能
+│   ├── types.ts      # 类型定义
+│   ├── app.tsx       # 应用注册和管理工具
+│   └── utils.ts      # 工具函数
+└── package.json
+```
+
+**核心功能：**
+- 类型导出（AppConfig, AppCategory, WindowOptions 等）
+- 应用管理（registerApp, createApp, getAllApps 等）
+- 工具函数（generateId, formatFileSize, debounce, throttle 等）
+- 分类图标（CategoryIcons, CATEGORIES）
+
+### 文档系统创建
+
+创建了 `packages/os/packages/docs/` 目录，包含 MD 文档：
+
+**文档文件：**
+- `getting-started.md` - 快速开始指南
+- `app-config.md` - 应用配置说明
+- `hooks.md` - React Hooks 文档
+- `api.md` - API 参考
+- `cli.md` - CLI 命令文档
+- `index.json` - 文档索引配置
+
+### 文档应用创建
+
+创建了 `packages/os/packages/apps/com.os.docs/` 应用：
+
+**功能特性：**
+- 侧边栏导航显示文档列表
+- 搜索过滤文档
+- Markdown 解析和渲染
+- 代码高亮
+- 表格支持
+- 暗色主题支持
+- 响应式设计
+
+**技术实现：**
+- 自定义 Markdown 解析器
+- 内联文档内容（无需外部文件请求）
+- CSS 样式支持暗色主题
+- 注册到应用列表
+
+### 应用注册更新
+
+更新 `packages/os/packages/apps/index.ts`：
+- 添加 `com.os.docs` 应用导入
+- 注册到 allAppInfos 列表
+
+### 文件清单
+
+**新增文件：**
+1. `packages/os/packages/sdk/packages/core/src/index.ts`
+2. `packages/os/packages/sdk/packages/core/src/types.ts`
+3. `packages/os/packages/sdk/packages/core/src/app.tsx`
+4. `packages/os/packages/sdk/packages/core/src/utils.ts`
+5. `packages/os/packages/sdk/packages/core/package.json`
+6. `packages/os/packages/docs/getting-started.md`
+7. `packages/os/packages/docs/app-config.md`
+8. `packages/os/packages/docs/hooks.md`
+9. `packages/os/packages/docs/api.md`
+10. `packages/os/packages/docs/cli.md`
+11. `packages/os/packages/docs/index.json`
+12. `packages/os/packages/apps/com.os.docs/src/index.tsx`
+13. `packages/os/packages/apps/com.os.docs/src/styles.css`
+14. `packages/os/packages/apps/com.os.docs/src/icon.tsx`
+15. `packages/os/packages/apps/com.os.docs/appinfo.json`
+16. `packages/os/packages/apps/com.os.docs/package.json`
+17. `packages/os/packages/apps/com.os.docs/README.md`
+
+**修改文件：**
+- `packages/os/packages/apps/index.ts` - 注册文档应用

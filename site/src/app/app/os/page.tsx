@@ -7,8 +7,11 @@ const AGREEMENT_KEY = 'webos-agreement-accepted';
 
 // 注入全局变量（必须在组件加载前执行）
 if (typeof globalThis !== 'undefined') {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (globalThis as any).__OS_NAME__ = 'WebOS';
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (globalThis as any).__OS_VERSION__ = '0.0.1';
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (globalThis as any).__BUILD_TIME__ = new Date().toISOString();
 }
 
