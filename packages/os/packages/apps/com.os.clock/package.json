@@ -1,6 +1,6 @@
 {
   "name": "@app/com.os.clock",
-  "version": "1.0.0",
+  "version": "0.0.1-alpha",
   "description": "WebOS Clock Application - Digital clock with alarm functionality",
   "private": true,
   "type": "module",

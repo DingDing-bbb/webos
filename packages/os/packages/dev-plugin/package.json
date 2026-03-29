@@ -1,6 +1,6 @@
 {
   "name": "@webos/dev-plugin",
-  "version": "1.0.0",
+  "version": "0.0.1-alpha",
   "description": "Developer Plugin for WebOS Bootloader - enables system reset functionality",
   "main": "src/index.ts",
   "types": "src/index.ts",
@@ -12,7 +12,7 @@
     "id": "com.webos.dev-plugin",
     "name": "Developer Plugin",
     "description": "Enables developer features including system reset",
-    "version": "1.0.0",
+    "version": "0.0.1-alpha",
     "author": "WebOS Team",
     "permissions": ["system:reset", "system:debug"],
     "installMode": "bootloader"
