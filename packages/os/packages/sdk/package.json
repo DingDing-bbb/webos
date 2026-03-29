@@ -1,6 +1,6 @@
 {
   "name": "@webos/sdk",
-  "version": "2.0.0",
+  "version": "0.0.1-alpha",
   "description": "WebOS Software Development Kit - Complete toolkit for building WebOS applications",
   "private": true,
   "type": "module",
