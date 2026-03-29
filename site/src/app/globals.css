@@ -211,8 +211,6 @@ html, body { width: 100%; height: 100%; font-family: system-ui, sans-serif; }
 
 .main-content {
   flex: 1;
-  margin-left: 240px;
-  margin-right: 200px;
   padding: 40px 56px;
   max-width: 820px;
 }
@@ -298,6 +296,15 @@ html, body { width: 100%; height: 100%; font-family: system-ui, sans-serif; }
   margin-bottom: 16px;
 }
 
+.doc-content ul li, .doc-content ol li {
+  color: var(--text-muted);
+}
+
+.doc-content strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
 .doc-content section {
   margin-bottom: 32px;
 }
@@ -325,12 +332,18 @@ html, body { width: 100%; height: 100%; font-family: system-ui, sans-serif; }
   font-size: 16px;
   font-weight: 500;
   margin-bottom: 10px;
+  color: var(--text);
 }
 
 .card ul {
   padding-left: 18px;
   line-height: 1.6;
   margin: 0;
+  color: var(--text-muted);
+}
+
+.card ul li {
+  color: var(--text-muted);
 }
 
 .card.small {
@@ -393,6 +406,11 @@ html, body { width: 100%; height: 100%; font-family: system-ui, sans-serif; }
   line-height: 1.6;
   color: var(--text);
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.code-block code {
+  color: var(--text);
+  font-family: inherit;
 }
 
 .license-block {
@@ -492,11 +510,11 @@ html, body { width: 100%; height: 100%; font-family: system-ui, sans-serif; }
 }
 
 .docs-footer {
-  margin-left: 240px;
-  margin-right: 200px;
+  width: 100%;
   padding: 28px;
   border-top: 1px solid var(--border);
   text-align: center;
+  background: var(--bg);
 }
 
 .docs-footer p {
@@ -613,8 +631,12 @@ html, body { width: 100%; height: 100%; font-family: system-ui, sans-serif; }
   .docs-nav { display: none; }
   .mobile-menu-btn { display: flex; }
   .sidebar { display: none; }
-  .main-content { margin-left: 0; margin-right: 0; padding: 28px 20px; }
+  .main-content { padding: 28px 20px; max-width: 100%; }
   .toc-sidebar { display: none; }
-  .docs-footer { margin-left: 0; margin-right: 0; }
+  .docs-footer { padding: 20px 16px; }
   .skeleton-card-grid { grid-template-columns: 1fr; }
+  .doc-title { font-size: 26px; }
+  .card-grid { grid-template-columns: 1fr; }
+  .nav-btn { min-width: 140px; padding: 12px 16px; }
+  .article-nav { gap: 12px; }
 }

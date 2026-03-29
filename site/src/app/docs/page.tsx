@@ -386,12 +386,11 @@ export default function DocsPage() {
   const [isPending, startTransition] = useTransition();
   const contentRef = useRef<HTMLDivElement>(null);
   const [showSkeleton, setShowSkeleton] = useState(false);
-  
+
   const [lang, setLang] = useState<Lang>('zh');
   const [theme, setTheme] = useState<Theme>('light');
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [mounted, setMounted] = useState(false);
   
   const sectionParam = searchParams.get('section');
   const currentDocID: DocID = allDocIDs.includes(sectionParam as DocID) ? sectionParam as DocID : defaultDocID;
@@ -414,8 +413,7 @@ export default function DocsPage() {
     const savedTheme = localStorage.getItem('webos-theme') as Theme;
     if (savedLang && ['zh', 'zh-TW', 'en'].includes(savedLang)) setLang(savedLang);
     if (savedTheme && ['light', 'dark'].includes(savedTheme)) setTheme(savedTheme);
-    setMounted(true);
-    
+
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
     window.addEventListener('resize', checkMobile);
@@ -512,40 +510,46 @@ export default function DocsPage() {
           </aside>
         )}
 
-        <main className="main-content" ref={contentRef}>
-          <div className={`content-wrapper ${isPending ? 'loading' : ''}`}>
-            <div className="breadcrumb">
-              <a href="/docs">{t.breadcrumb.docs}</a>
-              <span style={{ color: 'var(--text-muted)' }}>/</span>
-              <span>{t.titles[currentDocID]}</span>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', marginLeft: isMobile ? 0 : 240, marginRight: isMobile ? 0 : 200 }}>
+          <main className="main-content" ref={contentRef}>
+            <div className={`content-wrapper ${isPending ? 'loading' : ''}`}>
+              <div className="breadcrumb">
+                <a href="/docs">{t.breadcrumb.docs}</a>
+                <span style={{ color: 'var(--text-muted)' }}>/</span>
+                <span>{t.titles[currentDocID]}</span>
+              </div>
+
+              <h1 className="doc-title">{t.titles[currentDocID]}</h1>
+
+              <div className="doc-content">
+                {showSkeleton && isPending ? (
+                  <DocSkeleton />
+                ) : (
+                  <DocContent docID={currentDocID} lang={lang} isDark={isDark} />
+                )}
+              </div>
+
+              <nav className="article-nav">
+                {prevDoc ? (
+                  <button className="nav-btn prev" onClick={() => navigateToDoc(prevDoc)}>
+                    <span className="label"><ChevronLeft />{t.articleNav.prev}</span>
+                    <span className="title">{t.titles[prevDoc]}</span>
+                  </button>
+                ) : <div />}
+                {nextDoc ? (
+                  <button className="nav-btn next" onClick={() => navigateToDoc(nextDoc)}>
+                    <span className="label">{t.articleNav.next}<ChevronRight /></span>
+                    <span className="title">{t.titles[nextDoc]}</span>
+                  </button>
+                ) : <div />}
+              </nav>
             </div>
+          </main>
 
-            <h1 className="doc-title">{t.titles[currentDocID]}</h1>
-
-            <div className="doc-content">
-              {showSkeleton && isPending ? (
-                <DocSkeleton />
-              ) : (
-                <DocContent docID={currentDocID} lang={lang} isDark={isDark} />
-              )}
-            </div>
-
-            <nav className="article-nav">
-              {prevDoc ? (
-                <button className="nav-btn prev" onClick={() => navigateToDoc(prevDoc)}>
-                  <span className="label"><ChevronLeft />{t.articleNav.prev}</span>
-                  <span className="title">{t.titles[prevDoc]}</span>
-                </button>
-              ) : <div />}
-              {nextDoc ? (
-                <button className="nav-btn next" onClick={() => navigateToDoc(nextDoc)}>
-                  <span className="label">{t.articleNav.next}<ChevronRight /></span>
-                  <span className="title">{t.titles[nextDoc]}</span>
-                </button>
-              ) : <div />}
-            </nav>
-          </div>
-        </main>
+          <footer className="docs-footer">
+            <p>{t.footer}</p>
+          </footer>
+        </div>
 
         {!isMobile && toc.length > 0 && (
           <aside className="toc-sidebar">
@@ -556,10 +560,6 @@ export default function DocsPage() {
           </aside>
         )}
       </div>
-
-      <footer className="docs-footer">
-        <p>{t.footer}</p>
-      </footer>
     </div>
   );
 }
