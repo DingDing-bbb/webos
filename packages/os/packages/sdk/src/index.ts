@@ -1,15 +1,15 @@
 /**
  * @fileoverview WebOS SDK - Main Entry
  * @module @webos/sdk
- * 
+ *
  * WebOS 应用开发工具包
- * 
+ *
  * @example
  * ```typescript
  * // 创建应用
  * import { createApp, registerApp } from '@webos/sdk';
  * import { useTranslation, useTheme } from '@webos/sdk/react';
- * 
+ *
  * const myApp = createApp({
  *   id: 'com.example.myapp',
  *   name: 'My App',
@@ -17,7 +17,7 @@
  *   icon: MyAppIcon,
  *   component: MyApp,
  * });
- * 
+ *
  * registerApp(myApp);
  * ```
  */

@@ -38,12 +38,12 @@ type SpacingValue = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
  * Container size options
  */
 export type ContainerSize =
-  | 'xs'    // 480px
-  | 'sm'    // 640px
-  | 'md'    // 768px
-  | 'lg'    // 1024px
-  | 'xl'    // 1280px
-  | '2xl'   // 1536px
+  | 'xs' // 480px
+  | 'sm' // 640px
+  | 'md' // 768px
+  | 'lg' // 1024px
+  | 'xl' // 1280px
+  | '2xl' // 1536px
   | 'full'; // 100%
 
 /**
@@ -102,7 +102,9 @@ const spacingToCSS = (value: SpacingValue | undefined): string | undefined => {
 /**
  * Convert border radius to CSS variable
  */
-const borderRadiusToCSS = (value: 'none' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full' | undefined): string | undefined => {
+const borderRadiusToCSS = (
+  value: 'none' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full' | undefined
+): string | undefined => {
   if (value === undefined || value === 'none') return undefined;
   return `var(--radius-${value}, 8px)`;
 };
@@ -222,16 +224,12 @@ export interface SectionProps extends ContainerProps {
 type SectionElement = HTMLElement & HTMLDivElement;
 
 export const Section = forwardRef<SectionElement, SectionProps>(
-  (
-    {
-      as: Component = 'section',
-      children,
-      ...props
-    },
-    ref
-  ) => {
+  ({ as: Component = 'section', children, ...props }, ref) => {
     return (
-      <Component ref={ref as React.Ref<SectionElement>} {...(props as React.HTMLAttributes<HTMLElement>)}>
+      <Component
+        ref={ref as React.Ref<SectionElement>}
+        {...(props as React.HTMLAttributes<HTMLElement>)}
+      >
         {children}
       </Component>
     );
@@ -289,12 +287,7 @@ export const Center = forwardRef<HTMLDivElement, CenterProps>(
     }, [horizontal, vertical, maxWidth, propStyle]);
 
     return (
-      <div
-        ref={ref}
-        className={className}
-        style={styles}
-        {...rest}
-      >
+      <div ref={ref} className={className} style={styles} {...rest}>
         {children}
       </div>
     );

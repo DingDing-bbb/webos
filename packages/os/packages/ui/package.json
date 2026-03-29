@@ -17,6 +17,11 @@
     "react": ">=19.0.0",
     "react-dom": ">=19.0.0"
   },
-  "keywords": ["webos", "ui", "components", "layered"],
+  "keywords": [
+    "webos",
+    "ui",
+    "components",
+    "layered"
+  ],
   "license": "MIT"
 }

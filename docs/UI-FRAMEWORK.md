@@ -42,12 +42,14 @@ import { ThemeProvider, useTheme } from '@ui-framework/theme';
 WebOS UI 框架采用双层设计系统，支持 Classic 和 Modern 两种风格：
 
 ### Classic 风格
+
 - 方正边角（2px border-radius）
 - 实心背景
 - 简约动画
 - 适合传统桌面应用
 
 ### Modern 风格
+
 - 圆角设计（8px border-radius）
 - 毛玻璃效果（backdrop-filter）
 - 流畅动画
@@ -153,7 +155,7 @@ import { Grid, GridItem } from '@ui-framework';
 <Grid columns={12} gap={16}>
   <GridItem span={6}>左侧</GridItem>
   <GridItem span={6}>右侧</GridItem>
-</Grid>
+</Grid>;
 ```
 
 #### Container 容器
@@ -163,7 +165,7 @@ import { Container } from '@ui-framework';
 
 <Container maxWidth="lg" padding="md">
   内容
-</Container>
+</Container>;
 ```
 
 #### SplitPanel 分割面板
@@ -174,7 +176,7 @@ import { SplitPanel } from '@ui-framework';
 <SplitPanel direction="horizontal" initialSizes={[200, 'auto']}>
   <div>侧边栏</div>
   <div>主内容</div>
-</SplitPanel>
+</SplitPanel>;
 ```
 
 #### Stack 堆栈
@@ -185,7 +187,7 @@ import { Stack } from '@ui-framework';
 <Stack direction="column" gap={8}>
   <div>项目1</div>
   <div>项目2</div>
-</Stack>
+</Stack>;
 ```
 
 ### 3. 导航组件
@@ -202,7 +204,7 @@ import { Menu, MenuItem, SubMenu } from '@ui-framework';
     <MenuItem>大图标</MenuItem>
     <MenuItem>小图标</MenuItem>
   </SubMenu>
-</Menu>
+</Menu>;
 ```
 
 #### Tabs 标签页
@@ -211,9 +213,13 @@ import { Menu, MenuItem, SubMenu } from '@ui-framework';
 import { Tabs, Tab } from '@ui-framework';
 
 <Tabs defaultActive="tab1">
-  <Tab id="tab1" label="标签一">内容一</Tab>
-  <Tab id="tab2" label="标签二">内容二</Tab>
-</Tabs>
+  <Tab id="tab1" label="标签一">
+    内容一
+  </Tab>
+  <Tab id="tab2" label="标签二">
+    内容二
+  </Tab>
+</Tabs>;
 ```
 
 #### Sidebar 侧边栏
@@ -224,7 +230,7 @@ import { Sidebar } from '@ui-framework';
 <Sidebar width={240} collapsible>
   <Sidebar.Item icon={<Icon />} label="首页" />
   <Sidebar.Item icon={<Icon />} label="设置" />
-</Sidebar>
+</Sidebar>;
 ```
 
 #### Breadcrumb 面包屑
@@ -236,7 +242,7 @@ import { Breadcrumb } from '@ui-framework';
   <Breadcrumb.Item>首页</Breadcrumb.Item>
   <Breadcrumb.Item>文档</Breadcrumb.Item>
   <Breadcrumb.Item current>指南</Breadcrumb.Item>
-</Breadcrumb>
+</Breadcrumb>;
 ```
 
 ### 4. 数据输入组件
@@ -246,19 +252,19 @@ import { Breadcrumb } from '@ui-framework';
 ```tsx
 import { Input } from '@ui-framework';
 
-<Input 
-  placeholder="请输入" 
+<Input
+  placeholder="请输入"
   value={value}
   onChange={(e) => setValue(e.target.value)}
 />
 
-<Input 
+<Input
   type="password"
   leftIcon={<LockIcon />}
   rightIcon={<EyeIcon />}
 />
 
-<Input 
+<Input
   status="error"
   errorMessage="格式不正确"
 />
@@ -269,14 +275,14 @@ import { Input } from '@ui-framework';
 ```tsx
 import { Select } from '@ui-framework';
 
-<Select 
+<Select
   options={[
     { value: '1', label: '选项一' },
     { value: '2', label: '选项二' },
   ]}
   value={value}
   onChange={setValue}
-/>
+/>;
 ```
 
 #### Checkbox 复选框
@@ -299,7 +305,7 @@ import { Checkbox } from '@ui-framework';
 ```tsx
 import { Switch } from '@ui-framework';
 
-<Switch checked={enabled} onChange={setEnabled} />
+<Switch checked={enabled} onChange={setEnabled} />;
 ```
 
 #### Slider 滑块
@@ -307,12 +313,7 @@ import { Switch } from '@ui-framework';
 ```tsx
 import { Slider } from '@ui-framework';
 
-<Slider 
-  min={0} 
-  max={100} 
-  value={value} 
-  onChange={setValue}
-/>
+<Slider min={0} max={100} value={value} onChange={setValue} />;
 ```
 
 #### DatePicker 日期选择器
@@ -320,13 +321,13 @@ import { Slider } from '@ui-framework';
 ```tsx
 import { DatePicker } from '@ui-framework';
 
-<DatePicker 
+<DatePicker
   value={date}
   onChange={setDate}
   format="YYYY-MM-DD"
 />
 
-<DatePicker.RangePicker 
+<DatePicker.RangePicker
   value={[start, end]}
   onChange={setRange}
 />
@@ -337,13 +338,9 @@ import { DatePicker } from '@ui-framework';
 ```tsx
 import { Upload } from '@ui-framework';
 
-<Upload 
-  accept="image/*"
-  multiple
-  onUpload={handleUpload}
->
+<Upload accept="image/*" multiple onUpload={handleUpload}>
   <Button>选择文件</Button>
-</Upload>
+</Upload>;
 ```
 
 ### 5. 数据展示组件
@@ -353,7 +350,7 @@ import { Upload } from '@ui-framework';
 ```tsx
 import { Table } from '@ui-framework';
 
-<Table 
+<Table
   columns={[
     { key: 'name', title: '名称' },
     { key: 'size', title: '大小' },
@@ -362,7 +359,7 @@ import { Table } from '@ui-framework';
   data={files}
   sortable
   selectable
-/>
+/>;
 ```
 
 #### List 列表
@@ -371,10 +368,10 @@ import { Table } from '@ui-framework';
 import { List } from '@ui-framework';
 
 <List>
-  {items.map(item => (
+  {items.map((item) => (
     <List.Item key={item.id}>{item.name}</List.Item>
   ))}
-</List>
+</List>;
 ```
 
 #### Card 卡片
@@ -386,7 +383,7 @@ import { Card } from '@ui-framework';
   <Card.Header>标题</Card.Header>
   <Card.Body>内容</Card.Body>
   <Card.Footer>操作</Card.Footer>
-</Card>
+</Card>;
 ```
 
 #### Tree 树形控件
@@ -394,12 +391,7 @@ import { Card } from '@ui-framework';
 ```tsx
 import { Tree } from '@ui-framework';
 
-<Tree 
-  data={treeData}
-  selectable
-  expandable
-  onSelect={handleSelect}
-/>
+<Tree data={treeData} selectable expandable onSelect={handleSelect} />;
 ```
 
 #### Progress 进度条
@@ -418,17 +410,13 @@ import { Progress } from '@ui-framework';
 ```tsx
 import { Modal } from '@ui-framework';
 
-<Modal 
-  open={isOpen}
-  onClose={() => setIsOpen(false)}
-  title="对话框"
->
+<Modal open={isOpen} onClose={() => setIsOpen(false)} title="对话框">
   <p>内容</p>
   <Modal.Footer>
     <Button onClick={() => setIsOpen(false)}>取消</Button>
     <Button variant="primary">确定</Button>
   </Modal.Footer>
-</Modal>
+</Modal>;
 ```
 
 #### Toast 轻提示
@@ -462,7 +450,7 @@ import { Tooltip } from '@ui-framework';
 
 <Tooltip content="提示文字">
   <Button>悬停显示</Button>
-</Tooltip>
+</Tooltip>;
 ```
 
 #### Spinner 加载指示器
@@ -482,17 +470,17 @@ import { Spinner } from '@ui-framework';
 ```tsx
 import { Desktop } from '@ui-framework';
 
-<Desktop 
+<Desktop
   apps={[
-    { 
-      id: 'settings', 
-      name: '设置', 
-      icon: <SettingsIcon />, 
-      onOpen: () => openApp('settings') 
+    {
+      id: 'settings',
+      name: '设置',
+      icon: <SettingsIcon />,
+      onOpen: () => openApp('settings'),
     },
   ]}
   wallpaper={{ type: 'soft' }}
-/>
+/>;
 ```
 
 #### Window 窗口
@@ -513,7 +501,7 @@ import { Window } from '@ui-framework';
   onClose={() => closeWindow()}
 >
   {/* 窗口内容 */}
-</Window>
+</Window>;
 ```
 
 #### Taskbar 任务栏
@@ -526,7 +514,7 @@ import { Taskbar } from '@ui-framework';
   onWindowClick={handleWindowClick}
   onStartClick={toggleStartMenu}
   displayMode="icon-name"
-/>
+/>;
 ```
 
 #### StartMenu 开始菜单
@@ -540,7 +528,7 @@ import { StartMenu } from '@ui-framework';
   apps={apps}
   onSettings={() => openSettings()}
   onShutdown={handleShutdown}
-/>
+/>;
 ```
 
 #### ContextMenu 右键菜单
@@ -569,7 +557,7 @@ import { SystemTray } from '@ui-framework';
   <SystemTray.Item icon={<WifiIcon />} tooltip="网络" />
   <SystemTray.Item icon={<VolumeIcon />} tooltip="音量" />
   <SystemTray.Item icon={<BatteryIcon />} tooltip="电池" />
-</SystemTray>
+</SystemTray>;
 ```
 
 ---
@@ -584,17 +572,13 @@ import { ThemeProvider, useTheme } from '@ui-framework';
 // 在应用根组件
 <ThemeProvider defaultTheme="light">
   <App />
-</ThemeProvider>
+</ThemeProvider>;
 
 // 在子组件中切换主题
 function ThemeToggle() {
   const { theme, setTheme } = useTheme();
-  
-  return (
-    <button onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
-      切换主题
-    </button>
-  );
+
+  return <button onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>切换主题</button>;
 }
 ```
 
@@ -606,7 +590,7 @@ function ThemeToggle() {
   --os-border-radius: 8px;
 }
 
-[data-theme="dark"] {
+[data-theme='dark'] {
   --os-color-background: #1a1a1a;
   --os-color-text: #ffffff;
 }
@@ -623,18 +607,18 @@ import { I18nProvider } from '@ui-framework';
 
 <I18nProvider locale="zh-CN" fallbackLocale="en">
   <App />
-</I18nProvider>
+</I18nProvider>;
 ```
 
 ### 支持的语言
 
 | 语言代码 | 语言名称 |
-|---------|---------|
-| zh-CN   | 简体中文 |
-| zh-TW   | 繁体中文 |
-| en      | English |
-| de      | Deutsch |
-| fr      | Français |
+| -------- | -------- |
+| zh-CN    | 简体中文 |
+| zh-TW    | 繁体中文 |
+| en       | English  |
+| de       | Deutsch  |
+| fr       | Français |
 
 ### 使用翻译
 
@@ -643,7 +627,7 @@ import { useTranslation } from '@ui-framework';
 
 function Component() {
   const { t } = useTranslation();
-  
+
   return <span>{t('common.save')}</span>;
 }
 ```
@@ -703,7 +687,7 @@ import { VirtualList } from '@ui-framework';
   items={largeData}
   itemHeight={48}
   renderItem={(item) => <ItemComponent item={item} />}
-/>
+/>;
 
 // 懒加载组件
 const HeavyComponent = lazy(() => import('./HeavyComponent'));
@@ -713,12 +697,12 @@ const HeavyComponent = lazy(() => import('./HeavyComponent'));
 
 ## 版本历史
 
-| 版本 | 日期 | 变更说明 |
-|-----|------|---------|
+| 版本  | 日期    | 变更说明               |
+| ----- | ------- | ---------------------- |
 | 1.0.0 | 2024-01 | 初始版本，包含基础组件 |
-| 1.1.0 | 2024-02 | 添加桌面环境组件 |
-| 1.2.0 | 2024-03 | 添加主题系统 |
-| 1.3.0 | 2024-04 | 添加国际化支持 |
+| 1.1.0 | 2024-02 | 添加桌面环境组件       |
+| 1.2.0 | 2024-03 | 添加主题系统           |
+| 1.3.0 | 2024-04 | 添加国际化支持         |
 
 ---
 

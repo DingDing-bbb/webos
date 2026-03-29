@@ -11,7 +11,14 @@ import * as LucideIcons from 'lucide-react';
 // ============================================
 
 export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
-export type IconColor = 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'info' | 'inherit';
+export type IconColor =
+  | 'primary'
+  | 'secondary'
+  | 'success'
+  | 'warning'
+  | 'danger'
+  | 'info'
+  | 'inherit';
 
 export interface IconProps extends React.SVGAttributes<SVGElement> {
   /** Lucide 图标名称 */
@@ -116,7 +123,9 @@ export const Icon = forwardRef<SVGElement, IconProps>(
         pulse && 'webos-icon--pulse',
         onClick && 'webos-icon--clickable',
         className,
-      ].filter(Boolean).join(' ');
+      ]
+        .filter(Boolean)
+        .join(' ');
 
       return classes;
     }, [spin, pulse, onClick, className]);
@@ -151,7 +160,7 @@ export const Icon = forwardRef<SVGElement, IconProps>(
     // 渲染 Lucide 图标
     if (name) {
       const LucideIcon = (LucideIcons as Record<string, React.FC<LucideIcons.LucideProps>>)[name];
-      
+
       if (!LucideIcon) {
         console.warn(`[WebOS Icon] Icon "${name}" not found in Lucide icons`);
         return null;

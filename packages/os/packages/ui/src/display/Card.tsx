@@ -154,31 +154,27 @@ export const CardBody: React.FC<CardBodyProps> = memo(
 
 CardBody.displayName = 'CardBody';
 
-export const CardFooter: React.FC<CardFooterProps> = memo(
-  ({ children, className = '', style }) => {
-    if (!children) return null;
+export const CardFooter: React.FC<CardFooterProps> = memo(({ children, className = '', style }) => {
+  if (!children) return null;
 
-    return (
-      <div className={`ui-card-footer ${className}`} style={style}>
-        {children}
-      </div>
-    );
-  }
-);
+  return (
+    <div className={`ui-card-footer ${className}`} style={style}>
+      {children}
+    </div>
+  );
+});
 
 CardFooter.displayName = 'CardFooter';
 
-export const CardCover: React.FC<CardCoverProps> = memo(
-  ({ children, className = '', style }) => {
-    if (!children) return null;
+export const CardCover: React.FC<CardCoverProps> = memo(({ children, className = '', style }) => {
+  if (!children) return null;
 
-    return (
-      <div className={`ui-card-cover ${className}`} style={style}>
-        {children}
-      </div>
-    );
-  }
-);
+  return (
+    <div className={`ui-card-cover ${className}`} style={style}>
+      {children}
+    </div>
+  );
+});
 
 CardCover.displayName = 'CardCover';
 
@@ -189,11 +185,7 @@ export const CardActions: React.FC<CardActionsProps> = memo(({ actions, classNam
     <ul className={`ui-card-actions ${className}`}>
       {actions.map((action) => (
         <li key={action.key} className="ui-card-action-item">
-          <button
-            type="button"
-            className="ui-card-action-btn"
-            onClick={action.onClick}
-          >
+          <button type="button" className="ui-card-action-btn" onClick={action.onClick}>
             {action.icon && <span className="action-icon">{action.icon}</span>}
             {action.text && <span className="action-text">{action.text}</span>}
           </button>
@@ -212,9 +204,7 @@ export const CardMeta: React.FC<CardMetaProps> = memo(
         {avatar && <div className="ui-card-meta-avatar">{avatar}</div>}
         <div className="ui-card-meta-content">
           {title && <div className="ui-card-meta-title">{title}</div>}
-          {description && (
-            <div className="ui-card-meta-description">{description}</div>
-          )}
+          {description && <div className="ui-card-meta-description">{description}</div>}
         </div>
       </div>
     );
@@ -338,9 +328,7 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
           <>
             {cover && <CardCover>{cover}</CardCover>}
 
-            {(title || extra) && (
-              <CardHeader title={title} subtitle={subtitle} extra={extra} />
-            )}
+            {(title || extra) && <CardHeader title={title} subtitle={subtitle} extra={extra} />}
 
             {children && <CardBody padding={padding}>{children}</CardBody>}
 
@@ -405,10 +393,7 @@ export const CardGroup: React.FC<CardGroupProps> = ({
   style,
 }) => {
   return (
-    <div
-      className={`ui-card-group ui-card-group-${direction} ${className}`}
-      style={style}
-    >
+    <div className={`ui-card-group ui-card-group-${direction} ${className}`} style={style}>
       {children}
     </div>
   );

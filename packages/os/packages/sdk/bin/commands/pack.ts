@@ -17,7 +17,7 @@ export async function packCommand(options: PackOptions) {
   const outputFile = path.resolve(options.output || 'app.webos');
 
   // 检查 dist 目录
-  if (!await fs.pathExists(distDir)) {
+  if (!(await fs.pathExists(distDir))) {
     console.error(chalk.red('Error: dist directory not found. Run "build" first.'));
     process.exit(1);
   }
@@ -25,7 +25,7 @@ export async function packCommand(options: PackOptions) {
   // 检查必要文件
   const requiredFiles = ['appinfo.json', 'index.js'];
   for (const file of requiredFiles) {
-    if (!await fs.pathExists(path.join(distDir, file))) {
+    if (!(await fs.pathExists(path.join(distDir, file)))) {
       console.error(chalk.red(`Error: Missing required file: ${file}`));
       process.exit(1);
     }
@@ -49,7 +49,7 @@ export async function packCommand(options: PackOptions) {
 
     // 列出所有文件
     const files = await getAllFiles(distDir);
-    manifest.files = files.map(f => path.relative(distDir, f));
+    manifest.files = files.map((f) => path.relative(distDir, f));
 
     // 写入清单
     await fs.writeJson(path.join(distDir, 'manifest.json'), manifest, { spaces: 2 });
@@ -75,7 +75,7 @@ async function getAllFiles(dir: string): Promise<string[]> {
   for (const entry of entries) {
     const fullPath = path.join(dir, entry.name);
     if (entry.isDirectory()) {
-      files.push(...await getAllFiles(fullPath));
+      files.push(...(await getAllFiles(fullPath)));
     } else {
       files.push(fullPath);
     }

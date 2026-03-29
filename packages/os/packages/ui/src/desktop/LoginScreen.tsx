@@ -274,9 +274,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                   <div className="desktop-loginscreen-user-name">
                     {user.displayName || user.username}
                   </div>
-                  {user.role && (
-                    <div className="desktop-loginscreen-user-role">{user.role}</div>
-                  )}
+                  {user.role && <div className="desktop-loginscreen-user-role">{user.role}</div>}
                 </button>
               ))}
             </div>
@@ -323,16 +321,8 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                     disabled={isLoading}
                     className="desktop-loginscreen-password-input"
                   />
-                  <button
-                    type="submit"
-                    className="desktop-loginscreen-submit"
-                    disabled={isLoading}
-                  >
-                    {isLoading ? (
-                      <span className="desktop-loginscreen-spinner" />
-                    ) : (
-                      <ArrowIcon />
-                    )}
+                  <button type="submit" className="desktop-loginscreen-submit" disabled={isLoading}>
+                    {isLoading ? <span className="desktop-loginscreen-spinner" /> : <ArrowIcon />}
                   </button>
                 </div>
 

@@ -1,7 +1,7 @@
 /**
  * WebOS Developer Plugin
  * 开发者插件 - 安装到引导程序，提供系统重置等开发者功能
- * 
+ *
  * 安装方式:
  * - OOBE阶段: location.reload() 带 ?installDevPlugin 参数可免密安装
  * - 非OOBE阶段: 需要密码验证和多次确认
@@ -14,11 +14,11 @@ export const PLUGIN_INFO = {
   version: '1.0.0',
   description: 'Enables developer features including system reset',
   author: 'WebOS Team',
-  permissions: ['system:reset', 'system:debug', 'system:recovery'] as const
+  permissions: ['system:reset', 'system:debug', 'system:recovery'] as const,
 };
 
 // 插件权限类型
-export type DevPluginPermission = typeof PLUGIN_INFO.permissions[number];
+export type DevPluginPermission = (typeof PLUGIN_INFO.permissions)[number];
 
 // 插件接口
 export interface DevPluginInterface {
@@ -27,14 +27,14 @@ export interface DevPluginInterface {
   version: string;
   isInstalled: boolean;
   installedAt?: string;
-  
+
   // 功能方法
   canResetSystem(): boolean;
   requestSystemReset(): Promise<{ success: boolean; error?: string }>;
-  
+
   // 权限检查
   hasPermission(permission: DevPluginPermission): boolean;
-  
+
   // 安装/卸载
   install(): Promise<{ success: boolean; error?: string }>;
   uninstall(): Promise<{ success: boolean; error?: string }>;
@@ -72,11 +72,14 @@ class DevPlugin implements DevPluginInterface {
   }
 
   private saveState(): void {
-    localStorage.setItem(PLUGIN_INSTALLED_FLAG, JSON.stringify({
-      installedAt: this.installedAt,
-      version: this.version
-    }));
-    
+    localStorage.setItem(
+      PLUGIN_INSTALLED_FLAG,
+      JSON.stringify({
+        installedAt: this.installedAt,
+        version: this.version,
+      })
+    );
+
     // 同时更新插件列表
     const pluginsStr = localStorage.getItem(PLUGIN_STORAGE_KEY) || '[]';
     try {
@@ -92,12 +95,12 @@ class DevPlugin implements DevPluginInterface {
 
   private clearState(): void {
     localStorage.removeItem(PLUGIN_INSTALLED_FLAG);
-    
+
     const pluginsStr = localStorage.getItem(PLUGIN_STORAGE_KEY);
     if (pluginsStr) {
       try {
         const plugins = JSON.parse(pluginsStr) as string[];
-        const filtered = plugins.filter(p => p !== this.id);
+        const filtered = plugins.filter((p) => p !== this.id);
         localStorage.setItem(PLUGIN_STORAGE_KEY, JSON.stringify(filtered));
       } catch {
         localStorage.removeItem(PLUGIN_STORAGE_KEY);
@@ -124,9 +127,11 @@ class DevPlugin implements DevPluginInterface {
     this.saveState();
 
     // 触发安装事件
-    window.dispatchEvent(new CustomEvent('dev-plugin:installed', {
-      detail: { plugin: PLUGIN_INFO }
-    }));
+    window.dispatchEvent(
+      new CustomEvent('dev-plugin:installed', {
+        detail: { plugin: PLUGIN_INFO },
+      })
+    );
 
     console.log('[DevPlugin] Installed successfully');
     return { success: true };
@@ -142,9 +147,11 @@ class DevPlugin implements DevPluginInterface {
     this.clearState();
 
     // 触发卸载事件
-    window.dispatchEvent(new CustomEvent('dev-plugin:uninstalled', {
-      detail: { plugin: PLUGIN_INFO }
-    }));
+    window.dispatchEvent(
+      new CustomEvent('dev-plugin:uninstalled', {
+        detail: { plugin: PLUGIN_INFO },
+      })
+    );
 
     console.log('[DevPlugin] Uninstalled successfully');
     return { success: true };
@@ -160,9 +167,11 @@ class DevPlugin implements DevPluginInterface {
     }
 
     // 触发系统重置事件
-    window.dispatchEvent(new CustomEvent('dev-plugin:reset-requested', {
-      detail: { timestamp: new Date().toISOString() }
-    }));
+    window.dispatchEvent(
+      new CustomEvent('dev-plugin:reset-requested', {
+        detail: { timestamp: new Date().toISOString() },
+      })
+    );
 
     return { success: true };
   }

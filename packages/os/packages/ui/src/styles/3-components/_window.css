@@ -11,7 +11,10 @@
   display: flex;
   flex-direction: column;
   /* 默认只在尺寸变化时有动画 */
-  transition: width 0.2s ease, height 0.2s ease, box-shadow 0.15s ease;
+  transition:
+    width 0.2s ease,
+    height 0.2s ease,
+    box-shadow 0.15s ease;
   /* 优化渲染性能 */
   will-change: auto;
   /* 允许窗口交互（父容器可能设置 pointer-events: none） */
@@ -31,7 +34,12 @@
 
 /* 动画状态 */
 .os-window.animating {
-  transition: left 0.2s ease, top 0.2s ease, width 0.2s ease, height 0.2s ease, border-radius 0.2s ease;
+  transition:
+    left 0.2s ease,
+    top 0.2s ease,
+    width 0.2s ease,
+    height 0.2s ease,
+    border-radius 0.2s ease;
 }
 
 /* 拖动状态 - 禁用所有 transition，避免卡顿 */
@@ -60,11 +68,21 @@
 
 /* 最大化动画 */
 .os-window.maximizing {
-  transition: left 0.2s ease, top 0.2s ease, width 0.2s ease, height 0.2s ease, border-radius 0.15s ease;
+  transition:
+    left 0.2s ease,
+    top 0.2s ease,
+    width 0.2s ease,
+    height 0.2s ease,
+    border-radius 0.15s ease;
 }
 
 .os-window.unmaximizing {
-  transition: left 0.2s ease, top 0.2s ease, width 0.2s ease, height 0.2s ease, border-radius 0.15s ease;
+  transition:
+    left 0.2s ease,
+    top 0.2s ease,
+    width 0.2s ease,
+    height 0.2s ease,
+    border-radius 0.15s ease;
 }
 
 @keyframes windowRestore {
@@ -307,14 +325,30 @@
   background: var(--os-color-primary-light);
 }
 
-.os-window-touch-resize-se { cursor: se-resize; }
-.os-window-touch-resize-sw { cursor: sw-resize; }
-.os-window-touch-resize-ne { cursor: ne-resize; }
-.os-window-touch-resize-nw { cursor: nw-resize; }
-.os-window-touch-resize-n { cursor: n-resize; }
-.os-window-touch-resize-s { cursor: s-resize; }
-.os-window-touch-resize-e { cursor: e-resize; }
-.os-window-touch-resize-w { cursor: w-resize; }
+.os-window-touch-resize-se {
+  cursor: se-resize;
+}
+.os-window-touch-resize-sw {
+  cursor: sw-resize;
+}
+.os-window-touch-resize-ne {
+  cursor: ne-resize;
+}
+.os-window-touch-resize-nw {
+  cursor: nw-resize;
+}
+.os-window-touch-resize-n {
+  cursor: n-resize;
+}
+.os-window-touch-resize-s {
+  cursor: s-resize;
+}
+.os-window-touch-resize-e {
+  cursor: e-resize;
+}
+.os-window-touch-resize-w {
+  cursor: w-resize;
+}
 
 /* ========================================
    Desktop Window 样式兼容
@@ -531,7 +565,12 @@
   }
 
   .os-window.animating {
-    transition: left 0.2s ease, top 0.2s ease, width 0.2s ease, height 0.2s ease, border-radius 0.15s ease;
+    transition:
+      left 0.2s ease,
+      top 0.2s ease,
+      width 0.2s ease,
+      height 0.2s ease,
+      border-radius 0.15s ease;
   }
 
   .os-window.dragging,

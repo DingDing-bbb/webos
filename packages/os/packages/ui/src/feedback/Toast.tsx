@@ -24,14 +24,7 @@
  * ```
  */
 
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-  useEffect,
-  useRef,
-} from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect, useRef } from 'react';
 
 // ============================================================================
 // Types
@@ -83,22 +76,38 @@ const ToastContext = createContext<ToastContextValue | null>(null);
 const DEFAULT_ICONS: Record<ToastType, React.ReactNode> = {
   success: (
     <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-      <path fillRule="evenodd" d="M8 16A8 8 0 108 0a8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L7 8.586 5.707 7.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+      <path
+        fillRule="evenodd"
+        d="M8 16A8 8 0 108 0a8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L7 8.586 5.707 7.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+        clipRule="evenodd"
+      />
     </svg>
   ),
   error: (
     <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-      <path fillRule="evenodd" d="M8 16A8 8 0 108 0a8 8 0 000 16zM7 4.5a1 1 0 112 0v3a1 1 0 11-2 0v-3zm1 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+      <path
+        fillRule="evenodd"
+        d="M8 16A8 8 0 108 0a8 8 0 000 16zM7 4.5a1 1 0 112 0v3a1 1 0 11-2 0v-3zm1 8a1 1 0 100-2 1 1 0 000 2z"
+        clipRule="evenodd"
+      />
     </svg>
   ),
   warning: (
     <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-      <path fillRule="evenodd" d="M8 16A8 8 0 108 0a8 8 0 000 16zM7 4.5a1 1 0 112 0v3a1 1 0 11-2 0v-3zm1 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+      <path
+        fillRule="evenodd"
+        d="M8 16A8 8 0 108 0a8 8 0 000 16zM7 4.5a1 1 0 112 0v3a1 1 0 11-2 0v-3zm1 8a1 1 0 100-2 1 1 0 000 2z"
+        clipRule="evenodd"
+      />
     </svg>
   ),
   info: (
     <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-      <path fillRule="evenodd" d="M8 16A8 8 0 108 0a8 8 0 000 16zM7 4.5a1 1 0 012 0v4a1 1 0 11-2 0v-4zm1 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+      <path
+        fillRule="evenodd"
+        d="M8 16A8 8 0 108 0a8 8 0 000 16zM7 4.5a1 1 0 012 0v4a1 1 0 11-2 0v-4zm1 8a1 1 0 100-2 1 1 0 000 2z"
+        clipRule="evenodd"
+      />
     </svg>
   ),
   loading: (
@@ -151,32 +160,35 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({
 }) => {
   const [toasts, setToasts] = useState<ToastItem[]>([]);
 
-  const show = useCallback((options: ToastOptions): string => {
-    const id = `toast-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    const type = options.type || 'info';
-    const duration = options.duration ?? DEFAULT_DURATIONS[type];
+  const show = useCallback(
+    (options: ToastOptions): string => {
+      const id = `toast-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const type = options.type || 'info';
+      const duration = options.duration ?? DEFAULT_DURATIONS[type];
 
-    const toast: ToastItem = {
-      ...options,
-      id,
-      type,
-      duration,
-      createdAt: Date.now(),
-    };
+      const toast: ToastItem = {
+        ...options,
+        id,
+        type,
+        duration,
+        createdAt: Date.now(),
+      };
 
-    setToasts(prev => {
-      const updated = [...prev, toast];
-      return updated.slice(-maxCount);
-    });
+      setToasts((prev) => {
+        const updated = [...prev, toast];
+        return updated.slice(-maxCount);
+      });
 
-    return id;
-  }, [maxCount]);
+      return id;
+    },
+    [maxCount]
+  );
 
   const dismiss = useCallback((id: string) => {
-    setToasts(prev => {
-      const toast = prev.find(t => t.id === id);
+    setToasts((prev) => {
+      const toast = prev.find((t) => t.id === id);
       toast?.onClose?.();
-      return prev.filter(t => t.id !== id);
+      return prev.filter((t) => t.id !== id);
     });
   }, []);
 
@@ -185,17 +197,12 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({
   }, []);
 
   const update = useCallback((id: string, options: Partial<ToastOptions>) => {
-    setToasts(prev =>
-      prev.map(toast =>
-        toast.id === id ? { ...toast, ...options } : toast
-      )
-    );
+    setToasts((prev) => prev.map((toast) => (toast.id === id ? { ...toast, ...options } : toast)));
   }, []);
 
   const typedShow = useCallback(
-    (type: ToastType) =>
-      (message: string, options?: Omit<ToastOptions, 'message' | 'type'>) =>
-        show({ ...options, message, type }),
+    (type: ToastType) => (message: string, options?: Omit<ToastOptions, 'message' | 'type'>) =>
+      show({ ...options, message, type }),
     [show]
   );
 
@@ -236,7 +243,7 @@ const ToastContainer: React.FC<ToastContainerProps> = ({ position }) => {
 
   return (
     <div className={`toast-container toast-container--${position}`}>
-      {toasts.map(toast => (
+      {toasts.map((toast) => (
         <ToastCard key={toast.id} toast={toast} />
       ))}
     </div>
@@ -283,12 +290,7 @@ const ToastCard: React.FC<ToastCardProps> = ({ toast }) => {
       {icon && <div className="toast__icon">{icon}</div>}
       <span className="toast__message">{toast.message}</span>
       {toast.type !== 'loading' && (
-        <button
-          className="toast__close"
-          onClick={handleClose}
-          aria-label="Dismiss"
-          type="button"
-        >
+        <button className="toast__close" onClick={handleClose} aria-label="Dismiss" type="button">
           <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor">
             <path d="M5.589 5l2.956-2.956a.417.417 0 00-.59-.589L5 4.411 2.044 1.455a.417.417 0 00-.589.59L4.411 5l-2.956 2.956a.417.417 0 00.59.589L5 5.589l2.956 2.956a.417.417 0 00.589-.59L5.589 5z" />
           </svg>

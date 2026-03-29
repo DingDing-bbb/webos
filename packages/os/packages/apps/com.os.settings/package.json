@@ -8,7 +8,12 @@
   "types": "./src/index.tsx",
   "author": "WebOS Team",
   "category": "system",
-  "keywords": ["webos", "app", "settings", "configuration"],
+  "keywords": [
+    "webos",
+    "app",
+    "settings",
+    "configuration"
+  ],
   "dependencies": {
     "@webos/apps": "workspace:*"
   }

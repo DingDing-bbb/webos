@@ -54,9 +54,7 @@ const MyApp: React.FC = () => {
   return (
     <div className={`app ${theme}`}>
       <h1>{t('app.myapp.title')}</h1>
-      <button onClick={toggleTheme}>
-        Toggle Theme
-      </button>
+      <button onClick={toggleTheme}>Toggle Theme</button>
     </div>
   );
 };
@@ -92,12 +90,10 @@ function MyComponent() {
 ```tsx
 function MyComponent() {
   const { theme, setTheme, toggleTheme } = useTheme();
-  
+
   return (
     <div className={theme}>
-      <button onClick={toggleTheme}>
-        {theme === 'light' ? '🌙' : '☀️'}
-      </button>
+      <button onClick={toggleTheme}>{theme === 'light' ? '🌙' : '☀️'}</button>
     </div>
   );
 }
@@ -110,16 +106,16 @@ function MyComponent() {
 ```tsx
 function FileManager() {
   const { read, write, exists, list, mkdir, remove } = useFileSystem();
-  
+
   const handleSave = async () => {
     await write('/home/user/document.txt', 'Hello World');
   };
-  
+
   const handleLoad = async () => {
     const content = read('/home/user/document.txt');
     console.log(content);
   };
-  
+
   return <div>...</div>;
 }
 ```
@@ -131,11 +127,11 @@ function FileManager() {
 ```tsx
 function MyComponent() {
   const { show } = useNotification();
-  
+
   const handleClick = () => {
     show('Notification', 'This is a notification!');
   };
-  
+
   return <button onClick={handleClick}>Notify</button>;
 }
 ```
@@ -150,12 +146,10 @@ function Settings() {
     theme: 'light',
     fontSize: 14,
   });
-  
+
   return (
     <div>
-      <button onClick={() => setSettings(s => ({ ...s, theme: 'dark' }))}>
-        Dark Mode
-      </button>
+      <button onClick={() => setSettings((s) => ({ ...s, theme: 'dark' }))}>Dark Mode</button>
     </div>
   );
 }
@@ -170,7 +164,7 @@ function Editor() {
   useKeyboardShortcut('ctrl+s', () => {
     saveDocument();
   });
-  
+
   return <div>...</div>;
 }
 ```
@@ -183,20 +177,20 @@ function Editor() {
 
 ```typescript
 interface AppConfig {
-  id: string;                    // 应用ID
-  name: string;                  // 应用名称
-  nameKey: string;               // 国际化键名
-  description?: string;          // 描述
-  version: string;               // 版本号
-  category: AppCategory;         // 分类
-  icon: FC<IconProps>;           // 图标组件
-  component: FC;                 // 主组件
-  defaultWidth?: number;         // 默认宽度
-  defaultHeight?: number;        // 默认高度
-  minWidth?: number;             // 最小宽度
-  minHeight?: number;            // 最小高度
-  resizable?: boolean;           // 可调整大小
-  singleton?: boolean;           // 单例模式
+  id: string; // 应用ID
+  name: string; // 应用名称
+  nameKey: string; // 国际化键名
+  description?: string; // 描述
+  version: string; // 版本号
+  category: AppCategory; // 分类
+  icon: FC<IconProps>; // 图标组件
+  component: FC; // 主组件
+  defaultWidth?: number; // 默认宽度
+  defaultHeight?: number; // 默认高度
+  minWidth?: number; // 最小宽度
+  minHeight?: number; // 最小高度
+  resizable?: boolean; // 可调整大小
+  singleton?: boolean; // 单例模式
   permissions?: AppPermission[]; // 权限
 }
 ```
@@ -207,13 +201,13 @@ interface AppConfig {
 
 ```typescript
 type AppCategory =
-  | 'system'       // 系统工具
+  | 'system' // 系统工具
   | 'productivity' // 生产力
-  | 'media'        // 媒体
-  | 'games'        // 游戏
-  | 'network'      // 网络
-  | 'development'  // 开发
-  | 'utilities';   // 实用工具
+  | 'media' // 媒体
+  | 'games' // 游戏
+  | 'network' // 网络
+  | 'development' // 开发
+  | 'utilities'; // 实用工具
 ```
 
 ### AppPermission
@@ -221,13 +215,13 @@ type AppCategory =
 应用权限：
 
 ```typescript
-type AppPermission = 
-  | 'fs:read'       // 文件系统读取
-  | 'fs:write'      // 文件系统写入
-  | 'network'       // 网络访问
-  | 'notification'  // 通知
-  | 'clipboard'     // 剪贴板
-  | 'storage';      // 本地存储
+type AppPermission =
+  | 'fs:read' // 文件系统读取
+  | 'fs:write' // 文件系统写入
+  | 'network' // 网络访问
+  | 'notification' // 通知
+  | 'clipboard' // 剪贴板
+  | 'storage'; // 本地存储
 ```
 
 ## CLI 命令

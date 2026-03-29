@@ -1,6 +1,6 @@
 /**
  * 启动界面 UI 组件
- * 
+ *
  * 显示真正的启动过程：
  * - Logo
  * - 加载动画
@@ -44,12 +44,7 @@ function Spinner({ size = 40, color = 'white' }: { size?: number; color?: string
 // BootUI Component
 // ============================================================================
 
-export const BootUI: React.FC<BootUIProps> = ({
-  progress,
-  statusText,
-  error,
-  onRetry,
-}) => {
+export const BootUI: React.FC<BootUIProps> = ({ progress, statusText, error, onRetry }) => {
   // 错误状态
   if (error) {
     return (
@@ -72,11 +67,7 @@ export const BootUI: React.FC<BootUIProps> = ({
         </div>
         <div className="os-boot-error">{error}</div>
         {onRetry && (
-          <button
-            className="os-boot-retry"
-            onClick={onRetry}
-            type="button"
-          >
+          <button className="os-boot-retry" onClick={onRetry} type="button">
             Retry
           </button>
         )}
@@ -112,22 +103,15 @@ export const BootUI: React.FC<BootUIProps> = ({
       </div>
 
       {/* 状态文本 */}
-      <div className="os-boot-text">
-        {statusText}
-      </div>
+      <div className="os-boot-text">{statusText}</div>
 
       {/* 进度条 */}
       <div className="os-boot-progress">
-        <div 
-          className="os-boot-progress-bar" 
-          style={{ width: `${progress}%` }}
-        />
+        <div className="os-boot-progress-bar" style={{ width: `${progress}%` }} />
       </div>
 
       {/* 版本信息 */}
-      <div className="os-boot-version">
-        v0.0.1
-      </div>
+      <div className="os-boot-version">v0.0.1</div>
 
       {/* 内联样式 */}
       <style>{`

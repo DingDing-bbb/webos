@@ -32,11 +32,7 @@
  */
 
 import type { User, UserRole, Permission, UserSession } from '../types';
-import {
-  hashPassword,
-  verifyPassword,
-  isCryptoAvailable,
-} from './crypto';
+import { hashPassword, verifyPassword, isCryptoAvailable } from './crypto';
 import {
   initDatabase,
   saveDatabase,
@@ -328,10 +324,7 @@ class SecureUserManager {
           const stats = getStats();
           if (stats.userCount > 0) {
             // Check if this specific user exists
-            const users = querySql<UserRow>(
-              'SELECT * FROM users WHERE username = ?',
-              [username]
-            );
+            const users = querySql<UserRow>('SELECT * FROM users WHERE username = ?', [username]);
 
             if (users.length > 0) {
               // User exists - log them in
@@ -464,10 +457,7 @@ class SecureUserManager {
       }
 
       // Query user
-      const users = querySql<UserRow>(
-        'SELECT * FROM users WHERE username = ?',
-        [username]
-      );
+      const users = querySql<UserRow>('SELECT * FROM users WHERE username = ?', [username]);
 
       if (users.length === 0) {
         console.log('[SecureUserManager] User not found:', username);
@@ -485,10 +475,7 @@ class SecureUserManager {
 
       // Update last login time
       const now = new Date().toISOString();
-      runSql(
-        'UPDATE users SET last_login = ? WHERE username = ?',
-        [now, username]
-      );
+      runSql('UPDATE users SET last_login = ? WHERE username = ?', [now, username]);
       await saveDatabase();
 
       // Create session
@@ -585,10 +572,7 @@ class SecureUserManager {
   async getUser(username: string): Promise<User | null> {
     if (!isUnlocked()) return null;
 
-    const rows = querySql<UserRow>(
-      'SELECT * FROM users WHERE username = ?',
-      [username]
-    );
+    const rows = querySql<UserRow>('SELECT * FROM users WHERE username = ?', [username]);
     return rows.length > 0 ? this.rowToUser(rows[0]) : null;
   }
 
@@ -632,9 +616,7 @@ class SecureUserManager {
       const { hash, salt } = await hashPassword(password);
       const role = options?.role || 'user';
       const now = new Date().toISOString();
-      const permissions = JSON.stringify(
-        options?.permissions || this.getDefaultPermissions(role)
-      );
+      const permissions = JSON.stringify(options?.permissions || this.getDefaultPermissions(role));
       const homeDir = role === 'root' ? '/root' : `/home/${username}`;
 
       runSql(
@@ -681,10 +663,7 @@ class SecureUserManager {
       return { success: false, error: 'Not logged in' };
     }
 
-    const rows = querySql<UserRow>(
-      'SELECT * FROM users WHERE username = ?',
-      [user.username]
-    );
+    const rows = querySql<UserRow>('SELECT * FROM users WHERE username = ?', [user.username]);
 
     if (rows.length === 0) {
       return { success: false, error: 'User not found' };
@@ -707,10 +686,11 @@ class SecureUserManager {
     try {
       const { hash, salt } = await hashPassword(newPassword);
 
-      runSql(
-        'UPDATE users SET password_hash = ?, password_salt = ? WHERE username = ?',
-        [hash, salt, user.username]
-      );
+      runSql('UPDATE users SET password_hash = ?, password_salt = ? WHERE username = ?', [
+        hash,
+        salt,
+        user.username,
+      ]);
 
       await saveDatabase();
       this.masterKey = newPassword;
@@ -734,10 +714,7 @@ class SecureUserManager {
       return { success: false, error: 'Not logged in' };
     }
 
-    runSql(
-      'UPDATE users SET display_name = ? WHERE username = ?',
-      [displayName, user.username]
-    );
+    runSql('UPDATE users SET display_name = ? WHERE username = ?', [displayName, user.username]);
 
     await saveDatabase();
 
@@ -801,10 +778,11 @@ class SecureUserManager {
       const existing = querySql('SELECT key FROM vault WHERE key = ?', [key]);
 
       if (existing.length > 0) {
-        runSql(
-          'UPDATE vault SET encrypted_data = ?, updated_at = ? WHERE key = ?',
-          [data, now, key]
-        );
+        runSql('UPDATE vault SET encrypted_data = ?, updated_at = ? WHERE key = ?', [
+          data,
+          now,
+          key,
+        ]);
       } else {
         runSql(
           'INSERT INTO vault (key, encrypted_data, iv, salt, category, updated_at) VALUES (?, ?, "", "", "user-data", ?)',
@@ -893,10 +871,7 @@ class SecureUserManager {
     }
 
     // Verify password
-    const rows = querySql<UserRow>(
-      'SELECT * FROM users WHERE username = ?',
-      [user.username]
-    );
+    const rows = querySql<UserRow>('SELECT * FROM users WHERE username = ?', [user.username]);
 
     if (rows.length === 0) {
       return { success: false, error: 'User not found' };

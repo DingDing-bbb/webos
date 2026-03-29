@@ -23,13 +23,7 @@ import React, { createContext, useContext, forwardRef, memo } from 'react';
 // ============================================================================
 
 export type TimelineMode = 'left' | 'right' | 'alternate';
-export type TimelineColor =
-  | 'primary'
-  | 'success'
-  | 'warning'
-  | 'danger'
-  | 'info'
-  | 'gray';
+export type TimelineColor = 'primary' | 'success' | 'warning' | 'danger' | 'info' | 'gray';
 
 export interface TimelineProps {
   /** Timeline mode */
@@ -109,31 +103,26 @@ interface TimelineDotProps {
   pending?: boolean;
 }
 
-const TimelineDot: React.FC<TimelineDotProps> = memo(
-  ({ color = 'primary', dot, pending }) => {
-    const colorValue = getColorValue(color);
+const TimelineDot: React.FC<TimelineDotProps> = memo(({ color = 'primary', dot, pending }) => {
+  const colorValue = getColorValue(color);
 
-    if (dot) {
-      return (
-        <div
-          className={`ui-timeline-dot ${pending ? 'pending' : ''}`}
-          style={{ color: colorValue }}
-        >
-          {dot}
-        </div>
-      );
-    }
-
+  if (dot) {
     return (
-      <div
-        className={`ui-timeline-dot ${pending ? 'pending' : ''}`}
-        style={{ backgroundColor: colorValue, borderColor: colorValue }}
-      >
-        {pending && <div className="dot-pulse" style={{ backgroundColor: colorValue }} />}
+      <div className={`ui-timeline-dot ${pending ? 'pending' : ''}`} style={{ color: colorValue }}>
+        {dot}
       </div>
     );
   }
-);
+
+  return (
+    <div
+      className={`ui-timeline-dot ${pending ? 'pending' : ''}`}
+      style={{ backgroundColor: colorValue, borderColor: colorValue }}
+    >
+      {pending && <div className="dot-pulse" style={{ backgroundColor: colorValue }} />}
+    </div>
+  );
+});
 
 TimelineDot.displayName = 'TimelineDot';
 
@@ -144,16 +133,7 @@ TimelineDot.displayName = 'TimelineDot';
 export const TimelineItem = memo(
   forwardRef<HTMLDivElement, TimelineItemProps>(
     (
-      {
-        dot,
-        color = 'primary',
-        label,
-        children,
-        position,
-        className = '',
-        style,
-        pending = false,
-      },
+      { dot, color = 'primary', label, children, position, className = '', style, pending = false },
       ref
     ) => {
       const { mode } = useTimelineContext();
@@ -201,11 +181,7 @@ export const TimelineItem = memo(
           {!pending && (
             <div
               className="ui-timeline-item-tail"
-              style={
-                dot
-                  ? { borderLeftColor: colorValue }
-                  : undefined
-              }
+              style={dot ? { borderLeftColor: colorValue } : undefined}
             />
           )}
 
@@ -215,9 +191,7 @@ export const TimelineItem = memo(
           </div>
 
           {/* Content */}
-          <div className="ui-timeline-item-content">
-            {children}
-          </div>
+          <div className="ui-timeline-item-content">{children}</div>
         </div>
       );
     }
@@ -258,11 +232,7 @@ export const Timeline: React.FC<TimelineProps> & {
     });
   };
 
-  const timelineClasses = [
-    'ui-timeline',
-    `ui-timeline-${mode}`,
-    className,
-  ]
+  const timelineClasses = ['ui-timeline', `ui-timeline-${mode}`, className]
     .filter(Boolean)
     .join(' ');
 
@@ -298,11 +268,7 @@ export const TimelineWithPending: React.FC<TimelineWithPendingProps> = ({
     <Timeline {...props}>
       {children}
       {pending && (
-        <TimelineItem
-          pending
-          dot={pendingDot || <PendingDot />}
-          color="gray"
-        >
+        <TimelineItem pending dot={pendingDot || <PendingDot />} color="gray">
           {pending}
         </TimelineItem>
       )}

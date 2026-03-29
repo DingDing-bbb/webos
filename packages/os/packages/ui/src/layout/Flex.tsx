@@ -39,40 +39,22 @@ type SpacingValue = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 /**
  * Flex direction options
  */
-export type FlexDirection =
-  | 'row'
-  | 'row-reverse'
-  | 'column'
-  | 'column-reverse';
+export type FlexDirection = 'row' | 'row-reverse' | 'column' | 'column-reverse';
 
 /**
  * Flex wrap options
  */
-export type FlexWrap =
-  | 'nowrap'
-  | 'wrap'
-  | 'wrap-reverse';
+export type FlexWrap = 'nowrap' | 'wrap' | 'wrap-reverse';
 
 /**
  * Flex justify content options
  */
-export type FlexJustify =
-  | 'start'
-  | 'end'
-  | 'center'
-  | 'between'
-  | 'around'
-  | 'evenly';
+export type FlexJustify = 'start' | 'end' | 'center' | 'between' | 'around' | 'evenly';
 
 /**
  * Flex align items options
  */
-export type FlexAlign =
-  | 'start'
-  | 'end'
-  | 'center'
-  | 'baseline'
-  | 'stretch';
+export type FlexAlign = 'start' | 'end' | 'center' | 'baseline' | 'stretch';
 
 /**
  * Flex component props
@@ -144,7 +126,9 @@ const spacingToCSS = (value: SpacingValue | undefined): string | undefined => {
 /**
  * Convert dimension to CSS
  */
-const dimensionToCSS = (value: string | number | 'full' | 'auto' | 'screen' | undefined): string | undefined => {
+const dimensionToCSS = (
+  value: string | number | 'full' | 'auto' | 'screen' | undefined
+): string | undefined => {
   if (value === undefined) return undefined;
   if (typeof value === 'number') return `${value}px`;
   if (value === 'full') return '100%';
@@ -316,7 +300,8 @@ export const FlexItem = forwardRef<HTMLDivElement, FlexItemProps>(
       // Flex properties
       style.flexGrow = typeof grow === 'number' ? grow : grow ? 1 : 0;
       style.flexShrink = typeof shrink === 'number' ? shrink : shrink ? 1 : 0;
-      style.flexBasis = basis === 'full' ? '100%' : typeof basis === 'number' ? `${basis}px` : basis;
+      style.flexBasis =
+        basis === 'full' ? '100%' : typeof basis === 'number' ? `${basis}px` : basis;
 
       // Align self
       if (alignSelf !== undefined) {

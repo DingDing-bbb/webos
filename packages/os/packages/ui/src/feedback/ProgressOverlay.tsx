@@ -94,10 +94,12 @@ export const ProgressOverlay: React.FC<ProgressOverlayProps> = ({
   return (
     <div
       className={`progress-overlay ${className}`}
-      style={{
-        '--background-opacity': backgroundOpacity,
-        zIndex: zIndex || 'var(--z-modal)',
-      } as React.CSSProperties}
+      style={
+        {
+          '--background-opacity': backgroundOpacity,
+          zIndex: zIndex || 'var(--z-modal)',
+        } as React.CSSProperties
+      }
       role="dialog"
       aria-modal="true"
       aria-labelledby={message ? 'progress-message' : undefined}
@@ -107,7 +109,9 @@ export const ProgressOverlay: React.FC<ProgressOverlayProps> = ({
     >
       <div className="progress-overlay__content">
         {/* Progress Ring */}
-        <div className={`progress-overlay__ring ${indeterminate ? 'progress-overlay__ring--indeterminate' : ''}`}>
+        <div
+          className={`progress-overlay__ring ${indeterminate ? 'progress-overlay__ring--indeterminate' : ''}`}
+        >
           <svg viewBox="0 0 100 100" className="progress-overlay__svg">
             {/* Background circle */}
             <circle
@@ -136,9 +140,7 @@ export const ProgressOverlay: React.FC<ProgressOverlayProps> = ({
 
           {/* Progress text for determinate */}
           {!indeterminate && (
-            <div className="progress-overlay__percentage">
-              {Math.round(normalizedProgress)}%
-            </div>
+            <div className="progress-overlay__percentage">{Math.round(normalizedProgress)}%</div>
           )}
 
           {/* Spinner for indeterminate */}
@@ -175,19 +177,11 @@ export const ProgressOverlay: React.FC<ProgressOverlayProps> = ({
         )}
 
         {/* Sub message */}
-        {subMessage && (
-          <div className="progress-overlay__sub-message">
-            {subMessage}
-          </div>
-        )}
+        {subMessage && <div className="progress-overlay__sub-message">{subMessage}</div>}
 
         {/* Cancel button */}
         {cancellable && onCancel && (
-          <button
-            className="progress-overlay__cancel"
-            onClick={onCancel}
-            type="button"
-          >
+          <button className="progress-overlay__cancel" onClick={onCancel} type="button">
             Cancel
           </button>
         )}
@@ -245,31 +239,26 @@ export const ProgressBarOverlay: React.FC<ProgressBarOverlayProps> = ({
   return (
     <div
       className={`progress-bar-overlay ${className}`}
-      style={{
-        '--background-opacity': backgroundOpacity,
-        zIndex: zIndex || 'var(--z-modal)',
-      } as React.CSSProperties}
+      style={
+        {
+          '--background-opacity': backgroundOpacity,
+          zIndex: zIndex || 'var(--z-modal)',
+        } as React.CSSProperties
+      }
       role="dialog"
       aria-modal="true"
     >
       <div className="progress-bar-overlay__content">
-        {message && (
-          <div className="progress-bar-overlay__message">
-            {message}
-          </div>
-        )}
+        {message && <div className="progress-bar-overlay__message">{message}</div>}
 
-        <div className={`progress-bar-overlay__bar ${indeterminate ? 'progress-bar-overlay__bar--indeterminate' : ''}`}>
-          <div
-            className="progress-bar-overlay__fill"
-            style={{ width: `${normalizedProgress}%` }}
-          />
+        <div
+          className={`progress-bar-overlay__bar ${indeterminate ? 'progress-bar-overlay__bar--indeterminate' : ''}`}
+        >
+          <div className="progress-bar-overlay__fill" style={{ width: `${normalizedProgress}%` }} />
         </div>
 
         <div className="progress-bar-overlay__info">
-          {subMessage && (
-            <span className="progress-bar-overlay__sub-message">{subMessage}</span>
-          )}
+          {subMessage && <span className="progress-bar-overlay__sub-message">{subMessage}</span>}
           {!indeterminate && (
             <span className="progress-bar-overlay__percentage">
               {Math.round(normalizedProgress)}%
@@ -278,11 +267,7 @@ export const ProgressBarOverlay: React.FC<ProgressBarOverlayProps> = ({
         </div>
 
         {cancellable && onCancel && (
-          <button
-            className="progress-bar-overlay__cancel"
-            onClick={onCancel}
-            type="button"
-          >
+          <button className="progress-bar-overlay__cancel" onClick={onCancel} type="button">
             Cancel
           </button>
         )}

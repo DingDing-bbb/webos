@@ -229,7 +229,9 @@ export const ColorSwatch: React.FC<ColorSwatchProps> = ({
       selected && 'webos-color-swatch--selected',
       copyable && 'webos-color-swatch--copyable',
       className,
-    ].filter(Boolean).join(' ');
+    ]
+      .filter(Boolean)
+      .join(' ');
 
     return classes;
   }, [size, rounded, circle, border, selectable, selected, copyable, className]);
@@ -255,11 +257,25 @@ export const ColorSwatch: React.FC<ColorSwatchProps> = ({
           aria-label={copied ? 'Copied!' : 'Copy color'}
         >
           {copied ? (
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
               <polyline points="20 6 9 17 4 12" />
             </svg>
           ) : (
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
               <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
               <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
             </svg>
@@ -268,7 +284,14 @@ export const ColorSwatch: React.FC<ColorSwatchProps> = ({
       )}
       {selected && (
         <span className="webos-color-swatch__check">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="3"
+          >
             <polyline points="20 6 9 17 4 12" />
           </svg>
         </span>
@@ -282,16 +305,36 @@ export const ColorSwatch: React.FC<ColorSwatchProps> = ({
 // ============================================
 
 const defaultPresets = [
-  '#0078d4', '#106ebe', '#005a9e', // Blue
-  '#107c10', '#0b5c0b', '#2da02d', // Green
-  '#d13438', '#a4262c', '#e56a6d', // Red
-  '#ff8c00', '#e07000', '#ffab40', // Orange
-  '#ffb900', '#d49a00', '#ffd35c', // Yellow
-  '#8764b8', '#6b4d99', '#a78bd4', // Purple
-  '#e3008c', '#b4006f', '#f066b0', // Pink
-  '#00b294', '#008f75', '#33c9af', // Teal
-  '#ffffff', '#f3f3f3', '#e8e8e8', // Light
-  '#1a1a1a', '#333333', '#666666', // Dark
+  '#0078d4',
+  '#106ebe',
+  '#005a9e', // Blue
+  '#107c10',
+  '#0b5c0b',
+  '#2da02d', // Green
+  '#d13438',
+  '#a4262c',
+  '#e56a6d', // Red
+  '#ff8c00',
+  '#e07000',
+  '#ffab40', // Orange
+  '#ffb900',
+  '#d49a00',
+  '#ffd35c', // Yellow
+  '#8764b8',
+  '#6b4d99',
+  '#a78bd4', // Purple
+  '#e3008c',
+  '#b4006f',
+  '#f066b0', // Pink
+  '#00b294',
+  '#008f75',
+  '#33c9af', // Teal
+  '#ffffff',
+  '#f3f3f3',
+  '#e8e8e8', // Light
+  '#1a1a1a',
+  '#333333',
+  '#666666', // Dark
 ];
 
 export const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
@@ -364,17 +407,22 @@ export const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
         disabled && 'webos-color-picker--disabled',
         isOpen && 'webos-color-picker--open',
         className,
-      ].filter(Boolean).join(' ');
+      ]
+        .filter(Boolean)
+        .join(' ');
 
       return classes;
     }, [size, disabled, isOpen, className]);
 
     return (
-      <div ref={(node) => {
-        pickerRef.current = node;
-        if (typeof ref === 'function') ref(node);
-        else if (ref) ref.current = node;
-      }} className={pickerClasses}>
+      <div
+        ref={(node) => {
+          pickerRef.current = node;
+          if (typeof ref === 'function') ref(node);
+          else if (ref) ref.current = node;
+        }}
+        className={pickerClasses}
+      >
         <button
           className="webos-color-picker__trigger"
           onClick={() => !disabled && setIsOpen(!isOpen)}
@@ -508,7 +556,9 @@ export const ColorPalette: React.FC<ColorPaletteProps> = ({
             {(showNames || showValues) && (
               <div className="webos-color-palette__info">
                 {showNames && <span className="webos-color-palette__item-name">{color.name}</span>}
-                {showValues && <span className="webos-color-palette__item-value">{color.value}</span>}
+                {showValues && (
+                  <span className="webos-color-palette__item-value">{color.value}</span>
+                )}
               </div>
             )}
           </div>

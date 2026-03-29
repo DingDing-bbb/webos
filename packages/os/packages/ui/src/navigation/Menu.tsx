@@ -138,7 +138,7 @@ const SubMenu: React.FC<SubMenuProps> = ({ item, level }) => {
           </span>
         )}
       </div>
-      
+
       {item.children && (
         <ul
           className={`
@@ -148,7 +148,7 @@ const SubMenu: React.FC<SubMenuProps> = ({ item, level }) => {
           `.trim()}
           role="menu"
         >
-          {item.children.map((child) => (
+          {item.children.map((child) =>
             child.divider ? (
               <li key={child.key} className="nav-menu-divider" role="separator" />
             ) : child.children ? (
@@ -156,7 +156,7 @@ const SubMenu: React.FC<SubMenuProps> = ({ item, level }) => {
             ) : (
               <MenuItem key={child.key} item={child} />
             )
-          ))}
+          )}
         </ul>
       )}
     </li>
@@ -233,20 +233,24 @@ export const Menu: React.FC<MenuProps> = ({
   const selectedKey = controlledSelectedKey ?? internalSelectedKey;
   const openKeys = controlledOpenKeys ?? internalOpenKeys;
 
-  const handleSelect = useCallback((key: string) => {
-    setInternalSelectedKey(key);
-    onSelect?.(key);
-  }, [onSelect]);
+  const handleSelect = useCallback(
+    (key: string) => {
+      setInternalSelectedKey(key);
+      onSelect?.(key);
+    },
+    [onSelect]
+  );
 
-  const handleToggle = useCallback((key: string) => {
-    setInternalOpenKeys((prev) => {
-      const newKeys = prev.includes(key)
-        ? prev.filter((k) => k !== key)
-        : [...prev, key];
-      onOpenChange?.(newKeys);
-      return newKeys;
-    });
-  }, [onOpenChange]);
+  const handleToggle = useCallback(
+    (key: string) => {
+      setInternalOpenKeys((prev) => {
+        const newKeys = prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key];
+        onOpenChange?.(newKeys);
+        return newKeys;
+      });
+    },
+    [onOpenChange]
+  );
 
   // Keyboard navigation
   useEffect(() => {

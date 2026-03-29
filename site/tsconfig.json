@@ -52,7 +52,5 @@
     "../packages/docs/**/*.ts",
     "../packages/docs/**/*.tsx"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }

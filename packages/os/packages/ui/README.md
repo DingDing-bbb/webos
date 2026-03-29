@@ -149,37 +149,36 @@ ui/
 ## 组件分类
 
 ### 桌面环境组件
-| 组件 | 描述 |
-|------|------|
-| `Desktop` | 桌面环境 |
-| `Taskbar` | 任务栏 |
-| `StartMenu` | 开始菜单 |
-| `Window` | 窗口 |
-| `WindowManager` | 窗口管理器 |
-| `DesktopIcon` | 桌面图标 |
-| `ContextMenu` | 右键菜单 |
-| `SystemTray` | 系统托盘 |
-| `NotificationCenter` | 通知中心 |
-| `LockScreen` | 锁屏界面 |
-| `LoginScreen` | 登录界面 |
+
+| 组件                 | 描述       |
+| -------------------- | ---------- |
+| `Desktop`            | 桌面环境   |
+| `Taskbar`            | 任务栏     |
+| `StartMenu`          | 开始菜单   |
+| `Window`             | 窗口       |
+| `WindowManager`      | 窗口管理器 |
+| `DesktopIcon`        | 桌面图标   |
+| `ContextMenu`        | 右键菜单   |
+| `SystemTray`         | 系统托盘   |
+| `NotificationCenter` | 通知中心   |
+| `LockScreen`         | 锁屏界面   |
+| `LoginScreen`        | 登录界面   |
 
 ### 主要组件
-| 组件 | 描述 |
-|------|------|
-| `BootScreen` | 启动画面 |
-| `NotificationContainer` | 通知容器 |
-| `ErrorDialogContainer` | 错误对话框容器 |
-| `BlueScreenContainer` | 蓝屏容器 |
-| `Spinner` | 加载指示器 |
-| `UpdateNotification` | 更新通知 |
+
+| 组件                    | 描述           |
+| ----------------------- | -------------- |
+| `BootScreen`            | 启动画面       |
+| `NotificationContainer` | 通知容器       |
+| `ErrorDialogContainer`  | 错误对话框容器 |
+| `BlueScreenContainer`   | 蓝屏容器       |
+| `Spinner`               | 加载指示器     |
+| `UpdateNotification`    | 更新通知       |
 
 ## 使用
 
 ```tsx
-import { 
-  Desktop, Taskbar, StartMenu, BootScreen,
-  NotificationContainer, LockScreen
-} from '@ui';
+import { Desktop, Taskbar, StartMenu, BootScreen, NotificationContainer, LockScreen } from '@ui';
 import type { WallpaperConfig, TaskbarDisplayMode } from '@ui';
 
 function App() {

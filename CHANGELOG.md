@@ -13,6 +13,7 @@ WebOS - 一个在浏览器中运行的操作系统，具有真实的操作系统
 ### 最近更新 (2024-03)
 
 #### 项目结构优化
+
 - 删除无用的 `com.os.docs` 桌面应用
 - 更新 `.gitignore` 排除临时文件和日志
 - 添加 LICENSE、CONTRIBUTING.md、SECURITY.md
@@ -20,10 +21,12 @@ WebOS - 一个在浏览器中运行的操作系统，具有真实的操作系统
 - 添加 .editorconfig 统一编辑器配置
 
 #### UI 改进
+
 - OOBE 加载圈样式与登录界面保持一致
 - 登录界面采用 macOS/Windows 11 风格设计
 
 #### 版本更新
+
 - Next.js 15 → 16
 - TypeScript 5 → 6
 
@@ -32,12 +35,14 @@ WebOS - 一个在浏览器中运行的操作系统，具有真实的操作系统
 ### 架构改进
 
 #### Monorepo 结构
+
 - 使用 Bun workspaces 管理多包
 - 支持两种运行模式：
   - 独立模式：Webpack 构建 `packages/os/`
   - Next.js 模式：集成到 `site/`
 
 #### 路径别名系统
+
 - 在 `next.config.js` 和 `tsconfig.json` 中统一配置
 - 支持的别名：`@kernel`, `@ui`, `@i18n`, `@oobe`, `@bootloader`, `@recovery`, `@tablet`, `@apps`, `@webos/os`, `@webos/docs`, `@webos/intro`
 
@@ -46,6 +51,7 @@ WebOS - 一个在浏览器中运行的操作系统，具有真实的操作系统
 ## 已完成的功能
 
 ### 核心系统
+
 - [x] 安全认证 - PBKDF2 100K 迭代 + AES-256-GCM 加密
 - [x] 加密存储 - SQLite 数据库加密存储在 IndexedDB
 - [x] 多用户支持 - Root 和标准用户账户，带权限系统
@@ -55,6 +61,7 @@ WebOS - 一个在浏览器中运行的操作系统，具有真实的操作系统
 - [x] 恢复模式 - 系统错误时的恢复界面
 
 ### 用户界面
+
 - [x] 启动动画 - 优雅的加载序列
 - [x] OOBE (开箱即用体验) - 首次启动设置向导
 - [x] 锁屏界面 - 安全锁屏和用户选择
@@ -65,6 +72,7 @@ WebOS - 一个在浏览器中运行的操作系统，具有真实的操作系统
 - [x] 蓝屏界面 - 错误显示界面
 
 ### 内置应用
+
 - [x] 时钟应用 (`com.os.clock`) - 时钟和闹钟
 - [x] 文件管理器 (`com.os.filemanager`) - 文件浏览
 - [x] 设置应用 (`com.os.settings`) - 系统配置
@@ -79,6 +87,7 @@ WebOS - 一个在浏览器中运行的操作系统，具有真实的操作系统
 - [x] 浏览器应用 (`com.os.browser`) - 网页浏览
 
 ### 国际化
+
 - [x] English (en)
 - [x] 简体中文 (zh-CN)
 - [x] 繁體中文 (zh-TW)
@@ -86,6 +95,7 @@ WebOS - 一个在浏览器中运行的操作系统，具有真实的操作系统
 - [ ] Deutsch (de) - 预留
 
 ### 触摸支持
+
 - [x] 设备检测 - 自动检测桌面/平板/手机
 - [x] 触摸手势 - 点击、双击、长按、滑动、捏合
 - [x] 平板模式 - 自动切换、增大触摸目标、边缘手势
@@ -97,11 +107,13 @@ WebOS - 一个在浏览器中运行的操作系统，具有真实的操作系统
 ### Next.js 集成修复
 
 #### Service Worker 和 version.json 404
+
 - **问题**: Service Worker 注册失败，版本检查失败
 - **原因**: `site/public/` 目录缺少这两个文件
 - **修复**: 创建 `site/public/version.json` 和 `site/public/sw.js`
 
 #### 窗口无法显示
+
 - **问题**: 点击桌面应用图标没有窗口弹出
 - **原因**:
   1. `next.config.js` 路径别名错误（`__dirname` 指向 `site/` 而非项目根目录）
@@ -113,6 +125,7 @@ WebOS - 一个在浏览器中运行的操作系统，具有真实的操作系统
   3. 在 WebOSApp.tsx 中添加窗口容器设置
 
 #### 桌面图标无法点击
+
 - **问题**: 窗口容器覆盖桌面图标，导致点击无效
 - **修复**: 窗口容器设置 `pointer-events: none`，窗口元素设置 `pointer-events: auto`
 

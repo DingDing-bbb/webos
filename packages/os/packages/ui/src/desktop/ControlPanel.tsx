@@ -197,9 +197,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
               </span>
               <div className="desktop-control-panel-header-text">
                 <h2>{activeCategoryInfo.name}</h2>
-                {activeCategoryInfo.description && (
-                  <p>{activeCategoryInfo.description}</p>
-                )}
+                {activeCategoryInfo.description && <p>{activeCategoryInfo.description}</p>}
               </div>
             </>
           ) : (

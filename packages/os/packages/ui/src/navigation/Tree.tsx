@@ -3,7 +3,15 @@
  * 支持展开/折叠、复选框支持、搜索过滤
  */
 
-import React, { useState, useCallback, useRef, useEffect, useMemo, createContext, useContext } from 'react';
+import React, {
+  useState,
+  useCallback,
+  useRef,
+  useEffect,
+  useMemo,
+  createContext,
+  useContext,
+} from 'react';
 
 // ========== Types ==========
 export interface TreeNode {
@@ -28,7 +36,10 @@ export interface TreeProps {
   expandedKeys?: string[];
   defaultExpandedKeys?: string[];
   onSelect?: (selectedKeys: string[], info: { node: TreeNode; selected: boolean }) => void;
-  onCheck?: (checkedKeys: string[], info: { node: TreeNode; checked: boolean; checkedNodes: TreeNode[] }) => void;
+  onCheck?: (
+    checkedKeys: string[],
+    info: { node: TreeNode; checked: boolean; checkedNodes: TreeNode[] }
+  ) => void;
   onExpand?: (expandedKeys: string[], info: { node: TreeNode; expanded: boolean }) => void;
   onSearch?: (value: string) => void;
   checkable?: boolean;
@@ -88,11 +99,7 @@ const TreeSearch: React.FC<TreeSearchProps> = ({ placeholder, value, onChange })
         className="nav-tree-search-input"
       />
       {value && (
-        <button
-          className="nav-tree-search-clear"
-          onClick={handleClear}
-          aria-label="Clear search"
-        >
+        <button className="nav-tree-search-clear" onClick={handleClear} aria-label="Clear search">
           ×
         </button>
       )}
@@ -141,7 +148,9 @@ const TreeNodeComponent: React.FC<TreeNodeProps> = ({ node, level, searchValue }
     return (
       <>
         {text.slice(0, index)}
-        <span className="nav-tree-node-highlight">{text.slice(index, index + searchValue.length)}</span>
+        <span className="nav-tree-node-highlight">
+          {text.slice(index, index + searchValue.length)}
+        </span>
         {text.slice(index + searchValue.length)}
       </>
     );
@@ -230,9 +239,7 @@ const TreeNodeComponent: React.FC<TreeNodeProps> = ({ node, level, searchValue }
         {node.icon && <span className="nav-tree-node-icon">{node.icon}</span>}
 
         {/* Title */}
-        <span className="nav-tree-node-title">
-          {highlightMatch(node.title)}
-        </span>
+        <span className="nav-tree-node-title">{highlightMatch(node.title)}</span>
       </div>
 
       {/* Children */}
@@ -333,7 +340,12 @@ export const Tree: React.FC<TreeProps> = ({
     if (Array.isArray(controlledCheckedKeys)) {
       return { checked: controlledCheckedKeys, halfChecked: internalHalfCheckedKeys };
     }
-    return controlledCheckedKeys ?? { checked: internalCheckedKeys, halfChecked: internalHalfCheckedKeys };
+    return (
+      controlledCheckedKeys ?? {
+        checked: internalCheckedKeys,
+        halfChecked: internalHalfCheckedKeys,
+      }
+    );
   }, [controlledCheckedKeys, internalCheckedKeys, internalHalfCheckedKeys]);
 
   // Filter tree based on search
@@ -348,52 +360,62 @@ export const Tree: React.FC<TreeProps> = ({
     }
   }, [searchValue, filteredData, controlledExpandedKeys]);
 
-  const handleSelect = useCallback((key: string, node: TreeNode, selected: boolean) => {
-    let newSelectedKeys: string[];
+  const handleSelect = useCallback(
+    (key: string, node: TreeNode, selected: boolean) => {
+      let newSelectedKeys: string[];
 
-    if (multiple) {
-      newSelectedKeys = selected
-        ? [...selectedKeys, key]
-        : selectedKeys.filter((k) => k !== key);
-    } else {
-      newSelectedKeys = selected ? [key] : [];
-    }
+      if (multiple) {
+        newSelectedKeys = selected ? [...selectedKeys, key] : selectedKeys.filter((k) => k !== key);
+      } else {
+        newSelectedKeys = selected ? [key] : [];
+      }
 
-    setInternalSelectedKeys(newSelectedKeys);
-    onSelect?.(newSelectedKeys, { node, selected });
-  }, [selectedKeys, multiple, onSelect]);
+      setInternalSelectedKeys(newSelectedKeys);
+      onSelect?.(newSelectedKeys, { node, selected });
+    },
+    [selectedKeys, multiple, onSelect]
+  );
 
-  const handleCheck = useCallback((key: string, node: TreeNode, checked: boolean) => {
-    // Simple check logic - in a real implementation you'd need to handle parent/child relationships
-    let newCheckedKeys: string[];
+  const handleCheck = useCallback(
+    (key: string, node: TreeNode, checked: boolean) => {
+      // Simple check logic - in a real implementation you'd need to handle parent/child relationships
+      let newCheckedKeys: string[];
 
-    if (checked) {
-      newCheckedKeys = [...parsedCheckedKeys.checked, key];
-    } else {
-      newCheckedKeys = parsedCheckedKeys.checked.filter((k) => k !== key);
-    }
+      if (checked) {
+        newCheckedKeys = [...parsedCheckedKeys.checked, key];
+      } else {
+        newCheckedKeys = parsedCheckedKeys.checked.filter((k) => k !== key);
+      }
 
-    setInternalCheckedKeys(newCheckedKeys);
-    onCheck?.(newCheckedKeys, { node, checked, checkedNodes: [] });
-  }, [parsedCheckedKeys, onCheck]);
+      setInternalCheckedKeys(newCheckedKeys);
+      onCheck?.(newCheckedKeys, { node, checked, checkedNodes: [] });
+    },
+    [parsedCheckedKeys, onCheck]
+  );
 
-  const handleExpand = useCallback((key: string, node: TreeNode, expanded: boolean) => {
-    let newExpandedKeys: string[];
+  const handleExpand = useCallback(
+    (key: string, node: TreeNode, expanded: boolean) => {
+      let newExpandedKeys: string[];
 
-    if (expanded) {
-      newExpandedKeys = [...expandedKeys, key];
-    } else {
-      newExpandedKeys = expandedKeys.filter((k) => k !== key);
-    }
+      if (expanded) {
+        newExpandedKeys = [...expandedKeys, key];
+      } else {
+        newExpandedKeys = expandedKeys.filter((k) => k !== key);
+      }
 
-    setInternalExpandedKeys(newExpandedKeys);
-    onExpand?.(newExpandedKeys, { node, expanded });
-  }, [expandedKeys, onExpand]);
+      setInternalExpandedKeys(newExpandedKeys);
+      onExpand?.(newExpandedKeys, { node, expanded });
+    },
+    [expandedKeys, onExpand]
+  );
 
-  const handleSearch = useCallback((value: string) => {
-    setSearchValue(value);
-    onSearch?.(value);
-  }, [onSearch]);
+  const handleSearch = useCallback(
+    (value: string) => {
+      setSearchValue(value);
+      onSearch?.(value);
+    },
+    [onSearch]
+  );
 
   // Keyboard navigation
   useEffect(() => {
@@ -462,11 +484,7 @@ export const Tree: React.FC<TreeProps> = ({
         style={style}
       >
         {showSearch && (
-          <TreeSearch
-            placeholder={searchPlaceholder}
-            value={searchValue}
-            onChange={handleSearch}
-          />
+          <TreeSearch placeholder={searchPlaceholder} value={searchValue} onChange={handleSearch} />
         )}
 
         <ul
@@ -477,12 +495,7 @@ export const Tree: React.FC<TreeProps> = ({
           style={height ? { maxHeight: height, overflow: 'auto' } : undefined}
         >
           {filteredData.map((node) => (
-            <TreeNodeComponent
-              key={node.key}
-              node={node}
-              level={0}
-              searchValue={searchValue}
-            />
+            <TreeNodeComponent key={node.key} node={node} level={0} searchValue={searchValue} />
           ))}
         </ul>
 

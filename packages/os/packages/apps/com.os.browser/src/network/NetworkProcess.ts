@@ -1,18 +1,18 @@
 /**
  * Network Process - 网络进程
- * 
+ *
  * 处理所有网络请求，包括HTTP/HTTPS、重定向、缓存、Cookie
  * 基于Fetch API实现
  */
 
 import { ipcBus } from '../ipc/MessageBus';
-import type { 
-  NetworkRequestLog, 
-  FetchRequestMessage, 
+import type {
+  NetworkRequestLog,
+  FetchRequestMessage,
   FetchResponseMessage,
   FetchErrorMessage,
   ResourceLoadedMessage,
-  IPCMessage 
+  IPCMessage,
 } from '../ipc/messages';
 
 interface CacheEntry {
@@ -40,13 +40,13 @@ interface Cookie {
  */
 export class NetworkProcess {
   private static instance: NetworkProcess;
-  
+
   private cache: Map<string, CacheEntry> = new Map();
   private cookies: Map<string, Cookie[]> = new Map();
   private requestLog: NetworkRequestLog[] = [];
   private activeRequests: Map<string, AbortController> = new Map();
   private unsubscribers: (() => void)[] = [];
-  
+
   private maxCacheSize: number = 100;
   private maxLogSize: number = 1000;
   private defaultUserAgent: string = 'WebOS/1.0 Browser';
@@ -64,24 +64,18 @@ export class NetworkProcess {
 
   private init(): void {
     // 监听fetch请求
-    this.unsubscribers.push(
-      ipcBus.on('network:fetch-request', this.handleFetchRequest.bind(this))
-    );
-    
+    this.unsubscribers.push(ipcBus.on('network:fetch-request', this.handleFetchRequest.bind(this)));
+
     // 监听取消请求
     this.unsubscribers.push(
       ipcBus.on('network:cancel-request', this.handleCancelRequest.bind(this))
     );
 
     // 监听清除缓存
-    this.unsubscribers.push(
-      ipcBus.on('network:clear-cache', this.handleClearCache.bind(this))
-    );
+    this.unsubscribers.push(ipcBus.on('network:clear-cache', this.handleClearCache.bind(this)));
 
     // 监听清除Cookie
-    this.unsubscribers.push(
-      ipcBus.on('network:clear-cookies', this.handleClearCookies.bind(this))
-    );
+    this.unsubscribers.push(ipcBus.on('network:clear-cookies', this.handleClearCookies.bind(this)));
 
     // 监听获取网络日志
     this.unsubscribers.push(
@@ -100,7 +94,7 @@ export class NetworkProcess {
   private async handleFetchRequest(message: IPCMessage): Promise<void> {
     const request = message as FetchRequestMessage;
     const { requestId, url, method, headers, body } = request;
-    
+
     const startTime = Date.now();
     const requestLog: NetworkRequestLog = {
       id: requestId,
@@ -115,14 +109,14 @@ export class NetworkProcess {
       endTime: 0,
       duration: 0,
       resourceType: this.getResourceType(url),
-      size: 0
+      size: 0,
     };
 
     try {
       // 检查缓存
       const cacheKey = this.getCacheKey(url, method, headers);
       const cached = this.getFromCache(cacheKey);
-      
+
       if (cached && method === 'GET') {
         requestLog.status = 200;
         requestLog.statusText = 'OK (Cached)';
@@ -143,7 +137,7 @@ export class NetworkProcess {
           statusText: 'OK (Cached)',
           headers: {},
           body: cached.body,
-          contentType: cached.contentType
+          contentType: cached.contentType,
         } as FetchResponseMessage);
         return;
       }
@@ -151,7 +145,7 @@ export class NetworkProcess {
       // 添加Cookie到请求头
       const cookies = this.getCookiesForUrl(url);
       if (cookies.length > 0) {
-        headers['Cookie'] = cookies.map(c => `${c.name}=${c.value}`).join('; ');
+        headers['Cookie'] = cookies.map((c) => `${c.name}=${c.value}`).join('; ');
       }
 
       // 添加User-Agent
@@ -170,7 +164,7 @@ export class NetworkProcess {
         body: body ? body : undefined,
         signal: abortController.signal,
         mode: 'cors',
-        credentials: 'include'
+        credentials: 'include',
       });
 
       // 移除AbortController
@@ -232,7 +226,7 @@ export class NetworkProcess {
         statusText: response.statusText,
         headers: responseHeaders,
         body: responseBody,
-        contentType
+        contentType,
       } as FetchResponseMessage);
 
       // 发送资源加载完成通知
@@ -248,12 +242,11 @@ export class NetworkProcess {
         url,
         size: responseBody.length,
         duration: requestLog.duration,
-        status: response.status
+        status: response.status,
       } as ResourceLoadedMessage);
-
     } catch (error: unknown) {
       const err = error as Error;
-      
+
       // 更新请求日志
       requestLog.status = 0;
       requestLog.statusText = 'Error';
@@ -273,7 +266,7 @@ export class NetworkProcess {
         tabId: message.tabId,
         timestamp: Date.now(),
         requestId,
-        error: err.message
+        error: err.message,
       } as FetchErrorMessage);
     }
   }
@@ -323,13 +316,13 @@ export class NetworkProcess {
    */
   private getResourceType(url: string): NetworkRequestLog['resourceType'] {
     const path = url.split('?')[0].toLowerCase();
-    
+
     if (path.endsWith('.css')) return 'stylesheet';
     if (path.endsWith('.js')) return 'script';
     if (/\.(png|jpg|jpeg|gif|svg|webp|ico)$/i.test(path)) return 'image';
     if (/\.(woff|woff2|ttf|otf|eot)$/i.test(path)) return 'font';
     if (/\.(html|htm)$/i.test(path) || !path.includes('.')) return 'document';
-    
+
     return 'other';
   }
 
@@ -346,19 +339,25 @@ export class NetworkProcess {
   private getFromCache(key: string): CacheEntry | null {
     const entry = this.cache.get(key);
     if (!entry) return null;
-    
+
     if (Date.now() - entry.timestamp > entry.maxAge * 1000) {
       this.cache.delete(key);
       return null;
     }
-    
+
     return entry;
   }
 
   /**
    * 添加到缓存
    */
-  private addToCache(key: string, response: Response, body: string, contentType: string, maxAge: number): void {
+  private addToCache(
+    key: string,
+    response: Response,
+    body: string,
+    contentType: string,
+    maxAge: number
+  ): void {
     // 检查缓存大小
     if (this.cache.size >= this.maxCacheSize) {
       // 删除最旧的条目
@@ -373,7 +372,7 @@ export class NetworkProcess {
       body,
       contentType,
       timestamp: Date.now(),
-      maxAge
+      maxAge,
     });
   }
 
@@ -396,12 +395,12 @@ export class NetworkProcess {
     const urlObj = new URL(url);
     const domain = urlObj.hostname;
     const path = urlObj.pathname;
-    
+
     const cookies: Cookie[] = [];
-    
+
     this.cookies.forEach((domainCookies, cookieDomain) => {
       if (domain.endsWith(cookieDomain) || cookieDomain.endsWith(domain)) {
-        domainCookies.forEach(cookie => {
+        domainCookies.forEach((cookie) => {
           if (path.startsWith(cookie.path)) {
             if (!cookie.secure || urlObj.protocol === 'https:') {
               cookies.push(cookie);
@@ -410,7 +409,7 @@ export class NetworkProcess {
         });
       }
     });
-    
+
     return cookies;
   }
 
@@ -420,14 +419,14 @@ export class NetworkProcess {
   private setCookiesFromHeader(url: string, setCookie: string): void {
     const urlObj = new URL(url);
     const defaultDomain = urlObj.hostname;
-    
-    const cookieStrings = setCookie.split(',').map(s => s.trim());
-    
-    cookieStrings.forEach(cookieStr => {
-      const parts = cookieStr.split(';').map(s => s.trim());
+
+    const cookieStrings = setCookie.split(',').map((s) => s.trim());
+
+    cookieStrings.forEach((cookieStr) => {
+      const parts = cookieStr.split(';').map((s) => s.trim());
       const [nameValue, ...attributes] = parts;
       const [name, value] = nameValue.split('=');
-      
+
       const cookie: Cookie = {
         name,
         value: value || '',
@@ -435,10 +434,10 @@ export class NetworkProcess {
         path: '/',
         httpOnly: false,
         secure: false,
-        sameSite: 'Lax'
+        sameSite: 'Lax',
       };
-      
-      attributes.forEach(attr => {
+
+      attributes.forEach((attr) => {
         const [attrName, attrValue] = attr.split('=');
         switch (attrName.toLowerCase()) {
           case 'domain':
@@ -464,15 +463,15 @@ export class NetworkProcess {
             break;
         }
       });
-      
+
       // 保存Cookie
       if (!this.cookies.has(cookie.domain)) {
         this.cookies.set(cookie.domain, []);
       }
-      
+
       const domainCookies = this.cookies.get(cookie.domain)!;
-      const existingIndex = domainCookies.findIndex(c => c.name === cookie.name);
-      
+      const existingIndex = domainCookies.findIndex((c) => c.name === cookie.name);
+
       if (existingIndex >= 0) {
         domainCookies[existingIndex] = cookie;
       } else {
@@ -501,7 +500,7 @@ export class NetworkProcess {
    */
   private addRequestLog(log: NetworkRequestLog): void {
     this.requestLog.push(log);
-    
+
     // 限制日志大小
     if (this.requestLog.length > this.maxLogSize) {
       this.requestLog.shift();
@@ -519,9 +518,9 @@ export class NetworkProcess {
    * 销毁
    */
   destroy(): void {
-    this.unsubscribers.forEach(unsub => unsub());
+    this.unsubscribers.forEach((unsub) => unsub());
     this.unsubscribers = [];
-    this.activeRequests.forEach(controller => controller.abort());
+    this.activeRequests.forEach((controller) => controller.abort());
     this.activeRequests.clear();
   }
 }

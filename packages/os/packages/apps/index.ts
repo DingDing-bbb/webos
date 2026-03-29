@@ -1,6 +1,6 @@
 /**
  * WebOS Applications - Main Entry
- * 
+ *
  * 系统应用主入口，包含所有内置应用
  */
 
@@ -18,9 +18,9 @@ export {
 } from './registry';
 
 // 导出类型
-export type { 
-  AppInfo, 
-  AppCategory, 
+export type {
+  AppInfo,
+  AppCategory,
   AppInstance,
   CategoryInfo,
   IconProps,
@@ -28,7 +28,7 @@ export type {
   AppEvent,
   LaunchOptions,
   AppStatus,
-  AppPermission
+  AppPermission,
 } from './types';
 
 // 导入注册函数
@@ -52,11 +52,11 @@ let initialized = false;
  */
 export function initApps(): void {
   if (initialized) return;
-  
-  allAppInfos.forEach(appInfo => {
+
+  allAppInfos.forEach((appInfo) => {
     registerApp(appInfo);
   });
-  
+
   initialized = true;
   console.log(`[Apps] Initialized ${allAppInfos.length} apps`);
 }
@@ -74,8 +74,8 @@ export function getRegisteredApps() {
  */
 export function getAppLauncherConfig() {
   initApps();
-  
-  return allAppInfos.map(app => ({
+
+  return allAppInfos.map((app) => ({
     id: app.id,
     name: app.name,
     nameKey: app.nameKey,
@@ -85,6 +85,6 @@ export function getAppLauncherConfig() {
     minWidth: app.minWidth,
     minHeight: app.minHeight,
     resizable: app.resizable,
-    singleton: app.singleton
+    singleton: app.singleton,
   }));
 }

@@ -189,20 +189,17 @@ export const Desktop: React.FC<DesktopProps> = ({
   // ========================================
   // Selection Box
   // ========================================
-  const handleMouseDown = useCallback(
-    (e: React.MouseEvent) => {
-      if (e.button !== 0) return;
-      if ((e.target as HTMLElement).closest('.desktop-icon')) return;
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    if (e.button !== 0) return;
+    if ((e.target as HTMLElement).closest('.desktop-icon')) return;
 
-      setSelectionBox({
-        startX: e.clientX,
-        startY: e.clientY,
-        currentX: e.clientX,
-        currentY: e.clientY,
-      });
-    },
-    []
-  );
+    setSelectionBox({
+      startX: e.clientX,
+      startY: e.clientY,
+      currentX: e.clientX,
+      currentY: e.clientY,
+    });
+  }, []);
 
   const handleMouseMove = useCallback(
     (e: React.MouseEvent) => {

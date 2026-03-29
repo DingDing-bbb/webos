@@ -34,7 +34,7 @@ class UpdateManager {
     latestVersion: null,
     lastCheckTime: null,
     isChecking: false,
-    isUpdating: false
+    isUpdating: false,
   };
 
   constructor() {
@@ -56,7 +56,7 @@ class UpdateManager {
       autoUpdate: true,
       lastCheckTime: null,
       currentVersion: VERSION,
-      lastVersion: null
+      lastVersion: null,
     };
   }
 
@@ -83,7 +83,7 @@ class UpdateManager {
   }
 
   private notify(): void {
-    this.listeners.forEach(listener => listener(this.getStatus()));
+    this.listeners.forEach((listener) => listener(this.getStatus()));
   }
 
   /**
@@ -101,8 +101,8 @@ class UpdateManager {
       const response = await fetch(`/version.json?t=${timestamp}`, {
         cache: 'no-store',
         headers: {
-          'Cache-Control': 'no-cache'
-        }
+          'Cache-Control': 'no-cache',
+        },
       });
 
       if (!response.ok) {
@@ -123,7 +123,7 @@ class UpdateManager {
         hasUpdate,
         latestVersion,
         lastCheckTime: this.config.lastCheckTime,
-        isChecking: false
+        isChecking: false,
       };
 
       this.notify();
@@ -174,7 +174,7 @@ class UpdateManager {
       // 清除所有缓存
       if ('caches' in window) {
         const cacheNames = await caches.keys();
-        await Promise.all(cacheNames.map(name => caches.delete(name)));
+        await Promise.all(cacheNames.map((name) => caches.delete(name)));
       }
 
       // 注销旧的 Service Worker
@@ -230,7 +230,7 @@ class UpdateManager {
 
     try {
       const registration = await navigator.serviceWorker.register('/sw.js');
-      
+
       registration.addEventListener('updatefound', () => {
         const newWorker = registration.installing;
         if (newWorker) {
@@ -251,7 +251,6 @@ class UpdateManager {
       navigator.serviceWorker.addEventListener('controllerchange', () => {
         window.location.reload();
       });
-
     } catch (error) {
       console.error('Service Worker registration failed:', error);
     }

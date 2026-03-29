@@ -1,8 +1,8 @@
 /**
  * BootController - 启动控制器
- * 
+ *
  * 执行真正的系统初始化任务
- * 
+ *
  * 注意：此控制器假设 window.webos 已经初始化
  * 内核初始化应该在创建此控制器之前完成
  */
@@ -31,7 +31,7 @@ export interface BootResult {
 
 /**
  * 启动控制器
- * 
+ *
  * 执行系统初始化任务：
  * - Stage 1: Kernel - 验证内核 API
  * - Stage 2: Filesystem - 文件系统初始化
@@ -240,9 +240,7 @@ export class BootController {
         this.completedWeight += task.weight;
 
         if (this.onProgress) {
-          const progress = Math.round(
-            (this.completedWeight / this.totalWeight) * 100
-          );
+          const progress = Math.round((this.completedWeight / this.totalWeight) * 100);
           this.onProgress(task.name, progress);
         }
       } catch (error: unknown) {

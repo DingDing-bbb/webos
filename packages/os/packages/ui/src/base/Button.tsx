@@ -38,12 +38,45 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 // Constants
 // ============================================
 
-const sizeConfig: Record<ButtonSize, { height: string; padding: string; fontSize: string; iconSize: number; gap: string }> = {
-  xs: { height: '24px', padding: '6px 8px', fontSize: 'var(--os-font-size-xs)', iconSize: 12, gap: '4px' },
-  sm: { height: '32px', padding: '8px 12px', fontSize: 'var(--os-font-size-sm)', iconSize: 14, gap: '6px' },
-  md: { height: '40px', padding: '10px 16px', fontSize: 'var(--os-font-size-md)', iconSize: 16, gap: '8px' },
-  lg: { height: '48px', padding: '12px 24px', fontSize: 'var(--os-font-size-lg)', iconSize: 18, gap: '10px' },
-  xl: { height: '56px', padding: '16px 32px', fontSize: 'var(--os-font-size-xl)', iconSize: 20, gap: '12px' },
+const sizeConfig: Record<
+  ButtonSize,
+  { height: string; padding: string; fontSize: string; iconSize: number; gap: string }
+> = {
+  xs: {
+    height: '24px',
+    padding: '6px 8px',
+    fontSize: 'var(--os-font-size-xs)',
+    iconSize: 12,
+    gap: '4px',
+  },
+  sm: {
+    height: '32px',
+    padding: '8px 12px',
+    fontSize: 'var(--os-font-size-sm)',
+    iconSize: 14,
+    gap: '6px',
+  },
+  md: {
+    height: '40px',
+    padding: '10px 16px',
+    fontSize: 'var(--os-font-size-md)',
+    iconSize: 16,
+    gap: '8px',
+  },
+  lg: {
+    height: '48px',
+    padding: '12px 24px',
+    fontSize: 'var(--os-font-size-lg)',
+    iconSize: 18,
+    gap: '10px',
+  },
+  xl: {
+    height: '56px',
+    padding: '16px 32px',
+    fontSize: 'var(--os-font-size-xl)',
+    iconSize: 20,
+    gap: '12px',
+  },
 };
 
 const iconOnlySizeConfig: Record<ButtonSize, { size: string; iconSize: number }> = {
@@ -115,25 +148,32 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
       // 如果是字符串，从 Lucide 图标库获取
       if (typeof icon === 'string') {
-        const IconComponent = (LucideIcons as Record<string, React.FC<LucideIcons.LucideProps>>)[icon];
+        const IconComponent = (LucideIcons as Record<string, React.FC<LucideIcons.LucideProps>>)[
+          icon
+        ];
         if (!IconComponent) {
           console.warn(`Icon "${icon}" not found in Lucide icons`);
           return null;
         }
-        return <IconComponent size={iconOnly ? iconConfig.iconSize : config.iconSize} aria-hidden="true" />;
+        return (
+          <IconComponent
+            size={iconOnly ? iconConfig.iconSize : config.iconSize}
+            aria-hidden="true"
+          />
+        );
       }
 
       // 自定义 React 节点
-      return <span className="webos-button__custom-icon" aria-hidden="true">{icon}</span>;
+      return (
+        <span className="webos-button__custom-icon" aria-hidden="true">
+          {icon}
+        </span>
+      );
     }, [icon, config.iconSize, iconConfig.iconSize, iconOnly]);
 
     // 构建类名
     const buttonClasses = useMemo(() => {
-      const classes = [
-        'webos-button',
-        `webos-button--${variant}`,
-        `webos-button--${size}`,
-      ];
+      const classes = ['webos-button', `webos-button--${variant}`, `webos-button--${size}`];
 
       if (iconOnly) classes.push('webos-button--icon-only');
       if (acrylic) classes.push('webos-button--acrylic');
@@ -144,7 +184,18 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       if (className) classes.push(className);
 
       return classes.join(' ');
-    }, [variant, size, iconOnly, acrylic, block, loading, isDisabled, icon, iconPosition, className]);
+    }, [
+      variant,
+      size,
+      iconOnly,
+      acrylic,
+      block,
+      loading,
+      isDisabled,
+      icon,
+      iconPosition,
+      className,
+    ]);
 
     // 内联样式
     const buttonStyle = useMemo(() => {
@@ -215,7 +266,9 @@ export const ButtonGroup: React.FC<ButtonGroupProps> = ({
     vertical ? 'webos-button-group--vertical' : 'webos-button-group--horizontal',
     attached && 'webos-button-group--attached',
     className,
-  ].filter(Boolean).join(' ');
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   // 克隆子元素并传递 props
   const enhancedChildren = useMemo(() => {

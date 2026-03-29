@@ -160,7 +160,7 @@
   gap: 12px;
 }
 
-.secure-settings-field input[type="text"] {
+.secure-settings-field input[type='text'] {
   flex: 1;
   padding: 12px 16px;
   background: var(--bg-tertiary, #16161f);
@@ -172,7 +172,7 @@
   transition: all 0.2s ease;
 }
 
-.secure-settings-field input[type="text"]:focus {
+.secure-settings-field input[type='text']:focus {
   border-color: var(--accent-primary, #42a5f5);
   box-shadow: 0 0 0 3px rgba(66, 165, 245, 0.1);
 }

@@ -141,27 +141,33 @@ export const Pagination: React.FC<PaginationProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handlePageChange = useCallback((page: number) => {
-    if (disabled) return;
-    if (page < 1 || page > totalPages) return;
-    if (page === current) return;
+  const handlePageChange = useCallback(
+    (page: number) => {
+      if (disabled) return;
+      if (page < 1 || page > totalPages) return;
+      if (page === current) return;
 
-    setInternalCurrent(page);
-    onChange?.(page, pageSize);
-  }, [disabled, totalPages, current, onChange, pageSize]);
+      setInternalCurrent(page);
+      onChange?.(page, pageSize);
+    },
+    [disabled, totalPages, current, onChange, pageSize]
+  );
 
-  const handlePageSizeChange = useCallback((newSize: number) => {
-    if (disabled) return;
+  const handlePageSizeChange = useCallback(
+    (newSize: number) => {
+      if (disabled) return;
 
-    const newTotalPages = Math.ceil(total / newSize);
-    const newCurrent = Math.min(current, newTotalPages);
+      const newTotalPages = Math.ceil(total / newSize);
+      const newCurrent = Math.min(current, newTotalPages);
 
-    setInternalPageSize(newSize);
-    setInternalCurrent(newCurrent);
-    onShowSizeChange?.(newCurrent, newSize);
-    onChange?.(newCurrent, newSize);
-    setSizeSelectOpen(false);
-  }, [disabled, total, current, onShowSizeChange, onChange]);
+      setInternalPageSize(newSize);
+      setInternalCurrent(newCurrent);
+      onShowSizeChange?.(newCurrent, newSize);
+      onChange?.(newCurrent, newSize);
+      setSizeSelectOpen(false);
+    },
+    [disabled, total, current, onShowSizeChange, onChange]
+  );
 
   const handleJump = useCallback(() => {
     const page = parseInt(jumpValue, 10);
@@ -171,11 +177,14 @@ export const Pagination: React.FC<PaginationProps> = ({
     }
   }, [jumpValue, totalPages, handlePageChange]);
 
-  const handleJumpKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleJump();
-    }
-  }, [handleJump]);
+  const handleJumpKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        handleJump();
+      }
+    },
+    [handleJump]
+  );
 
   // Render total info
   const renderTotal = () => {
@@ -185,11 +194,7 @@ export const Pagination: React.FC<PaginationProps> = ({
     const end = Math.min(current * pageSize, total);
 
     if (typeof showTotal === 'function') {
-      return (
-        <span className="nav-pagination-total">
-          {showTotal(total, [start, end])}
-        </span>
-      );
+      return <span className="nav-pagination-total">{showTotal(total, [start, end])}</span>;
     }
 
     return (
@@ -251,11 +256,7 @@ export const Pagination: React.FC<PaginationProps> = ({
           disabled={disabled}
           className="nav-pagination-jumper-input"
         />
-        <button
-          className="nav-pagination-jumper-btn"
-          onClick={handleJump}
-          disabled={disabled}
-        >
+        <button className="nav-pagination-jumper-btn" onClick={handleJump} disabled={disabled}>
           Go
         </button>
       </div>

@@ -21,7 +21,7 @@ export async function buildCommand(options: BuildOptions) {
   const outDir = path.resolve(options.output || 'dist');
 
   // 检查配置文件
-  if (!await fs.pathExists(configFile)) {
+  if (!(await fs.pathExists(configFile))) {
     console.error(chalk.red(`Error: Config file not found: ${configFile}`));
     process.exit(1);
   }
@@ -39,7 +39,7 @@ export async function buildCommand(options: BuildOptions) {
   const entryFile = appInfo.main?.replace('./dist/', './src/') || './src/index.tsx';
   const entryPath = path.resolve(entryFile);
 
-  if (!await fs.pathExists(entryPath)) {
+  if (!(await fs.pathExists(entryPath))) {
     console.error(chalk.red(`Error: Entry file not found: ${entryPath}`));
     process.exit(1);
   }

@@ -33,7 +33,9 @@
   border: 1px solid var(--os-color-border);
   background: var(--os-color-bg-secondary);
   font-size: var(--os-font-size-sm);
-  transition: border-color var(--os-transition-fast), box-shadow var(--os-transition-fast);
+  transition:
+    border-color var(--os-transition-fast),
+    box-shadow var(--os-transition-fast);
 }
 
 .os-start-menu-search:focus {

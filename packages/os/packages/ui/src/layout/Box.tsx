@@ -34,15 +34,7 @@ import React, { forwardRef, useMemo } from 'react';
 
 type SpacingValue = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 'auto';
 
-type DimensionValue =
-  | number
-  | string
-  | 'full'
-  | 'screen'
-  | 'auto'
-  | 'min'
-  | 'max'
-  | 'fit';
+type DimensionValue = number | string | 'full' | 'screen' | 'auto' | 'min' | 'max' | 'fit';
 
 type CSSProperty = string | number;
 
@@ -61,33 +53,17 @@ export type BoxVariant =
 /**
  * Border radius options
  */
-export type BorderRadius =
-  | 'none'
-  | 'sm'
-  | 'md'
-  | 'lg'
-  | 'xl'
-  | '2xl'
-  | 'full';
+export type BorderRadius = 'none' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
 
 /**
  * Overflow options
  */
-export type OverflowValue =
-  | 'auto'
-  | 'hidden'
-  | 'visible'
-  | 'scroll';
+export type OverflowValue = 'auto' | 'hidden' | 'visible' | 'scroll';
 
 /**
  * Position options
  */
-export type PositionValue =
-  | 'static'
-  | 'relative'
-  | 'absolute'
-  | 'fixed'
-  | 'sticky';
+export type PositionValue = 'static' | 'relative' | 'absolute' | 'fixed' | 'sticky';
 
 /**
  * Box component props
@@ -98,9 +74,27 @@ export interface BoxProps extends Omit<React.HTMLAttributes<HTMLElement>, 'color
   /** Visual variant */
   variant?: BoxVariant;
   /** Padding - single value or object for individual sides */
-  padding?: SpacingValue | { x?: SpacingValue; y?: SpacingValue; t?: SpacingValue; r?: SpacingValue; b?: SpacingValue; l?: SpacingValue };
+  padding?:
+    | SpacingValue
+    | {
+        x?: SpacingValue;
+        y?: SpacingValue;
+        t?: SpacingValue;
+        r?: SpacingValue;
+        b?: SpacingValue;
+        l?: SpacingValue;
+      };
   /** Margin - single value or object for individual sides */
-  margin?: SpacingValue | { x?: SpacingValue; y?: SpacingValue; t?: SpacingValue; r?: SpacingValue; b?: SpacingValue; l?: SpacingValue };
+  margin?:
+    | SpacingValue
+    | {
+        x?: SpacingValue;
+        y?: SpacingValue;
+        t?: SpacingValue;
+        r?: SpacingValue;
+        b?: SpacingValue;
+        l?: SpacingValue;
+      };
   /** Width */
   width?: DimensionValue;
   /** Height */
@@ -134,7 +128,15 @@ export interface BoxProps extends Omit<React.HTMLAttributes<HTMLElement>, 'color
   /** Z-index */
   zIndex?: number | 'auto';
   /** Display property */
-  display?: 'block' | 'inline' | 'inline-block' | 'flex' | 'inline-flex' | 'grid' | 'inline-grid' | 'none';
+  display?:
+    | 'block'
+    | 'inline'
+    | 'inline-block'
+    | 'flex'
+    | 'inline-flex'
+    | 'grid'
+    | 'inline-grid'
+    | 'none';
   /** Flex grow */
   flexGrow?: number;
   /** Flex shrink */
@@ -197,7 +199,9 @@ const borderRadiusToCSS = (value: BorderRadius | undefined): string | undefined 
 /**
  * Convert shadow to CSS variable
  */
-const shadowToCSS = (value: 'none' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | undefined): string | undefined => {
+const shadowToCSS = (
+  value: 'none' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | undefined
+): string | undefined => {
   if (value === undefined || value === 'none') return undefined;
   return `var(--shadow-${value}, 0 4px 12px rgba(0, 0, 0, 0.25))`;
 };
@@ -344,7 +348,8 @@ export const Box = forwardRef<HTMLElement, BoxProps>(
       if (display !== undefined) style.display = display;
       if (flexGrow !== undefined) style.flexGrow = flexGrow;
       if (flexShrink !== undefined) style.flexShrink = flexShrink;
-      if (flexBasis !== undefined) style.flexBasis = typeof flexBasis === 'number' ? `${flexBasis}px` : flexBasis;
+      if (flexBasis !== undefined)
+        style.flexBasis = typeof flexBasis === 'number' ? `${flexBasis}px` : flexBasis;
 
       // Visual
       if (opacity !== undefined) style.opacity = opacity;
@@ -354,9 +359,33 @@ export const Box = forwardRef<HTMLElement, BoxProps>(
 
       return style;
     }, [
-      padding, margin, width, height, minWidth, maxWidth, minHeight, maxHeight,
-      borderRadius, overflow, overflowX, overflowY, position, top, right, bottom, left,
-      zIndex, display, flexGrow, flexShrink, flexBasis, opacity, bgColor, color, shadow, propStyle
+      padding,
+      margin,
+      width,
+      height,
+      minWidth,
+      maxWidth,
+      minHeight,
+      maxHeight,
+      borderRadius,
+      overflow,
+      overflowX,
+      overflowY,
+      position,
+      top,
+      right,
+      bottom,
+      left,
+      zIndex,
+      display,
+      flexGrow,
+      flexShrink,
+      flexBasis,
+      opacity,
+      bgColor,
+      color,
+      shadow,
+      propStyle,
     ]);
 
     return (

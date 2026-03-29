@@ -226,8 +226,8 @@ const id = generateId();
 ```typescript
 import { formatFileSize } from '@webos/sdk-core';
 
-formatFileSize(1024);      // "1 KB"
-formatFileSize(1048576);   // "1 MB"
+formatFileSize(1024); // "1 KB"
+formatFileSize(1048576); // "1 MB"
 formatFileSize(1073741824); // "1 GB"
 ```
 
@@ -239,9 +239,9 @@ formatFileSize(1073741824); // "1 GB"
 import { formatDate, formatTime, formatDateTime } from '@webos/sdk-core';
 
 const now = new Date();
-formatDate(now);      // "Jan 1, 2024"
-formatTime(now);      // "12:30 PM"
-formatDateTime(now);  // "Jan 1, 2024 12:30 PM"
+formatDate(now); // "Jan 1, 2024"
+formatTime(now); // "12:30 PM"
+formatDateTime(now); // "Jan 1, 2024 12:30 PM"
 ```
 
 ### debounce / throttle
@@ -273,8 +273,8 @@ const merged = deepMerge(target, source);
 ```typescript
 import { isValidAppId } from '@webos/sdk-core';
 
-isValidAppId('com.example.myapp');  // true
-isValidAppId('invalid');             // false
+isValidAppId('com.example.myapp'); // true
+isValidAppId('invalid'); // false
 ```
 
 ### cn
@@ -308,6 +308,6 @@ import { retry } from '@webos/sdk-core';
 const result = await retry(fetchData, {
   maxAttempts: 3,
   delay: 1000,
-  backoff: true
+  backoff: true,
 });
 ```

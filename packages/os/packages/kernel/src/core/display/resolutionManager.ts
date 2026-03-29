@@ -48,7 +48,12 @@ export interface ResolutionManagerConfig {
 export const RESOLUTION_PRESETS: ResolutionPreset[] = [
   { name: 'HD', resolution: { width: 1280, height: 720 }, aspectRatio: '16:9' },
   { name: 'HD+', resolution: { width: 1600, height: 900 }, aspectRatio: '16:9' },
-  { name: 'Full HD', resolution: { width: 1920, height: 1080 }, aspectRatio: '16:9', recommended: true },
+  {
+    name: 'Full HD',
+    resolution: { width: 1920, height: 1080 },
+    aspectRatio: '16:9',
+    recommended: true,
+  },
   { name: 'WUXGA', resolution: { width: 1920, height: 1200 }, aspectRatio: '16:10' },
   { name: 'QHD', resolution: { width: 2560, height: 1440 }, aspectRatio: '16:9' },
   { name: 'WQHD+', resolution: { width: 2560, height: 1600 }, aspectRatio: '16:10' },
@@ -210,7 +215,11 @@ class ResolutionManager {
     // Notify listeners
     this.notifyListeners();
 
-    console.log('[ResolutionManager] Resolution changed to:', newResolution, isAuto ? '(auto)' : '(manual)');
+    console.log(
+      '[ResolutionManager] Resolution changed to:',
+      newResolution,
+      isAuto ? '(auto)' : '(manual)'
+    );
   }
 
   /**
@@ -459,7 +468,8 @@ export const resolutionManager = new ResolutionManager();
 
 // Export as global for debugging
 if (typeof window !== 'undefined') {
-  (window as unknown as { webosResolutionManager: ResolutionManager }).webosResolutionManager = resolutionManager;
+  (window as unknown as { webosResolutionManager: ResolutionManager }).webosResolutionManager =
+    resolutionManager;
 }
 
 export default resolutionManager;

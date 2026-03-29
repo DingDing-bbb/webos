@@ -7,11 +7,11 @@ export const NotificationContainer: React.FC = () => {
 
   useEffect(() => {
     if (containerRef.current && window.webos) {
-      (window.webos as { _internal?: { notify?: { setContainer?: (el: HTMLDivElement) => void } } })._internal?.notify?.setContainer?.(containerRef.current);
+      (
+        window.webos as { _internal?: { notify?: { setContainer?: (el: HTMLDivElement) => void } } }
+      )._internal?.notify?.setContainer?.(containerRef.current);
     }
   }, []);
 
-  return (
-    <div className="os-notification-container" ref={containerRef} />
-  );
+  return <div className="os-notification-container" ref={containerRef} />;
 };

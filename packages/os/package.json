@@ -38,7 +38,14 @@
     "packages/*",
     "packages/apps/*"
   ],
-  "keywords": ["webos", "os", "web-based", "operating-system", "react", "typescript"],
+  "keywords": [
+    "webos",
+    "os",
+    "web-based",
+    "operating-system",
+    "react",
+    "typescript"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",

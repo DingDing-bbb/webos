@@ -254,10 +254,7 @@ export const StartMenu: React.FC<StartMenuProps> = ({
           ) : showAllApps ? (
             // All Apps View
             <div className="desktop-start-menu-section">
-              <button
-                className="desktop-start-menu-back"
-                onClick={() => setShowAllApps(false)}
-              >
+              <button className="desktop-start-menu-back" onClick={() => setShowAllApps(false)}>
                 ← Back
               </button>
               <div className="desktop-start-menu-section-title">All Apps</div>
@@ -324,9 +321,7 @@ export const StartMenu: React.FC<StartMenuProps> = ({
         <div className="desktop-start-menu-footer">
           {/* User Profile */}
           <button className="desktop-start-menu-user">
-            <span className="desktop-start-menu-user-avatar">
-              {user?.avatar || <UserIcon />}
-            </span>
+            <span className="desktop-start-menu-user-avatar">{user?.avatar || <UserIcon />}</span>
             <span className="desktop-start-menu-user-name">{user?.name || 'User'}</span>
           </button>
 

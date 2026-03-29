@@ -9,9 +9,15 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@types/webpack-env": "^1.18.8",
+    "concurrently": "^9.2.1",
     "eslint": "^10.1.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.5",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
+    "prettier": "^3.8.1",
     "typescript": "^6.0.2",
     "typescript-eslint": "^8.57.2"
   },
@@ -26,7 +32,8 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "dev": "cd site && bun run dev",
+    "dev": "concurrently -n site,os -c blue,green \"bun run dev:site\" \"bun run dev:os\"",
+    "dev:site": "cd site && bun run dev",
     "dev:os": "cd packages/os && bun run dev",
     "build:os": "cd packages/os && bun run build",
     "build:site": "cd site && bun run build",
@@ -36,11 +43,20 @@
     "lint": "eslint . --ext .ts,.tsx --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "eslint . --ext .ts,.tsx --fix",
     "typecheck": "tsc --noEmit",
-    "clean": "rm -rf node_modules packages/*/node_modules site/node_modules packages/os/packages/*/node_modules && rm -rf .next packages/os/dist site/.next"
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "clean": "rm -rf node_modules packages/*/node_modules site/node_modules packages/os/packages/*/node_modules && rm -rf .next packages/os/dist site/.next",
+    "prepare": "husky"
   },
   "type": "module",
   "workspaces": [
     "packages/*",
     "site"
-  ]
+  ],
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,json,md}": [
+      "prettier --write",
+      "eslint --fix"
+    ]
+  }
 }

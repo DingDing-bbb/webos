@@ -10,12 +10,12 @@
 
 ## 应用信息
 
-| 属性 | 值 |
-|------|-----|
-| ID | com.os.settings |
-| 版本 | 1.0.0 |
-| 分类 | system |
-| 图标 | settings |
+| 属性 | 值              |
+| ---- | --------------- |
+| ID   | com.os.settings |
+| 版本 | 1.0.0           |
+| 分类 | system          |
+| 图标 | settings        |
 
 ## 权限
 
@@ -35,5 +35,5 @@ src/
 ```tsx
 import { Settings } from '@app/com.os.settings/src';
 
-<Settings />
+<Settings />;
 ```

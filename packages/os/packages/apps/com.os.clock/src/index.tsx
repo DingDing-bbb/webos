@@ -32,7 +32,7 @@ export const Clock: React.FC<ClockProps> = () => {
       hour: '2-digit',
       minute: '2-digit',
       second: '2-digit',
-      hour12: false
+      hour12: false,
     });
   };
 
@@ -41,7 +41,7 @@ export const Clock: React.FC<ClockProps> = () => {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
-      day: 'numeric'
+      day: 'numeric',
     });
   };
 
@@ -57,16 +57,12 @@ export const Clock: React.FC<ClockProps> = () => {
     }
 
     const alarmId = window.webos?.time.setAlarm(alarmTime, () => {
-      window.webos?.notify.show(
-        t('notify.alarm'),
-        `${formatTime(alarmTime)}`,
-        { duration: 10000 }
-      );
-      setAlarms(prev => prev.filter(a => a.id !== alarmId));
+      window.webos?.notify.show(t('notify.alarm'), `${formatTime(alarmTime)}`, { duration: 10000 });
+      setAlarms((prev) => prev.filter((a) => a.id !== alarmId));
     });
 
     if (alarmId) {
-      setAlarms(prev => [...prev, { id: alarmId, time: alarmTime }]);
+      setAlarms((prev) => [...prev, { id: alarmId, time: alarmTime }]);
     }
 
     setShowAlarmForm(false);
@@ -74,49 +70,63 @@ export const Clock: React.FC<ClockProps> = () => {
 
   const handleClearAlarm = (alarmId: string) => {
     window.webos?.time.clearAlarm(alarmId);
-    setAlarms(prev => prev.filter(a => a.id !== alarmId));
+    setAlarms((prev) => prev.filter((a) => a.id !== alarmId));
   };
 
   return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      height: '100%',
-      padding: '24px',
-      gap: '24px'
-    }}>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100%',
+        padding: '24px',
+        gap: '24px',
+      }}
+    >
       <div style={{ textAlign: 'center' }}>
-        <div style={{
-          fontSize: '64px',
-          fontWeight: '200',
-          fontFamily: 'monospace',
-          letterSpacing: '4px',
-          color: 'var(--os-color-text)'
-        }}>
+        <div
+          style={{
+            fontSize: '64px',
+            fontWeight: '200',
+            fontFamily: 'monospace',
+            letterSpacing: '4px',
+            color: 'var(--os-color-text)',
+          }}
+        >
           {formatTime(time)}
         </div>
-        <div style={{
-          fontSize: '16px',
-          color: 'var(--os-color-text-secondary)',
-          marginTop: '8px'
-        }}>
+        <div
+          style={{
+            fontSize: '16px',
+            color: 'var(--os-color-text-secondary)',
+            marginTop: '8px',
+          }}
+        >
           {formatDate(time)}
         </div>
       </div>
 
       {alarms.length > 0 && (
-        <div style={{
-          width: '100%',
-          maxWidth: '300px',
-          borderTop: '1px solid var(--os-color-border)',
-          paddingTop: '16px'
-        }}>
-          <h3 style={{ fontSize: '14px', marginBottom: '8px', color: 'var(--os-color-text-secondary)' }}>
+        <div
+          style={{
+            width: '100%',
+            maxWidth: '300px',
+            borderTop: '1px solid var(--os-color-border)',
+            paddingTop: '16px',
+          }}
+        >
+          <h3
+            style={{
+              fontSize: '14px',
+              marginBottom: '8px',
+              color: 'var(--os-color-text-secondary)',
+            }}
+          >
             {t('clock.setAlarm')}
           </h3>
-          {alarms.map(alarm => (
+          {alarms.map((alarm) => (
             <div
               key={alarm.id}
               style={{
@@ -125,12 +135,10 @@ export const Clock: React.FC<ClockProps> = () => {
                 alignItems: 'center',
                 padding: '8px',
                 background: 'var(--os-color-bg-secondary)',
-                marginBottom: '4px'
+                marginBottom: '4px',
               }}
             >
-              <span style={{ fontFamily: 'monospace' }}>
-                {formatTime(alarm.time)}
-              </span>
+              <span style={{ fontFamily: 'monospace' }}>{formatTime(alarm.time)}</span>
               <button
                 onClick={() => handleClearAlarm(alarm.id)}
                 style={{
@@ -138,7 +146,7 @@ export const Clock: React.FC<ClockProps> = () => {
                   border: 'none',
                   background: 'var(--os-color-danger)',
                   color: 'white',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
                 }}
               >
                 ×
@@ -154,21 +162,23 @@ export const Clock: React.FC<ClockProps> = () => {
           padding: '8px 24px',
           border: '1px solid var(--os-color-border)',
           background: 'var(--os-color-bg-secondary)',
-          cursor: 'pointer'
+          cursor: 'pointer',
         }}
       >
         {t('clock.setAlarm')}
       </button>
 
       {showAlarmForm && (
-        <div style={{
-          display: 'flex',
-          gap: '8px',
-          alignItems: 'center',
-          padding: '16px',
-          background: 'var(--os-color-bg-secondary)',
-          border: '1px solid var(--os-color-border)'
-        }}>
+        <div
+          style={{
+            display: 'flex',
+            gap: '8px',
+            alignItems: 'center',
+            padding: '16px',
+            background: 'var(--os-color-bg-secondary)',
+            border: '1px solid var(--os-color-border)',
+          }}
+        >
           <input
             type="number"
             min="0"
@@ -180,7 +190,7 @@ export const Clock: React.FC<ClockProps> = () => {
               padding: '8px',
               textAlign: 'center',
               border: '1px solid var(--os-color-border)',
-              background: 'var(--os-color-bg)'
+              background: 'var(--os-color-bg)',
             }}
             placeholder="HH"
           />
@@ -196,7 +206,7 @@ export const Clock: React.FC<ClockProps> = () => {
               padding: '8px',
               textAlign: 'center',
               border: '1px solid var(--os-color-border)',
-              background: 'var(--os-color-bg)'
+              background: 'var(--os-color-bg)',
             }}
             placeholder="MM"
           />
@@ -207,7 +217,7 @@ export const Clock: React.FC<ClockProps> = () => {
               border: 'none',
               background: 'var(--os-color-primary)',
               color: 'white',
-              cursor: 'pointer'
+              cursor: 'pointer',
             }}
           >
             {t('common.save')}
@@ -234,7 +244,7 @@ export const appInfo: AppInfo = {
   minWidth: 300,
   minHeight: 250,
   resizable: true,
-  singleton: true
+  singleton: true,
 };
 
 export default Clock;

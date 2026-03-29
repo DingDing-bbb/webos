@@ -4,11 +4,11 @@ WebOS Monorepo 包目录。
 
 ## 包列表
 
-| 包 | 名称 | 描述 |
-|----|------|------|
-| `packages/os` | `@webos/os` | WebOS 核心系统 |
-| `packages/docs` | `@webos/docs` | 文档页面组件 |
-| `packages/intro` | `@webos/intro` | 介绍页面组件 |
+| 包               | 名称           | 描述           |
+| ---------------- | -------------- | -------------- |
+| `packages/os`    | `@webos/os`    | WebOS 核心系统 |
+| `packages/docs`  | `@webos/docs`  | 文档页面组件   |
+| `packages/intro` | `@webos/intro` | 介绍页面组件   |
 
 ## 目录结构
 

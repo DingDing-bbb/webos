@@ -14,7 +14,10 @@
     "description": "Enables developer features including system reset",
     "version": "0.0.1-alpha",
     "author": "WebOS Team",
-    "permissions": ["system:reset", "system:debug"],
+    "permissions": [
+      "system:reset",
+      "system:debug"
+    ],
     "installMode": "bootloader"
   }
 }

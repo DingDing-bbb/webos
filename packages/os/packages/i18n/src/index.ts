@@ -15,16 +15,16 @@ export type TranslationData = Record<string, string>;
 
 /** 所有语言翻译映射 */
 export const translations: Record<string, TranslationData> = {
-  'en': en,
+  en: en,
   'zh-CN': zhCN,
-  'zh-TW': zhTW
+  'zh-TW': zhTW,
 };
 
 /** 可用语言列表 */
 export const availableLocales: LocaleConfig[] = [
   { code: 'en', name: 'English', nativeName: 'English' },
   { code: 'zh-CN', name: 'Chinese (Simplified)', nativeName: '简体中文' },
-  { code: 'zh-TW', name: 'Chinese (Traditional)', nativeName: '繁體中文' }
+  { code: 'zh-TW', name: 'Chinese (Traditional)', nativeName: '繁體中文' },
 ];
 
 /** 默认语言 */
@@ -62,12 +62,12 @@ export function getTranslation(locale: string, key: string): string | undefined 
  */
 export function t(locale: string, key: string, params?: Record<string, string | number>): string {
   let text = translations[locale]?.[key];
-  
+
   // 回退到英文
   if (!text && locale !== DEFAULT_LOCALE) {
     text = translations[DEFAULT_LOCALE]?.[key];
   }
-  
+
   // 未找到翻译
   if (!text) {
     const missingKey = `${locale}:${key}`;
@@ -79,14 +79,14 @@ export function t(locale: string, key: string, params?: Record<string, string | 
     }
     return key;
   }
-  
+
   // 插值处理
   if (params) {
     return text.replace(/\{(\w+)\}/g, (_, paramKey) => {
       return String(params[paramKey] ?? `{${paramKey}}`);
     });
   }
-  
+
   return text;
 }
 
@@ -123,16 +123,16 @@ export function getAllKeys(): string[] {
  */
 export function validateKey(key: string): { valid: boolean; missing: string[] } {
   const missing: string[] = [];
-  
+
   for (const locale of Object.keys(translations)) {
     if (!translations[locale][key]) {
       missing.push(locale);
     }
   }
-  
+
   return {
     valid: missing.length === 0,
-    missing
+    missing,
   };
 }
 

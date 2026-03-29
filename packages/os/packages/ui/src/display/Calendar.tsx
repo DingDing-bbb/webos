@@ -17,13 +17,7 @@
  * ```
  */
 
-import React, {
-  useState,
-  useMemo,
-  useCallback,
-  forwardRef,
-  memo,
-} from 'react';
+import React, { useState, useMemo, useCallback, forwardRef, memo } from 'react';
 
 // ============================================================================
 // Types
@@ -52,7 +46,10 @@ export interface CalendarProps {
   /** Disabled date function */
   disabledDate?: (date: Date) => boolean;
   /** Custom cell render function */
-  cellRender?: (date: Date, info: { isCurrentMonth: boolean; isSelected: boolean; isToday: boolean }) => React.ReactNode;
+  cellRender?: (
+    date: Date,
+    info: { isCurrentMonth: boolean; isSelected: boolean; isToday: boolean }
+  ) => React.ReactNode;
   /** Mode */
   mode?: 'month' | 'year';
   /** Mode change callback */
@@ -89,25 +86,42 @@ export interface CalendarProps {
 
 const DEFAULT_LOCALE = {
   months: [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December',
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
   ],
-  weekdays: [
-    'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday',
-  ],
+  weekdays: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
   weekdaysShort: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
   today: 'Today',
 };
 
 const WEEKDAY_CLASSES = [
-  'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday',
+  'sunday',
+  'monday',
+  'tuesday',
+  'wednesday',
+  'thursday',
+  'friday',
+  'saturday',
 ];
 
 // ============================================================================
 // Utility Functions
 // ============================================================================
 
-function getMonthDays(date: Date, firstDayOfWeek: number): Array<{
+function getMonthDays(
+  date: Date,
+  firstDayOfWeek: number
+): Array<{
   date: Date;
   isCurrentMonth: boolean;
   isToday: boolean;
@@ -216,26 +230,21 @@ interface CalendarHeaderProps {
 }
 
 const CalendarHeader: React.FC<CalendarHeaderProps> = memo(
-  ({
-    currentDate,
-    mode,
-    locale,
-    onPrev,
-    onNext,
-    onModeChange,
-    onYearChange,
-  }) => {
+  ({ currentDate, mode, locale, onPrev, onNext, onModeChange, onYearChange }) => {
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
 
     return (
       <div className="ui-calendar-header">
-        <button
-          className="ui-calendar-nav-btn prev"
-          onClick={onPrev}
-          aria-label="Previous"
-        >
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2">
+        <button className="ui-calendar-nav-btn prev" onClick={onPrev} aria-label="Previous">
+          <svg
+            viewBox="0 0 24 24"
+            width="20"
+            height="20"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
             <polyline points="15 18 9 12 15 6" />
           </svg>
         </button>
@@ -256,12 +265,15 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = memo(
           </button>
         </div>
 
-        <button
-          className="ui-calendar-nav-btn next"
-          onClick={onNext}
-          aria-label="Next"
-        >
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2">
+        <button className="ui-calendar-nav-btn next" onClick={onNext} aria-label="Next">
+          <svg
+            viewBox="0 0 24 24"
+            width="20"
+            height="20"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
             <polyline points="9 18 15 12 9 6" />
           </svg>
         </button>
@@ -303,10 +315,7 @@ const WeekdayHeader: React.FC<WeekdayHeaderProps> = memo(
         {weekdays.map((day, index) => {
           const dayIndex = (firstDayOfWeek + index) % 7;
           return (
-            <div
-              key={index}
-              className={`ui-calendar-weekday ${WEEKDAY_CLASSES[dayIndex]}`}
-            >
+            <div key={index} className={`ui-calendar-weekday ${WEEKDAY_CLASSES[dayIndex]}`}>
               {day}
             </div>
           );
@@ -386,9 +395,7 @@ const DateCell: React.FC<DateCellProps> = memo(
               </div>
             ))}
             {cellEvents.length > 2 && (
-              <div className="ui-calendar-event more">
-                +{cellEvents.length - 2} more
-              </div>
+              <div className="ui-calendar-event more">+{cellEvents.length - 2} more</div>
             )}
           </div>
         )}
@@ -457,12 +464,8 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(
     const mergedLocale = { ...DEFAULT_LOCALE, ...locale };
 
     // State
-    const [selectedDate, setSelectedDate] = useState<Date | null>(
-      value ?? defaultValue ?? null
-    );
-    const [currentDate, setCurrentDate] = useState<Date>(
-      value ?? defaultValue ?? new Date()
-    );
+    const [selectedDate, setSelectedDate] = useState<Date | null>(value ?? defaultValue ?? null);
+    const [currentDate, setCurrentDate] = useState<Date>(value ?? defaultValue ?? new Date());
     const [currentMode, setCurrentMode] = useState<'month' | 'year'>(mode);
 
     // Sync with controlled value
@@ -525,11 +528,14 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(
       [onModeChange]
     );
 
-    const handleYearChange = useCallback((year: number) => {
-      const newDate = new Date(currentDate);
-      newDate.setFullYear(year);
-      setCurrentDate(newDate);
-    }, [currentDate]);
+    const handleYearChange = useCallback(
+      (year: number) => {
+        const newDate = new Date(currentDate);
+        newDate.setFullYear(year);
+        setCurrentDate(newDate);
+      },
+      [currentDate]
+    );
 
     // Memoized data
     const monthDays = useMemo(
@@ -651,9 +657,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   style,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Date | null>(
-    value ?? defaultValue ?? null
-  );
+  const [selectedDate, setSelectedDate] = useState<Date | null>(value ?? defaultValue ?? null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -664,10 +668,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(event.target as Node)
-      ) {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     };

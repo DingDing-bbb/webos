@@ -117,12 +117,7 @@ interface ExpandIconProps {
   customIcon?: CollapseProps['expandIcon'];
 }
 
-const ExpandIcon: React.FC<ExpandIconProps> = ({
-  isActive,
-  disabled,
-  position,
-  customIcon,
-}) => {
+const ExpandIcon: React.FC<ExpandIconProps> = ({ isActive, disabled, position, customIcon }) => {
   if (customIcon) {
     if (typeof customIcon === 'function') {
       return (
@@ -131,11 +126,7 @@ const ExpandIcon: React.FC<ExpandIconProps> = ({
         </span>
       );
     }
-    return (
-      <span className={`ui-collapse-arrow ${disabled ? 'disabled' : ''}`}>
-        {customIcon}
-      </span>
-    );
+    return <span className={`ui-collapse-arrow ${disabled ? 'disabled' : ''}`}>{customIcon}</span>;
   }
 
   return (
@@ -178,9 +169,7 @@ export const CollapsePanel = memo(
       ref
     ) => {
       const contentRef = useRef<HTMLDivElement>(null);
-      const [contentHeight, setContentHeight] = useState<number | undefined>(
-        undefined
-      );
+      const [contentHeight, setContentHeight] = useState<number | undefined>(undefined);
       const [hasRendered, setHasRendered] = useState(false);
 
       const {
@@ -232,8 +221,7 @@ export const CollapsePanel = memo(
         }
       };
 
-      const shouldRenderContent =
-        isActive || forceRender || (hasRendered && !destroyInactivePanel);
+      const shouldRenderContent = isActive || forceRender || (hasRendered && !destroyInactivePanel);
 
       const panelClasses = [
         'ui-collapse-panel',
@@ -326,9 +314,7 @@ export const Collapse: React.FC<CollapseProps> & {
   useEffect(() => {
     if (activeKey !== undefined) {
       const keyArray = Array.isArray(activeKey) ? activeKey : [activeKey];
-      setActiveKeys(
-        new Set(accordion && keyArray.length > 0 ? [keyArray[0]] : keyArray)
-      );
+      setActiveKeys(new Set(accordion && keyArray.length > 0 ? [keyArray[0]] : keyArray));
     }
   }, [activeKey, accordion]);
 
@@ -353,9 +339,7 @@ export const Collapse: React.FC<CollapseProps> & {
         }
 
         // Call onChange callback
-        const newActiveKey = accordion
-          ? Array.from(newKeys)[0] || ''
-          : Array.from(newKeys);
+        const newActiveKey = accordion ? Array.from(newKeys)[0] || '' : Array.from(newKeys);
         onChange?.(newActiveKey);
 
         return newKeys;
@@ -408,10 +392,7 @@ export const NestedCollapse: React.FC<NestedCollapseProps> = ({
   ...props
 }) => {
   return (
-    <Collapse
-      {...props}
-      className={`ui-collapse-nested ui-collapse-level-${level} ${className}`}
-    />
+    <Collapse {...props} className={`ui-collapse-nested ui-collapse-level-${level} ${className}`} />
   );
 };
 

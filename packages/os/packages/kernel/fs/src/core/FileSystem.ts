@@ -1,7 +1,17 @@
 // 文件系统核心类
 
 import type { FSNode, DirEntry, UserInfo, FSEvent, FSEventListener, FSStats } from '../types';
-import { createNode, toDirEntry, getChildren, getChild, addChild, removeChild, setContent, getContent, isEmptyDir } from './Node';
+import {
+  createNode,
+  toDirEntry,
+  getChildren,
+  getChild,
+  addChild,
+  removeChild,
+  setContent,
+  getContent,
+  isEmptyDir,
+} from './Node';
 import { checkPermission, DEFAULT_DIR_PERMS, DEFAULT_FILE_PERMS } from './Permissions';
 
 /**
@@ -40,7 +50,7 @@ export class FileSystem {
    */
   private createDefaultStructure(): FSNode {
     const now = new Date();
-    
+
     // 根目录
     const root: FSNode = {
       name: '/',
@@ -51,7 +61,7 @@ export class FileSystem {
       size: 0,
       createdAt: now,
       modifiedAt: now,
-      children: new Map()
+      children: new Map(),
     };
 
     // /home - 用户目录
@@ -62,48 +72,53 @@ export class FileSystem {
     // /etc - 系统配置
     const etc = createNode('etc', 'directory', DEFAULT_DIR_PERMS, 'root');
     etc.path = '/etc';
-    
-    const configJson = createNode('config.json', 'file', DEFAULT_FILE_PERMS, 'root',
-      JSON.stringify({ system: 'WebOS', version: '0.0.1-alpha' }, null, 2));
+
+    const configJson = createNode(
+      'config.json',
+      'file',
+      DEFAULT_FILE_PERMS,
+      'root',
+      JSON.stringify({ system: 'WebOS', version: '0.0.1-alpha' }, null, 2)
+    );
     configJson.path = '/etc/config.json';
     addChild(etc, configJson);
-    
+
     const passwd = createNode('passwd', 'file', DEFAULT_FILE_PERMS, 'root', '');
     passwd.path = '/etc/passwd';
     addChild(etc, passwd);
-    
+
     addChild(root, etc);
 
     // /usr - 用户程序
     const usr = createNode('usr', 'directory', DEFAULT_DIR_PERMS, 'root');
     usr.path = '/usr';
-    
+
     const usrBin = createNode('bin', 'directory', DEFAULT_DIR_PERMS, 'root');
     usrBin.path = '/usr/bin';
     addChild(usr, usrBin);
-    
+
     const usrLib = createNode('lib', 'directory', DEFAULT_DIR_PERMS, 'root');
     usrLib.path = '/usr/lib';
     addChild(usr, usrLib);
-    
+
     addChild(root, usr);
 
     // /var - 可变数据
     const varDir = createNode('var', 'directory', DEFAULT_DIR_PERMS, 'root');
     varDir.path = '/var';
-    
+
     const varLog = createNode('log', 'directory', DEFAULT_DIR_PERMS, 'root');
     varLog.path = '/var/log';
     addChild(varDir, varLog);
-    
+
     const varCache = createNode('cache', 'directory', DEFAULT_DIR_PERMS, 'root');
     varCache.path = '/var/cache';
     addChild(varDir, varCache);
-    
+
     const varTmp = createNode('tmp', 'directory', 'drwxrwxrwx', 'root');
     varTmp.path = '/var/tmp';
     addChild(varDir, varTmp);
-    
+
     addChild(root, varDir);
 
     // /tmp - 临时文件
@@ -114,37 +129,37 @@ export class FileSystem {
     // /system - 系统核心 (只读)
     const system = createNode('system', 'directory', 'dr-xr-xr-x', 'root');
     system.path = '/system';
-    
+
     const sysApps = createNode('apps', 'directory', 'dr-xr-xr-x', 'root');
     sysApps.path = '/system/apps';
     addChild(system, sysApps);
-    
+
     const sysCore = createNode('core', 'directory', 'dr-xr-xr-x', 'root');
     sysCore.path = '/system/core';
     addChild(system, sysCore);
-    
+
     const sysBoot = createNode('boot', 'directory', 'dr-xr-xr-x', 'root');
     sysBoot.path = '/system/boot';
     addChild(system, sysBoot);
-    
+
     addChild(root, system);
 
     // /dev - 设备文件
     const dev = createNode('dev', 'directory', DEFAULT_DIR_PERMS, 'root');
     dev.path = '/dev';
-    
+
     const devNull = createNode('null', 'file', 'crw-rw-rw-', 'root');
     devNull.path = '/dev/null';
     addChild(dev, devNull);
-    
+
     const devZero = createNode('zero', 'file', 'crw-rw-rw-', 'root');
     devZero.path = '/dev/zero';
     addChild(dev, devZero);
-    
+
     const devRandom = createNode('random', 'file', 'crw-rw-rw-', 'root');
     devRandom.path = '/dev/random';
     addChild(dev, devRandom);
-    
+
     addChild(root, dev);
 
     return root;
@@ -161,24 +176,24 @@ export class FileSystem {
     if (!userHome) {
       userHome = createNode(username, 'directory', DEFAULT_DIR_PERMS, username);
       userHome.path = `/home/${username}`;
-      
+
       // 创建默认用户目录
       const documents = createNode('Documents', 'directory', DEFAULT_DIR_PERMS, username);
       documents.path = `/home/${username}/Documents`;
       addChild(userHome, documents);
-      
+
       const downloads = createNode('Downloads', 'directory', DEFAULT_DIR_PERMS, username);
       downloads.path = `/home/${username}/Downloads`;
       addChild(userHome, downloads);
-      
+
       const pictures = createNode('Pictures', 'directory', DEFAULT_DIR_PERMS, username);
       pictures.path = `/home/${username}/Pictures`;
       addChild(userHome, pictures);
-      
+
       const desktop = createNode('Desktop', 'directory', DEFAULT_DIR_PERMS, username);
       desktop.path = `/home/${username}/Desktop`;
       addChild(userHome, desktop);
-      
+
       addChild(home, userHome);
       this.emitEvent({ type: 'create', path: userHome.path, timestamp: new Date() });
     }
@@ -190,16 +205,16 @@ export class FileSystem {
   normalizePath(path: string): string {
     // 处理空路径
     if (!path) return '/';
-    
+
     // 确保以 / 开头
     if (!path.startsWith('/')) {
       path = '/' + path;
     }
-    
+
     // 解析 . 和 ..
     const parts = path.split('/').filter(Boolean);
     const result: string[] = [];
-    
+
     for (const part of parts) {
       if (part === '.') continue;
       if (part === '..') {
@@ -208,7 +223,7 @@ export class FileSystem {
         result.push(part);
       }
     }
-    
+
     return '/' + result.join('/');
   }
 
@@ -272,20 +287,20 @@ export class FileSystem {
    */
   private emitEvent(event: FSEvent): void {
     // 通知全局监听器
-    this.globalWatchers.forEach(listener => listener(event));
-    
+    this.globalWatchers.forEach((listener) => listener(event));
+
     // 通知路径监听器
     const pathListeners = this.watchers.get(event.path);
     if (pathListeners) {
-      pathListeners.forEach(listener => listener(event));
+      pathListeners.forEach((listener) => listener(event));
     }
-    
+
     // 通知父目录监听器
     const parentPath = this.dirname(event.path);
     if (parentPath !== event.path) {
       const parentListeners = this.watchers.get(parentPath);
       if (parentListeners) {
-        parentListeners.forEach(listener => listener(event));
+        parentListeners.forEach((listener) => listener(event));
       }
     }
   }
@@ -322,8 +337,13 @@ export class FileSystem {
       if (!parentInfo) return false;
       if (!this.checkAccess(parentInfo.parent, 'write')) return false;
 
-      node = createNode(parentInfo.name, 'file', DEFAULT_FILE_PERMS, 
-        this.currentUser?.username || 'root', content);
+      node = createNode(
+        parentInfo.name,
+        'file',
+        DEFAULT_FILE_PERMS,
+        this.currentUser?.username || 'root',
+        content
+      );
       node.path = normalized;
       addChild(parentInfo.parent, node);
       this.emitEvent({ type: 'create', path: normalized, timestamp: new Date() });
@@ -377,8 +397,12 @@ export class FileSystem {
 
         if (!child) {
           if (!this.checkAccess(current, 'write')) return false;
-          child = createNode(part, 'directory', DEFAULT_DIR_PERMS, 
-            this.currentUser?.username || 'root');
+          child = createNode(
+            part,
+            'directory',
+            DEFAULT_DIR_PERMS,
+            this.currentUser?.username || 'root'
+          );
           child.path = this.normalizePath(currentPath);
           addChild(current, child);
           this.emitEvent({ type: 'create', path: child.path, timestamp: new Date() });
@@ -396,8 +420,12 @@ export class FileSystem {
       if (!parentInfo) return false;
       if (!this.checkAccess(parentInfo.parent, 'write')) return false;
 
-      const node = createNode(parentInfo.name, 'directory', DEFAULT_DIR_PERMS,
-        this.currentUser?.username || 'root');
+      const node = createNode(
+        parentInfo.name,
+        'directory',
+        DEFAULT_DIR_PERMS,
+        this.currentUser?.username || 'root'
+      );
       node.path = normalized;
       addChild(parentInfo.parent, node);
       this.emitEvent({ type: 'create', path: normalized, timestamp: new Date() });
@@ -515,7 +543,7 @@ export class FileSystem {
   dirname(path: string): string {
     const normalized = this.normalizePath(path);
     if (normalized === '/') return '/';
-    
+
     const parts = normalized.split('/').filter(Boolean);
     parts.pop();
     return parts.length === 0 ? '/' : '/' + parts.join('/');
@@ -527,7 +555,7 @@ export class FileSystem {
   basename(path: string): string {
     const normalized = this.normalizePath(path);
     if (normalized === '/') return '/';
-    
+
     const parts = normalized.split('/').filter(Boolean);
     return parts[parts.length - 1] || '/';
   }
@@ -563,13 +591,13 @@ export class FileSystem {
    */
   watch(path: string, listener: FSEventListener): () => void {
     const normalized = this.normalizePath(path);
-    
+
     if (!this.watchers.has(normalized)) {
       this.watchers.set(normalized, new Set());
     }
-    
+
     this.watchers.get(normalized)!.add(listener);
-    
+
     return () => {
       this.watchers.get(normalized)?.delete(listener);
     };
@@ -594,7 +622,7 @@ export class FileSystem {
       } else {
         totalDirectories++;
         if (node.children) {
-          node.children.forEach(child => count(child));
+          node.children.forEach((child) => count(child));
         }
       }
     };
@@ -605,7 +633,7 @@ export class FileSystem {
       totalNodes,
       totalFiles,
       totalDirectories,
-      totalSize
+      totalSize,
     };
   }
 
@@ -616,7 +644,7 @@ export class FileSystem {
    */
   needsAuthentication(path: string, operation: 'read' | 'write' | 'execute'): boolean {
     if (this.currentUser?.isRoot) return false;
-    
+
     const node = this.getNode(path);
     if (!node) return false;
     return !this.checkAccess(node, operation);

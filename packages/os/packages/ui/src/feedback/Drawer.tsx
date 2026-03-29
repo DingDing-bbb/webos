@@ -139,11 +139,14 @@ export const Drawer: React.FC<DrawerProps> = ({
   }, [isOpen]);
 
   // Handle overlay click
-  const handleOverlayClick = useCallback((e: React.MouseEvent) => {
-    if (closeOnOverlayClick && e.target === e.currentTarget) {
-      onClose();
-    }
-  }, [closeOnOverlayClick, onClose]);
+  const handleOverlayClick = useCallback(
+    (e: React.MouseEvent) => {
+      if (closeOnOverlayClick && e.target === e.currentTarget) {
+        onClose();
+      }
+    },
+    [closeOnOverlayClick, onClose]
+  );
 
   // Focus trap handler
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
@@ -230,15 +233,9 @@ export const Drawer: React.FC<DrawerProps> = ({
           </div>
         )}
 
-        <div className="drawer__content">
-          {children}
-        </div>
+        <div className="drawer__content">{children}</div>
 
-        {footer && (
-          <div className="drawer__footer">
-            {footer}
-          </div>
-        )}
+        {footer && <div className="drawer__footer">{footer}</div>}
       </div>
     </div>
   );

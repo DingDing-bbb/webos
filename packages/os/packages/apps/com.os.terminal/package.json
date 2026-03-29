@@ -8,7 +8,13 @@
   "types": "./src/index.tsx",
   "author": "WebOS Team",
   "category": "development",
-  "keywords": ["webos", "app", "terminal", "cli", "shell"],
+  "keywords": [
+    "webos",
+    "app",
+    "terminal",
+    "cli",
+    "shell"
+  ],
   "dependencies": {
     "@webos/apps": "workspace:*"
   }

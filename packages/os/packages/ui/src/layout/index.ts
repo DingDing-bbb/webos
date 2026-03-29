@@ -45,13 +45,7 @@ import './styles.css';
 // Box Component
 // ============================================================================
 export { Box } from './Box';
-export type {
-  BoxProps,
-  BoxVariant,
-  BorderRadius,
-  OverflowValue,
-  PositionValue,
-} from './Box';
+export type { BoxProps, BoxVariant, BorderRadius, OverflowValue, PositionValue } from './Box';
 
 // ============================================================================
 // Flex Component
@@ -85,12 +79,7 @@ export type {
 // Grid Component
 // ============================================================================
 export { Grid, GridItem } from './Grid';
-export type {
-  GridProps,
-  GridItemProps,
-  GridColumns,
-  ResponsiveColumns,
-} from './Grid';
+export type { GridProps, GridItemProps, GridColumns, ResponsiveColumns } from './Grid';
 
 // ============================================================================
 // Container Component

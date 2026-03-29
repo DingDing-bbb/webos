@@ -1,6 +1,6 @@
 /**
  * IPC Message Types - 进程间通信消息类型定义
- * 
+ *
  * 所有消息必须序列化为普通对象，不允许传递函数引用或共享状态
  */
 
@@ -212,11 +212,30 @@ export interface ExecuteConsoleMessage extends BaseMessage {
 // 绘制命令
 // ============================================
 
-export type PaintCommand = 
+export type PaintCommand =
   | { type: 'fillRect'; x: number; y: number; w: number; h: number; color: string }
   | { type: 'strokeRect'; x: number; y: number; w: number; h: number; color: string; width: number }
-  | { type: 'fillText'; text: string; x: number; y: number; font: string; color: string; maxWidth?: number }
-  | { type: 'drawImage'; imageId: string; x: number; y: number; w: number; h: number; sx?: number; sy?: number; sw?: number; sh?: number }
+  | {
+      type: 'fillText';
+      text: string;
+      x: number;
+      y: number;
+      font: string;
+      color: string;
+      maxWidth?: number;
+    }
+  | {
+      type: 'drawImage';
+      imageId: string;
+      x: number;
+      y: number;
+      w: number;
+      h: number;
+      sx?: number;
+      sy?: number;
+      sw?: number;
+      sh?: number;
+    }
   | { type: 'clip'; path: string }
   | { type: 'save' }
   | { type: 'restore' }
@@ -254,7 +273,7 @@ export interface SerializedDOMTree {
 // 联合类型
 // ============================================
 
-export type IPCMessage = 
+export type IPCMessage =
   | NavigateMessage
   | ExecuteScriptMessage
   | ReloadMessage

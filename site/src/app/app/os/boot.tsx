@@ -8,12 +8,12 @@ interface BootStageProps {
   complete?: () => void;
 }
 
-export function BootStage({ progress = 0, message = 'Starting...', complete: _complete }: BootStageProps) {
+export function BootStage({
+  progress = 0,
+  message = 'Starting...',
+  complete: _complete,
+}: BootStageProps) {
   return (
-    <BootUI
-      progress={progress}
-      statusText={message}
-      onRetry={() => window.location.reload()}
-    />
+    <BootUI progress={progress} statusText={message} onRetry={() => window.location.reload()} />
   );
 }

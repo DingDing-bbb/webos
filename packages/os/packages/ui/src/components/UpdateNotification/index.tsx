@@ -20,47 +20,58 @@ export const UpdateNotification: React.FC<UpdateNotificationProps> = ({
   onClose,
   currentVersion,
   latestVersion,
-  isUpdating
+  isUpdating,
 }) => {
   return (
-    <div style={{
-      position: 'fixed',
-      bottom: '60px',
-      right: '16px',
-      background: 'var(--os-color-bg)',
-      border: '1px solid var(--os-color-border)',
-      borderRadius: '8px',
-      padding: '16px',
-      boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
-      zIndex: 10000,
-      maxWidth: '320px',
-      animation: 'slideInUp 0.3s ease'
-    }}>
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '12px',
-        marginBottom: '12px'
-      }}>
-        <div style={{
-          width: '40px',
-          height: '40px',
-          borderRadius: '50%',
-          background: 'linear-gradient(135deg, #4CAF50, #8BC34A)',
+    <div
+      style={{
+        position: 'fixed',
+        bottom: '60px',
+        right: '16px',
+        background: 'var(--os-color-bg)',
+        border: '1px solid var(--os-color-border)',
+        borderRadius: '8px',
+        padding: '16px',
+        boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
+        zIndex: 10000,
+        maxWidth: '320px',
+        animation: 'slideInUp 0.3s ease',
+      }}
+    >
+      <div
+        style={{
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'center'
-        }}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-            <polyline points="7 10 12 15 17 10"/>
-            <line x1="12" y1="15" x2="12" y2="3"/>
+          gap: '12px',
+          marginBottom: '12px',
+        }}
+      >
+        <div
+          style={{
+            width: '40px',
+            height: '40px',
+            borderRadius: '50%',
+            background: 'linear-gradient(135deg, #4CAF50, #8BC34A)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="white"
+            strokeWidth="2"
+          >
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
           </svg>
         </div>
         <div>
-          <div style={{ fontWeight: 600, color: 'var(--os-color-text)' }}>
-            发现新版本
-          </div>
+          <div style={{ fontWeight: 600, color: 'var(--os-color-text)' }}>发现新版本</div>
           <div style={{ fontSize: '12px', color: 'var(--os-color-text-secondary)' }}>
             v{currentVersion} → v{latestVersion}
           </div>
@@ -75,22 +86,31 @@ export const UpdateNotification: React.FC<UpdateNotificationProps> = ({
             border: 'none',
             cursor: 'pointer',
             padding: '4px',
-            color: 'var(--os-color-text-secondary)'
+            color: 'var(--os-color-text-secondary)',
           }}
         >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <line x1="18" y1="6" x2="6" y2="18"/>
-            <line x1="6" y1="6" x2="18" y2="18"/>
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
           </svg>
         </button>
       </div>
 
-      <div style={{ 
-        fontSize: '13px', 
-        color: 'var(--os-color-text-secondary)',
-        marginBottom: '16px',
-        lineHeight: 1.5
-      }}>
+      <div
+        style={{
+          fontSize: '13px',
+          color: 'var(--os-color-text-secondary)',
+          marginBottom: '16px',
+          lineHeight: 1.5,
+        }}
+      >
         新版本已就绪，更新后即可使用最新功能。
       </div>
 
@@ -107,7 +127,7 @@ export const UpdateNotification: React.FC<UpdateNotificationProps> = ({
             color: 'var(--os-color-text)',
             cursor: isUpdating ? 'not-allowed' : 'pointer',
             opacity: isUpdating ? 0.6 : 1,
-            fontSize: '14px'
+            fontSize: '14px',
           }}
         >
           稍后提醒
@@ -128,22 +148,26 @@ export const UpdateNotification: React.FC<UpdateNotificationProps> = ({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '8px'
+            gap: '8px',
           }}
         >
           {isUpdating ? (
             <>
-              <span style={{
-                width: '14px',
-                height: '14px',
-                border: '2px solid white',
-                borderTopColor: 'transparent',
-                borderRadius: '50%',
-                animation: 'spin 0.8s linear infinite'
-              }}/>
+              <span
+                style={{
+                  width: '14px',
+                  height: '14px',
+                  border: '2px solid white',
+                  borderTopColor: 'transparent',
+                  borderRadius: '50%',
+                  animation: 'spin 0.8s linear infinite',
+                }}
+              />
               更新中...
             </>
-          ) : '立即更新'}
+          ) : (
+            '立即更新'
+          )}
         </button>
       </div>
 

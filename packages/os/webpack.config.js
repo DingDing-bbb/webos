@@ -19,14 +19,14 @@ export default (env, argv) => {
 
   return {
     entry: {
-      main: './src/index.tsx'
+      main: './src/index.tsx',
     },
     output: {
       path: path.resolve(__dirname, 'dist'),
       filename: isProduction ? '[name].[contenthash].js' : '[name].js',
       chunkFilename: isProduction ? '[id].[contenthash].js' : '[id].js',
       clean: true,
-      publicPath: './'
+      publicPath: './',
     },
     resolve: {
       extensions: ['.tsx', '.ts', '.jsx', '.js', '.json'],
@@ -39,37 +39,34 @@ export default (env, argv) => {
         '@recovery': path.resolve(__dirname, 'packages/recovery/src'),
         '@tablet': path.resolve(__dirname, 'packages/tablet/src'),
         '@app': path.resolve(__dirname, 'packages/apps'),
-        '@apps': path.resolve(__dirname, 'packages/apps')
-      }
+        '@apps': path.resolve(__dirname, 'packages/apps'),
+      },
     },
     module: {
       rules: [
         {
           test: /\.tsx?$/,
           use: 'babel-loader',
-          exclude: /node_modules/
+          exclude: /node_modules/,
         },
         {
           test: /\.jsx?$/,
           use: 'babel-loader',
-          exclude: /node_modules/
+          exclude: /node_modules/,
         },
         {
           test: /\.css$/,
-          use: [
-            isProduction ? MiniCssExtractPlugin.loader : 'style-loader',
-            'css-loader'
-          ]
+          use: [isProduction ? MiniCssExtractPlugin.loader : 'style-loader', 'css-loader'],
         },
         {
           test: /\.(png|svg|jpg|jpeg|gif)$/i,
-          type: 'asset/resource'
+          type: 'asset/resource',
         },
         {
           test: /\.(woff|woff2|eot|ttf|otf)$/i,
-          type: 'asset/resource'
-        }
-      ]
+          type: 'asset/resource',
+        },
+      ],
     },
     plugins: [
       new HtmlWebpackPlugin({
@@ -77,47 +74,44 @@ export default (env, argv) => {
         filename: 'index.html',
         inject: 'body',
         title: OS_NAME,
-        favicon: './public/favicon.svg'
+        favicon: './public/favicon.svg',
       }),
       new webpack.DefinePlugin({
         __OS_NAME__: JSON.stringify(OS_NAME),
         __OS_VERSION__: JSON.stringify(OS_VERSION),
-        __BUILD_TIME__: JSON.stringify(new Date().toISOString())
+        __BUILD_TIME__: JSON.stringify(new Date().toISOString()),
       }),
       new MiniCssExtractPlugin({
-        filename: isProduction ? '[name].[contenthash].css' : '[name].css'
+        filename: isProduction ? '[name].[contenthash].css' : '[name].css',
       }),
       new CopyWebpackPlugin({
-        patterns: [
-          { from: 'public', to: '', noErrorOnMissing: true }
-        ]
+        patterns: [{ from: 'public', to: '', noErrorOnMissing: true }],
       }),
-      ...(isProduction ? [
-        new WorkboxWebpackPlugin.GenerateSW({
-          clientsClaim: true,
-          skipWaiting: true,
-          include: [/\.html$/, /\.js$/, /\.css$/],
-          runtimeCaching: [
-            {
-              urlPattern: /\.(?:js|css)$/,
-              handler: 'CacheFirst',
-              options: {
-                cacheName: 'webos-static',
-                expiration: {
-                  maxEntries: 50,
-                  maxAgeSeconds: 30 * 24 * 60 * 60
-                }
-              }
-            }
+      ...(isProduction
+        ? [
+            new WorkboxWebpackPlugin.GenerateSW({
+              clientsClaim: true,
+              skipWaiting: true,
+              include: [/\.html$/, /\.js$/, /\.css$/],
+              runtimeCaching: [
+                {
+                  urlPattern: /\.(?:js|css)$/,
+                  handler: 'CacheFirst',
+                  options: {
+                    cacheName: 'webos-static',
+                    expiration: {
+                      maxEntries: 50,
+                      maxAgeSeconds: 30 * 24 * 60 * 60,
+                    },
+                  },
+                },
+              ],
+            }),
           ]
-        })
-      ] : [])
+        : []),
     ],
     optimization: {
-      minimizer: [
-        '...',
-        new CssMinimizerPlugin()
-      ],
+      minimizer: ['...', new CssMinimizerPlugin()],
       splitChunks: {
         chunks: 'all',
         cacheGroups: {
@@ -125,14 +119,14 @@ export default (env, argv) => {
             test: /[\\/]node_modules[\\/]/,
             name: 'vendor',
             chunks: 'all',
-            priority: 5
-          }
-        }
-      }
+            priority: 5,
+          },
+        },
+      },
     },
     devServer: {
       static: {
-        directory: path.join(__dirname, 'public')
+        directory: path.join(__dirname, 'public'),
       },
       port: 3001,
       host: '0.0.0.0',
@@ -140,15 +134,15 @@ export default (env, argv) => {
       hot: true,
       historyApiFallback: true,
       headers: {
-        'Access-Control-Allow-Origin': '*'
+        'Access-Control-Allow-Origin': '*',
       },
       client: {
         overlay: {
           errors: true,
-          warnings: false
-        }
-      }
+          warnings: false,
+        },
+      },
     },
-    devtool: isProduction ? 'source-map' : 'eval-source-map'
+    devtool: isProduction ? 'source-map' : 'eval-source-map',
   };
 };

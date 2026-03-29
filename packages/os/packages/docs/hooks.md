@@ -11,7 +11,7 @@ import { useTranslation } from '@webos/sdk/react';
 
 function MyComponent() {
   const t = useTranslation();
-  
+
   return <h1>{t('app.myapp.title')}</h1>;
 }
 ```
@@ -34,13 +34,11 @@ import { useTheme } from '@webos/sdk/react';
 
 function ThemeToggle() {
   const { theme, setTheme, toggleTheme } = useTheme();
-  
+
   return (
     <div className={theme}>
       <p>当前主题: {theme}</p>
-      <button onClick={toggleTheme}>
-        {theme === 'light' ? '🌙 暗色模式' : '☀️ 亮色模式'}
-      </button>
+      <button onClick={toggleTheme}>{theme === 'light' ? '🌙 暗色模式' : '☀️ 亮色模式'}</button>
     </div>
   );
 }
@@ -48,11 +46,11 @@ function ThemeToggle() {
 
 ### 返回值
 
-| 属性 | 类型 | 说明 |
-|------|------|------|
-| `theme` | `'light' \| 'dark'` | 当前主题 |
-| `setTheme` | `(theme) => void` | 设置主题 |
-| `toggleTheme` | `() => void` | 切换主题 |
+| 属性          | 类型                | 说明     |
+| ------------- | ------------------- | -------- |
+| `theme`       | `'light' \| 'dark'` | 当前主题 |
+| `setTheme`    | `(theme) => void`   | 设置主题 |
+| `toggleTheme` | `() => void`        | 切换主题 |
 
 ## useFileSystem
 
@@ -63,16 +61,16 @@ import { useFileSystem } from '@webos/sdk/react';
 
 function FileManager() {
   const { read, write, exists, list, mkdir, remove } = useFileSystem();
-  
+
   const handleSave = async () => {
     await write('/home/user/document.txt', 'Hello World');
   };
-  
+
   const handleLoad = async () => {
     const content = read('/home/user/document.txt');
     console.log(content);
   };
-  
+
   return (
     <div>
       <button onClick={handleSave}>保存</button>
@@ -84,14 +82,14 @@ function FileManager() {
 
 ### 方法列表
 
-| 方法 | 参数 | 返回值 | 说明 |
-|------|------|--------|------|
-| `read` | `path: string` | `string \| null` | 读取文件内容 |
-| `write` | `path, content` | `boolean` | 写入文件 |
-| `exists` | `path: string` | `boolean` | 检查文件是否存在 |
-| `list` | `path: string` | `DirEntry[]` | 列出目录内容 |
-| `mkdir` | `path, recursive?` | `boolean` | 创建目录 |
-| `remove` | `path: string` | `boolean` | 删除文件或目录 |
+| 方法     | 参数               | 返回值           | 说明             |
+| -------- | ------------------ | ---------------- | ---------------- |
+| `read`   | `path: string`     | `string \| null` | 读取文件内容     |
+| `write`  | `path, content`    | `boolean`        | 写入文件         |
+| `exists` | `path: string`     | `boolean`        | 检查文件是否存在 |
+| `list`   | `path: string`     | `DirEntry[]`     | 列出目录内容     |
+| `mkdir`  | `path, recursive?` | `boolean`        | 创建目录         |
+| `remove` | `path: string`     | `boolean`        | 删除文件或目录   |
 
 ## useNotification
 
@@ -102,14 +100,14 @@ import { useNotification } from '@webos/sdk/react';
 
 function NotificationDemo() {
   const { show } = useNotification();
-  
+
   const handleNotify = () => {
     show('通知标题', '这是一条通知内容', {
       icon: 'info',
-      duration: 5000
+      duration: 5000,
     });
   };
-  
+
   return <button onClick={handleNotify}>发送通知</button>;
 }
 ```
@@ -131,11 +129,11 @@ function Settings() {
     theme: 'light',
     fontSize: 14,
   });
-  
+
   const updateTheme = () => {
-    setSettings(s => ({ ...s, theme: 'dark' }));
+    setSettings((s) => ({ ...s, theme: 'dark' }));
   };
-  
+
   return (
     <div style={{ fontSize: settings.fontSize }}>
       <p>当前主题: {settings.theme}</p>
@@ -154,12 +152,12 @@ import { useKeyboardShortcut } from '@webos/sdk/react';
 
 function Editor() {
   const [saved, setSaved] = useState(false);
-  
+
   useKeyboardShortcut('ctrl+s', () => {
     // 保存逻辑
     setSaved(true);
   });
-  
+
   return (
     <div>
       <p>按 Ctrl+S 保存</p>
@@ -185,11 +183,11 @@ import { useUser } from '@webos/sdk/react';
 
 function UserProfile() {
   const { user, login, logout } = useUser();
-  
+
   if (!user) {
     return <LoginForm onSubmit={login} />;
   }
-  
+
   return (
     <div>
       <p>欢迎, {user.displayName || user.username}</p>
@@ -209,19 +207,15 @@ import { useWindowFocus } from '@webos/sdk/react';
 
 function AutoSave() {
   const isFocused = useWindowFocus();
-  
+
   useEffect(() => {
     if (!isFocused) {
       // 窗口失去焦点时自动保存
       saveDocument();
     }
   }, [isFocused]);
-  
-  return (
-    <div>
-      窗口状态: {isFocused ? '活跃' : '未激活'}
-    </div>
-  );
+
+  return <div>窗口状态: {isFocused ? '活跃' : '未激活'}</div>;
 }
 ```
 
@@ -234,7 +228,7 @@ import { useTabletMode } from '@webos/sdk/react';
 
 function ResponsiveUI() {
   const isTablet = useTabletMode();
-  
+
   return (
     <div className={isTablet ? 'tablet-layout' : 'desktop-layout'}>
       {isTablet ? <TabletNav /> : <DesktopNav />}

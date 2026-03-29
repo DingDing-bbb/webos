@@ -18,7 +18,10 @@ export interface SecureSettingsProps {
     createdAt?: Date;
     lastLogin?: Date;
   };
-  onChangePassword: (oldPassword: string, newPassword: string) => Promise<{ success: boolean; error?: string }>;
+  onChangePassword: (
+    oldPassword: string,
+    newPassword: string
+  ) => Promise<{ success: boolean; error?: string }>;
   onUpdateDisplayName: (displayName: string) => Promise<{ success: boolean; error?: string }>;
   onLogout: () => void;
   onLock?: () => void;
@@ -33,7 +36,7 @@ export const SecureSettings: React.FC<SecureSettingsProps> = ({
   onChangePassword,
   onUpdateDisplayName,
   onLogout,
-  onLock
+  onLock,
 }) => {
   // 状态
   const [activeTab, setActiveTab] = useState<'profile' | 'security'>('profile');
@@ -42,11 +45,11 @@ export const SecureSettings: React.FC<SecureSettingsProps> = ({
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPasswords, setShowPasswords] = useState(false);
-  
+
   // 加载状态
   const [isUpdatingName, setIsUpdatingName] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
-  
+
   // 消息
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -61,7 +64,7 @@ export const SecureSettings: React.FC<SecureSettingsProps> = ({
   const handleUpdateDisplayName = async (e: React.FormEvent) => {
     e.preventDefault();
     clearMessages();
-    
+
     if (!displayName.trim()) {
       setErrorMessage('Display name cannot be empty');
       return;
@@ -127,7 +130,7 @@ export const SecureSettings: React.FC<SecureSettingsProps> = ({
       month: 'long',
       day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     }).format(date);
   };
 
@@ -139,7 +142,14 @@ export const SecureSettings: React.FC<SecureSettingsProps> = ({
           className={`secure-settings-tab ${activeTab === 'profile' ? 'active' : ''}`}
           onClick={() => setActiveTab('profile')}
         >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
             <circle cx="12" cy="7" r="4" />
           </svg>
@@ -149,7 +159,14 @@ export const SecureSettings: React.FC<SecureSettingsProps> = ({
           className={`secure-settings-tab ${activeTab === 'security' ? 'active' : ''}`}
           onClick={() => setActiveTab('security')}
         >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
             <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
             <path d="M7 11V7a5 5 0 0 1 10 0v4" />
           </svg>
@@ -160,7 +177,14 @@ export const SecureSettings: React.FC<SecureSettingsProps> = ({
       {/* 消息 */}
       {successMessage && (
         <div className="secure-settings-message success">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
             <polyline points="22 4 12 14.01 9 11.01" />
           </svg>
@@ -171,7 +195,14 @@ export const SecureSettings: React.FC<SecureSettingsProps> = ({
 
       {errorMessage && (
         <div className="secure-settings-message error">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
             <circle cx="12" cy="12" r="10" />
             <line x1="12" y1="8" x2="12" y2="12" />
             <line x1="12" y1="16" x2="12.01" y2="16" />
@@ -188,7 +219,8 @@ export const SecureSettings: React.FC<SecureSettingsProps> = ({
             {/* 用户信息 */}
             <div className="secure-settings-user-info">
               <div className="secure-settings-avatar">
-                {currentUser.displayName?.charAt(0).toUpperCase() || currentUser.username.charAt(0).toUpperCase()}
+                {currentUser.displayName?.charAt(0).toUpperCase() ||
+                  currentUser.username.charAt(0).toUpperCase()}
               </div>
               <div className="secure-settings-user-details">
                 <div className="secure-settings-username">{currentUser.username}</div>
@@ -207,7 +239,10 @@ export const SecureSettings: React.FC<SecureSettingsProps> = ({
                   placeholder="Your display name"
                   disabled={isUpdatingName}
                 />
-                <button type="submit" disabled={isUpdatingName || displayName === currentUser.displayName}>
+                <button
+                  type="submit"
+                  disabled={isUpdatingName || displayName === currentUser.displayName}
+                >
                   {isUpdatingName ? 'Saving...' : 'Save'}
                 </button>
               </div>
@@ -219,17 +254,17 @@ export const SecureSettings: React.FC<SecureSettingsProps> = ({
               <dl>
                 <dt>Username</dt>
                 <dd>{currentUser.username}</dd>
-                
+
                 <dt>Role</dt>
                 <dd>{currentUser.role}</dd>
-                
+
                 {currentUser.createdAt && (
                   <>
                     <dt>Created</dt>
                     <dd>{formatDate(currentUser.createdAt)}</dd>
                   </>
                 )}
-                
+
                 {currentUser.lastLogin && (
                   <>
                     <dt>Last Login</dt>
@@ -249,7 +284,7 @@ export const SecureSettings: React.FC<SecureSettingsProps> = ({
               <p className="secure-settings-section-desc">
                 Your password is hashed with PBKDF2 (100,000 iterations) and stored securely.
               </p>
-              
+
               <form onSubmit={handleChangePassword} className="secure-settings-form">
                 <div className="secure-settings-field-group">
                   <label>Current Password</label>
@@ -294,9 +329,7 @@ export const SecureSettings: React.FC<SecureSettingsProps> = ({
                     />
                   </div>
                   {confirmPassword && newPassword !== confirmPassword && (
-                    <span className="secure-settings-field-hint error">
-                      Passwords do not match
-                    </span>
+                    <span className="secure-settings-field-hint error">Passwords do not match</span>
                   )}
                 </div>
 
@@ -314,7 +347,12 @@ export const SecureSettings: React.FC<SecureSettingsProps> = ({
                 <button
                   type="submit"
                   className="secure-settings-primary-btn"
-                  disabled={isChangingPassword || !oldPassword || newPassword.length < 6 || newPassword !== confirmPassword}
+                  disabled={
+                    isChangingPassword ||
+                    !oldPassword ||
+                    newPassword.length < 6 ||
+                    newPassword !== confirmPassword
+                  }
                 >
                   {isChangingPassword ? 'Changing...' : 'Change Password'}
                 </button>
@@ -326,18 +364,34 @@ export const SecureSettings: React.FC<SecureSettingsProps> = ({
               <h3>Security Information</h3>
               <div className="secure-settings-security-info">
                 <div className="secure-settings-security-item">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
                     <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
                     <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                   </svg>
                   <div>
                     <div className="secure-settings-security-label">Password Hashing</div>
-                    <div className="secure-settings-security-value">PBKDF2-SHA256 (100,000 iterations)</div>
+                    <div className="secure-settings-security-value">
+                      PBKDF2-SHA256 (100,000 iterations)
+                    </div>
                   </div>
                 </div>
-                
+
                 <div className="secure-settings-security-item">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
                     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                   </svg>
                   <div>
@@ -345,9 +399,16 @@ export const SecureSettings: React.FC<SecureSettingsProps> = ({
                     <div className="secure-settings-security-value">IndexedDB (encrypted)</div>
                   </div>
                 </div>
-                
+
                 <div className="secure-settings-security-item">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
                     <circle cx="12" cy="12" r="10" />
                     <path d="M12 6v6l4 2" />
                   </svg>
@@ -365,7 +426,14 @@ export const SecureSettings: React.FC<SecureSettingsProps> = ({
               <div className="secure-settings-actions">
                 {onLock && (
                   <button className="secure-settings-action-btn lock" onClick={onLock}>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
                       <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
                       <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                     </svg>
@@ -373,7 +441,14 @@ export const SecureSettings: React.FC<SecureSettingsProps> = ({
                   </button>
                 )}
                 <button className="secure-settings-action-btn logout" onClick={onLogout}>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
                     <polyline points="16 17 21 12 16 7" />
                     <line x1="21" y1="12" x2="9" y2="12" />

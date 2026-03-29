@@ -26,8 +26,10 @@ import React, {
 
 export type SwitchSize = 'sm' | 'md' | 'lg';
 
-export interface SwitchProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'checked' | 'onChange' | 'size'> {
+export interface SwitchProps extends Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  'type' | 'checked' | 'onChange' | 'size'
+> {
   /** 是否选中 */
   checked?: boolean;
   /** 默认是否选中 */
@@ -119,13 +121,17 @@ export const Switch = forwardRef<HTMLInputElement, SwitchProps>(
       isChecked && 'webos-switch-wrapper--checked',
       isDisabled && 'webos-switch-wrapper--disabled',
       className,
-    ].filter(Boolean).join(' ');
+    ]
+      .filter(Boolean)
+      .join(' ');
 
     const switchClasses = [
       'webos-switch',
       `webos-switch--${size}`,
       loading && 'webos-switch--loading',
-    ].filter(Boolean).join(' ');
+    ]
+      .filter(Boolean)
+      .join(' ');
 
     // Render thumb content
     const renderThumbContent = () => {
@@ -158,9 +164,7 @@ export const Switch = forwardRef<HTMLInputElement, SwitchProps>(
             aria-busy={loading}
             {...rest}
           />
-          <span className="webos-switch-thumb">
-            {renderThumbContent()}
-          </span>
+          <span className="webos-switch-thumb">{renderThumbContent()}</span>
         </span>
         {label !== undefined && <span className="webos-switch-label">{label}</span>}
       </label>

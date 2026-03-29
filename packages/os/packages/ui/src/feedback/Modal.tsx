@@ -172,34 +172,40 @@ export const Modal: React.FC<ModalProps> = ({
   }, [isOpen]);
 
   // Drag handlers
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    if (!draggable || !headerRef.current?.contains(e.target as Node)) return;
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      if (!draggable || !headerRef.current?.contains(e.target as Node)) return;
 
-    e.preventDefault();
-    setDragState(prev => ({
-      ...prev,
-      isDragging: true,
-      startX: e.clientX - prev.offsetX,
-      startY: e.clientY - prev.offsetY,
-    }));
-  }, [draggable]);
+      e.preventDefault();
+      setDragState((prev) => ({
+        ...prev,
+        isDragging: true,
+        startX: e.clientX - prev.offsetX,
+        startY: e.clientY - prev.offsetY,
+      }));
+    },
+    [draggable]
+  );
 
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (!dragState.isDragging) return;
+  const handleMouseMove = useCallback(
+    (e: MouseEvent) => {
+      if (!dragState.isDragging) return;
 
-    const newOffsetX = e.clientX - dragState.startX;
-    const newOffsetY = e.clientY - dragState.startY;
+      const newOffsetX = e.clientX - dragState.startX;
+      const newOffsetY = e.clientY - dragState.startY;
 
-    setPosition_({ x: newOffsetX, y: newOffsetY });
-    setDragState(prev => ({
-      ...prev,
-      offsetX: newOffsetX,
-      offsetY: newOffsetY,
-    }));
-  }, [dragState]);
+      setPosition_({ x: newOffsetX, y: newOffsetY });
+      setDragState((prev) => ({
+        ...prev,
+        offsetX: newOffsetX,
+        offsetY: newOffsetY,
+      }));
+    },
+    [dragState]
+  );
 
   const handleMouseUp = useCallback(() => {
-    setDragState(prev => ({ ...prev, isDragging: false }));
+    setDragState((prev) => ({ ...prev, isDragging: false }));
   }, []);
 
   useEffect(() => {
@@ -276,11 +282,7 @@ export const Modal: React.FC<ModalProps> = ({
         onKeyDown={handleKeyDown}
       >
         {(title || showCloseButton) && (
-          <div
-            ref={headerRef}
-            className="modal__header"
-            onMouseDown={handleMouseDown}
-          >
+          <div ref={headerRef} className="modal__header" onMouseDown={handleMouseDown}>
             {title && (
               <h2 id="modal-title" className="modal__title">
                 {title}
@@ -301,15 +303,9 @@ export const Modal: React.FC<ModalProps> = ({
           </div>
         )}
 
-        <div className="modal__content">
-          {children}
-        </div>
+        <div className="modal__content">{children}</div>
 
-        {footer && (
-          <div className="modal__footer">
-            {footer}
-          </div>
-        )}
+        {footer && <div className="modal__footer">{footer}</div>}
       </div>
     </div>
   );

@@ -66,7 +66,14 @@ const RestoreIcon = () => (
 );
 
 const CloseIcon = () => (
-  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5">
+  <svg
+    width="12"
+    height="12"
+    viewBox="0 0 12 12"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+  >
     <path d="M2 2l8 8M10 2l-8 8" />
   </svg>
 );
@@ -107,7 +114,13 @@ export const Window: React.FC<WindowProps> = ({
 
   const windowRef = useRef<HTMLDivElement>(null);
   const dragStartRef = useRef<{ x: number; y: number; posX: number; posY: number } | null>(null);
-  const touchStartRef = useRef<{ x: number; y: number; posX: number; posY: number; time: number } | null>(null);
+  const touchStartRef = useRef<{
+    x: number;
+    y: number;
+    posX: number;
+    posY: number;
+    time: number;
+  } | null>(null);
   const lastTapRef = useRef<{ x: number; y: number; time: number } | null>(null);
 
   useEffect(() => {
@@ -189,7 +202,7 @@ export const Window: React.FC<WindowProps> = ({
         y: touch.clientY,
         posX: position.x,
         posY: position.y,
-        time: Date.now()
+        time: Date.now(),
       };
     },
     [draggable, state, position, onFocus]
@@ -241,10 +254,12 @@ export const Window: React.FC<WindowProps> = ({
         const now = Date.now();
         const lastTap = lastTapRef.current;
 
-        if (lastTap &&
-            now - lastTap.time < 300 &&
-            Math.abs(touch.clientX - lastTap.x) < 30 &&
-            Math.abs(touch.clientY - lastTap.y) < 30) {
+        if (
+          lastTap &&
+          now - lastTap.time < 300 &&
+          Math.abs(touch.clientX - lastTap.x) < 30 &&
+          Math.abs(touch.clientY - lastTap.y) < 30
+        ) {
           if (showMaximize && draggable) {
             onMaximize?.();
           }
@@ -253,7 +268,7 @@ export const Window: React.FC<WindowProps> = ({
           lastTapRef.current = {
             x: touch.clientX,
             y: touch.clientY,
-            time: now
+            time: now,
           };
         }
       }
@@ -279,20 +294,32 @@ export const Window: React.FC<WindowProps> = ({
         let newHeight = prev.height;
 
         if (direction.includes('e')) {
-          newWidth = Math.max(minSize.width, Math.min(maxSize?.width ?? Infinity, prev.width + delta.x));
+          newWidth = Math.max(
+            minSize.width,
+            Math.min(maxSize?.width ?? Infinity, prev.width + delta.x)
+          );
         }
         if (direction.includes('w')) {
-          newWidth = Math.max(minSize.width, Math.min(maxSize?.width ?? Infinity, prev.width - delta.x));
+          newWidth = Math.max(
+            minSize.width,
+            Math.min(maxSize?.width ?? Infinity, prev.width - delta.x)
+          );
           if (newWidth !== prev.width) {
             setPosition((p) => ({ ...p, x: p.x + delta.x }));
           }
         }
 
         if (direction.includes('s')) {
-          newHeight = Math.max(minSize.height, Math.min(maxSize?.height ?? Infinity, prev.height + delta.y));
+          newHeight = Math.max(
+            minSize.height,
+            Math.min(maxSize?.height ?? Infinity, prev.height + delta.y)
+          );
         }
         if (direction.includes('n')) {
-          newHeight = Math.max(minSize.height, Math.min(maxSize?.height ?? Infinity, prev.height - delta.y));
+          newHeight = Math.max(
+            minSize.height,
+            Math.min(maxSize?.height ?? Infinity, prev.height - delta.y)
+          );
           if (newHeight !== prev.height) {
             setPosition((p) => ({ ...p, y: Math.max(0, p.y + delta.y) }));
           }
@@ -338,14 +365,16 @@ export const Window: React.FC<WindowProps> = ({
     <div
       ref={windowRef}
       className={`desktop-window ${isActive ? 'active' : ''} ${isDragging ? 'dragging' : ''} ${isResizing ? 'resizing' : ''} ${className}`}
-      style={{
-        left: position.x,
-        top: position.y,
-        width: size.width,
-        height: size.height,
-        zIndex,
-        '--acrylic-intensity': acrylicIntensity,
-      } as React.CSSProperties}
+      style={
+        {
+          left: position.x,
+          top: position.y,
+          width: size.width,
+          height: size.height,
+          zIndex,
+          '--acrylic-intensity': acrylicIntensity,
+        } as React.CSSProperties
+      }
       onMouseDown={() => onFocus?.()}
     >
       <div className="desktop-window-acrylic" />
@@ -358,7 +387,10 @@ export const Window: React.FC<WindowProps> = ({
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
         onDoubleClick={handleTitleBarDoubleClick}
-        style={{ touchAction: 'none', cursor: draggable ? (isDragging ? 'grabbing' : 'grab') : 'default' }}
+        style={{
+          touchAction: 'none',
+          cursor: draggable ? (isDragging ? 'grabbing' : 'grab') : 'default',
+        }}
       >
         <div className="desktop-window-titlebar-content">
           {icon && <span className="desktop-window-icon">{icon}</span>}

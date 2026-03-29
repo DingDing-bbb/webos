@@ -57,30 +57,36 @@ export const OOBE: React.FC<OOBEProps> = ({ onComplete }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // 翻译函数
-  const t = useCallback((key: keyof OOBETranslations): string => {
-    return getOOBETranslation(locale, key);
-  }, [locale]);
+  const t = useCallback(
+    (key: keyof OOBETranslations): string => {
+      return getOOBETranslation(locale, key);
+    },
+    [locale]
+  );
 
   // 步骤配置
-  const steps = useMemo<Step[]>(() => ['welcome', 'language', 'theme', 'user', 'mode', 'complete'], []);
+  const steps = useMemo<Step[]>(
+    () => ['welcome', 'language', 'theme', 'user', 'mode', 'complete'],
+    []
+  );
 
   // 初始化
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', 'light');
-    
+
     const touchSupport = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     setIsTouchDevice(touchSupport);
-    
+
     if (touchSupport) {
-      setFormData(prev => ({ ...prev, tabletMode: true }));
+      setFormData((prev) => ({ ...prev, tabletMode: true }));
     }
-    
+
     // 尝试获取系统语言
     if (window.webos) {
       const currentLocale = window.webos.i18n.getCurrentLocale();
       if (currentLocale) {
         setLocale(currentLocale);
-        setFormData(prev => ({ ...prev, language: currentLocale }));
+        setFormData((prev) => ({ ...prev, language: currentLocale }));
       }
     }
   }, []);
@@ -98,7 +104,7 @@ export const OOBE: React.FC<OOBEProps> = ({ onComplete }) => {
       if (!formData.username.trim()) {
         newErrors.username = t('usernameRequired');
       }
-      
+
       if (formData.password) {
         if (formData.password.length < 4) {
           newErrors.password = t('passwordTooShort');
@@ -137,9 +143,9 @@ export const OOBE: React.FC<OOBEProps> = ({ onComplete }) => {
   // 完成
   const handleComplete = useCallback(async () => {
     if (isSubmitting) return;
-    
+
     if (!validateStep()) return;
-    
+
     setIsSubmitting(true);
 
     try {
@@ -164,7 +170,7 @@ export const OOBE: React.FC<OOBEProps> = ({ onComplete }) => {
       }
 
       localStorage.setItem('webos-theme', formData.theme);
-      
+
       if (window.webos) {
         window.webos.config.set('theme', formData.theme);
         if (formData.systemName.trim()) {
@@ -225,7 +231,7 @@ export const OOBE: React.FC<OOBEProps> = ({ onComplete }) => {
           onChange={(e) => {
             const newLocale = e.target.value;
             setLocale(newLocale);
-            setFormData(prev => ({ ...prev, language: newLocale }));
+            setFormData((prev) => ({ ...prev, language: newLocale }));
           }}
         >
           {locales.map((loc) => (
@@ -242,13 +248,13 @@ export const OOBE: React.FC<OOBEProps> = ({ onComplete }) => {
   const renderTheme = () => (
     <div className="os-oobe-content">
       <p className="os-oobe-field-desc">{t('themeDesc')}</p>
-      
+
       {(['light', 'dark'] as const).map((themeValue) => (
         <div
           key={themeValue}
           className={`os-oobe-mode-card ${formData.theme === themeValue ? 'selected' : ''}`}
           onClick={() => {
-            setFormData(prev => ({ ...prev, theme: themeValue }));
+            setFormData((prev) => ({ ...prev, theme: themeValue }));
             applyTheme(themeValue);
           }}
         >
@@ -276,7 +282,7 @@ export const OOBE: React.FC<OOBEProps> = ({ onComplete }) => {
           className="os-oobe-input"
           placeholder={t('usernamePlaceholder')}
           value={formData.username}
-          onChange={(e) => setFormData(prev => ({ ...prev, username: e.target.value }))}
+          onChange={(e) => setFormData((prev) => ({ ...prev, username: e.target.value }))}
           autoFocus
         />
         {errors.username && <div className="os-oobe-error">{errors.username}</div>}
@@ -291,7 +297,7 @@ export const OOBE: React.FC<OOBEProps> = ({ onComplete }) => {
           className="os-oobe-input"
           placeholder={t('passwordPlaceholder')}
           value={formData.password}
-          onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
+          onChange={(e) => setFormData((prev) => ({ ...prev, password: e.target.value }))}
         />
         {errors.password && <div className="os-oobe-error">{errors.password}</div>}
       </div>
@@ -319,7 +325,7 @@ export const OOBE: React.FC<OOBEProps> = ({ onComplete }) => {
           className="os-oobe-input"
           placeholder={t('systemNamePlaceholder')}
           value={formData.systemName}
-          onChange={(e) => setFormData(prev => ({ ...prev, systemName: e.target.value }))}
+          onChange={(e) => setFormData((prev) => ({ ...prev, systemName: e.target.value }))}
         />
       </div>
     </div>
@@ -332,7 +338,7 @@ export const OOBE: React.FC<OOBEProps> = ({ onComplete }) => {
 
       <div
         className={`os-oobe-mode-card ${!formData.tabletMode ? 'selected' : ''}`}
-        onClick={() => setFormData(prev => ({ ...prev, tabletMode: false }))}
+        onClick={() => setFormData((prev) => ({ ...prev, tabletMode: false }))}
       >
         <div className="os-oobe-mode-radio" />
         <div>
@@ -343,7 +349,7 @@ export const OOBE: React.FC<OOBEProps> = ({ onComplete }) => {
 
       <div
         className={`os-oobe-mode-card ${formData.tabletMode ? 'selected' : ''}`}
-        onClick={() => setFormData(prev => ({ ...prev, tabletMode: true }))}
+        onClick={() => setFormData((prev) => ({ ...prev, tabletMode: true }))}
       >
         <div className="os-oobe-mode-radio" />
         <div>
@@ -354,7 +360,14 @@ export const OOBE: React.FC<OOBEProps> = ({ onComplete }) => {
 
       {isTouchDevice && (
         <div className="os-oobe-touch-hint">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
             <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
             <path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12z" />
             <circle cx="12" cy="12" r="2" />
@@ -387,13 +400,20 @@ export const OOBE: React.FC<OOBEProps> = ({ onComplete }) => {
   // 渲染当前步骤
   const renderStep = () => {
     switch (currentStep) {
-      case 'welcome': return renderWelcome();
-      case 'language': return renderLanguage();
-      case 'theme': return renderTheme();
-      case 'user': return renderUserForm();
-      case 'mode': return renderMode();
-      case 'complete': return renderComplete();
-      default: return null;
+      case 'welcome':
+        return renderWelcome();
+      case 'language':
+        return renderLanguage();
+      case 'theme':
+        return renderTheme();
+      case 'user':
+        return renderUserForm();
+      case 'mode':
+        return renderMode();
+      case 'complete':
+        return renderComplete();
+      default:
+        return null;
     }
   };
 
@@ -440,9 +460,19 @@ export const OOBE: React.FC<OOBEProps> = ({ onComplete }) => {
             >
               {isSubmitting ? (
                 <svg className="oobe-spinner" viewBox="0 0 24 24">
-                  <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="2" strokeDasharray="31.4 31.4" />
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeDasharray="31.4 31.4"
+                  />
                 </svg>
-              ) : t('start')}
+              ) : (
+                t('start')
+              )}
             </button>
           ) : (
             <button className="os-oobe-btn primary" onClick={handleNext} type="button">

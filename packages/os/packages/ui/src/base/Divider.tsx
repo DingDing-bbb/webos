@@ -92,7 +92,9 @@ export const Divider = forwardRef<HTMLDivElement, DividerProps>(
         hasContent && `webos-divider--label-${labelPosition}`,
         transparent && 'webos-divider--transparent',
         className,
-      ].filter(Boolean).join(' ');
+      ]
+        .filter(Boolean)
+        .join(' ');
 
       return classes;
     }, [direction, dividerStyle, size, hasContent, labelPosition, transparent, className]);
@@ -146,12 +148,7 @@ export const Divider = forwardRef<HTMLDivElement, DividerProps>(
 
     // 渲染带内容的分隔线
     return (
-      <div
-        ref={ref}
-        className={dividerClasses}
-        {...ariaProps}
-        {...restProps}
-      >
+      <div ref={ref} className={dividerClasses} {...ariaProps} {...restProps}>
         {direction === 'horizontal' ? (
           <>
             <span className="webos-divider__line webos-divider__line--before" />

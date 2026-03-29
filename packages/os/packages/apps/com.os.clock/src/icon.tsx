@@ -13,8 +13,8 @@ export const ClockIcon: React.FC<IconProps> = ({ size = 48, className, style }) 
     className={className}
     style={style}
   >
-    <circle cx="24" cy="24" r="20" stroke="currentColor" strokeWidth="2"/>
-    <path d="M24 12V24L32 28" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+    <circle cx="24" cy="24" r="20" stroke="currentColor" strokeWidth="2" />
+    <path d="M24 12V24L32 28" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
   </svg>
 );
 

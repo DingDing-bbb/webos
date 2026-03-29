@@ -159,7 +159,9 @@ export const WindowManager: React.FC<WindowManagerProps> = ({
 
   const minimizeWindow = useCallback((id: string) => {
     setWindows((prev) =>
-      prev.map((w) => (w.id === id ? { ...w, state: 'minimized' as WindowState, isFocused: false } : w))
+      prev.map((w) =>
+        w.id === id ? { ...w, state: 'minimized' as WindowState, isFocused: false } : w
+      )
     );
   }, []);
 

@@ -37,7 +37,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: 
+  background:
     radial-gradient(ellipse 80% 50% at 50% -20%, rgba(120, 119, 198, 0.15) 0%, transparent 50%),
     radial-gradient(ellipse 60% 40% at 80% 100%, rgba(78, 205, 196, 0.08) 0%, transparent 40%),
     radial-gradient(ellipse 60% 40% at 20% 100%, rgba(199, 125, 255, 0.08) 0%, transparent 40%);
@@ -243,7 +243,7 @@
 .os-oobe-input:focus {
   background: rgba(255, 255, 255, 0.08);
   border-color: rgba(255, 255, 255, 0.2);
-  box-shadow: 
+  box-shadow:
     0 0 0 4px rgba(255, 255, 255, 0.03),
     0 8px 24px rgba(0, 0, 0, 0.15);
 }
@@ -283,7 +283,7 @@
 .os-oobe-select:focus {
   background-color: rgba(255, 255, 255, 0.08);
   border-color: rgba(255, 255, 255, 0.2);
-  box-shadow: 
+  box-shadow:
     0 0 0 4px rgba(255, 255, 255, 0.03),
     0 8px 24px rgba(0, 0, 0, 0.15);
 }
@@ -338,7 +338,7 @@
 .os-oobe-mode-card.selected {
   background: rgba(102, 126, 234, 0.12);
   border-color: rgba(102, 126, 234, 0.35);
-  box-shadow: 
+  box-shadow:
     0 4px 20px rgba(102, 126, 234, 0.15),
     0 0 0 1px rgba(102, 126, 234, 0.1) inset;
 }
@@ -541,7 +541,7 @@
 
 .os-oobe-btn.primary:hover {
   background: linear-gradient(135deg, #7c8ef0 0%, #8a5eb8 100%);
-  box-shadow: 
+  box-shadow:
     0 8px 28px rgba(102, 126, 234, 0.4),
     0 0 0 1px rgba(255, 255, 255, 0.1) inset;
 }
@@ -589,7 +589,7 @@
    Light Theme
    ============================================ */
 
-[data-theme="light"] .os-oobe {
+[data-theme='light'] .os-oobe {
   background: linear-gradient(
     135deg,
     #f8fafc 0%,
@@ -600,14 +600,14 @@
   );
 }
 
-[data-theme="light"] .os-oobe::before {
-  background: 
+[data-theme='light'] .os-oobe::before {
+  background:
     radial-gradient(ellipse 80% 50% at 50% -20%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
     radial-gradient(ellipse 60% 40% at 80% 100%, rgba(139, 92, 246, 0.05) 0%, transparent 40%),
     radial-gradient(ellipse 60% 40% at 20% 100%, rgba(99, 102, 241, 0.05) 0%, transparent 40%);
 }
 
-[data-theme="light"] .os-oobe-cursor-light {
+[data-theme='light'] .os-oobe-cursor-light {
   background: radial-gradient(
     circle,
     rgba(59, 130, 246, 0.04) 0%,
@@ -616,7 +616,7 @@
   );
 }
 
-[data-theme="light"] .os-oobe-container {
+[data-theme='light'] .os-oobe-container {
   background: rgba(255, 255, 255, 0.9);
   border-color: rgba(0, 0, 0, 0.05);
   box-shadow:
@@ -625,143 +625,143 @@
     0 1px 0 rgba(255, 255, 255, 0.8) inset;
 }
 
-[data-theme="light"] .os-oobe-title {
+[data-theme='light'] .os-oobe-title {
   color: #0f172a;
   text-shadow: none;
 }
 
-[data-theme="light"] .os-oobe-welcome-desc,
-[data-theme="light"] .os-oobe-field-desc,
-[data-theme="light"] .os-oobe-complete-desc {
+[data-theme='light'] .os-oobe-welcome-desc,
+[data-theme='light'] .os-oobe-field-desc,
+[data-theme='light'] .os-oobe-complete-desc {
   color: rgba(15, 23, 42, 0.5);
 }
 
-[data-theme="light"] .os-oobe-label {
+[data-theme='light'] .os-oobe-label {
   color: rgba(15, 23, 42, 0.5);
 }
 
-[data-theme="light"] .os-oobe-input,
-[data-theme="light"] .os-oobe-select {
+[data-theme='light'] .os-oobe-input,
+[data-theme='light'] .os-oobe-select {
   color: #0f172a;
   background: rgba(15, 23, 42, 0.03);
   border-color: rgba(15, 23, 42, 0.08);
 }
 
-[data-theme="light"] .os-oobe-input::placeholder {
+[data-theme='light'] .os-oobe-input::placeholder {
   color: rgba(15, 23, 42, 0.3);
 }
 
-[data-theme="light"] .os-oobe-input:hover,
-[data-theme="light"] .os-oobe-select:hover {
+[data-theme='light'] .os-oobe-input:hover,
+[data-theme='light'] .os-oobe-select:hover {
   background: rgba(15, 23, 42, 0.05);
   border-color: rgba(15, 23, 42, 0.12);
 }
 
-[data-theme="light"] .os-oobe-input:focus,
-[data-theme="light"] .os-oobe-select:focus {
+[data-theme='light'] .os-oobe-input:focus,
+[data-theme='light'] .os-oobe-select:focus {
   background: rgba(15, 23, 42, 0.03);
   border-color: rgba(99, 102, 241, 0.4);
   box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.08);
 }
 
-[data-theme="light"] .os-oobe-select option {
+[data-theme='light'] .os-oobe-select option {
   background: #fff;
   color: #0f172a;
 }
 
-[data-theme="light"] .os-oobe-mode-card {
+[data-theme='light'] .os-oobe-mode-card {
   background: rgba(15, 23, 42, 0.02);
   border-color: rgba(15, 23, 42, 0.06);
 }
 
-[data-theme="light"] .os-oobe-mode-card:hover {
+[data-theme='light'] .os-oobe-mode-card:hover {
   background: rgba(15, 23, 42, 0.04);
   border-color: rgba(15, 23, 42, 0.1);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
 }
 
-[data-theme="light"] .os-oobe-mode-card.selected {
+[data-theme='light'] .os-oobe-mode-card.selected {
   background: rgba(99, 102, 241, 0.08);
   border-color: rgba(99, 102, 241, 0.3);
-  box-shadow: 
+  box-shadow:
     0 4px 16px rgba(99, 102, 241, 0.1),
     0 0 0 1px rgba(99, 102, 241, 0.1) inset;
 }
 
-[data-theme="light"] .os-oobe-mode-radio {
+[data-theme='light'] .os-oobe-mode-radio {
   border-color: rgba(15, 23, 42, 0.2);
 }
 
-[data-theme="light"] .os-oobe-mode-card.selected .os-oobe-mode-radio {
+[data-theme='light'] .os-oobe-mode-card.selected .os-oobe-mode-radio {
   border-color: #6366f1;
   box-shadow: 0 0 12px rgba(99, 102, 241, 0.3);
 }
 
-[data-theme="light"] .os-oobe-mode-card.selected .os-oobe-mode-radio::after {
+[data-theme='light'] .os-oobe-mode-card.selected .os-oobe-mode-radio::after {
   background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
 }
 
-[data-theme="light"] .os-oobe-mode-label {
+[data-theme='light'] .os-oobe-mode-label {
   color: #0f172a;
 }
 
-[data-theme="light"] .os-oobe-mode-desc {
+[data-theme='light'] .os-oobe-mode-desc {
   color: rgba(15, 23, 42, 0.4);
 }
 
-[data-theme="light"] .os-oobe-step {
+[data-theme='light'] .os-oobe-step {
   background: rgba(15, 23, 42, 0.1);
 }
 
-[data-theme="light"] .os-oobe-step.active {
+[data-theme='light'] .os-oobe-step.active {
   background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 100%);
   box-shadow: 0 0 16px rgba(99, 102, 241, 0.3);
 }
 
-[data-theme="light"] .os-oobe-step.completed {
+[data-theme='light'] .os-oobe-step.completed {
   background: #22c55e;
   box-shadow: 0 0 12px rgba(34, 197, 94, 0.3);
 }
 
-[data-theme="light"] .os-oobe-btn {
+[data-theme='light'] .os-oobe-btn {
   color: rgba(15, 23, 42, 0.65);
   background: rgba(15, 23, 42, 0.03);
   border-color: rgba(15, 23, 42, 0.08);
 }
 
-[data-theme="light"] .os-oobe-btn:hover {
+[data-theme='light'] .os-oobe-btn:hover {
   background: rgba(15, 23, 42, 0.06);
   border-color: rgba(15, 23, 42, 0.12);
   color: #0f172a;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
 }
 
-[data-theme="light"] .os-oobe-btn.primary {
+[data-theme='light'] .os-oobe-btn.primary {
   background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
   color: #fff;
   box-shadow: 0 4px 16px rgba(99, 102, 241, 0.25);
 }
 
-[data-theme="light"] .os-oobe-btn.primary:hover {
+[data-theme='light'] .os-oobe-btn.primary:hover {
   background: linear-gradient(135deg, #818cf8 0%, #a78bfa 100%);
-  box-shadow: 
+  box-shadow:
     0 8px 28px rgba(99, 102, 241, 0.35),
     0 0 0 1px rgba(255, 255, 255, 0.1) inset;
 }
 
-[data-theme="light"] .os-oobe-error {
+[data-theme='light'] .os-oobe-error {
   color: #dc2626;
   background: rgba(220, 38, 38, 0.05);
   border-color: rgba(220, 38, 38, 0.12);
 }
 
-[data-theme="light"] .os-oobe-touch-hint {
+[data-theme='light'] .os-oobe-touch-hint {
   color: #6366f1;
   background: rgba(99, 102, 241, 0.05);
   border-color: rgba(99, 102, 241, 0.12);
 }
 
-[data-theme="light"] .os-oobe-check-icon {
+[data-theme='light'] .os-oobe-check-icon {
   filter: drop-shadow(0 0 16px rgba(34, 197, 94, 0.3));
 }
 
@@ -781,8 +781,12 @@
    ============================================ */
 
 @keyframes fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slide-up {
@@ -808,12 +812,26 @@
 }
 
 @keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  10%, 50%, 90% { transform: translateX(-6px); }
-  30%, 70% { transform: translateX(6px); }
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  10%,
+  50%,
+  90% {
+    transform: translateX(-6px);
+  }
+  30%,
+  70% {
+    transform: translateX(6px);
+  }
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }

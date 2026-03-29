@@ -105,7 +105,7 @@
 /* 输入框和文本区域允许选择 */
 .os-tablet-mode input,
 .os-tablet-mode textarea,
-.os-tablet-mode [contenteditable="true"] {
+.os-tablet-mode [contenteditable='true'] {
   -webkit-user-select: text;
   user-select: text;
   touch-action: auto;

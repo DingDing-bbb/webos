@@ -258,54 +258,103 @@ type Theme = 'light' | 'dark';
 
 // SVG Icons
 const DocumentIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="18" height="18">
-    <path d="M9 12h6M9 16h6M9 8h6M5 3h9l5 5v12a1 1 0 01-1 1H6a1 1 0 01-1-1V4a1 1 0 011-1z"/>
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    width="18"
+    height="18"
+  >
+    <path d="M9 12h6M9 16h6M9 8h6M5 3h9l5 5v12a1 1 0 01-1 1H6a1 1 0 01-1-1V4a1 1 0 011-1z" />
   </svg>
 );
 
 const LockIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="18" height="18">
-    <rect x="5" y="11" width="14" height="10" rx="2"/>
-    <path d="M8 11V7a4 4 0 118 0v4"/>
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    width="18"
+    height="18"
+  >
+    <rect x="5" y="11" width="14" height="10" rx="2" />
+    <path d="M8 11V7a4 4 0 118 0v4" />
   </svg>
 );
 
 const FileTextIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="18" height="18">
-    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
-    <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/>
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    width="18"
+    height="18"
+  >
+    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+    <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" />
   </svg>
 );
 
 const AlertIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="18" height="18">
-    <path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    width="18"
+    height="18"
+  >
+    <path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
   </svg>
 );
 
 const GithubIcon = () => (
   <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
-    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.21 11.39.6.11.79-.26.79-.58v-2.23c-3.34.73-4.03-1.42-4.03-1.42-.55-1.39-1.33-1.76-1.33-1.76-1.09-.74.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.49 1 .11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 016.01 0c2.3-1.55 3.3-1.23 3.3-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.82 1.1.82 2.22v3.29c0 .32.19.7.8.58C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/>
+    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.21 11.39.6.11.79-.26.79-.58v-2.23c-3.34.73-4.03-1.42-4.03-1.42-.55-1.39-1.33-1.76-1.33-1.76-1.09-.74.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.49 1 .11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 016.01 0c2.3-1.55 3.3-1.23 3.3-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.82 1.1.82 2.22v3.29c0 .32.19.7.8.58C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z" />
   </svg>
 );
 
 const SunIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="18" height="18">
-    <circle cx="12" cy="12" r="4"/>
-    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    width="18"
+    height="18"
+  >
+    <circle cx="12" cy="12" r="4" />
+    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
   </svg>
 );
 
 const MoonIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="18" height="18">
-    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    width="18"
+    height="18"
+  >
+    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
   </svg>
 );
 
 // Reserved for future use
 const _MenuIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="20" height="20">
-    <path d="M4 6h16M4 12h16M4 18h16"/>
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    width="20"
+    height="20"
+  >
+    <path d="M4 6h16M4 12h16M4 18h16" />
   </svg>
 );
 
@@ -315,16 +364,21 @@ function renderMarkdown(text: string, theme: Theme): React.ReactNode {
   const elements: React.ReactNode[] = [];
   let currentList: string[] = [];
   let listKey = 0;
-  
+
   const textColor = theme === 'dark' ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.7)';
   const headingColor = theme === 'dark' ? '#fff' : '#000';
 
   const flushList = () => {
     if (currentList.length > 0) {
       elements.push(
-        <ul key={`list-${listKey++}`} style={{ margin: '12px 0', paddingLeft: '24px', color: textColor }}>
+        <ul
+          key={`list-${listKey++}`}
+          style={{ margin: '12px 0', paddingLeft: '24px', color: textColor }}
+        >
           {currentList.map((item, i) => (
-            <li key={i} style={{ margin: '6px 0', lineHeight: 1.7 }}>{item.replace(/^- /, '')}</li>
+            <li key={i} style={{ margin: '6px 0', lineHeight: 1.7 }}>
+              {item.replace(/^- /, '')}
+            </li>
           ))}
         </ul>
       );
@@ -336,7 +390,16 @@ function renderMarkdown(text: string, theme: Theme): React.ReactNode {
     if (line.startsWith('## ')) {
       flushList();
       elements.push(
-        <h3 key={index} style={{ fontSize: '17px', fontWeight: 600, marginTop: '24px', marginBottom: '12px', color: headingColor }}>
+        <h3
+          key={index}
+          style={{
+            fontSize: '17px',
+            fontWeight: 600,
+            marginTop: '24px',
+            marginBottom: '12px',
+            color: headingColor,
+          }}
+        >
           {line.replace('## ', '')}
         </h3>
       );
@@ -433,7 +496,7 @@ export default function AppPage() {
       headerBg: 'rgba(245, 245, 247, 0.8)',
     },
   };
-  
+
   const c = colors[theme];
   const tabs: TabKey[] = ['tos', 'privacy', 'license', 'disclaimer'];
   const contentMap: Record<TabKey, string> = {
@@ -453,15 +516,17 @@ export default function AppPage() {
   // 加载中
   if (isLoading) {
     return (
-      <div style={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: c.bgGradient,
-        color: c.text,
-        fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif',
-      }}>
+      <div
+        style={{
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: c.bgGradient,
+          color: c.text,
+          fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif',
+        }}
+      >
         <div style={{ fontSize: '18px', opacity: 0.6 }}>Loading...</div>
       </div>
     );
@@ -469,71 +534,131 @@ export default function AppPage() {
 
   // 协议页面
   return (
-    <div style={{
-      minHeight: '100vh',
-      display: 'flex',
-      flexDirection: 'column',
-      background: c.bgGradient,
-      color: c.text,
-      fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif',
-      overscrollBehavior: 'none',
-    }}>
+    <div
+      style={{
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        background: c.bgGradient,
+        color: c.text,
+        fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif',
+        overscrollBehavior: 'none',
+      }}
+    >
       {/* Header */}
-      <header style={{
-        position: 'sticky',
-        top: 0,
-        zIndex: 100,
-        background: c.headerBg,
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-        borderBottom: `1px solid ${c.border}`,
-      }}>
-        <div style={{
-          maxWidth: '800px',
-          margin: '0 auto',
-          padding: '0 16px',
-          height: '52px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}>
+      <header
+        style={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 100,
+          background: c.headerBg,
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          borderBottom: `1px solid ${c.border}`,
+        }}
+      >
+        <div
+          style={{
+            maxWidth: '800px',
+            margin: '0 auto',
+            padding: '0 16px',
+            height: '52px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
           <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '12px' : '24px' }}>
-            <a href="/intro" style={{ fontSize: '18px', fontWeight: 600, color: c.text, textDecoration: 'none' }}>
+            <a
+              href="/intro"
+              style={{ fontSize: '18px', fontWeight: 600, color: c.text, textDecoration: 'none' }}
+            >
               WebOS
             </a>
             {!isMobile && (
               <nav style={{ display: 'flex', gap: '20px' }}>
-                <a href="/intro" style={{ fontSize: '13px', color: c.textMuted, textDecoration: 'none' }}>{t.nav.intro}</a>
-                <a href="/docs" style={{ fontSize: '13px', color: c.textMuted, textDecoration: 'none' }}>{t.nav.docs}</a>
+                <a
+                  href="/intro"
+                  style={{ fontSize: '13px', color: c.textMuted, textDecoration: 'none' }}
+                >
+                  {t.nav.intro}
+                </a>
+                <a
+                  href="/docs"
+                  style={{ fontSize: '13px', color: c.textMuted, textDecoration: 'none' }}
+                >
+                  {t.nav.docs}
+                </a>
                 <span style={{ fontSize: '13px', fontWeight: 500 }}>{t.nav.app}</span>
               </nav>
             )}
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <a 
-              href="https://github.com/webos/webos" 
-              target="_blank" 
+            <a
+              href="https://github.com/webos/webos"
+              target="_blank"
               rel="noopener noreferrer"
-              style={{ padding: '8px', color: c.textMuted, display: 'flex', alignItems: 'center', textDecoration: 'none' }}
+              style={{
+                padding: '8px',
+                color: c.textMuted,
+                display: 'flex',
+                alignItems: 'center',
+                textDecoration: 'none',
+              }}
               title="GitHub"
             >
               <GithubIcon />
             </a>
-            <button onClick={handleThemeChange} style={{ padding: '8px', background: 'transparent', border: 'none', color: c.textMuted, cursor: 'pointer', borderRadius: '6px' }}>
+            <button
+              onClick={handleThemeChange}
+              style={{
+                padding: '8px',
+                background: 'transparent',
+                border: 'none',
+                color: c.textMuted,
+                cursor: 'pointer',
+                borderRadius: '6px',
+              }}
+            >
               {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
             </button>
-            <select value={lang} onChange={(e) => handleLangChange(e.target.value as Lang)}
-              style={{ padding: '6px 10px', background: c.card, border: `1px solid ${c.border}`, borderRadius: '6px', color: c.text, fontSize: '13px', cursor: 'pointer' }}>
-              <option value="zh" style={{ background: c.bg }}>简体中文</option>
-              <option value="zh-TW" style={{ background: c.bg }}>繁體中文</option>
-              <option value="en" style={{ background: c.bg }}>English</option>
+            <select
+              value={lang}
+              onChange={(e) => handleLangChange(e.target.value as Lang)}
+              style={{
+                padding: '6px 10px',
+                background: c.card,
+                border: `1px solid ${c.border}`,
+                borderRadius: '6px',
+                color: c.text,
+                fontSize: '13px',
+                cursor: 'pointer',
+              }}
+            >
+              <option value="zh" style={{ background: c.bg }}>
+                简体中文
+              </option>
+              <option value="zh-TW" style={{ background: c.bg }}>
+                繁體中文
+              </option>
+              <option value="en" style={{ background: c.bg }}>
+                English
+              </option>
             </select>
           </div>
         </div>
       </header>
 
       {/* Main */}
-      <main style={{ flex: 1, maxWidth: '800px', margin: '0 auto', padding: '24px 16px', width: '100%' }}>
+      <main
+        style={{
+          flex: 1,
+          maxWidth: '800px',
+          margin: '0 auto',
+          padding: '24px 16px',
+          width: '100%',
+        }}
+      >
         {/* Title */}
         <div style={{ textAlign: 'center', marginBottom: '24px' }}>
           <h1 style={{ fontSize: '24px', fontWeight: 600, marginBottom: '6px' }}>{t.title}</h1>
@@ -541,15 +666,17 @@ export default function AppPage() {
         </div>
 
         {/* Tabs */}
-        <div style={{
-          display: 'flex',
-          gap: '6px',
-          marginBottom: '20px',
-          padding: '4px',
-          background: c.card,
-          borderRadius: '10px',
-          border: `1px solid ${c.border}`,
-        }}>
+        <div
+          style={{
+            display: 'flex',
+            gap: '6px',
+            marginBottom: '20px',
+            padding: '4px',
+            background: c.card,
+            borderRadius: '10px',
+            border: `1px solid ${c.border}`,
+          }}
+        >
           {tabs.map((tab) => (
             <button
               key={tab}
@@ -577,33 +704,39 @@ export default function AppPage() {
         </div>
 
         {/* Content */}
-        <div style={{
-          background: c.card,
-          border: `1px solid ${c.border}`,
-          borderRadius: '10px',
-          padding: '20px 24px',
-          marginBottom: '20px',
-          maxHeight: '320px',
-          overflowY: 'auto',
-          overscrollBehavior: 'contain',
-          WebkitOverflowScrolling: 'touch',
-        }}>
+        <div
+          style={{
+            background: c.card,
+            border: `1px solid ${c.border}`,
+            borderRadius: '10px',
+            padding: '20px 24px',
+            marginBottom: '20px',
+            maxHeight: '320px',
+            overflowY: 'auto',
+            overscrollBehavior: 'contain',
+            WebkitOverflowScrolling: 'touch',
+          }}
+        >
           {renderMarkdown(contentMap[activeTab], theme)}
         </div>
 
         {/* Checkbox & Button */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
-          <label style={{
-            display: 'flex',
-            alignItems: 'flex-start',
-            gap: '10px',
-            cursor: 'pointer',
-            padding: '14px 20px',
-            background: c.card,
-            border: agreed ? '1px solid rgba(16, 185, 129, 0.5)' : `1px solid ${c.border}`,
-            borderRadius: '10px',
-            transition: 'border-color 0.15s',
-          }}>
+        <div
+          style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}
+        >
+          <label
+            style={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: '10px',
+              cursor: 'pointer',
+              padding: '14px 20px',
+              background: c.card,
+              border: agreed ? '1px solid rgba(16, 185, 129, 0.5)' : `1px solid ${c.border}`,
+              borderRadius: '10px',
+              transition: 'border-color 0.15s',
+            }}
+          >
             <input
               type="checkbox"
               checked={agreed}

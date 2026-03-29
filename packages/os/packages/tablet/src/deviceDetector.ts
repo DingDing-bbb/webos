@@ -57,7 +57,7 @@ class DeviceDetector {
       screen,
       orientation: screen.width > screen.height ? 'landscape' : 'portrait',
       isTabletMode,
-      isConvertible
+      isConvertible,
     };
   }
 
@@ -68,14 +68,15 @@ class DeviceDetector {
       mouse: this.hasMouse(),
       keyboard: this.hasKeyboard(),
       accelerometer: this.hasAccelerometer(),
-      gyroscope: this.hasGyroscope()
+      gyroscope: this.hasGyroscope(),
     };
   }
 
   private hasTouch(): boolean {
     if ('ontouchstart' in window) return true;
     if (navigator.maxTouchPoints > 0) return true;
-    const msMaxTouchPoints = (navigator as unknown as { msMaxTouchPoints?: number }).msMaxTouchPoints;
+    const msMaxTouchPoints = (navigator as unknown as { msMaxTouchPoints?: number })
+      .msMaxTouchPoints;
     if (msMaxTouchPoints && msMaxTouchPoints > 0) return true;
     return false;
   }
@@ -113,7 +114,7 @@ class DeviceDetector {
       physicalWidth: this.getPhysicalDimension(width),
       physicalHeight: this.getPhysicalDimension(height),
       pixelRatio: window.devicePixelRatio || 1,
-      touchPoints: navigator.maxTouchPoints || 0
+      touchPoints: navigator.maxTouchPoints || 0,
     };
   }
 
@@ -123,9 +124,13 @@ class DeviceDetector {
     return (pixels / dpi) * ratio;
   }
 
-  private determineDeviceType(capabilities: DeviceCapability, screen: DeviceInfo['screen']): DeviceType {
+  private determineDeviceType(
+    capabilities: DeviceCapability,
+    screen: DeviceInfo['screen']
+  ): DeviceType {
     const ua = navigator.userAgent.toLowerCase();
-    const isIPad = /ipad/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const isIPad =
+      /ipad/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
     const isAndroidTablet = /android(?!.*mobile)/i.test(ua);
     const isPhone = /iphone|ipod|android.*mobile|windows phone/i.test(ua);
 
@@ -220,7 +225,7 @@ class DeviceDetector {
   }
 
   private notifyListeners(): void {
-    this.listeners.forEach(listener => listener(this.info));
+    this.listeners.forEach((listener) => listener(this.info));
   }
 
   getInfo(): DeviceInfo {

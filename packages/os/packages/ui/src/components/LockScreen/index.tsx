@@ -55,7 +55,15 @@ const ArrowRightIcon = () => (
 
 const SpinnerIcon = () => (
   <svg className="lockscreen-spinner" viewBox="0 0 24 24">
-    <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="2" strokeDasharray="31.4 31.4" />
+    <circle
+      cx="12"
+      cy="12"
+      r="10"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeDasharray="31.4 31.4"
+    />
   </svg>
 );
 
@@ -225,9 +233,7 @@ export const LockScreen: React.FC<LockScreenProps> = ({
                       {user.displayName?.charAt(0).toUpperCase() ||
                         user.username.charAt(0).toUpperCase()}
                     </div>
-                    <div className="lockscreen-user-name">
-                      {user.displayName || user.username}
-                    </div>
+                    <div className="lockscreen-user-name">{user.displayName || user.username}</div>
                   </div>
                 ))}
               </div>

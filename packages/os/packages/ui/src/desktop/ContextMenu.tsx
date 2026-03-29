@@ -93,14 +93,7 @@ const SubMenu: React.FC<SubMenuProps> = ({ items, onClose, position, parentRef }
           return <div key={`divider-${index}`} className="desktop-context-menu-divider" />;
         }
 
-        return (
-          <ContextMenuItemComponent
-            key={item.id}
-            item={item}
-            onClose={onClose}
-            isSubmenu
-          />
-        );
+        return <ContextMenuItemComponent key={item.id} item={item} onClose={onClose} isSubmenu />;
       })}
     </div>
   );
@@ -159,23 +152,14 @@ const ContextMenuItemComponent: React.FC<ContextMenuItemComponentProps> = ({
       <span className="desktop-context-menu-label">{item.label}</span>
 
       {/* Shortcut */}
-      {item.shortcut && (
-        <span className="desktop-context-menu-shortcut">{item.shortcut}</span>
-      )}
+      {item.shortcut && <span className="desktop-context-menu-shortcut">{item.shortcut}</span>}
 
       {/* Submenu Arrow */}
-      {item.submenu && (
-        <span className="desktop-context-menu-arrow">▶</span>
-      )}
+      {item.submenu && <span className="desktop-context-menu-arrow">▶</span>}
 
       {/* Submenu */}
       {showSubmenu && item.submenu && (
-        <SubMenu
-          items={item.submenu}
-          onClose={onClose}
-          position="right"
-          parentRef={itemRef}
-        />
+        <SubMenu items={item.submenu} onClose={onClose} position="right" parentRef={itemRef} />
       )}
     </div>
   );
@@ -268,13 +252,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
           return <div key={`divider-${index}`} className="desktop-context-menu-divider" />;
         }
 
-        return (
-          <ContextMenuItemComponent
-            key={item.id}
-            item={item}
-            onClose={onClose}
-          />
-        );
+        return <ContextMenuItemComponent key={item.id} item={item} onClose={onClose} />;
       })}
     </div>
   );

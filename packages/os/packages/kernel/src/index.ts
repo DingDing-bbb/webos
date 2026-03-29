@@ -1,10 +1,10 @@
 // WebOS Kernel 入口
 
 // 先导出本地类型（避免重复导出）
-export type { 
-  User, 
-  UserSession, 
-  UserRole, 
+export type {
+  User,
+  UserSession,
+  UserRole,
   Permission,
   FileSystemNode,
   WindowOptions,
@@ -13,7 +13,7 @@ export type {
   Alarm,
   LocaleConfig,
   SystemConfig,
-  WebOSAPI
+  WebOSAPI,
 } from './types';
 
 export * from './core/windowManager';

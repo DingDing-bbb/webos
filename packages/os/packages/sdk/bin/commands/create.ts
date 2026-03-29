@@ -35,7 +35,7 @@ export async function createAppCommand(appId: string, options: CreateOptions) {
   // 解析应用名称
   const name = options.name || appId.split('.').pop() || 'MyApp';
   const category = options.category || 'utilities';
-  
+
   if (!CATEGORY_NAMES[category]) {
     console.error(chalk.red(`Error: Invalid category "${category}"`));
     console.log(chalk.gray('Valid categories:'), Object.keys(CATEGORY_NAMES).join(', '));
@@ -74,7 +74,10 @@ export async function createAppCommand(appId: string, options: CreateOptions) {
   console.log();
 }
 
-async function generateFiles(targetDir: string, config: { appId: string; name: string; category: string }) {
+async function generateFiles(
+  targetDir: string,
+  config: { appId: string; name: string; category: string }
+) {
   const { appId, name, category } = config;
 
   // package.json

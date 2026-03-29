@@ -9,7 +9,12 @@ interface AuthStageProps {
   onLoginSuccess?: () => void;
 }
 
-export function AuthStage({ type, users = [], systemName = 'WebOS', onLoginSuccess }: AuthStageProps) {
+export function AuthStage({
+  type,
+  users = [],
+  systemName = 'WebOS',
+  onLoginSuccess,
+}: AuthStageProps) {
   if (type === 'oobe') {
     return (
       <OOBE
@@ -49,7 +54,7 @@ export function AuthStage({ type, users = [], systemName = 'WebOS', onLoginSucce
       onLogin={async (username, password) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const secure = (window.webos?.user as any)?.secure;
-        
+
         if (secure) {
           const result = await secure.login(username, password);
           if (result.success) {
@@ -61,7 +66,7 @@ export function AuthStage({ type, users = [], systemName = 'WebOS', onLoginSucce
           }
           return result;
         }
-        
+
         // 没有安全用户管理器，直接登录成功
         localStorage.setItem('webos-last-username', username);
         if (onLoginSuccess) {

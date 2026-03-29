@@ -3,13 +3,13 @@
  * 基于 Windows 触控手势指南
  */
 
-export type GestureType = 
-  | 'tap' 
-  | 'doubleTap' 
-  | 'longPress' 
+export type GestureType =
+  | 'tap'
+  | 'doubleTap'
+  | 'longPress'
   | 'pressAndHold'
-  | 'swipe' 
-  | 'pinch' 
+  | 'swipe'
+  | 'pinch'
   | 'stretch'
   | 'pan'
   | 'rotate';
@@ -60,7 +60,7 @@ const defaultConfig: GestureConfig = {
   swipeVelocity: 0.3,
   pinchThreshold: 10,
   rotateThreshold: 5,
-  edgeThreshold: 20
+  edgeThreshold: 20,
 };
 
 type GestureCallbacks = {
@@ -144,7 +144,7 @@ class GestureDetector {
         duration: Date.now() - startTime,
         fingerCount: originalEvent.touches.length || originalEvent.changedTouches.length,
         timestamp: Date.now(),
-        ...overrides
+        ...overrides,
       };
     };
 
@@ -173,7 +173,7 @@ class GestureDetector {
       touchStart = {
         x: touch.clientX,
         y: touch.clientY,
-        time: Date.now()
+        time: Date.now(),
       };
 
       isPanning = false;
@@ -272,7 +272,7 @@ class GestureDetector {
           const event = createEvent('swipe', e, {
             direction,
             velocity,
-            edge: getEdgePosition(touchStart.x, touchStart.y)
+            edge: getEdgePosition(touchStart.x, touchStart.y),
           });
           callbacks.onSwipe?.(event);
 

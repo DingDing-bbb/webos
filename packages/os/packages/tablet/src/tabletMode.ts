@@ -32,24 +32,24 @@ export interface EdgeGestureConfig {
 }
 
 const defaultConfig: TabletModeConfig = {
-  autoDetect: false,  // 默认不自动检测，避免误判
+  autoDetect: false, // 默认不自动检测，避免误判
   forceTabletMode: false,
   largerTouchTargets: true,
   disableHoverStates: true,
   enableEdgeGestures: true,
   enableTouchFeedback: true,
   autoShowKeyboard: true,
-  taskbarAutoHide: false,  // 默认不自动隐藏任务栏
+  taskbarAutoHide: false, // 默认不自动隐藏任务栏
   disableIOSRubberBand: true,
   disableDoubleTapZoom: true,
-  disableLongPress: true
+  disableLongPress: true,
 };
 
 const defaultEdgeConfig: EdgeGestureConfig = {
   leftSwipeAction: 'startMenu',
   rightSwipeAction: 'actionCenter',
   topSwipeAction: 'fullscreen',
-  bottomSwipeAction: 'taskbar'
+  bottomSwipeAction: 'taskbar',
 };
 
 type TabletModeListener = (isTabletMode: boolean) => void;
@@ -63,10 +63,7 @@ class TabletModeManager {
   private cleanupFns: (() => void)[] = [];
   private modeChangeReason: ModeChangeReason = 'auto';
 
-  constructor(
-    config: Partial<TabletModeConfig> = {},
-    edgeConfig: Partial<EdgeGestureConfig> = {}
-  ) {
+  constructor(config: Partial<TabletModeConfig> = {}, edgeConfig: Partial<EdgeGestureConfig> = {}) {
     this.config = { ...defaultConfig, ...config };
     this.edgeConfig = { ...defaultEdgeConfig, ...edgeConfig };
 
@@ -95,7 +92,11 @@ class TabletModeManager {
     };
 
     if ('screen' in window && 'orientation' in screen) {
-      (screen.orientation as unknown as { addEventListener?: (type: string, handler: () => void) => void }).addEventListener?.('change', checkMode);
+      (
+        screen.orientation as unknown as {
+          addEventListener?: (type: string, handler: () => void) => void;
+        }
+      ).addEventListener?.('change', checkMode);
     }
 
     window.addEventListener('orientationchange', () => {
@@ -159,7 +160,7 @@ class TabletModeManager {
       html.classList.remove('os-no-hover');
       html.classList.remove('os-touch-feedback');
       html.classList.remove('os-taskbar-autohide');
-      
+
       // 恢复iOS默认行为
       this.enableIOSInterferences();
     }
@@ -224,24 +225,24 @@ class TabletModeManager {
       // 允许滚动元素内部滚动
       const target = e.target as HTMLElement;
       const scrollable = target.closest('.os-scrollable, [data-scrollable], .os-window-content');
-      
+
       if (scrollable) {
         const el = scrollable as HTMLElement;
         const { scrollTop, scrollHeight, clientHeight } = el;
-        
+
         // 如果内容可以滚动，允许
         if (scrollHeight > clientHeight) {
           // 检查是否在顶部或底部边界
           const atTop = scrollTop === 0;
           const atBottom = scrollTop + clientHeight >= scrollHeight;
-          
+
           if ((atTop && e.touches[0].clientY > 0) || atBottom) {
             // 允许内部滚动
             return;
           }
         }
       }
-      
+
       // 防止页面级别的橡皮筋效果
       if (e.touches.length === 1) {
         const touch = e.touches[0];
@@ -254,7 +255,7 @@ class TabletModeManager {
 
     // 使用 passive: false 以便调用 preventDefault
     document.addEventListener('touchmove', preventRubberBand, { passive: false });
-    
+
     this.cleanupFns.push(() => {
       document.removeEventListener('touchmove', preventRubberBand);
     });
@@ -388,7 +389,7 @@ class TabletModeManager {
             }
             break;
         }
-      }
+      },
     });
 
     this.cleanupFns.push(cleanup);
@@ -458,7 +459,7 @@ class TabletModeManager {
   }
 
   private notifyListeners(): void {
-    this.listeners.forEach(listener => listener(this.isTabletMode));
+    this.listeners.forEach((listener) => listener(this.isTabletMode));
   }
 
   enable(): void {
@@ -506,7 +507,7 @@ class TabletModeManager {
   }
 
   destroy(): void {
-    this.cleanupFns.forEach(fn => fn());
+    this.cleanupFns.forEach((fn) => fn());
     this.cleanupFns = [];
     this.listeners.clear();
   }

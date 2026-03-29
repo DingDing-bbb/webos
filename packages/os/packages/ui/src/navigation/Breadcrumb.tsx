@@ -41,11 +41,7 @@ interface BreadcrumbDropdownProps {
   onClose: () => void;
 }
 
-const BreadcrumbDropdown: React.FC<BreadcrumbDropdownProps> = ({
-  items,
-  isOpen,
-  onClose,
-}) => {
+const BreadcrumbDropdown: React.FC<BreadcrumbDropdownProps> = ({ items, isOpen, onClose }) => {
   const dropdownRef = useRef<HTMLUListElement>(null);
 
   useEffect(() => {
@@ -67,11 +63,7 @@ const BreadcrumbDropdown: React.FC<BreadcrumbDropdownProps> = ({
   if (!isOpen) return null;
 
   return (
-    <ul
-      ref={dropdownRef}
-      className="nav-breadcrumb-dropdown"
-      role="menu"
-    >
+    <ul ref={dropdownRef} className="nav-breadcrumb-dropdown" role="menu">
       {items.map((item) => (
         <li
           key={item.key}
@@ -141,9 +133,7 @@ const BreadcrumbItemRender: React.FC<BreadcrumbItemRenderProps> = ({
     <>
       {item.icon && <span className="nav-breadcrumb-item-icon">{item.icon}</span>}
       <span className="nav-breadcrumb-item-title">{item.title}</span>
-      {hasDropdown && (
-        <span className="nav-breadcrumb-dropdown-arrow">▼</span>
-      )}
+      {hasDropdown && <span className="nav-breadcrumb-dropdown-arrow">▼</span>}
     </>
   );
 

@@ -24,7 +24,7 @@ export interface WindowTouchConfig {
 const touchTargetDefaults: TouchTargetConfig = {
   minSize: 44,
   minSpacing: 8,
-  padding: 12
+  padding: 12,
 };
 
 const windowTouchDefaults: WindowTouchConfig = {
@@ -33,7 +33,7 @@ const windowTouchDefaults: WindowTouchConfig = {
   enableSwipeToClose: true,
   enableSplitView: true,
   dragThreshold: 5,
-  resizeHandleSize: 12
+  resizeHandleSize: 12,
 };
 
 class TouchHandler {
@@ -73,7 +73,7 @@ class TouchHandler {
       cleanupFns.push(this.setupWindowResize(windowEl));
     }
 
-    this.activeWindows.set(windowEl, () => cleanupFns.forEach(fn => fn()));
+    this.activeWindows.set(windowEl, () => cleanupFns.forEach((fn) => fn()));
   }
 
   disableTouchForWindow(windowEl: HTMLElement): void {
@@ -94,7 +94,7 @@ class TouchHandler {
           startX: e.currentX,
           startY: e.currentY,
           windowStartX: windowEl.offsetLeft,
-          windowStartY: windowEl.offsetTop
+          windowStartY: windowEl.offsetTop,
         };
 
         windowEl.classList.add('os-window-dragging');
@@ -116,7 +116,7 @@ class TouchHandler {
       onPanEnd: () => {
         windowEl.classList.remove('os-window-dragging');
         this.activeDrag = null;
-      }
+      },
     });
   }
 
@@ -125,7 +125,7 @@ class TouchHandler {
     const handles: HTMLElement[] = [];
     const cleanupFns: (() => void)[] = [];
 
-    positions.forEach(pos => {
+    positions.forEach((pos) => {
       const handle = this.createResizeHandle(pos);
       windowEl.appendChild(handle);
       handles.push(handle);
@@ -133,8 +133,8 @@ class TouchHandler {
     });
 
     return () => {
-      handles.forEach(h => h.remove());
-      cleanupFns.forEach(fn => fn());
+      handles.forEach((h) => h.remove());
+      cleanupFns.forEach((fn) => fn());
     };
   }
 
@@ -150,26 +150,26 @@ class TouchHandler {
       position: 'absolute',
       zIndex: '10',
       touchAction: 'none',
-      display: 'block'
+      display: 'block',
     });
 
     if (isCorner) {
       Object.assign(handle.style, {
         width: size,
-        height: size
+        height: size,
       });
     } else {
       if (position === 'n' || position === 's') {
         Object.assign(handle.style, {
           left: size,
           right: size,
-          height: size
+          height: size,
         });
       } else {
         Object.assign(handle.style, {
           top: size,
           bottom: size,
-          width: size
+          width: size,
         });
       }
     }
@@ -195,12 +195,12 @@ class TouchHandler {
       onPanStart: (e: GestureEvent) => {
         startSize = {
           width: windowEl.offsetWidth,
-          height: windowEl.offsetHeight
+          height: windowEl.offsetHeight,
         };
         startPos = { x: e.currentX, y: e.currentY };
         startOffset = {
           x: windowEl.offsetLeft,
-          y: windowEl.offsetTop
+          y: windowEl.offsetTop,
         };
         windowEl.classList.add('os-window-resizing');
       },
@@ -236,7 +236,7 @@ class TouchHandler {
       },
       onPanEnd: () => {
         windowEl.classList.remove('os-window-resizing');
-      }
+      },
     });
   }
 
@@ -249,7 +249,7 @@ class TouchHandler {
         } else {
           window.webos?.window.maximize(windowEl.id);
         }
-      }
+      },
     });
   }
 
@@ -271,7 +271,7 @@ class TouchHandler {
       'button, a, input, select, textarea, [role="button"], [tabindex]'
     );
 
-    interactiveElements.forEach(el => {
+    interactiveElements.forEach((el) => {
       if (el instanceof HTMLElement) {
         this.optimizeTouchTarget(el);
       }
@@ -283,7 +283,7 @@ class TouchHandler {
   }
 
   destroy(): void {
-    this.activeWindows.forEach(cleanup => cleanup());
+    this.activeWindows.forEach((cleanup) => cleanup());
     this.activeWindows.clear();
   }
 }

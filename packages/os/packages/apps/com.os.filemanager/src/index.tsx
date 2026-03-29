@@ -11,15 +11,29 @@ interface FileManagerProps {
 
 // 图标组件
 const FolderIcon = () => (
-  <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.5">
-    <path d="M3 7C3 5.89543 3.89543 5 5 5H9L11 7H19C20.1046 7 21 7.89543 21 9V17C21 18.1046 20.1046 19 19 19H5C3.89543 19 3 18.1046 3 17V7Z"/>
+  <svg
+    viewBox="0 0 24 24"
+    width="24"
+    height="24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+  >
+    <path d="M3 7C3 5.89543 3.89543 5 5 5H9L11 7H19C20.1046 7 21 7.89543 21 9V17C21 18.1046 20.1046 19 19 19H5C3.89543 19 3 18.1046 3 17V7Z" />
   </svg>
 );
 
 const FileIcon = () => (
-  <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.5">
-    <path d="M14 2H6C4.89543 2 4 2.89543 4 4V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V8L14 2Z"/>
-    <path d="M14 2V8H20"/>
+  <svg
+    viewBox="0 0 24 24"
+    width="24"
+    height="24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+  >
+    <path d="M14 2H6C4.89543 2 4 2.89543 4 4V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V8L14 2Z" />
+    <path d="M14 2V8H20" />
   </svg>
 );
 
@@ -50,12 +64,14 @@ export const FileManager: React.FC<FileManagerProps> = () => {
     } else {
       // 尝试打开文件
       const filePath = currentPath === '/' ? `/${file.name}` : `${currentPath}/${file.name}`;
-      
+
       // 检查是否需要提权
-      if (file.permissions.includes('r--') && file.owner === 'root' && !window.webos?.user.isRoot()) {
-        const granted = await window.webos?.user.requestPrivilege(
-          t('auth.required')
-        );
+      if (
+        file.permissions.includes('r--') &&
+        file.owner === 'root' &&
+        !window.webos?.user.isRoot()
+      ) {
+        const granted = await window.webos?.user.requestPrivilege(t('auth.required'));
         if (!granted) return;
       }
 
@@ -68,7 +84,7 @@ export const FileManager: React.FC<FileManagerProps> = () => {
             title: `${file.name} - ${t('app.textEditor')}`,
             width: 700,
             height: 500,
-            content: createTextEditorContent(filePath, content, file.name)
+            content: createTextEditorContent(filePath, content, file.name),
           });
         }
       }
@@ -83,18 +99,22 @@ export const FileManager: React.FC<FileManagerProps> = () => {
   };
 
   const formatDate = (date: Date) => {
-    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return (
+      date.toLocaleDateString() +
+      ' ' +
+      date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    );
   };
 
   const getFileType = (file: FileSystemNode): string => {
     if (file.type === 'directory') return t('file.folder');
     const ext = file.name.split('.').pop()?.toLowerCase() || '';
     const types: Record<string, string> = {
-      'txt': 'Text',
-      'js': 'JavaScript',
-      'json': 'JSON',
-      'css': 'CSS',
-      'html': 'HTML'
+      txt: 'Text',
+      js: 'JavaScript',
+      json: 'JSON',
+      css: 'CSS',
+      html: 'HTML',
     };
     return types[ext] || t('file.file');
   };
@@ -102,13 +122,15 @@ export const FileManager: React.FC<FileManagerProps> = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       {/* 工具栏 */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        padding: '8px',
-        borderBottom: '1px solid var(--os-color-border)',
-        gap: '8px'
-      }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          padding: '8px',
+          borderBottom: '1px solid var(--os-color-border)',
+          gap: '8px',
+        }}
+      >
         <button
           onClick={navigateUp}
           disabled={currentPath === '/'}
@@ -117,18 +139,20 @@ export const FileManager: React.FC<FileManagerProps> = () => {
             border: '1px solid var(--os-color-border)',
             background: 'var(--os-color-bg-secondary)',
             cursor: currentPath === '/' ? 'not-allowed' : 'pointer',
-            opacity: currentPath === '/' ? 0.5 : 1
+            opacity: currentPath === '/' ? 0.5 : 1,
           }}
         >
           ↑
         </button>
-        <div style={{
-          flex: 1,
-          padding: '4px 8px',
-          background: 'var(--os-color-bg-secondary)',
-          border: '1px solid var(--os-color-border)',
-          fontFamily: 'monospace'
-        }}>
+        <div
+          style={{
+            flex: 1,
+            padding: '4px 8px',
+            background: 'var(--os-color-bg-secondary)',
+            border: '1px solid var(--os-color-border)',
+            fontFamily: 'monospace',
+          }}
+        >
           {currentPath}
         </div>
       </div>
@@ -141,13 +165,31 @@ export const FileManager: React.FC<FileManagerProps> = () => {
               <th style={{ padding: '8px', borderBottom: '1px solid var(--os-color-border)' }}>
                 {t('file.name')}
               </th>
-              <th style={{ padding: '8px', borderBottom: '1px solid var(--os-color-border)', width: '100px' }}>
+              <th
+                style={{
+                  padding: '8px',
+                  borderBottom: '1px solid var(--os-color-border)',
+                  width: '100px',
+                }}
+              >
                 {t('file.type')}
               </th>
-              <th style={{ padding: '8px', borderBottom: '1px solid var(--os-color-border)', width: '120px' }}>
+              <th
+                style={{
+                  padding: '8px',
+                  borderBottom: '1px solid var(--os-color-border)',
+                  width: '120px',
+                }}
+              >
                 {t('file.permissions')}
               </th>
-              <th style={{ padding: '8px', borderBottom: '1px solid var(--os-color-border)', width: '150px' }}>
+              <th
+                style={{
+                  padding: '8px',
+                  borderBottom: '1px solid var(--os-color-border)',
+                  width: '150px',
+                }}
+              >
                 {t('file.modified')}
               </th>
             </tr>
@@ -155,7 +197,14 @@ export const FileManager: React.FC<FileManagerProps> = () => {
           <tbody>
             {files.length === 0 ? (
               <tr>
-                <td colSpan={4} style={{ padding: '32px', textAlign: 'center', color: 'var(--os-color-text-muted)' }}>
+                <td
+                  colSpan={4}
+                  style={{
+                    padding: '32px',
+                    textAlign: 'center',
+                    color: 'var(--os-color-text-muted)',
+                  }}
+                >
                   {t('file.empty')}
                 </td>
               </tr>
@@ -166,8 +215,9 @@ export const FileManager: React.FC<FileManagerProps> = () => {
                   onClick={() => setSelectedFile(file.name)}
                   onDoubleClick={() => handleFileDoubleClick(file)}
                   style={{
-                    background: selectedFile === file.name ? 'rgba(0, 120, 212, 0.1)' : 'transparent',
-                    cursor: 'pointer'
+                    background:
+                      selectedFile === file.name ? 'rgba(0, 120, 212, 0.1)' : 'transparent',
+                    cursor: 'pointer',
                   }}
                 >
                   <td style={{ padding: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -180,7 +230,13 @@ export const FileManager: React.FC<FileManagerProps> = () => {
                   <td style={{ padding: '8px', fontFamily: 'monospace', fontSize: '12px' }}>
                     {file.permissions}
                   </td>
-                  <td style={{ padding: '8px', color: 'var(--os-color-text-secondary)', fontSize: '12px' }}>
+                  <td
+                    style={{
+                      padding: '8px',
+                      color: 'var(--os-color-text-secondary)',
+                      fontSize: '12px',
+                    }}
+                  >
                     {formatDate(file.modifiedAt)}
                   </td>
                 </tr>
@@ -243,7 +299,7 @@ export const appInfo: AppInfo = {
   minWidth: 500,
   minHeight: 300,
   resizable: true,
-  singleton: false
+  singleton: false,
 };
 
 export default FileManager;

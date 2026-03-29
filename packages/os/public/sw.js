@@ -10,13 +10,7 @@ const VERSION = __OS_VERSION__;
 const CACHE_NAME = `${CACHE_NAME_PREFIX}-${VERSION}`;
 
 // 需要缓存的资源
-const STATIC_ASSETS = [
-  '/',
-  '/index.html',
-  '/main.js',
-  '/main.css',
-  '/version.json'
-];
+const STATIC_ASSETS = ['/', '/index.html', '/main.js', '/main.css', '/version.json'];
 
 // 需要缓存的路由模式
 const CACHE_PATTERNS = [
@@ -32,46 +26,56 @@ const CACHE_PATTERNS = [
   /\.gif$/,
   /\.webp$/,
   /\.ico$/,
-  /\/locales\/.*\.json$/
+  /\/locales\/.*\.json$/,
 ];
 
 // 安装事件 - 预缓存关键资源
 self.addEventListener('install', (event) => {
   console.log('[SW] Installing service worker version:', VERSION);
-  
+
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      console.log('[SW] Pre-caching static assets');
-      return cache.addAll(STATIC_ASSETS.map(url => {
-        return new Request(url, { cache: 'reload' });
-      })).catch(err => {
-        console.warn('[SW] Some assets failed to cache:', err);
-      });
-    }).then(() => {
-      // 跳过等待，立即激活
-      return self.skipWaiting();
-    })
+    caches
+      .open(CACHE_NAME)
+      .then((cache) => {
+        console.log('[SW] Pre-caching static assets');
+        return cache
+          .addAll(
+            STATIC_ASSETS.map((url) => {
+              return new Request(url, { cache: 'reload' });
+            })
+          )
+          .catch((err) => {
+            console.warn('[SW] Some assets failed to cache:', err);
+          });
+      })
+      .then(() => {
+        // 跳过等待，立即激活
+        return self.skipWaiting();
+      })
   );
 });
 
 // 激活事件 - 清理旧缓存
 self.addEventListener('activate', (event) => {
   console.log('[SW] Activating service worker version:', VERSION);
-  
+
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames
-          .filter(name => name.startsWith(CACHE_NAME_PREFIX) && name !== CACHE_NAME)
-          .map(name => {
-            console.log('[SW] Deleting old cache:', name);
-            return caches.delete(name);
-          })
-      );
-    }).then(() => {
-      // 立即控制所有客户端
-      return self.clients.claim();
-    })
+    caches
+      .keys()
+      .then((cacheNames) => {
+        return Promise.all(
+          cacheNames
+            .filter((name) => name.startsWith(CACHE_NAME_PREFIX) && name !== CACHE_NAME)
+            .map((name) => {
+              console.log('[SW] Deleting old cache:', name);
+              return caches.delete(name);
+            })
+        );
+      })
+      .then(() => {
+        // 立即控制所有客户端
+        return self.clients.claim();
+      })
   );
 });
 
@@ -86,7 +90,8 @@ self.addEventListener('fetch', (event) => {
   }
 
   // 检查是否需要缓存
-  const shouldCache = CACHE_PATTERNS.some(pattern => pattern.test(url.pathname)) ||
+  const shouldCache =
+    CACHE_PATTERNS.some((pattern) => pattern.test(url.pathname)) ||
     url.pathname === '/' ||
     url.pathname === '/index.html';
 
@@ -155,13 +160,14 @@ self.addEventListener('message', (event) => {
 
   if (event.data && event.data.type === 'CLEAR_CACHE') {
     event.waitUntil(
-      caches.keys().then(cacheNames => {
-        return Promise.all(
-          cacheNames.map(name => caches.delete(name))
-        );
-      }).then(() => {
-        event.ports[0].postMessage({ success: true });
-      })
+      caches
+        .keys()
+        .then((cacheNames) => {
+          return Promise.all(cacheNames.map((name) => caches.delete(name)));
+        })
+        .then(() => {
+          event.ports[0].postMessage({ success: true });
+        })
     );
   }
 });

@@ -8,13 +8,13 @@
 
 ## 应用列表
 
-| 应用 | ID | 描述 | 文件夹 |
-|------|-----|------|--------|
-| Clock | `com.os.clock` | 时钟和闹钟 | `com.os.clock/` |
+| 应用         | ID                   | 描述       | 文件夹                |
+| ------------ | -------------------- | ---------- | --------------------- |
+| Clock        | `com.os.clock`       | 时钟和闹钟 | `com.os.clock/`       |
 | File Manager | `com.os.filemanager` | 文件管理器 | `com.os.filemanager/` |
-| Settings | `com.os.settings` | 系统设置 | `com.os.settings/` |
-| Terminal | `com.os.terminal` | 终端模拟器 | `com.os.terminal/` |
-| Browser | `com.os.browser` | 网页浏览器 | `com.os.browser/` |
+| Settings     | `com.os.settings`    | 系统设置   | `com.os.settings/`    |
+| Terminal     | `com.os.terminal`    | 终端模拟器 | `com.os.terminal/`    |
+| Browser      | `com.os.browser`     | 网页浏览器 | `com.os.browser/`     |
 
 ## 目录结构
 
@@ -92,22 +92,22 @@ com.os.xxx/
 
 ```typescript
 interface AppInfo {
-  id: string;              // 应用唯一标识符，如 'com.os.clock'
-  name: string;            // 显示名称
-  nameKey: string;         // 国际化键名
-  description?: string;    // 描述
+  id: string; // 应用唯一标识符，如 'com.os.clock'
+  name: string; // 显示名称
+  nameKey: string; // 国际化键名
+  description?: string; // 描述
   descriptionKey?: string; // 描述国际化键名
-  version: string;         // 版本号
-  author?: string;         // 作者
-  category: AppCategory;   // 分类
+  version: string; // 版本号
+  author?: string; // 作者
+  category: AppCategory; // 分类
   icon: React.FC<IconProps>; // 图标组件
-  component: React.FC;     // 主组件
-  defaultWidth?: number;   // 默认宽度
-  defaultHeight?: number;  // 默认高度
-  minWidth?: number;       // 最小宽度
-  minHeight?: number;      // 最小高度
-  resizable?: boolean;     // 是否可调整大小
-  singleton?: boolean;     // 是否单例（只能打开一个实例）
+  component: React.FC; // 主组件
+  defaultWidth?: number; // 默认宽度
+  defaultHeight?: number; // 默认高度
+  minWidth?: number; // 最小宽度
+  minHeight?: number; // 最小高度
+  resizable?: boolean; // 是否可调整大小
+  singleton?: boolean; // 是否单例（只能打开一个实例）
   permissions?: AppPermission[]; // 权限列表
 }
 ```
@@ -159,7 +159,9 @@ import React from 'react';
 export const AppIcon: React.FC<{ size?: number }> = ({ size = 48 }) => (
   <svg width={size} height={size} viewBox="0 0 48 48">
     <rect width="48" height="48" rx="8" fill="#0078d4" />
-    <text x="24" y="30" textAnchor="middle" fill="white" fontSize="16">MA</text>
+    <text x="24" y="30" textAnchor="middle" fill="white" fontSize="16">
+      MA
+    </text>
   </svg>
 );
 ```

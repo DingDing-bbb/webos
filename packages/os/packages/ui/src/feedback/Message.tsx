@@ -24,14 +24,7 @@
  * ```
  */
 
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-  useEffect,
-  useRef,
-} from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect, useRef } from 'react';
 
 // ============================================================================
 // Types
@@ -91,22 +84,38 @@ const MessageContext = createContext<MessageContextValue | null>(null);
 const DEFAULT_ICONS: Record<MessageType, React.ReactNode> = {
   info: (
     <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-      <path fillRule="evenodd" d="M8 16A8 8 0 108 0a8 8 0 000 16zm1-11a1 1 0 11-2 0 1 1 0 012 0zM7 5a1 1 0 002 0v4a1 1 0 11-2 0V5zm1 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+      <path
+        fillRule="evenodd"
+        d="M8 16A8 8 0 108 0a8 8 0 000 16zm1-11a1 1 0 11-2 0 1 1 0 012 0zM7 5a1 1 0 002 0v4a1 1 0 11-2 0V5zm1 8a1 1 0 100-2 1 1 0 000 2z"
+        clipRule="evenodd"
+      />
     </svg>
   ),
   success: (
     <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-      <path fillRule="evenodd" d="M8 16A8 8 0 108 0a8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L7 8.586 5.707 7.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+      <path
+        fillRule="evenodd"
+        d="M8 16A8 8 0 108 0a8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L7 8.586 5.707 7.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+        clipRule="evenodd"
+      />
     </svg>
   ),
   warning: (
     <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-      <path fillRule="evenodd" d="M8 16A8 8 0 108 0a8 8 0 000 16zM7 4a1 1 0 112 0v3a1 1 0 11-2 0V4zm1 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+      <path
+        fillRule="evenodd"
+        d="M8 16A8 8 0 108 0a8 8 0 000 16zM7 4a1 1 0 112 0v3a1 1 0 11-2 0V4zm1 8a1 1 0 100-2 1 1 0 000 2z"
+        clipRule="evenodd"
+      />
     </svg>
   ),
   error: (
     <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-      <path fillRule="evenodd" d="M8 16A8 8 0 108 0a8 8 0 000 16zM5.293 5.293a1 1 0 011.414 0L8 6.586l1.293-1.293a1 1 0 111.414 1.414L9.414 8l1.293 1.293a1 1 0 01-1.414 1.414L8 9.414l-1.293 1.293a1 1 0 01-1.414-1.414L6.586 8 5.293 6.707a1 1 0 010-1.414z" clipRule="evenodd" />
+      <path
+        fillRule="evenodd"
+        d="M8 16A8 8 0 108 0a8 8 0 000 16zM5.293 5.293a1 1 0 011.414 0L8 6.586l1.293-1.293a1 1 0 111.414 1.414L9.414 8l1.293 1.293a1 1 0 01-1.414 1.414L8 9.414l-1.293 1.293a1 1 0 01-1.414-1.414L6.586 8 5.293 6.707a1 1 0 010-1.414z"
+        clipRule="evenodd"
+      />
     </svg>
   ),
 };
@@ -120,35 +129,35 @@ export interface MessageProviderProps {
   maxCount?: number;
 }
 
-export const MessageProvider: React.FC<MessageProviderProps> = ({
-  children,
-  maxCount = 3,
-}) => {
+export const MessageProvider: React.FC<MessageProviderProps> = ({ children, maxCount = 3 }) => {
   const [messages, setMessages] = useState<MessageItem[]>([]);
 
-  const show = useCallback((options: MessageOptions): string => {
-    const id = `message-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    const message: MessageItem = {
-      ...options,
-      id,
-      type: options.type || 'info',
-      duration: options.duration ?? 0, // 0 means no auto-close
-      createdAt: Date.now(),
-    };
+  const show = useCallback(
+    (options: MessageOptions): string => {
+      const id = `message-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const message: MessageItem = {
+        ...options,
+        id,
+        type: options.type || 'info',
+        duration: options.duration ?? 0, // 0 means no auto-close
+        createdAt: Date.now(),
+      };
 
-    setMessages(prev => {
-      const updated = [...prev, message];
-      return updated.slice(-maxCount);
-    });
+      setMessages((prev) => {
+        const updated = [...prev, message];
+        return updated.slice(-maxCount);
+      });
 
-    return id;
-  }, [maxCount]);
+      return id;
+    },
+    [maxCount]
+  );
 
   const dismiss = useCallback((id: string) => {
-    setMessages(prev => {
-      const message = prev.find(m => m.id === id);
+    setMessages((prev) => {
+      const message = prev.find((m) => m.id === id);
       message?.onClose?.();
-      return prev.filter(m => m.id !== id);
+      return prev.filter((m) => m.id !== id);
     });
   }, []);
 
@@ -196,7 +205,7 @@ const MessageContainer: React.FC = () => {
 
   return (
     <div className="message-container">
-      {messages.map(message => (
+      {messages.map((message) => (
         <MessageCard key={message.id} message={message} />
       ))}
     </div>
@@ -234,20 +243,10 @@ const MessageCard: React.FC<MessageCardProps> = ({ message }) => {
   const icon = message.icon ?? DEFAULT_ICONS[message.type];
 
   return (
-    <div
-      className={`message message--${message.type}`}
-      role="alert"
-      aria-live="polite"
-    >
-      {icon && (
-        <div className="message__icon">
-          {icon}
-        </div>
-      )}
+    <div className={`message message--${message.type}`} role="alert" aria-live="polite">
+      {icon && <div className="message__icon">{icon}</div>}
 
-      <div className="message__content">
-        {message.content}
-      </div>
+      <div className="message__content">{message.content}</div>
 
       {message.actions && message.actions.length > 0 && (
         <div className="message__actions">
@@ -341,15 +340,9 @@ export const Message: React.FC<MessageProps> = ({
       className={`message message--${type} ${filled ? 'message--filled' : ''} ${acrylic ? 'message--acrylic' : ''} ${className}`}
       role="alert"
     >
-      {displayIcon && (
-        <div className="message__icon">
-          {displayIcon}
-        </div>
-      )}
+      {displayIcon && <div className="message__icon">{displayIcon}</div>}
 
-      <div className="message__content">
-        {children}
-      </div>
+      <div className="message__content">{children}</div>
 
       {actions && actions.length > 0 && (
         <div className="message__actions">

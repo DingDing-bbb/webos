@@ -13,11 +13,7 @@ export default function OSMain() {
   switch (stage) {
     case 'boot':
       return (
-        <BootStage 
-          progress={bootProgress} 
-          message={bootMessage}
-          complete={props.boot.complete} 
-        />
+        <BootStage progress={bootProgress} message={bootMessage} complete={props.boot.complete} />
       );
     case 'recovery':
       return (
@@ -34,16 +30,11 @@ export default function OSMain() {
         />
       );
     case 'oobe':
-      return (
-        <AuthStage 
-          type="oobe" 
-          onLoginSuccess={props.auth.onLoginSuccess}
-        />
-      );
+      return <AuthStage type="oobe" onLoginSuccess={props.auth.onLoginSuccess} />;
     case 'lock':
       return (
-        <AuthStage 
-          type="lock" 
+        <AuthStage
+          type="lock"
           users={props.auth.users}
           systemName={props.auth.systemName}
           onLoginSuccess={props.auth.onLoginSuccess}

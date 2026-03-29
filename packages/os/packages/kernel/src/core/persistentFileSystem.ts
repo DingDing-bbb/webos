@@ -44,7 +44,11 @@ export interface FSStats {
 }
 
 export type FSEventType = 'create' | 'write' | 'delete' | 'rename' | 'chmod';
-export interface FSEvent { type: FSEventType; path: string; timestamp: Date; }
+export interface FSEvent {
+  type: FSEventType;
+  path: string;
+  timestamp: Date;
+}
 export type FSEventListener = (event: FSEvent) => void;
 
 export interface UserInfo {
@@ -68,7 +72,7 @@ export class PersistentFileSystem {
    */
   async init(): Promise<void> {
     if (this.initialized || !isUnlocked()) return;
-    
+
     runSql(`
       CREATE TABLE IF NOT EXISTS filesystem (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -84,16 +88,18 @@ export class PersistentFileSystem {
         target TEXT
       )
     `);
-    
+
     runSql(`CREATE INDEX IF NOT EXISTS idx_fs_path ON filesystem(path)`);
     runSql(`CREATE INDEX IF NOT EXISTS idx_fs_parent ON filesystem(name)`);
-    
+
     // 检查是否需要创建默认结构
-    const roots = querySql<{ count: number }>('SELECT COUNT(*) as count FROM filesystem WHERE path = "/"');
+    const roots = querySql<{ count: number }>(
+      'SELECT COUNT(*) as count FROM filesystem WHERE path = "/"'
+    );
     if (roots.length === 0 || roots[0].count === 0) {
       this.createDefaultStructure();
     }
-    
+
     this.initialized = true;
     await saveDatabase();
   }
@@ -111,7 +117,7 @@ export class PersistentFileSystem {
       owner: 'root',
       size: 0,
       createdAt: new Date(),
-      modifiedAt: new Date()
+      modifiedAt: new Date(),
     });
 
     // 默认目录
@@ -141,7 +147,7 @@ export class PersistentFileSystem {
         owner: 'root',
         size: 0,
         createdAt: new Date(),
-        modifiedAt: new Date()
+        modifiedAt: new Date(),
       });
     }
 
@@ -161,7 +167,7 @@ export class PersistentFileSystem {
       content: JSON.stringify({ system: 'WebOS', version: '0.0.1-alpha' }, null, 2),
       size: 50,
       createdAt: new Date(),
-      modifiedAt: new Date()
+      modifiedAt: new Date(),
     });
 
     this.insertNode({
@@ -173,7 +179,7 @@ export class PersistentFileSystem {
       content: '',
       size: 0,
       createdAt: new Date(),
-      modifiedAt: new Date()
+      modifiedAt: new Date(),
     });
 
     // 设备文件
@@ -188,7 +194,7 @@ export class PersistentFileSystem {
         content: '',
         size: 0,
         createdAt: new Date(),
-        modifiedAt: new Date()
+        modifiedAt: new Date(),
       });
     }
   }
@@ -211,7 +217,7 @@ export class PersistentFileSystem {
         node.size,
         node.createdAt.toISOString(),
         node.modifiedAt.toISOString(),
-        node.target || null
+        node.target || null,
       ]
     );
   }
@@ -245,7 +251,7 @@ export class PersistentFileSystem {
 
     if (existing.length === 0 || existing[0].count === 0) {
       const now = new Date();
-      
+
       // 用户主目录
       this.insertNode({
         path: homePath,
@@ -255,7 +261,7 @@ export class PersistentFileSystem {
         owner: username,
         size: 0,
         createdAt: now,
-        modifiedAt: now
+        modifiedAt: now,
       });
 
       // 默认子目录
@@ -269,7 +275,7 @@ export class PersistentFileSystem {
           owner: username,
           size: 0,
           createdAt: now,
-          modifiedAt: now
+          modifiedAt: now,
         });
       }
 
@@ -283,16 +289,16 @@ export class PersistentFileSystem {
   normalizePath(path: string): string {
     if (!path) return '/';
     if (!path.startsWith('/')) path = '/' + path;
-    
+
     const parts = path.split('/').filter(Boolean);
     const result: string[] = [];
-    
+
     for (const part of parts) {
       if (part === '.') continue;
       if (part === '..') result.pop();
       else result.push(part);
     }
-    
+
     return '/' + result.join('/');
   }
 
@@ -301,12 +307,12 @@ export class PersistentFileSystem {
    */
   getNode(path: string): FSNode | null {
     const normalized = this.normalizePath(path);
-    
+
     // 检查缓存
     if (this.cache.has(normalized)) {
       return this.cache.get(normalized)!;
     }
-    
+
     const rows = querySql<{
       id: number;
       path: string;
@@ -320,9 +326,9 @@ export class PersistentFileSystem {
       modified_at: string;
       target: string | null;
     }>('SELECT * FROM filesystem WHERE path = ?', [normalized]);
-    
+
     if (rows.length === 0) return null;
-    
+
     const row = rows[0];
     const node: FSNode = {
       id: row.id,
@@ -335,9 +341,9 @@ export class PersistentFileSystem {
       size: row.size,
       createdAt: new Date(row.created_at),
       modifiedAt: new Date(row.modified_at),
-      target: row.target || undefined
+      target: row.target || undefined,
     };
-    
+
     this.cache.set(normalized, node);
     return node;
   }
@@ -348,23 +354,26 @@ export class PersistentFileSystem {
   private checkAccess(node: FSNode, access: 'read' | 'write' | 'execute'): boolean {
     // root 用户有所有权限
     if (this.currentUser?.isRoot) return true;
-    
+
     const perms = node.permissions;
     const isOwner = this.currentUser?.username === node.owner;
-    
+
     // 解析权限位
     const permStr = perms.substring(1); // 去掉类型位
     const ownerPerms = permStr.substring(0, 3);
     const otherPerms = permStr.substring(6, 9);
-    
+
     const relevantPerms = isOwner ? ownerPerms : otherPerms;
-    
+
     switch (access) {
-      case 'read': return relevantPerms[0] === 'r';
-      case 'write': return relevantPerms[1] === 'w';
-      case 'execute': return relevantPerms[2] === 'x';
+      case 'read':
+        return relevantPerms[0] === 'r';
+      case 'write':
+        return relevantPerms[1] === 'w';
+      case 'execute':
+        return relevantPerms[2] === 'x';
     }
-    
+
     return false;
   }
 
@@ -372,11 +381,11 @@ export class PersistentFileSystem {
    * 触发事件
    */
   private emitEvent(event: FSEvent): void {
-    this.globalWatchers.forEach(listener => listener(event));
-    
+    this.globalWatchers.forEach((listener) => listener(event));
+
     const pathListeners = this.watchers.get(event.path);
     if (pathListeners) {
-      pathListeners.forEach(listener => listener(event));
+      pathListeners.forEach((listener) => listener(event));
     }
   }
 
@@ -397,7 +406,7 @@ export class PersistentFileSystem {
    */
   async write(path: string, content: string): Promise<boolean> {
     if (!isUnlocked()) return false;
-    
+
     const normalized = this.normalizePath(path);
     const node = this.getNode(normalized);
     const now = new Date();
@@ -405,11 +414,13 @@ export class PersistentFileSystem {
     if (node) {
       if (node.type !== 'file') return false;
       if (!this.checkAccess(node, 'write')) return false;
-      
-      runSql(
-        'UPDATE filesystem SET content = ?, size = ?, modified_at = ? WHERE path = ?',
-        [content, content.length, now.toISOString(), normalized]
-      );
+
+      runSql('UPDATE filesystem SET content = ?, size = ?, modified_at = ? WHERE path = ?', [
+        content,
+        content.length,
+        now.toISOString(),
+        normalized,
+      ]);
       this.cache.delete(normalized);
       this.emitEvent({ type: 'write', path: normalized, timestamp: now });
     } else {
@@ -418,7 +429,7 @@ export class PersistentFileSystem {
       const parentNode = this.getNode(parentPath);
       if (!parentNode || parentNode.type !== 'directory') return false;
       if (!this.checkAccess(parentNode, 'write')) return false;
-      
+
       const name = this.basename(normalized);
       this.insertNode({
         path: normalized,
@@ -429,7 +440,7 @@ export class PersistentFileSystem {
         content,
         size: content.length,
         createdAt: now,
-        modifiedAt: now
+        modifiedAt: now,
       });
       this.emitEvent({ type: 'create', path: normalized, timestamp: now });
     }
@@ -450,7 +461,7 @@ export class PersistentFileSystem {
    */
   async delete(path: string): Promise<boolean> {
     if (!isUnlocked()) return false;
-    
+
     const normalized = this.normalizePath(path);
     if (normalized === '/') return false;
 
@@ -476,7 +487,7 @@ export class PersistentFileSystem {
    */
   async mkdir(path: string, recursive: boolean = false): Promise<boolean> {
     if (!isUnlocked()) return false;
-    
+
     const normalized = this.normalizePath(path);
     if (this.exists(normalized)) return false;
 
@@ -485,15 +496,15 @@ export class PersistentFileSystem {
     if (recursive) {
       const parts = normalized.split('/').filter(Boolean);
       let currentPath = '';
-      
+
       for (const part of parts) {
         currentPath += '/' + part;
         const node = this.getNode(currentPath);
-        
+
         if (!node) {
           const parent = this.getNode(this.dirname(currentPath));
           if (parent && !this.checkAccess(parent, 'write')) return false;
-          
+
           this.insertNode({
             path: currentPath,
             name: part,
@@ -502,7 +513,7 @@ export class PersistentFileSystem {
             owner: this.currentUser?.username || 'root',
             size: 0,
             createdAt: now,
-            modifiedAt: now
+            modifiedAt: now,
           });
           this.emitEvent({ type: 'create', path: currentPath, timestamp: now });
         } else if (node.type !== 'directory') {
@@ -523,7 +534,7 @@ export class PersistentFileSystem {
         owner: this.currentUser?.username || 'root',
         size: 0,
         createdAt: now,
-        modifiedAt: now
+        modifiedAt: now,
       });
       this.emitEvent({ type: 'create', path: normalized, timestamp: now });
     }
@@ -538,10 +549,10 @@ export class PersistentFileSystem {
   async rmdir(path: string): Promise<boolean> {
     const node = this.getNode(path);
     if (!node || node.type !== 'directory') return false;
-    
+
     const children = this.readdir(path);
     if (children.length > 0) return false;
-    
+
     return this.delete(path);
   }
 
@@ -555,7 +566,7 @@ export class PersistentFileSystem {
 
     const normalized = this.normalizePath(path);
     const prefix = normalized === '/' ? '/' : normalized + '/';
-    
+
     const rows = querySql<{
       name: string;
       type: string;
@@ -570,19 +581,19 @@ export class PersistentFileSystem {
 
     // 只返回直接子项
     const depth = normalized.split('/').filter(Boolean).length;
-    
+
     return rows
-      .filter(row => {
+      .filter((row) => {
         const pathParts = row.name.split('/').filter(Boolean);
         return pathParts.length === depth + 1;
       })
-      .map(row => ({
+      .map((row) => ({
         name: row.name.split('/').pop() || row.name,
         type: row.type as FSNodeType,
         permissions: row.permissions,
         owner: row.owner,
         size: row.size,
-        modifiedAt: new Date(row.modified_at)
+        modifiedAt: new Date(row.modified_at),
       }));
   }
 
@@ -596,7 +607,7 @@ export class PersistentFileSystem {
 
     const normalized = this.normalizePath(path);
     const prefix = normalized === '/' ? '/' : normalized + '/';
-    
+
     const rows = querySql<{
       id: number;
       path: string;
@@ -608,19 +619,16 @@ export class PersistentFileSystem {
       size: number;
       created_at: string;
       modified_at: string;
-    }>(
-      'SELECT * FROM filesystem WHERE path LIKE ? AND path != ?',
-      [prefix + '%', normalized]
-    );
+    }>('SELECT * FROM filesystem WHERE path LIKE ? AND path != ?', [prefix + '%', normalized]);
 
     const depth = normalized.split('/').filter(Boolean).length;
-    
+
     return rows
-      .filter(row => {
+      .filter((row) => {
         const pathParts = row.path.split('/').filter(Boolean);
         return pathParts.length === depth + 1;
       })
-      .map(row => ({
+      .map((row) => ({
         id: row.id,
         path: row.path,
         name: row.name,
@@ -630,7 +638,7 @@ export class PersistentFileSystem {
         content: row.content,
         size: row.size,
         createdAt: new Date(row.created_at),
-        modifiedAt: new Date(row.modified_at)
+        modifiedAt: new Date(row.modified_at),
       }));
   }
 
@@ -648,17 +656,18 @@ export class PersistentFileSystem {
    */
   async chmod(path: string, mode: string): Promise<boolean> {
     if (!isUnlocked()) return false;
-    
+
     const node = this.getNode(path);
     if (!node || !this.checkAccess(node, 'write')) return false;
-    
+
     if (!/^[dcb-][rwx-]{9}$/.test(mode)) return false;
-    
-    runSql(
-      'UPDATE filesystem SET permissions = ?, modified_at = ? WHERE path = ?',
-      [mode, new Date().toISOString(), this.normalizePath(path)]
-    );
-    
+
+    runSql('UPDATE filesystem SET permissions = ?, modified_at = ? WHERE path = ?', [
+      mode,
+      new Date().toISOString(),
+      this.normalizePath(path),
+    ]);
+
     this.cache.delete(this.normalizePath(path));
     await saveDatabase();
     this.emitEvent({ type: 'chmod', path: this.normalizePath(path), timestamp: new Date() });
@@ -670,13 +679,13 @@ export class PersistentFileSystem {
    */
   async rename(oldPath: string, newPath: string): Promise<boolean> {
     if (!isUnlocked()) return false;
-    
+
     const node = this.getNode(oldPath);
     if (!node || !this.checkAccess(node, 'write')) return false;
-    
+
     const newParent = this.getNode(this.dirname(newPath));
     if (!newParent || !this.checkAccess(newParent, 'write')) return false;
-    
+
     if (this.exists(newPath)) return false;
 
     const normalizedOld = this.normalizePath(oldPath);
@@ -684,18 +693,21 @@ export class PersistentFileSystem {
     const newName = this.basename(newPath);
 
     // 更新节点
-    runSql(
-      'UPDATE filesystem SET path = ?, name = ?, modified_at = ? WHERE path = ?',
-      [normalizedNew, newName, new Date().toISOString(), normalizedOld]
-    );
+    runSql('UPDATE filesystem SET path = ?, name = ?, modified_at = ? WHERE path = ?', [
+      normalizedNew,
+      newName,
+      new Date().toISOString(),
+      normalizedOld,
+    ]);
 
     // 如果是目录，更新所有子路径
     if (node.type === 'directory') {
       const prefix = normalizedOld === '/' ? '/' : normalizedOld + '/';
-      runSql(
-        'UPDATE filesystem SET path = REPLACE(path, ?, ?) WHERE path LIKE ?',
-        [normalizedOld, normalizedNew, prefix + '%']
-      );
+      runSql('UPDATE filesystem SET path = REPLACE(path, ?, ?) WHERE path LIKE ?', [
+        normalizedOld,
+        normalizedNew,
+        prefix + '%',
+      ]);
     }
 
     this.cache.clear();
@@ -774,7 +786,7 @@ export class PersistentFileSystem {
       totalNodes: (files[0]?.count || 0) + (dirs[0]?.count || 0),
       totalFiles: files[0]?.count || 0,
       totalDirectories: dirs[0]?.count || 0,
-      totalSize: files[0]?.total_size || 0
+      totalSize: files[0]?.total_size || 0,
     };
   }
 

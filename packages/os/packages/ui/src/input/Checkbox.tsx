@@ -26,8 +26,10 @@ import React, {
 // Types
 // ============================================================================
 
-export interface CheckboxProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'checked' | 'onChange'> {
+export interface CheckboxProps extends Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  'type' | 'checked' | 'onChange'
+> {
   /** 是否选中 */
   checked?: boolean;
   /** 默认是否选中 */
@@ -176,7 +178,9 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
       indeterminate && 'webos-checkbox-wrapper--indeterminate',
       isDisabled && 'webos-checkbox-wrapper--disabled',
       className,
-    ].filter(Boolean).join(' ');
+    ]
+      .filter(Boolean)
+      .join(' ');
 
     return (
       <label className={wrapperClasses}>
@@ -251,7 +255,9 @@ export const CheckboxGroup: React.FC<CheckboxGroupProps> = ({
     'webos-checkbox-group',
     vertical && 'webos-checkbox-group--vertical',
     className,
-  ].filter(Boolean).join(' ');
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   const contextValue: CheckboxGroupContextValue = {
     name,

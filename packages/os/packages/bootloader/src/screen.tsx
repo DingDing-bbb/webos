@@ -1,6 +1,6 @@
 /**
  * BootScreen - 启动界面组合组件
- * 
+ *
  * 执行真正的启动流程
  */
 
@@ -22,10 +22,7 @@ export interface BootScreenProps {
 // BootScreen Component
 // ============================================================================
 
-export const BootScreen: React.FC<BootScreenProps> = ({
-  onComplete,
-  showUI = true,
-}) => {
+export const BootScreen: React.FC<BootScreenProps> = ({ onComplete, showUI = true }) => {
   const [progress, setProgress] = React.useState(0);
   const [statusText, setStatusText] = React.useState('Starting...');
   const [error, setError] = React.useState<string | null>(null);

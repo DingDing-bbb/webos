@@ -27,19 +27,25 @@ const isDevMode = (): boolean => {
 // 内嵌的加载动画
 const Spinner: React.FC<{ size?: number }> = ({ size = 20 }) => (
   <div style={{ display: 'inline-flex', width: size, height: size }}>
-    <svg 
-      width={size} 
-      height={size} 
-      stroke="currentColor" 
-      viewBox="0 0 24 24" 
+    <svg
+      width={size}
+      height={size}
+      stroke="currentColor"
+      viewBox="0 0 24 24"
       style={{ display: 'block' }}
     >
       <g style={{ transformOrigin: 'center', animation: 'login-spin 2s linear infinite' }}>
-        <circle 
-          cx="12" cy="12" r="9.5" fill="none" strokeWidth="3" strokeLinecap="round"
-          style={{ 
-            strokeDasharray: '0 150', strokeDashoffset: '0',
-            animation: 'login-dash 1.5s ease-in-out infinite'
+        <circle
+          cx="12"
+          cy="12"
+          r="9.5"
+          fill="none"
+          strokeWidth="3"
+          strokeLinecap="round"
+          style={{
+            strokeDasharray: '0 150',
+            strokeDashoffset: '0',
+            animation: 'login-dash 1.5s ease-in-out infinite',
           }}
         />
       </g>
@@ -60,7 +66,9 @@ export const SecureLoginScreen: React.FC<SecureLoginScreenProps> = ({ onLoginSuc
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [visibleUsers, setVisibleUsers] = useState<Array<{ username: string; displayName: string; isRoot: boolean }>>([]);
+  const [visibleUsers, setVisibleUsers] = useState<
+    Array<{ username: string; displayName: string; isRoot: boolean }>
+  >([]);
   const [_allUserCount, setAllUserCount] = useState(0);
   const [showUserInput, setShowUserInput] = useState(false);
   const [showSwitchAccount, setShowSwitchAccount] = useState(false);
@@ -93,38 +101,41 @@ export const SecureLoginScreen: React.FC<SecureLoginScreenProps> = ({ onLoginSuc
     loadUsers();
   }, [loadUsers]);
 
-  const handleSubmit = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!username.trim()) {
-      setError('Please enter username');
-      return;
-    }
-    
-    if (!password) {
-      setError('Please enter password');
-      return;
-    }
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
 
-    setIsLoading(true);
-    setError('');
-
-    try {
-      const result = await secureUserManager.login(username, password);
-      
-      if (result.success) {
-        onLoginSuccess();
-      } else {
-        setError(result.error || 'Login failed');
-        setPassword('');
+      if (!username.trim()) {
+        setError('Please enter username');
+        return;
       }
-    } catch {
-      setError('An error occurred during login');
-      setPassword('');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [username, password, onLoginSuccess]);
+
+      if (!password) {
+        setError('Please enter password');
+        return;
+      }
+
+      setIsLoading(true);
+      setError('');
+
+      try {
+        const result = await secureUserManager.login(username, password);
+
+        if (result.success) {
+          onLoginSuccess();
+        } else {
+          setError(result.error || 'Login failed');
+          setPassword('');
+        }
+      } catch {
+        setError('An error occurred during login');
+        setPassword('');
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [username, password, onLoginSuccess]
+  );
 
   const handleSwitchAccount = () => {
     setShowUserInput(true);
@@ -156,10 +167,10 @@ export const SecureLoginScreen: React.FC<SecureLoginScreenProps> = ({ onLoginSuc
     try {
       // 清除所有 IndexedDB 数据
       await secureUserManager.resetAndReinit();
-      
+
       // 清除 localStorage
       localStorage.clear();
-      
+
       // 清除 IndexedDB 数据库
       const databases = await indexedDB.databases();
       for (const db of databases) {
@@ -167,7 +178,7 @@ export const SecureLoginScreen: React.FC<SecureLoginScreenProps> = ({ onLoginSuc
           indexedDB.deleteDatabase(db.name);
         }
       }
-      
+
       // 刷新页面
       window.location.reload();
     } catch (error) {
@@ -182,23 +193,19 @@ export const SecureLoginScreen: React.FC<SecureLoginScreenProps> = ({ onLoginSuc
     <div className="os-lock-screen">
       {/* 壁纸背景 */}
       <div className="os-wallpaper os-wallpaper-lock" />
-      
+
       {/* 开发模式标识 */}
-      {devMode && (
-        <div className="os-lock-dev-badge">
-          ⚠️ DEV MODE
-        </div>
-      )}
-      
+      {devMode && <div className="os-lock-dev-badge">⚠️ DEV MODE</div>}
+
       {/* 锁屏内容 */}
       <div className="os-lock-content">
         {/* 系统Logo */}
         <div className="os-lock-logo">
           <svg width="60" height="24" viewBox="0 0 60 24">
-            <text 
-              x="50%" 
-              y="50%" 
-              dominantBaseline="middle" 
+            <text
+              x="50%"
+              y="50%"
+              dominantBaseline="middle"
               textAnchor="middle"
               fill="currentColor"
               fontSize="18"
@@ -225,7 +232,7 @@ export const SecureLoginScreen: React.FC<SecureLoginScreenProps> = ({ onLoginSuc
         {!isSingleUserMode && visibleUsers.length > 1 && !showUserInput && (
           <div className="os-lock-user-section">
             <div className="os-lock-user-list">
-              {visibleUsers.map(user => (
+              {visibleUsers.map((user) => (
                 <button
                   key={user.username}
                   className="os-lock-user-item"
@@ -258,7 +265,7 @@ export const SecureLoginScreen: React.FC<SecureLoginScreenProps> = ({ onLoginSuc
               />
             </div>
           )}
-          
+
           <div className="os-lock-field">
             <input
               id="login-password"
@@ -275,27 +282,37 @@ export const SecureLoginScreen: React.FC<SecureLoginScreenProps> = ({ onLoginSuc
 
           {error && (
             <div className="os-lock-error">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="12" cy="12" r="10"/>
-                <line x1="12" y1="8" x2="12" y2="12"/>
-                <line x1="12" y1="16" x2="12.01" y2="16"/>
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
               </svg>
               {error}
             </div>
           )}
 
-          <button 
-            type="submit" 
-            className="os-lock-submit"
-            disabled={isLoading}
-          >
+          <button type="submit" className="os-lock-submit" disabled={isLoading}>
             {isLoading ? (
               <Spinner size={20} />
             ) : (
               <>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                  <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                 </svg>
                 Login
               </>
@@ -305,8 +322,15 @@ export const SecureLoginScreen: React.FC<SecureLoginScreenProps> = ({ onLoginSuc
 
         {/* 安全提示 */}
         <div className="os-lock-security-hint">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          <svg
+            width="12"
+            height="12"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
           </svg>
           Protected by PBKDF2 100K + AES-256-GCM
         </div>
@@ -324,16 +348,19 @@ export const SecureLoginScreen: React.FC<SecureLoginScreenProps> = ({ onLoginSuc
 
       {/* 右下角切换账号按钮 */}
       {showSwitchAccount && (
-        <button 
-          className="os-lock-switch-account"
-          onClick={handleSwitchAccount}
-          type="button"
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-            <circle cx="9" cy="7" r="4"/>
-            <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
-            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        <button className="os-lock-switch-account" onClick={handleSwitchAccount} type="button">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
           </svg>
           Switch Account
         </button>
@@ -341,7 +368,7 @@ export const SecureLoginScreen: React.FC<SecureLoginScreenProps> = ({ onLoginSuc
 
       {/* 开发模式：重置按钮 */}
       {devMode && (
-        <button 
+        <button
           className={`os-lock-reset-btn ${showResetConfirm ? 'confirm' : ''}`}
           onClick={handleResetSystem}
           type="button"
@@ -353,8 +380,15 @@ export const SecureLoginScreen: React.FC<SecureLoginScreenProps> = ({ onLoginSuc
             '⚠️ Click again to confirm reset'
           ) : (
             <>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
               </svg>
               Reset System
             </>

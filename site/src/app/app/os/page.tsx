@@ -18,19 +18,14 @@ if (typeof globalThis !== 'undefined') {
 // 检测触屏设备
 function detectTouchDevice(): boolean {
   if (typeof window === 'undefined') return false;
-  return (
-    'ontouchstart' in window ||
-    navigator.maxTouchPoints > 0
-  );
+  return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 }
 
 // 加载界面
 function LoadingScreen() {
   return (
     <div className="fixed inset-0 bg-zinc-950 flex items-center justify-center">
-      <div 
-        className="w-8 h-8 border-2 border-zinc-700 border-t-white rounded-full animate-spin"
-      />
+      <div className="w-8 h-8 border-2 border-zinc-700 border-t-white rounded-full animate-spin" />
     </div>
   );
 }
@@ -60,12 +55,12 @@ export default function OSPage() {
   }
 
   return (
-    <div 
+    <div
       className={`os-container ${isTouchDevice ? 'os-touch-mode' : 'os-desktop-mode'}`}
       style={{
         position: 'fixed',
         inset: 0,
-        overflow: 'hidden'
+        overflow: 'hidden',
       }}
     >
       <Component />

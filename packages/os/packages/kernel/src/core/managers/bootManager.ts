@@ -42,7 +42,7 @@ export class BootManager {
   private saveState(): void {
     try {
       const state = JSON.stringify({
-        oobeComplete: this.oobeComplete
+        oobeComplete: this.oobeComplete,
       });
       console.log('[BootManager] Saving state:', state);
       localStorage.setItem(this.storageKey, state);

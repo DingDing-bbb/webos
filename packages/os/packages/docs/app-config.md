@@ -19,40 +19,40 @@
 
 ### 必填字段
 
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| `id` | string | 应用唯一标识，格式：`com.company.appname` |
-| `name` | string | 应用名称 |
-| `version` | string | 版本号，遵循语义化版本 |
-| `category` | string | 应用分类 |
-| `main` | string | 入口文件路径 |
-| `icon` | string | 图标文件路径 |
+| 字段       | 类型   | 说明                                      |
+| ---------- | ------ | ----------------------------------------- |
+| `id`       | string | 应用唯一标识，格式：`com.company.appname` |
+| `name`     | string | 应用名称                                  |
+| `version`  | string | 版本号，遵循语义化版本                    |
+| `category` | string | 应用分类                                  |
+| `main`     | string | 入口文件路径                              |
+| `icon`     | string | 图标文件路径                              |
 
 ### 可选字段
 
-| 字段 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `description` | string | - | 应用描述 |
-| `author` | string | - | 作者信息 |
-| `defaultWidth` | number | 700 | 默认窗口宽度 |
-| `defaultHeight` | number | 450 | 默认窗口高度 |
-| `minWidth` | number | 200 | 最小窗口宽度 |
-| `minHeight` | number | 150 | 最小窗口高度 |
-| `resizable` | boolean | true | 是否可调整窗口大小 |
-| `singleton` | boolean | false | 是否单例模式 |
-| `permissions` | string[] | [] | 所需权限列表 |
+| 字段            | 类型     | 默认值 | 说明               |
+| --------------- | -------- | ------ | ------------------ |
+| `description`   | string   | -      | 应用描述           |
+| `author`        | string   | -      | 作者信息           |
+| `defaultWidth`  | number   | 700    | 默认窗口宽度       |
+| `defaultHeight` | number   | 450    | 默认窗口高度       |
+| `minWidth`      | number   | 200    | 最小窗口宽度       |
+| `minHeight`     | number   | 150    | 最小窗口高度       |
+| `resizable`     | boolean  | true   | 是否可调整窗口大小 |
+| `singleton`     | boolean  | false  | 是否单例模式       |
+| `permissions`   | string[] | []     | 所需权限列表       |
 
 ## 应用分类
 
 ```typescript
 type AppCategory =
-  | 'system'       // 系统工具
+  | 'system' // 系统工具
   | 'productivity' // 生产力
-  | 'media'        // 媒体
-  | 'games'        // 游戏
-  | 'network'      // 网络
-  | 'development'  // 开发
-  | 'utilities';   // 实用工具
+  | 'media' // 媒体
+  | 'games' // 游戏
+  | 'network' // 网络
+  | 'development' // 开发
+  | 'utilities'; // 实用工具
 ```
 
 ## 权限配置
@@ -60,12 +60,12 @@ type AppCategory =
 ```json
 {
   "permissions": [
-    "fs:read",      // 文件系统读取
-    "fs:write",     // 文件系统写入
-    "network",      // 网络访问
+    "fs:read", // 文件系统读取
+    "fs:write", // 文件系统写入
+    "network", // 网络访问
     "notification", // 通知权限
-    "clipboard",    // 剪贴板访问
-    "storage"       // 本地存储
+    "clipboard", // 剪贴板访问
+    "storage" // 本地存储
   ]
 }
 ```

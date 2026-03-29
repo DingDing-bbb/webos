@@ -19,7 +19,7 @@
    ============================================ */
 
 .os-large-touch-targets button,
-.os-large-touch-targets [role="button"],
+.os-large-touch-targets [role='button'],
 .os-large-touch-targets .os-btn {
   min-height: var(--os-touch-target-size);
   min-width: var(--os-touch-target-size);
@@ -33,11 +33,11 @@
   align-items: center;
 }
 
-.os-large-touch-targets input[type="text"],
-.os-large-touch-targets input[type="search"],
-.os-large-touch-targets input[type="email"],
-.os-large-touch-targets input[type="password"],
-.os-large-touch-targets input[type="number"],
+.os-large-touch-targets input[type='text'],
+.os-large-touch-targets input[type='search'],
+.os-large-touch-targets input[type='email'],
+.os-large-touch-targets input[type='password'],
+.os-large-touch-targets input[type='number'],
 .os-large-touch-targets textarea,
 .os-large-touch-targets select {
   min-height: var(--os-touch-target-size);
@@ -191,7 +191,7 @@
     min-width: 70px;
     min-height: 70px;
   }
-  
+
   .os-tablet-mode .os-taskbar {
     height: 64px;
   }

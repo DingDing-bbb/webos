@@ -1,7 +1,7 @@
 /**
  * @fileoverview WebOS SDK - React Hooks
  * @module @webos/sdk/react
- * 
+ *
  * 应用开发所需的 React Hooks
  */
 
@@ -13,7 +13,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 
 /**
  * 获取翻译函数
- * 
+ *
  * @example
  * ```tsx
  * function MyApp() {
@@ -22,7 +22,10 @@ import { useState, useEffect, useCallback, useRef } from 'react';
  * }
  * ```
  */
-export function useTranslation(): (key: string, params?: Record<string, string | number>) => string {
+export function useTranslation(): (
+  key: string,
+  params?: Record<string, string | number>
+) => string {
   const [, setLocale] = useState(() => {
     if (typeof window !== 'undefined' && window.webos) {
       return window.webos.i18n.getCurrentLocale();
@@ -32,11 +35,11 @@ export function useTranslation(): (key: string, params?: Record<string, string |
 
   useEffect(() => {
     if (typeof window === 'undefined' || !window.webos) return;
-    
+
     const unsubscribe = window.webos.i18n.onLocaleChange((newLocale) => {
       setLocale(newLocale);
     });
-    
+
     return unsubscribe;
   }, []);
 
@@ -67,13 +70,13 @@ export function useLocale(): string {
 
   useEffect(() => {
     if (typeof window === 'undefined' || !window.webos) return;
-    
+
     setLocale(window.webos.i18n.getCurrentLocale());
-    
+
     const unsubscribe = window.webos.i18n.onLocaleChange((newLocale) => {
       setLocale(newLocale);
     });
-    
+
     return unsubscribe;
   }, []);
 
@@ -86,7 +89,7 @@ export function useLocale(): string {
 
 /**
  * 获取当前主题
- * 
+ *
  * @example
  * ```tsx
  * function MyApp() {
@@ -108,7 +111,7 @@ export function useTheme(): {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('webos-theme');
       if (saved === 'light' || saved === 'dark') return saved;
-      return document.documentElement.getAttribute('data-theme') as 'light' | 'dark' || 'light';
+      return (document.documentElement.getAttribute('data-theme') as 'light' | 'dark') || 'light';
     }
     return 'light';
   });
@@ -139,17 +142,23 @@ export function useTheme(): {
  * 获取窗口管理器
  */
 export function useWindowManager() {
-  const open = useCallback((appId: string, options?: {
-    title?: string;
-    width?: number;
-    height?: number;
-    content?: HTMLElement | string;
-  }) => {
-    if (typeof window !== 'undefined' && window.webos) {
-      return window.webos.window.open(appId, options);
-    }
-    return null;
-  }, []);
+  const open = useCallback(
+    (
+      appId: string,
+      options?: {
+        title?: string;
+        width?: number;
+        height?: number;
+        content?: HTMLElement | string;
+      }
+    ) => {
+      if (typeof window !== 'undefined' && window.webos) {
+        return window.webos.window.open(appId, options);
+      }
+      return null;
+    },
+    []
+  );
 
   const close = useCallback((windowId: string) => {
     if (typeof window !== 'undefined' && window.webos) {
@@ -227,14 +236,21 @@ export function useFileSystem() {
  * 显示通知
  */
 export function useNotification() {
-  const show = useCallback((title: string, message: string, options?: {
-    icon?: string;
-    duration?: number;
-  }) => {
-    if (typeof window !== 'undefined' && window.webos) {
-      window.webos.notify.show(title, message, options);
-    }
-  }, []);
+  const show = useCallback(
+    (
+      title: string,
+      message: string,
+      options?: {
+        icon?: string;
+        duration?: number;
+      }
+    ) => {
+      if (typeof window !== 'undefined' && window.webos) {
+        window.webos.notify.show(title, message, options);
+      }
+    },
+    []
+  );
 
   return { show };
 }
@@ -246,7 +262,10 @@ export function useNotification() {
 /**
  * 持久化状态（自动同步到 localStorage）
  */
-export function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T | ((prev: T) => T)) => void] {
+export function useLocalStorage<T>(
+  key: string,
+  initialValue: T
+): [T, (value: T | ((prev: T) => T)) => void] {
   const [storedValue, setStoredValue] = useState<T>(() => {
     if (typeof window === 'undefined') return initialValue;
     try {
@@ -257,15 +276,18 @@ export function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T 
     }
   });
 
-  const setValue = useCallback((value: T | ((prev: T) => T)) => {
-    setStoredValue(prev => {
-      const newValue = value instanceof Function ? value(prev) : value;
-      if (typeof window !== 'undefined') {
-        localStorage.setItem(key, JSON.stringify(newValue));
-      }
-      return newValue;
-    });
-  }, [key]);
+  const setValue = useCallback(
+    (value: T | ((prev: T) => T)) => {
+      setStoredValue((prev) => {
+        const newValue = value instanceof Function ? value(prev) : value;
+        if (typeof window !== 'undefined') {
+          localStorage.setItem(key, JSON.stringify(newValue));
+        }
+        return newValue;
+      });
+    },
+    [key]
+  );
 
   return [storedValue, setValue];
 }
@@ -357,7 +379,7 @@ export function useUser() {
 
 /**
  * 注册键盘快捷键
- * 
+ *
  * @example
  * ```tsx
  * useKeyboardShortcut('ctrl+s', () => {

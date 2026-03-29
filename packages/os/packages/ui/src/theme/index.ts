@@ -5,7 +5,15 @@
 
 // Theme types
 export type ThemeMode = 'light' | 'dark' | 'system';
-export type AccentColor = 'blue' | 'purple' | 'pink' | 'red' | 'orange' | 'yellow' | 'green' | 'teal';
+export type AccentColor =
+  | 'blue'
+  | 'purple'
+  | 'pink'
+  | 'red'
+  | 'orange'
+  | 'yellow'
+  | 'green'
+  | 'teal';
 export type BlurIntensity = 'low' | 'medium' | 'high' | 'ultra';
 
 export interface ThemeConfig {
@@ -49,7 +57,7 @@ export const defaultThemeConfig: ThemeConfig = {
   animations: true,
   noiseTexture: true,
   acrylicEnabled: true,
-  micaEnabled: true
+  micaEnabled: true,
 };
 
 export const defaultVisualEffects: VisualEffectsConfig = {
@@ -69,7 +77,7 @@ export const defaultVisualEffects: VisualEffectsConfig = {
   tooltipAnimations: true,
   cursorShadows: true,
   iconLabelShadows: true,
-  minMaxAnimations: true
+  minMaxAnimations: true,
 };
 
 // Accent color definitions
@@ -81,7 +89,7 @@ export const accentColors: Record<AccentColor, { primary: string; light: string;
   orange: { primary: '#ff8c00', light: '#ffab40', dark: '#e07000' },
   yellow: { primary: '#ffb900', light: '#ffd35c', dark: '#d49a00' },
   green: { primary: '#107c10', light: '#2da02d', dark: '#0b5c0b' },
-  teal: { primary: '#00b294', light: '#33c9af', dark: '#008f75' }
+  teal: { primary: '#00b294', light: '#33c9af', dark: '#008f75' },
 };
 
 // Blur intensity values
@@ -89,7 +97,7 @@ export const blurIntensities: Record<string, string> = {
   low: '12px',
   medium: '25px',
   high: '40px',
-  ultra: '80px'
+  ultra: '80px',
 };
 
 // Theme manager class
@@ -171,7 +179,7 @@ export class ThemeManager {
 
   private applyEffects(): void {
     const root = document.documentElement;
-    
+
     // Apply effect toggles as data attributes
     Object.entries(this.effects).forEach(([key, value]) => {
       root.setAttribute(`data-effect-${key}`, value ? 'true' : 'false');
@@ -196,14 +204,14 @@ export class ThemeManager {
     this.config = { ...this.config, ...updates };
     this.saveConfig();
     this.applyTheme();
-    this.listeners.forEach(fn => fn(this.config));
+    this.listeners.forEach((fn) => fn(this.config));
   }
 
   updateEffects(updates: Partial<VisualEffectsConfig>): void {
     this.effects = { ...this.effects, ...updates };
     this.saveEffects();
     this.applyEffects();
-    this.effectListeners.forEach(fn => fn(this.effects));
+    this.effectListeners.forEach((fn) => fn(this.effects));
   }
 
   subscribe(callback: (config: ThemeConfig) => void): () => void {
@@ -237,7 +245,7 @@ export function useTheme(): {
 } {
   return {
     config: themeManager.getConfig(),
-    updateConfig: (updates) => themeManager.updateConfig(updates)
+    updateConfig: (updates) => themeManager.updateConfig(updates),
   };
 }
 
@@ -247,7 +255,7 @@ export function useVisualEffects(): {
 } {
   return {
     effects: themeManager.getEffects(),
-    updateEffects: (updates) => themeManager.updateEffects(updates)
+    updateEffects: (updates) => themeManager.updateEffects(updates),
   };
 }
 

@@ -55,7 +55,9 @@
   background: var(--os-color-bg);
   font-size: var(--os-font-size-md);
   border-radius: var(--os-radius-sm);
-  transition: border-color var(--os-transition-fast), box-shadow var(--os-transition-fast);
+  transition:
+    border-color var(--os-transition-fast),
+    box-shadow var(--os-transition-fast);
 }
 
 .os-auth-input:focus {

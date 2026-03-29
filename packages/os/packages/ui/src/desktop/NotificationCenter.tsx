@@ -96,7 +96,14 @@ const ClearAllIcon = () => (
 );
 
 const WifiIcon = ({ isActive }: { isActive?: boolean }) => (
-  <svg viewBox="0 0 24 24" fill={isActive ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" width="20" height="20">
+  <svg
+    viewBox="0 0 24 24"
+    fill={isActive ? 'currentColor' : 'none'}
+    stroke="currentColor"
+    strokeWidth="2"
+    width="20"
+    height="20"
+  >
     <path d="M5 12.55a11 11 0 0 1 14.08 0" />
     <path d="M1.42 9a16 16 0 0 1 21.16 0" />
     <path d="M8.53 16.11a6 6 0 0 1 6.95 0" />
@@ -105,19 +112,40 @@ const WifiIcon = ({ isActive }: { isActive?: boolean }) => (
 );
 
 const BluetoothIcon = ({ isActive }: { isActive?: boolean }) => (
-  <svg viewBox="0 0 24 24" fill={isActive ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" width="20" height="20">
+  <svg
+    viewBox="0 0 24 24"
+    fill={isActive ? 'currentColor' : 'none'}
+    stroke="currentColor"
+    strokeWidth="2"
+    width="20"
+    height="20"
+  >
     <polyline points="6.5 6.5 17.5 17.5 12 23 12 1 17.5 6.5 6.5 17.5" />
   </svg>
 );
 
 const AirplaneIcon = ({ isActive }: { isActive?: boolean }) => (
-  <svg viewBox="0 0 24 24" fill={isActive ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" width="20" height="20">
+  <svg
+    viewBox="0 0 24 24"
+    fill={isActive ? 'currentColor' : 'none'}
+    stroke="currentColor"
+    strokeWidth="2"
+    width="20"
+    height="20"
+  >
     <path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" />
   </svg>
 );
 
 const MoonIcon = ({ isActive }: { isActive?: boolean }) => (
-  <svg viewBox="0 0 24 24" fill={isActive ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" width="20" height="20">
+  <svg
+    viewBox="0 0 24 24"
+    fill={isActive ? 'currentColor' : 'none'}
+    stroke="currentColor"
+    strokeWidth="2"
+    width="20"
+    height="20"
+  >
     <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
   </svg>
 );
@@ -246,20 +274,22 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
           </div>
 
           {/* Sliders */}
-          {settings.filter((s) => s.value !== undefined).map((setting) => (
-            <div key={`slider-${setting.id}`} className="desktop-notification-center-slider">
-              <span className="desktop-notification-center-slider-icon">
-                {setting.id === 'brightness' ? <BrightnessIcon /> : <VolumeHighIcon />}
-              </span>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={setting.value}
-                onChange={(e) => setting.onValueChange?.(parseInt(e.target.value))}
-              />
-            </div>
-          ))}
+          {settings
+            .filter((s) => s.value !== undefined)
+            .map((setting) => (
+              <div key={`slider-${setting.id}`} className="desktop-notification-center-slider">
+                <span className="desktop-notification-center-slider-icon">
+                  {setting.id === 'brightness' ? <BrightnessIcon /> : <VolumeHighIcon />}
+                </span>
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={setting.value}
+                  onChange={(e) => setting.onValueChange?.(parseInt(e.target.value))}
+                />
+              </div>
+            ))}
         </div>
 
         {/* Notifications */}
@@ -356,9 +386,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                 </div>
               ))
             ) : (
-              <div className="desktop-notification-center-empty">
-                No new notifications
-              </div>
+              <div className="desktop-notification-center-empty">No new notifications</div>
             )}
           </div>
         </div>

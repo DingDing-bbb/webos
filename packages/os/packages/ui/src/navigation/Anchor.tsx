@@ -136,9 +136,8 @@ export const Anchor: React.FC<AnchorProps> = ({
     if (!containerEl) return;
 
     const handleScroll = () => {
-      const containerTop = containerEl === window
-        ? 0
-        : (containerEl as HTMLElement).getBoundingClientRect().top;
+      const containerTop =
+        containerEl === window ? 0 : (containerEl as HTMLElement).getBoundingClientRect().top;
 
       // Get all anchor targets
       const hrefs = getAllHrefs(items);
@@ -208,11 +207,14 @@ export const Anchor: React.FC<AnchorProps> = ({
     }
   }, [currentAnchor]);
 
-  const handleClick = useCallback((e: React.MouseEvent, item: AnchorLinkItem) => {
-    onClick?.(e, item);
-    setInternalCurrentAnchor(item.href);
-    onChange?.(item.href);
-  }, [onClick, onChange]);
+  const handleClick = useCallback(
+    (e: React.MouseEvent, item: AnchorLinkItem) => {
+      onClick?.(e, item);
+      setInternalCurrentAnchor(item.href);
+      onChange?.(item.href);
+    },
+    [onClick, onChange]
+  );
 
   // Keyboard navigation
   useEffect(() => {
@@ -221,8 +223,8 @@ export const Anchor: React.FC<AnchorProps> = ({
 
     const handleKeyDown = (e: KeyboardEvent) => {
       const links = anchorEl.querySelectorAll<HTMLAnchorElement>('.nav-anchor-link');
-      const currentIndex = Array.from(links).findIndex(
-        (link) => link.classList.contains('nav-anchor-link-active')
+      const currentIndex = Array.from(links).findIndex((link) =>
+        link.classList.contains('nav-anchor-link-active')
       );
 
       let nextIndex: number;
@@ -279,10 +281,7 @@ export const Anchor: React.FC<AnchorProps> = ({
       >
         {/* Ink indicator */}
         <div className="nav-anchor-ink">
-          <div
-            className="nav-anchor-ink-ball"
-            style={{ top: inkTop }}
-          />
+          <div className="nav-anchor-ink-ball" style={{ top: inkTop }} />
         </div>
 
         {/* Links */}
@@ -329,7 +328,11 @@ export const AnchorLinkItem: React.FC<AnchorLinkItemProps> = ({
         {isActive && <span className="nav-anchor-link-dot" />}
         <span className="nav-anchor-link-title">{title}</span>
       </a>
-      {children && <ul className="nav-anchor-links" role="list">{children}</ul>}
+      {children && (
+        <ul className="nav-anchor-links" role="list">
+          {children}
+        </ul>
+      )}
     </li>
   );
 };

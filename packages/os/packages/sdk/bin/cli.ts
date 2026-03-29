@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * WebOS SDK CLI
- * 
+ *
  * 用法：
  *   webos-sdk create <app-id>    创建新应用
  *   webos-sdk build              构建应用
@@ -18,10 +18,7 @@ import { packCommand } from './commands/pack.js';
 
 const program = new Command();
 
-program
-  .name('webos-sdk')
-  .description('WebOS Application Development Kit')
-  .version('1.0.0');
+program.name('webos-sdk').description('WebOS Application Development Kit').version('1.0.0');
 
 // 创建应用命令
 program

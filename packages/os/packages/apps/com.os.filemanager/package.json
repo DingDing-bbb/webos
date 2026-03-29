@@ -8,7 +8,13 @@
   "types": "./src/index.tsx",
   "author": "WebOS Team",
   "category": "system",
-  "keywords": ["webos", "app", "file", "manager", "browser"],
+  "keywords": [
+    "webos",
+    "app",
+    "file",
+    "manager",
+    "browser"
+  ],
   "dependencies": {
     "@webos/apps": "workspace:*"
   }

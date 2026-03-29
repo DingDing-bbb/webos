@@ -7,7 +7,13 @@ export { deviceDetector } from './deviceDetector';
 export type { DeviceType, DeviceInfo, InputMode, DeviceCapability } from './deviceDetector';
 
 export { gestureDetector } from './gestures';
-export type { GestureType, GestureEvent, SwipeDirection, EdgePosition, GestureConfig } from './gestures';
+export type {
+  GestureType,
+  GestureEvent,
+  SwipeDirection,
+  EdgePosition,
+  GestureConfig,
+} from './gestures';
 
 export { touchHandler } from './touchHandler';
 export type { TouchTargetConfig, WindowTouchConfig } from './touchHandler';

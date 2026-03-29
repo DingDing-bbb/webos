@@ -56,11 +56,7 @@ com.example.myapp/
   },
   "keywords": ["utility", "productivity"],
   "categories": ["Utility", "Productivity"],
-  "permissions": [
-    "storage",
-    "network",
-    "notifications"
-  ],
+  "permissions": ["storage", "network", "notifications"],
   "minOSVersion": "0.0.1",
   "defaultWidth": 800,
   "defaultHeight": 600,
@@ -100,20 +96,20 @@ com.example.myapp/
 
 ### 清单字段说明
 
-| 字段 | 类型 | 必需 | 说明 |
-|-----|------|-----|------|
-| id | string | 是 | 应用唯一标识符，采用反向域名格式 |
-| name | string | 是 | 应用显示名称 |
-| nameKey | string | 否 | 国际化键名 |
-| version | string | 是 | 语义化版本号 |
-| description | string | 否 | 应用描述 |
-| author | object | 是 | 作者信息 |
-| permissions | array | 否 | 所需权限列表 |
-| minOSVersion | string | 否 | 最低系统版本要求 |
-| defaultWidth | number | 否 | 默认窗口宽度 |
-| defaultHeight | number | 否 | 默认窗口高度 |
-| resizable | boolean | 否 | 是否可调整窗口大小 |
-| singleton | boolean | 否 | 是否单例应用（只能打开一个实例） |
+| 字段          | 类型    | 必需 | 说明                             |
+| ------------- | ------- | ---- | -------------------------------- |
+| id            | string  | 是   | 应用唯一标识符，采用反向域名格式 |
+| name          | string  | 是   | 应用显示名称                     |
+| nameKey       | string  | 否   | 国际化键名                       |
+| version       | string  | 是   | 语义化版本号                     |
+| description   | string  | 否   | 应用描述                         |
+| author        | object  | 是   | 作者信息                         |
+| permissions   | array   | 否   | 所需权限列表                     |
+| minOSVersion  | string  | 否   | 最低系统版本要求                 |
+| defaultWidth  | number  | 否   | 默认窗口宽度                     |
+| defaultHeight | number  | 否   | 默认窗口高度                     |
+| resizable     | boolean | 否   | 是否可调整窗口大小               |
+| singleton     | boolean | 否   | 是否单例应用（只能打开一个实例） |
 
 ---
 
@@ -166,9 +162,7 @@ const MyApp: React.FC = () => {
       </header>
       <main className="my-app-content">
         <p>Count: {count}</p>
-        <button onClick={() => setCount(c => c + 1)}>
-          Increment
-        </button>
+        <button onClick={() => setCount((c) => c + 1)}>Increment</button>
       </main>
     </div>
   );
@@ -192,27 +186,9 @@ export default {
 import React from 'react';
 
 export const AppIcon: React.FC<{ size?: number }> = ({ size = 48 }) => (
-  <svg 
-    width={size} 
-    height={size} 
-    viewBox="0 0 48 48" 
-    fill="none"
-  >
-    <rect 
-      x="4" 
-      y="4" 
-      width="40" 
-      height="40" 
-      rx="8" 
-      fill="#0078d4"
-    />
-    <text 
-      x="24" 
-      y="30" 
-      textAnchor="middle" 
-      fill="white" 
-      fontSize="16"
-    >
+  <svg width={size} height={size} viewBox="0 0 48 48" fill="none">
+    <rect x="4" y="4" width="40" height="40" rx="8" fill="#0078d4" />
+    <text x="24" y="30" textAnchor="middle" fill="white" fontSize="16">
       MA
     </text>
   </svg>
@@ -343,9 +319,7 @@ appStore.install('com.example.myapp');
 ```tsx
 import { appManager } from '@kernel';
 
-await appManager.installFromUrl(
-  'https://example.com/apps/com.example.myapp.webosapp'
-);
+await appManager.installFromUrl('https://example.com/apps/com.example.myapp.webosapp');
 ```
 
 ### 手动安装
@@ -480,15 +454,15 @@ function MyComponent() {
 ```json
 {
   "permissions": [
-    "storage",      // 本地存储访问
-    "network",      // 网络请求
+    "storage", // 本地存储访问
+    "network", // 网络请求
     "notifications", // 系统通知
-    "filesystem",   // 文件系统访问
-    "camera",       // 摄像头
-    "microphone",   // 麦克风
-    "clipboard",    // 剪贴板
-    "geolocation",  // 地理位置
-    "bluetooth"     // 蓝牙
+    "filesystem", // 文件系统访问
+    "camera", // 摄像头
+    "microphone", // 麦克风
+    "clipboard", // 剪贴板
+    "geolocation", // 地理位置
+    "bluetooth" // 蓝牙
   ]
 }
 ```
@@ -568,7 +542,7 @@ try {
 // 使用翻译键而非硬编码字符串
 const MyComponent = () => {
   const { t } = window.webos.i18n;
-  
+
   return (
     <div>
       <h1>{t('myapp.welcome')}</h1>
@@ -625,7 +599,7 @@ const sanitizeInput = (input: string) => {
 
 ```tsx
 window.webos.window.open('com.os.settings', {
-  section: 'display'
+  section: 'display',
 });
 ```
 
@@ -633,10 +607,10 @@ window.webos.window.open('com.os.settings', {
 
 ## 版本历史
 
-| 版本 | 日期 | 变更说明 |
-|-----|------|---------|
-| 1.0.0 | 2024-01 | 初始版本 |
-| 1.1.0 | 2024-02 | 添加权限系统 |
+| 版本  | 日期    | 变更说明         |
+| ----- | ------- | ---------------- |
+| 1.0.0 | 2024-01 | 初始版本         |
+| 1.1.0 | 2024-02 | 添加权限系统     |
 | 1.2.0 | 2024-03 | 添加文件关联支持 |
 
 ---

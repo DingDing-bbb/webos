@@ -174,7 +174,12 @@ interface TreeContextValue {
   onDragEnd: () => void;
   onDragOver: (node: TreeNodeData, event: React.DragEvent) => void;
   onDragLeave: (node: TreeNodeData, event: React.DragEvent) => void;
-  onDrop: (node: TreeNodeData, dropPosition: number, dropToGap: boolean, event: React.DragEvent) => void;
+  onDrop: (
+    node: TreeNodeData,
+    dropPosition: number,
+    dropToGap: boolean,
+    event: React.DragEvent
+  ) => void;
   onRightClick: (node: TreeNodeData, event: React.MouseEvent) => void;
   titleRender: ((node: TreeNodeData) => React.ReactNode) | null;
   iconRender: ((node: TreeNodeData) => React.ReactNode) | null;
@@ -221,7 +226,10 @@ function flattenTreeData(
   return map;
 }
 
-function getAllDescendantKeys(nodeKey: string, nodeMap: Map<string, { children?: string[] }>): string[] {
+function getAllDescendantKeys(
+  nodeKey: string,
+  nodeMap: Map<string, { children?: string[] }>
+): string[] {
   const nodeInfo = nodeMap.get(nodeKey);
   if (!nodeInfo?.children) return [];
 
@@ -501,11 +509,27 @@ const TreeNode = memo<TreeNodeProps>(({ node, level, parentKey: _parentKey }) =>
           {isLoading ? (
             <span className="loading-icon">
               <svg className="spin" viewBox="0 0 24 24" width="14" height="14">
-                <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="2" strokeDasharray="31.4" strokeDashoffset="10" />
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeDasharray="31.4"
+                  strokeDashoffset="10"
+                />
               </svg>
             </span>
           ) : hasChildren ? (
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg
+              viewBox="0 0 24 24"
+              width="14"
+              height="14"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
               <polyline points="9 18 15 12 9 6" />
             </svg>
           ) : null}
@@ -523,15 +547,11 @@ const TreeNode = memo<TreeNodeProps>(({ node, level, parentKey: _parentKey }) =>
 
         {/* Icon */}
         {showIcon && (
-          <span className="ui-tree-icon">
-            {iconRender ? iconRender(node) : node.icon}
-          </span>
+          <span className="ui-tree-icon">{iconRender ? iconRender(node) : node.icon}</span>
         )}
 
         {/* Title */}
-        <span className="ui-tree-title">
-          {titleRender ? titleRender(node) : node.title}
-        </span>
+        <span className="ui-tree-title">{titleRender ? titleRender(node) : node.title}</span>
       </div>
 
       {/* Children */}
@@ -539,12 +559,7 @@ const TreeNode = memo<TreeNodeProps>(({ node, level, parentKey: _parentKey }) =>
         <div className="ui-tree-children">
           {showLine && <span className="ui-tree-line" />}
           {node.children!.map((child) => (
-            <TreeNode
-              key={child.key}
-              node={child}
-              level={level + 1}
-              parentKey={node.key}
-            />
+            <TreeNode key={child.key} node={child} level={level + 1} parentKey={node.key} />
           ))}
         </div>
       )}
@@ -814,21 +829,14 @@ export const Tree = forwardRef<HTMLDivElement, TreeProps>(
       setLoadingKey,
     };
 
-    const treeClasses = [
-      'ui-tree',
-      showLine ? 'show-line' : '',
-      className,
-    ]
+    const treeClasses = ['ui-tree', showLine ? 'show-line' : '', className]
       .filter(Boolean)
       .join(' ');
 
     return (
       <TreeContext.Provider value={contextValue}>
         <div ref={ref} className={treeClasses} style={style}>
-          <div
-            className="ui-tree-list"
-            style={height ? { height, overflow: 'auto' } : undefined}
-          >
+          <div className="ui-tree-list" style={height ? { height, overflow: 'auto' } : undefined}>
             {treeData.map((node) => (
               <TreeNode key={node.key} node={node} level={0} />
             ))}
@@ -859,33 +867,33 @@ export interface DirectoryTreeProps extends Omit<TreeProps, 'showIcon'> {
   showIcon?: boolean;
 }
 
-export const DirectoryTree: React.FC<DirectoryTreeProps> = ({
-  showIcon = true,
-  ...props
-}) => {
-  const iconRender = useCallback((node: TreeNodeData) => {
-    const hasChildren = node.children && node.children.length > 0;
-    const isExpanded = props.expandedKeys?.includes(node.key);
+export const DirectoryTree: React.FC<DirectoryTreeProps> = ({ showIcon = true, ...props }) => {
+  const iconRender = useCallback(
+    (node: TreeNodeData) => {
+      const hasChildren = node.children && node.children.length > 0;
+      const isExpanded = props.expandedKeys?.includes(node.key);
 
-    if (hasChildren) {
-      return isExpanded ? (
+      if (hasChildren) {
+        return isExpanded ? (
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+          </svg>
+        ) : (
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+          </svg>
+        );
+      }
+
+      return (
         <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-          <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
-        </svg>
-      ) : (
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-          <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+          <polyline points="14 2 14 8 20 8" />
         </svg>
       );
-    }
-
-    return (
-      <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-        <polyline points="14 2 14 8 20 8" />
-      </svg>
-    );
-  }, [props.expandedKeys]);
+    },
+    [props.expandedKeys]
+  );
 
   return <Tree {...props} showIcon={showIcon} iconRender={iconRender} />;
 };

@@ -9,27 +9,27 @@
   --color-primary-hover: #106ebe;
   --color-primary-active: #005a9e;
   --color-primary-light: rgba(0, 120, 212, 0.1);
-  
+
   --color-success: #107c10;
   --color-warning: #ff8c00;
   --color-danger: #d13438;
   --color-info: #0078d4;
-  
+
   /* ========== Background Colors ========== */
   --bg-solid-base: #202020;
   --bg-solid-secondary: #1a1a1a;
   --bg-solid-tertiary: #252525;
-  
+
   /* Acrylic/Glass backgrounds - High Blur */
   --bg-acrylic: rgba(32, 32, 32, 0.7);
   --bg-acrylic-light: rgba(45, 45, 45, 0.65);
   --bg-acrylic-dark: rgba(20, 20, 20, 0.85);
   --bg-acrylic-sidebar: rgba(30, 30, 30, 0.72);
-  
+
   /* Mica backgrounds */
   --bg-mica: rgba(32, 32, 32, 0.8);
   --bg-mica-alt: rgba(28, 28, 28, 0.95);
-  
+
   /* ========== Blur Effects ========== */
   --blur-xs: 8px;
   --blur-sm: 12px;
@@ -37,27 +37,27 @@
   --blur-lg: 40px;
   --blur-xl: 60px;
   --blur-2xl: 80px;
-  
+
   /* ========== Text Colors ========== */
   --text-primary: rgba(255, 255, 255, 0.95);
   --text-secondary: rgba(255, 255, 255, 0.7);
   --text-tertiary: rgba(255, 255, 255, 0.5);
   --text-disabled: rgba(255, 255, 255, 0.35);
   --text-link: #6cb6f4;
-  
+
   /* ========== Border Colors ========== */
   --border-subtle: rgba(255, 255, 255, 0.08);
   --border-default: rgba(255, 255, 255, 0.12);
   --border-strong: rgba(255, 255, 255, 0.2);
   --border-focus: rgba(0, 120, 212, 0.8);
-  
+
   /* ========== Shadows ========== */
   --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.2);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
   --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.3);
   --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.35);
   --shadow-2xl: 0 24px 64px rgba(0, 0, 0, 0.4);
-  
+
   /* ========== Spacing ========== */
   --spacing-xs: 4px;
   --spacing-sm: 8px;
@@ -66,7 +66,7 @@
   --spacing-xl: 24px;
   --spacing-2xl: 32px;
   --spacing-3xl: 48px;
-  
+
   /* ========== Border Radius ========== */
   --radius-xs: 2px;
   --radius-sm: 4px;
@@ -75,11 +75,11 @@
   --radius-xl: 12px;
   --radius-2xl: 16px;
   --radius-full: 9999px;
-  
+
   /* ========== Typography ========== */
   --font-family: 'Segoe UI Variable', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-family-mono: 'Cascadia Code', 'Fira Code', Consolas, monospace;
-  
+
   --font-size-xs: 11px;
   --font-size-sm: 12px;
   --font-size-md: 14px;
@@ -88,26 +88,26 @@
   --font-size-2xl: 24px;
   --font-size-3xl: 32px;
   --font-size-4xl: 40px;
-  
+
   --font-weight-regular: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
-  
+
   --line-height-tight: 1.2;
   --line-height-normal: 1.5;
   --line-height-relaxed: 1.75;
-  
+
   /* ========== Animation ========== */
   --duration-fast: 100ms;
   --duration-normal: 200ms;
   --duration-slow: 300ms;
   --duration-slower: 500ms;
-  
+
   --easing-default: cubic-bezier(0.4, 0, 0.2, 1);
   --easing-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
   --easing-smooth: cubic-bezier(0.25, 0.1, 0.25, 1);
-  
+
   /* ========== Z-Index ========== */
   --z-dropdown: 1000;
   --z-sticky: 1100;
@@ -119,28 +119,28 @@
 }
 
 /* ========== Light Theme ========== */
-[data-theme="light"] {
+[data-theme='light'] {
   --bg-solid-base: #f3f3f3;
   --bg-solid-secondary: #ffffff;
   --bg-solid-tertiary: #ebebeb;
-  
+
   --bg-acrylic: rgba(243, 243, 243, 0.7);
   --bg-acrylic-light: rgba(255, 255, 255, 0.65);
   --bg-acrylic-dark: rgba(230, 230, 230, 0.85);
   --bg-acrylic-sidebar: rgba(245, 245, 245, 0.72);
-  
+
   --bg-mica: rgba(243, 243, 243, 0.8);
   --bg-mica-alt: rgba(255, 255, 255, 0.95);
-  
+
   --text-primary: rgba(0, 0, 0, 0.9);
   --text-secondary: rgba(0, 0, 0, 0.7);
   --text-tertiary: rgba(0, 0, 0, 0.5);
   --text-disabled: rgba(0, 0, 0, 0.35);
-  
+
   --border-subtle: rgba(0, 0, 0, 0.06);
   --border-default: rgba(0, 0, 0, 0.1);
   --border-strong: rgba(0, 0, 0, 0.2);
-  
+
   --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.08);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
   --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
@@ -188,7 +188,9 @@
 }
 
 /* ========== Base Reset ========== */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -233,9 +235,10 @@ body {
 }
 
 .transition-colors {
-  transition: color var(--duration-fast) var(--easing-default),
-              background-color var(--duration-fast) var(--easing-default),
-              border-color var(--duration-fast) var(--easing-default);
+  transition:
+    color var(--duration-fast) var(--easing-default),
+    background-color var(--duration-fast) var(--easing-default),
+    border-color var(--duration-fast) var(--easing-default);
 }
 
 .transition-transform {

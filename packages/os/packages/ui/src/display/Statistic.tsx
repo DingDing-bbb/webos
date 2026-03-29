@@ -285,24 +285,14 @@ export const Statistic = forwardRef<HTMLDivElement, StatisticProps>(
     const displayValue = animation ? animatedValue : numValue;
 
     const formattedValue =
-      formatter?.(value) ??
-      formatNumber(displayValue, precision, decimalSeparator, groupSeparator);
+      formatter?.(value) ?? formatNumber(displayValue, precision, decimalSeparator, groupSeparator);
 
-    const statisticClasses = [
-      'ui-statistic',
-      onClick ? 'clickable' : '',
-      className,
-    ]
+    const statisticClasses = ['ui-statistic', onClick ? 'clickable' : '', className]
       .filter(Boolean)
       .join(' ');
 
     return (
-      <div
-        ref={ref}
-        className={statisticClasses}
-        style={style}
-        onClick={onClick}
-      >
+      <div ref={ref} className={statisticClasses} style={style} onClick={onClick}>
         {title && (
           <div className="ui-statistic-title" style={titleStyle}>
             {title}
@@ -408,9 +398,7 @@ export const Countdown = forwardRef<HTMLDivElement, CountdownProps>(
       return (
         <>
           {prefix && <span className="ui-countdown-prefix">{prefix}</span>}
-          <span className="ui-countdown-value">
-            {formatCountdown(timeData, format)}
-          </span>
+          <span className="ui-countdown-value">{formatCountdown(timeData, format)}</span>
           {suffix && <span className="ui-countdown-suffix">{suffix}</span>}
         </>
       );
@@ -462,7 +450,9 @@ export const Timer: React.FC<TimerProps> = ({
 }) => {
   const [elapsed, setElapsed] = useState(0);
   const [isRunning, _setIsRunning] = useState(autoStart);
-  const startRef = useRef<number>(startTime ? (typeof startTime === 'number' ? startTime : startTime.getTime()) : Date.now());
+  const startRef = useRef<number>(
+    startTime ? (typeof startTime === 'number' ? startTime : startTime.getTime()) : Date.now()
+  );
 
   useEffect(() => {
     if (!isRunning) return;

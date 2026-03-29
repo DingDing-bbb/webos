@@ -1,6 +1,6 @@
 /**
  * Bootloader - 系统引导加载器
- * 
+ *
  * 负责系统启动的完整流程：
  * 1. 引导检测
  * 2. 内核初始化
@@ -136,9 +136,9 @@ class Bootloader {
     progress: 0,
     message: '',
     errors: [],
-    canRecover: false
+    canRecover: false,
   };
-  
+
   private listeners: Set<(status: BootStatus) => void> = new Set();
   private recoveryMode = false;
   private plugins: Map<string, BootloaderPlugin> = new Map();
@@ -157,7 +157,7 @@ class Bootloader {
       const stored = localStorage.getItem(PLUGINS_STORAGE_KEY);
       if (stored) {
         const pluginIds = JSON.parse(stored) as string[];
-        pluginIds.forEach(id => {
+        pluginIds.forEach((id) => {
           const pluginData = localStorage.getItem(`webos-plugin-${id}`);
           if (pluginData) {
             const plugin = JSON.parse(pluginData) as BootloaderPlugin;
@@ -178,10 +178,10 @@ class Bootloader {
   private checkInstallParameter(): void {
     const urlParams = new URLSearchParams(window.location.search);
     const installPlugin = urlParams.get('installDevPlugin');
-    
+
     if (installPlugin === 'true') {
       const isOOBE = !localStorage.getItem('webos-oobe-complete');
-      
+
       if (isOOBE) {
         this.installDevPluginInternal();
       } else {
@@ -208,21 +208,27 @@ class Bootloader {
       name: 'Developer Plugin',
       version: '1.0.0',
       installedAt: new Date().toISOString(),
-      permissions: ['system:reset', 'system:debug', 'system:recovery']
+      permissions: ['system:reset', 'system:debug', 'system:recovery'],
     };
 
     this.plugins.set(plugin.id, plugin);
     localStorage.setItem(`webos-plugin-${plugin.id}`, JSON.stringify(plugin));
     this.savePlugins();
 
-    window.dispatchEvent(new CustomEvent('bootloader:plugin-installed', {
-      detail: { plugin }
-    }));
+    window.dispatchEvent(
+      new CustomEvent('bootloader:plugin-installed', {
+        detail: { plugin },
+      })
+    );
 
     return { success: true };
   }
 
-  installDevPlugin(requireAuth: boolean = true): { success: boolean; error?: string; requiresAuth?: boolean } {
+  installDevPlugin(requireAuth: boolean = true): {
+    success: boolean;
+    error?: string;
+    requiresAuth?: boolean;
+  } {
     if (requireAuth) {
       const isOOBE = !localStorage.getItem('webos-oobe-complete');
       if (!isOOBE) {
@@ -249,16 +255,18 @@ class Bootloader {
     localStorage.removeItem('webos-plugin-com.webos.dev-plugin');
     this.savePlugins();
 
-    window.dispatchEvent(new CustomEvent('bootloader:plugin-uninstalled', {
-      detail: { pluginId: 'com.webos.dev-plugin' }
-    }));
+    window.dispatchEvent(
+      new CustomEvent('bootloader:plugin-uninstalled', {
+        detail: { pluginId: 'com.webos.dev-plugin' },
+      })
+    );
 
     return { success: true };
   }
 
   hasPluginPermission(permission: string): boolean {
     if (!this.isDevPluginInstalled()) return false;
-    
+
     const plugin = this.plugins.get('com.webos.dev-plugin');
     return plugin?.permissions.includes(permission) ?? false;
   }
@@ -294,7 +302,7 @@ class Bootloader {
 
   private updateStatus(updates: Partial<BootStatus>) {
     this.status = { ...this.status, ...updates };
-    this.listeners.forEach(l => l(this.status));
+    this.listeners.forEach((l) => l(this.status));
   }
 
   addError(error: Partial<BootError>) {
@@ -305,13 +313,13 @@ class Bootloader {
       line: error.line,
       column: error.column,
       stack: error.stack,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
-    
+
     this.status.errors.push(bootError);
     this.status.canRecover = this.checkRecoverability(bootError);
-    this.listeners.forEach(l => l(this.status));
-    
+    this.listeners.forEach((l) => l(this.status));
+
     if (!this.recoveryMode && this.shouldEnterRecovery(bootError)) {
       this.enterRecoveryMode();
     }
@@ -334,12 +342,14 @@ class Bootloader {
     this.recoveryMode = true;
     this.updateStatus({
       stage: 'recovery',
-      message: 'Entering recovery mode...'
+      message: 'Entering recovery mode...',
     });
-    
-    window.dispatchEvent(new CustomEvent('bootloader:recovery', {
-      detail: { errors: this.status.errors }
-    }));
+
+    window.dispatchEvent(
+      new CustomEvent('bootloader:recovery', {
+        detail: { errors: this.status.errors },
+      })
+    );
   }
 
   async boot(): Promise<boolean> {
@@ -354,10 +364,10 @@ class Bootloader {
         throw new Error('Kernel not loaded');
       }
 
-      this.updateStatus({ 
-        stage: 'success', 
-        progress: 100, 
-        message: 'Boot complete!' 
+      this.updateStatus({
+        stage: 'success',
+        progress: 100,
+        message: 'Boot complete!',
       });
 
       return true;
@@ -366,7 +376,7 @@ class Bootloader {
       this.addError({
         type: 'runtime',
         message: err.message,
-        stack: err.stack
+        stack: err.stack,
       });
       return false;
     }
@@ -402,15 +412,15 @@ class Bootloader {
     }
 
     this.updateStatus({ message: 'Resetting system...' });
-    
+
     localStorage.clear();
     sessionStorage.clear();
-    
+
     if ('caches' in window) {
       const cacheNames = await caches.keys();
-      await Promise.all(cacheNames.map(name => caches.delete(name)));
+      await Promise.all(cacheNames.map((name) => caches.delete(name)));
     }
-    
+
     if ('serviceWorker' in navigator) {
       const registration = await navigator.serviceWorker.getRegistration();
       if (registration) {
@@ -429,9 +439,11 @@ class Bootloader {
       // 忽略错误
     }
 
-    window.dispatchEvent(new CustomEvent('bootloader:system-reset', {
-      detail: { timestamp: new Date().toISOString() }
-    }));
+    window.dispatchEvent(
+      new CustomEvent('bootloader:system-reset', {
+        detail: { timestamp: new Date().toISOString() },
+      })
+    );
 
     window.location.reload();
     return { success: true };
@@ -468,71 +480,82 @@ export function setupGlobalErrorHandler() {
   window.onerror = (message, source, lineno, colno, error) => {
     const errorType = error instanceof SyntaxError ? 'syntax' : 'runtime';
     const errorMessage = String(message);
-    
+
     bootloader.addError({
       type: errorType,
       message: errorMessage,
       file: source || undefined,
       line: lineno || undefined,
       column: colno || undefined,
-      stack: error?.stack
+      stack: error?.stack,
     });
-    
-    const webosApi = window.webos as { reportSystemError?: (msg: string, opts: object) => void } | undefined;
+
+    const webosApi = window.webos as
+      | { reportSystemError?: (msg: string, opts: object) => void }
+      | undefined;
     if (webosApi?.reportSystemError) {
       webosApi.reportSystemError(errorMessage, {
         code: errorType === 'syntax' ? 'ERR_2001' : 'ERR_2005',
         source: source || undefined,
         line: lineno || undefined,
         column: colno || undefined,
-        stack: error?.stack
+        stack: error?.stack,
       });
     }
-    
+
     return false;
   };
 
   window.addEventListener('unhandledrejection', (event) => {
     const message = event.reason?.message || 'Unhandled Promise rejection';
-    
+
     bootloader.addError({
       type: 'runtime',
       message,
-      stack: event.reason?.stack
+      stack: event.reason?.stack,
     });
-    
-    const webosApi = window.webos as { reportSystemError?: (msg: string, opts: object) => void } | undefined;
+
+    const webosApi = window.webos as
+      | { reportSystemError?: (msg: string, opts: object) => void }
+      | undefined;
     if (webosApi?.reportSystemError) {
       webosApi.reportSystemError(message, {
         code: 'ERR_2004',
-        stack: event.reason?.stack
+        stack: event.reason?.stack,
       });
     }
   });
 
-  window.addEventListener('error', (event) => {
-    if (event.target !== window) {
-      const target = event.target as HTMLElement;
-      const src = ('src' in target ? (target as HTMLImageElement | HTMLScriptElement).src : undefined) ||
-                  ('href' in target ? (target as HTMLLinkElement).href : undefined) ||
-                  'unknown';
-      const message = `Failed to load: ${src}`;
-      
-      bootloader.addError({
-        type: 'network',
-        message,
-        file: src
-      });
-      
-      const webosApi = window.webos as { reportSystemError?: (msg: string, opts: object) => void } | undefined;
-      if (webosApi?.reportSystemError) {
-        webosApi.reportSystemError(message, {
-          code: 'ERR_4001',
-          source: src
+  window.addEventListener(
+    'error',
+    (event) => {
+      if (event.target !== window) {
+        const target = event.target as HTMLElement;
+        const src =
+          ('src' in target ? (target as HTMLImageElement | HTMLScriptElement).src : undefined) ||
+          ('href' in target ? (target as HTMLLinkElement).href : undefined) ||
+          'unknown';
+        const message = `Failed to load: ${src}`;
+
+        bootloader.addError({
+          type: 'network',
+          message,
+          file: src,
         });
+
+        const webosApi = window.webos as
+          | { reportSystemError?: (msg: string, opts: object) => void }
+          | undefined;
+        if (webosApi?.reportSystemError) {
+          webosApi.reportSystemError(message, {
+            code: 'ERR_4001',
+            source: src,
+          });
+        }
       }
-    }
-  }, true);
+    },
+    true
+  );
 }
 
 // ============================================================================

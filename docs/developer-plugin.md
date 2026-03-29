@@ -13,7 +13,7 @@
 3. 输入以下命令并回车：
 
 ```javascript
-webosInstallDevPlugin()
+webosInstallDevPlugin();
 ```
 
 此时插件会安装到引导程序中，无需密码验证。
@@ -27,7 +27,7 @@ webosInstallDevPlugin()
 3. 输入以下命令并回车：
 
 ```javascript
-webosInstallDevPlugin()
+webosInstallDevPlugin();
 ```
 
 此时需要输入管理员密码进行验证。
@@ -39,14 +39,14 @@ webosInstallDevPlugin()
 ### 检查插件状态
 
 ```javascript
-webosCanResetSystem()
+webosCanResetSystem();
 // 返回 true 表示插件已安装，可以进行系统重置
 ```
 
 ### 重置系统
 
 ```javascript
-webosResetSystem()
+webosResetSystem();
 // 清除所有数据并重启系统
 // ⚠️ 此操作不可逆，所有用户数据和设置将被删除
 ```
@@ -54,7 +54,7 @@ webosResetSystem()
 ### 卸载插件
 
 ```javascript
-webosUninstallDevPlugin()
+webosUninstallDevPlugin();
 // 卸载开发者插件
 // 卸载后将无法使用 webosResetSystem() 命令
 ```
@@ -70,10 +70,10 @@ webosUninstallDevPlugin()
 
 开发者插件包含以下权限：
 
-| 权限 | 说明 |
-|------|------|
-| `system:reset` | 允许重置系统 |
-| `system:debug` | 允许调试功能 |
+| 权限              | 说明             |
+| ----------------- | ---------------- |
+| `system:reset`    | 允许重置系统     |
+| `system:debug`    | 允许调试功能     |
 | `system:recovery` | 允许进入恢复模式 |
 
 ## 技术实现

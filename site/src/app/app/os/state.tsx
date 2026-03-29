@@ -12,8 +12,8 @@ interface OSState {
   bootMessage: string;
   props: {
     boot: { complete: () => void };
-    auth: { 
-      users: Array<{ username: string; displayName: string }>; 
+    auth: {
+      users: Array<{ username: string; displayName: string }>;
       systemName: string;
       onLoginSuccess: () => void;
     };
@@ -31,7 +31,7 @@ const initialBootStatus: BootStatus = {
   progress: 0,
   message: '',
   errors: [],
-  canRecover: false
+  canRecover: false,
 };
 
 export function useOSState(): OSState {
@@ -73,7 +73,7 @@ export function useOSState(): OSState {
 
       // 2. 运行启动控制器
       const controller = new BootController();
-      
+
       controller.setProgressHandler((task, progress) => {
         if (mounted) {
           setBootMessage(task);
@@ -92,14 +92,14 @@ export function useOSState(): OSState {
           setStage('recovery');
         } else {
           setBootMessage(`Error: ${result.error}`);
-          await new Promise(r => setTimeout(r, 2000));
+          await new Promise((r) => setTimeout(r, 2000));
         }
       }
 
       // 3. 完成启动
       setBootMessage('Welcome!');
       setBootProgress(100);
-      await new Promise(r => setTimeout(r, 300));
+      await new Promise((r) => setTimeout(r, 300));
 
       if (!mounted) return;
 
@@ -115,10 +115,12 @@ export function useOSState(): OSState {
 
             if (session.systemName) setSystemName(session.systemName);
             if (session.username) {
-              setUsers([{
-                username: session.username,
-                displayName: session.displayName || session.username
-              }]);
+              setUsers([
+                {
+                  username: session.username,
+                  displayName: session.displayName || session.username,
+                },
+              ]);
             }
 
             if (session.theme) {
@@ -165,7 +167,9 @@ export function useOSState(): OSState {
 
     boot();
 
-    return () => { mounted = false; };
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   // 登录成功回调 - 直接切换到桌面，不刷新页面
@@ -218,10 +222,10 @@ export function useOSState(): OSState {
     bootMessage,
     props: {
       boot: { complete: () => {} },
-      auth: { 
-        users, 
-        systemName, 
-        onLoginSuccess: handleLoginSuccess 
+      auth: {
+        users,
+        systemName,
+        onLoginSuccess: handleLoginSuccess,
       },
       recovery: {
         status: bootStatus,

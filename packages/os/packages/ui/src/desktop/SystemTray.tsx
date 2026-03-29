@@ -137,13 +137,16 @@ export const SystemTray: React.FC<SystemTrayProps> = ({
   // ========================================
   // Handlers
   // ========================================
-  const handleIconClick = useCallback((icon: TrayIcon) => {
-    if (icon.panel) {
-      setActivePanel(activePanel === icon.id ? null : icon.id);
-    } else {
-      icon.onClick?.();
-    }
-  }, [activePanel]);
+  const handleIconClick = useCallback(
+    (icon: TrayIcon) => {
+      if (icon.panel) {
+        setActivePanel(activePanel === icon.id ? null : icon.id);
+      } else {
+        icon.onClick?.();
+      }
+    },
+    [activePanel]
+  );
 
   // ========================================
   // Render
@@ -180,9 +183,7 @@ export const SystemTray: React.FC<SystemTrayProps> = ({
           onClick={() => setShowNotifications(!showNotifications)}
         >
           <BellIcon />
-          {unreadCount > 0 && (
-            <span className="desktop-system-tray-badge">{unreadCount}</span>
-          )}
+          {unreadCount > 0 && <span className="desktop-system-tray-badge">{unreadCount}</span>}
         </button>
       </div>
 
@@ -236,13 +237,9 @@ export const SystemTray: React.FC<SystemTrayProps> = ({
                   className={`desktop-system-tray-notification-item ${notification.isUnread ? 'unread' : ''}`}
                   onClick={notification.onClick}
                 >
-                  <div className="desktop-system-tray-notification-icon">
-                    {notification.icon}
-                  </div>
+                  <div className="desktop-system-tray-notification-icon">{notification.icon}</div>
                   <div className="desktop-system-tray-notification-content">
-                    <div className="desktop-system-tray-notification-app">
-                      {notification.app}
-                    </div>
+                    <div className="desktop-system-tray-notification-app">{notification.app}</div>
                     <div className="desktop-system-tray-notification-title">
                       {notification.title}
                     </div>
@@ -254,10 +251,13 @@ export const SystemTray: React.FC<SystemTrayProps> = ({
                     {notification.actions && (
                       <div className="desktop-system-tray-notification-actions">
                         {notification.actions.map((action, index) => (
-                          <button key={index} onClick={(e) => {
-                            e.stopPropagation();
-                            action.onClick();
-                          }}>
+                          <button
+                            key={index}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              action.onClick();
+                            }}
+                          >
                             {action.label}
                           </button>
                         ))}
@@ -276,9 +276,7 @@ export const SystemTray: React.FC<SystemTrayProps> = ({
                 </div>
               ))
             ) : (
-              <div className="desktop-system-tray-notifications-empty">
-                No new notifications
-              </div>
+              <div className="desktop-system-tray-notifications-empty">No new notifications</div>
             )}
           </div>
         </div>

@@ -280,12 +280,8 @@ export const Tooltip = forwardRef<TooltipRef, TooltipProps>(
             role="tooltip"
             aria-hidden={!isVisible}
           >
-            <div className="tooltip__content">
-              {content}
-            </div>
-            {showArrow && (
-              <div className={`tooltip__arrow tooltip__arrow--${position}`} />
-            )}
+            <div className="tooltip__content">{content}</div>
+            {showArrow && <div className={`tooltip__arrow tooltip__arrow--${position}`} />}
           </div>
         )}
       </>
@@ -314,9 +310,7 @@ export const SimpleTooltip: React.FC<SimpleTooltipProps> = ({
 }) => {
   return (
     <div className="simple-tooltip-wrapper" data-tooltip={content} data-position={position}>
-      <div className={`simple-tooltip simple-tooltip--${position} ${className}`}>
-        {content}
-      </div>
+      <div className={`simple-tooltip simple-tooltip--${position} ${className}`}>{content}</div>
       {children}
     </div>
   );

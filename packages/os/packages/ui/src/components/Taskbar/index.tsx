@@ -16,19 +16,19 @@ interface TaskbarProps {
 
 const StartIcon = () => (
   <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
-    <rect x="2" y="2" width="9" height="9" rx="1"/>
-    <rect x="13" y="2" width="9" height="9" rx="1"/>
-    <rect x="2" y="13" width="9" height="9" rx="1"/>
-    <rect x="13" y="13" width="9" height="9" rx="1"/>
+    <rect x="2" y="2" width="9" height="9" rx="1" />
+    <rect x="13" y="2" width="9" height="9" rx="1" />
+    <rect x="2" y="13" width="9" height="9" rx="1" />
+    <rect x="13" y="13" width="9" height="9" rx="1" />
   </svg>
 );
 
 // 默认应用图标
 const DefaultAppIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
-    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-    <line x1="9" y1="9" x2="15" y2="15"/>
-    <line x1="15" y1="9" x2="9" y2="15"/>
+    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+    <line x1="9" y1="9" x2="15" y2="15" />
+    <line x1="15" y1="9" x2="9" y2="15" />
   </svg>
 );
 
@@ -46,7 +46,7 @@ export const Taskbar: React.FC<TaskbarProps> = ({
   onWindowClick,
   onStartClick,
   isStartMenuOpen,
-  displayMode = 'icon-name'
+  displayMode = 'icon-name',
 }) => {
   const [time, setTime] = useState(new Date());
 
@@ -77,21 +77,15 @@ export const Taskbar: React.FC<TaskbarProps> = ({
         aria-label={win.title}
         title={displayMode === 'icon-only' ? win.title : undefined}
       >
-        {showIcon && (
-          <span className="os-taskbar-app-icon">
-            {getAppIcon(win.appId)}
-          </span>
-        )}
-        {showName && (
-          <span className="os-taskbar-app-label">{win.title}</span>
-        )}
+        {showIcon && <span className="os-taskbar-app-icon">{getAppIcon(win.appId)}</span>}
+        {showName && <span className="os-taskbar-app-label">{win.title}</span>}
       </div>
     );
   };
 
   return (
     <div className="os-taskbar">
-      <div 
+      <div
         className={`os-taskbar-start ${isStartMenuOpen ? 'active' : ''}`}
         onClick={onStartClick}
         role="button"
@@ -106,9 +100,7 @@ export const Taskbar: React.FC<TaskbarProps> = ({
         </span>
       </div>
 
-      <div className="os-taskbar-apps">
-        {windows.map(renderTaskbarApp)}
-      </div>
+      <div className="os-taskbar-apps">{windows.map(renderTaskbarApp)}</div>
 
       <div className="os-taskbar-tray">
         <div className="os-taskbar-clock">
@@ -139,11 +131,11 @@ export const StartMenu: React.FC<StartMenuProps> = ({
   onClose,
   apps,
   onSettings,
-  onShutdown
+  onShutdown,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
 
-  const filteredApps = apps.filter(app =>
+  const filteredApps = apps.filter((app) =>
     app.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -152,7 +144,7 @@ export const StartMenu: React.FC<StartMenuProps> = ({
   return (
     <>
       {/* 背景遮罩 */}
-      <div 
+      <div
         className="os-start-menu-backdrop"
         onClick={onClose}
         style={{
@@ -161,10 +153,10 @@ export const StartMenu: React.FC<StartMenuProps> = ({
           left: 0,
           right: 0,
           bottom: 0,
-          zIndex: 9998
+          zIndex: 9998,
         }}
       />
-      
+
       <div className="os-start-menu open">
         <div className="os-start-menu-header">
           <input
@@ -176,7 +168,7 @@ export const StartMenu: React.FC<StartMenuProps> = ({
             autoFocus
           />
         </div>
-        
+
         <div className="os-start-menu-apps">
           {filteredApps.map((app) => (
             <div
@@ -188,21 +180,22 @@ export const StartMenu: React.FC<StartMenuProps> = ({
               }}
               role="button"
             >
-              <div className="os-start-menu-app-icon">
-                {app.icon}
-              </div>
+              <div className="os-start-menu-app-icon">{app.icon}</div>
               <span className="os-start-menu-app-name">{app.name}</span>
             </div>
           ))}
         </div>
 
         <div className="os-start-menu-footer">
-          <button onClick={() => { onSettings(); onClose(); }}>
+          <button
+            onClick={() => {
+              onSettings();
+              onClose();
+            }}
+          >
             {window.webos?.t('menu.settings') || 'Settings'}
           </button>
-          <button onClick={onShutdown}>
-            {window.webos?.t('menu.shutdown') || 'Shut Down'}
-          </button>
+          <button onClick={onShutdown}>{window.webos?.t('menu.shutdown') || 'Shut Down'}</button>
         </div>
       </div>
     </>

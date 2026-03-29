@@ -68,17 +68,14 @@ export const ResizeHandle: React.FC<ResizeHandleProps> = ({
   );
 
   // Touch Handlers
-  const handleTouchStart = useCallback(
-    (e: React.TouchEvent) => {
-      e.stopPropagation();
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    e.stopPropagation();
 
-      const touch = e.touches[0];
-      if (!touch) return;
+    const touch = e.touches[0];
+    if (!touch) return;
 
-      startRef.current = { x: touch.clientX, y: touch.clientY };
-    },
-    []
-  );
+    startRef.current = { x: touch.clientX, y: touch.clientY };
+  }, []);
 
   const handleTouchMove = useCallback(
     (e: React.TouchEvent) => {

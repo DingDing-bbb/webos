@@ -86,6 +86,7 @@ webos/
 ## .gitignore 配置
 
 项目已配置以下排除规则：
+
 ```
 # AI Skills - 不需要提交到 git
 skills/

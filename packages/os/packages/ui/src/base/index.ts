@@ -1,7 +1,7 @@
 /**
  * WebOS Base Components
  * 基础UI组件库 - 亚克力/毛玻璃设计风格
- * 
+ *
  * 组件列表:
  * - Button: 按钮组件
  * - Icon: 图标组件
@@ -18,12 +18,7 @@ import './styles.css';
 // Button Exports
 // ============================================
 
-export {
-  Button,
-  ButtonGroup,
-  IconButton,
-  default as ButtonDefault,
-} from './Button';
+export { Button, ButtonGroup, IconButton, default as ButtonDefault } from './Button';
 
 export type {
   ButtonProps,
@@ -37,21 +32,9 @@ export type {
 // Icon Exports
 // ============================================
 
-export {
-  Icon,
-  IconStack,
-  Icons,
-  iconNames,
-  default as IconDefault,
-} from './Icon';
+export { Icon, IconStack, Icons, iconNames, default as IconDefault } from './Icon';
 
-export type {
-  IconProps,
-  IconSize,
-  IconColor,
-  IconStackProps,
-  LucideIconName,
-} from './Icon';
+export type { IconProps, IconSize, IconColor, IconStackProps, LucideIconName } from './Icon';
 
 // ============================================
 // Typography Exports
