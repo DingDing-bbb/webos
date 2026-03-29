@@ -15,7 +15,7 @@ if (typeof globalThis !== 'undefined') {
   (globalThis as any).__BUILD_TIME__ = new Date().toISOString();
 }
 
-// 加载界面 - 早期版本的启动动画
+// 加载界面 - 早期版本的启动动画风格
 const LoadingScreen = () => {
   const [progress, setProgress] = useState(0);
 

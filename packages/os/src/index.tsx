@@ -5,7 +5,6 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { initWebOS } from '@kernel';
 import { 
-  BootScreen, 
   Desktop, 
   Taskbar, 
   StartMenu, 
@@ -15,10 +14,15 @@ import {
   UpdateNotification,
   LockScreen 
 } from '../packages/ui/src';
+// 从 bootloader 导入启动相关组件
+import { 
+  bootloader, 
+  setupGlobalErrorHandler, 
+  BootScreen
+} from '@bootloader';
 import type { WallpaperConfig, WallpaperType } from '../packages/ui/src';
 import type { TaskbarDisplayMode } from '../packages/ui/src/components/Taskbar';
 import { OOBE } from '@oobe';
-import { bootloader, setupGlobalErrorHandler } from '@bootloader';
 import { RecoveryMode } from '@recovery';
 import type { WindowState } from '@kernel/types';
 import type { BootStatus } from '@bootloader';
