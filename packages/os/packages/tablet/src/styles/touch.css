@@ -1,13 +1,34 @@
 /**
  * 平板模式触控优化样式
  * 基于 Windows 11 触控优化设计原则
+ * 禁用iOS干扰操作：橡皮筋效果、双击缩放、长按选择等
  */
 
 /* ============================================
-   平板模式基础样式
+   iOS 干扰操作禁用（核心优化）
    ============================================ */
 
 .os-tablet-mode {
+  /* 禁用iOS橡皮筋效果 */
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: auto;
+  
+  /* 禁用iOS双击缩放 */
+  touch-action: manipulation;
+  
+  /* 禁用iOS长按选择 */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  
+  /* 禁用iOS点击高亮 */
+  -webkit-tap-highlight-color: transparent;
+  
+  /* 禁用文本大小调整 */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  
+  /* 触控变量 */
   --os-touch-target-size: 44px;
   --os-touch-target-spacing: 8px;
   --os-touch-padding: 12px;
@@ -16,10 +37,40 @@
   --os-edge-gesture-zone: 20px;
 }
 
+/* 允许输入框选择文本 */
+.os-tablet-mode input,
+.os-tablet-mode textarea,
+.os-tablet-mode [contenteditable="true"] {
+  -webkit-user-select: text;
+  user-select: text;
+  -webkit-touch-callout: default;
+}
+
 .os-desktop-mode {
   --os-touch-target-size: auto;
   --os-touch-target-spacing: auto;
   --os-touch-padding: auto;
+}
+
+/* ============================================
+   全局触控优化
+   ============================================ */
+
+.os-tablet-mode *,
+.os-tablet-mode *::before,
+.os-tablet-mode *::after {
+  /* 禁用iOS橡皮筋效果 */
+  box-sizing: border-box;
+}
+
+.os-tablet-mode html,
+.os-tablet-mode body {
+  /* 防止整体页面滚动 */
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  overscroll-behavior: none;
 }
 
 /* ============================================
@@ -49,7 +100,7 @@
 .os-large-touch-targets textarea,
 .os-large-touch-targets select {
   min-height: var(--os-touch-target-size);
-  font-size: 16px;
+  font-size: 16px; /* 防止iOS自动缩放 */
   padding: var(--os-touch-padding);
 }
 
@@ -113,21 +164,22 @@
    禁用悬停状态（触摸设备优化）
    ============================================ */
 
+@media (hover: none) {
+  .os-tablet-mode .os-btn:hover,
+  .os-tablet-mode button:hover,
+  .os-tablet-mode [role="button"]:hover,
+  .os-tablet-mode a:hover {
+    background-color: inherit;
+    transform: none;
+  }
+}
+
 .os-no-hover .os-btn:hover,
 .os-no-hover button:hover,
 .os-no-hover [role="button"]:hover,
 .os-no-hover a:hover {
   background-color: inherit;
   transform: none;
-}
-
-.os-no-hover .os-dropdown:hover,
-.os-no-hover .os-menu:hover {
-  display: none;
-}
-
-.os-no-hover .os-tooltip:hover {
-  visibility: hidden;
 }
 
 /* ============================================
@@ -156,35 +208,33 @@
   background: rgba(0, 120, 212, 0.2);
 }
 
-.os-touch-resize-n {
-  cursor: ns-resize;
-}
-
-.os-touch-resize-s {
-  cursor: ns-resize;
-}
-
-.os-touch-resize-e {
-  cursor: ew-resize;
-}
-
-.os-touch-resize-w {
-  cursor: ew-resize;
-}
-
-.os-touch-resize-ne,
-.os-touch-resize-sw {
-  cursor: nesw-resize;
-}
-
-.os-touch-resize-nw,
-.os-touch-resize-se {
-  cursor: nwse-resize;
-}
+.os-touch-resize-n { cursor: ns-resize; }
+.os-touch-resize-s { cursor: ns-resize; }
+.os-touch-resize-e { cursor: ew-resize; }
+.os-touch-resize-w { cursor: ew-resize; }
+.os-touch-resize-ne, .os-touch-resize-sw { cursor: nesw-resize; }
+.os-touch-resize-nw, .os-touch-resize-se { cursor: nwse-resize; }
 
 /* ============================================
-   任务栏自动隐藏
+   任务栏平板优化
    ============================================ */
+
+.os-tablet-mode .os-taskbar {
+  height: 56px;
+  padding: 0 8px;
+}
+
+.os-tablet-mode .os-taskbar-item {
+  min-width: 48px;
+  min-height: 48px;
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.os-tablet-mode .os-taskbar-item:active {
+  transform: scale(0.95);
+  background: rgba(255, 255, 255, 0.1);
+}
 
 .os-taskbar-autohide .os-taskbar {
   position: fixed;
@@ -227,6 +277,9 @@
   grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
   gap: 16px;
   padding: 24px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 .os-tablet-mode .os-start-menu-item {
@@ -237,6 +290,12 @@
   min-height: 90px;
   padding: 16px;
   border-radius: 8px;
+  touch-action: manipulation;
+}
+
+.os-tablet-mode .os-start-menu-item:active {
+  background: rgba(255, 255, 255, 0.1);
+  transform: scale(0.95);
 }
 
 .os-tablet-mode .os-start-menu-item-icon {
@@ -319,6 +378,7 @@
   padding: 8px;
   transform: translateY(100%);
   transition: transform 0.2s ease;
+  touch-action: manipulation;
 }
 
 .os-touch-keyboard.os-visible {
@@ -348,6 +408,7 @@
 .os-touch-keyboard-key:active {
   background: var(--os-color-primary, #0078d4);
   color: white;
+  transform: scale(0.95);
 }
 
 .os-touch-keyboard-key.os-key-space {
@@ -418,6 +479,7 @@
 .os-tablet-mode .os-scrollable {
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
+  touch-action: pan-y;
 }
 
 .os-tablet-mode .os-scrollable::-webkit-scrollbar {
@@ -432,6 +494,47 @@
 .os-tablet-mode .os-scrollable::-webkit-scrollbar-thumb {
   background: rgba(0, 0, 0, 0.2);
   border-radius: 2px;
+}
+
+/* ============================================
+   边缘手势区域
+   ============================================ */
+
+.os-edge-swipe-left,
+.os-edge-swipe-right,
+.os-edge-swipe-top,
+.os-edge-swipe-bottom {
+  position: fixed;
+  z-index: 1000;
+  touch-action: none;
+}
+
+.os-edge-swipe-left {
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: var(--os-edge-gesture-zone);
+}
+
+.os-edge-swipe-right {
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: var(--os-edge-gesture-zone);
+}
+
+.os-edge-swipe-top {
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--os-edge-gesture-zone);
+}
+
+.os-edge-swipe-bottom {
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--os-edge-gesture-zone);
 }
 
 /* ============================================
@@ -459,6 +562,14 @@
   color: var(--os-color-text, #fff);
 }
 
+[data-theme="dark"] .os-start-menu-item:active {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .os-taskbar-item:active {
+  background: rgba(255, 255, 255, 0.15);
+}
+
 /* ============================================
    响应式断点
    ============================================ */
@@ -471,6 +582,10 @@
   .os-tablet-mode .os-quick-action {
     min-width: 70px;
     min-height: 70px;
+  }
+  
+  .os-tablet-mode .os-taskbar {
+    height: 64px;
   }
 }
 

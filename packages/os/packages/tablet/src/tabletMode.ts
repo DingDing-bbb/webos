@@ -1,6 +1,7 @@
 /**
  * 平板模式管理器
  * 基于 Windows 11 触控优化和二合一设备交互规范
+ * 禁用iOS干扰操作：橡皮筋效果、双击缩放、长按选择等
  */
 
 import { deviceDetector } from './deviceDetector';
@@ -18,6 +19,9 @@ export interface TabletModeConfig {
   enableTouchFeedback: boolean;
   autoShowKeyboard: boolean;
   taskbarAutoHide: boolean;
+  disableIOSRubberBand: boolean;
+  disableDoubleTapZoom: boolean;
+  disableLongPress: boolean;
 }
 
 export interface EdgeGestureConfig {
@@ -35,7 +39,10 @@ const defaultConfig: TabletModeConfig = {
   enableEdgeGestures: true,
   enableTouchFeedback: true,
   autoShowKeyboard: true,
-  taskbarAutoHide: true
+  taskbarAutoHide: true,
+  disableIOSRubberBand: true,
+  disableDoubleTapZoom: true,
+  disableLongPress: true
 };
 
 const defaultEdgeConfig: EdgeGestureConfig = {
@@ -140,6 +147,9 @@ class TabletModeManager {
         html.classList.add('os-taskbar-autohide');
       }
 
+      // iOS 干扰操作禁用
+      this.disableIOSInterferences();
+
       this.setupKeyboardHandling();
     } else {
       html.classList.remove('os-tablet-mode');
@@ -149,7 +159,147 @@ class TabletModeManager {
       html.classList.remove('os-no-hover');
       html.classList.remove('os-touch-feedback');
       html.classList.remove('os-taskbar-autohide');
+      
+      // 恢复iOS默认行为
+      this.enableIOSInterferences();
     }
+  }
+
+  /**
+   * 禁用iOS干扰操作
+   */
+  private disableIOSInterferences(): void {
+    // 禁用双击缩放
+    if (this.config.disableDoubleTapZoom) {
+      this.disableDoubleTapZoomGlobal();
+    }
+
+    // 禁用iOS橡皮筋效果
+    if (this.config.disableIOSRubberBand) {
+      this.disableRubberBandEffect();
+    }
+
+    // 禁用长按选择和上下文菜单
+    if (this.config.disableLongPress) {
+      this.disableLongPressGlobal();
+    }
+  }
+
+  /**
+   * 恢复iOS默认行为
+   */
+  private enableIOSInterferences(): void {
+    // 恢复双击缩放
+    const dblZoomStyle = document.getElementById('os-disable-dblzoom');
+    dblZoomStyle?.remove();
+
+    // 恢复长按
+    const longPressStyle = document.getElementById('os-disable-longpress');
+    longPressStyle?.remove();
+  }
+
+  /**
+   * 禁用双击缩放（iOS Safari）
+   */
+  private disableDoubleTapZoomGlobal(): void {
+    let style = document.getElementById('os-disable-dblzoom');
+    if (!style) {
+      style = document.createElement('style');
+      style.id = 'os-disable-dblzoom';
+      style.textContent = `
+        .os-tablet-mode,
+        .os-tablet-mode * {
+          touch-action: manipulation;
+        }
+      `;
+      document.head.appendChild(style);
+    }
+  }
+
+  /**
+   * 禁用橡皮筋效果
+   */
+  private disableRubberBandEffect(): void {
+    const preventRubberBand = (e: TouchEvent) => {
+      // 允许滚动元素内部滚动
+      const target = e.target as HTMLElement;
+      const scrollable = target.closest('.os-scrollable, [data-scrollable], .os-window-content');
+      
+      if (scrollable) {
+        const el = scrollable as HTMLElement;
+        const { scrollTop, scrollHeight, clientHeight } = el;
+        
+        // 如果内容可以滚动，允许
+        if (scrollHeight > clientHeight) {
+          // 检查是否在顶部或底部边界
+          const atTop = scrollTop === 0;
+          const atBottom = scrollTop + clientHeight >= scrollHeight;
+          
+          if ((atTop && e.touches[0].clientY > 0) || atBottom) {
+            // 允许内部滚动
+            return;
+          }
+        }
+      }
+      
+      // 防止页面级别的橡皮筋效果
+      if (e.touches.length === 1) {
+        const touch = e.touches[0];
+        // 只在边缘区域阻止
+        if (touch.clientY < 10 || touch.clientY > window.innerHeight - 10) {
+          e.preventDefault();
+        }
+      }
+    };
+
+    // 使用 passive: false 以便调用 preventDefault
+    document.addEventListener('touchmove', preventRubberBand, { passive: false });
+    
+    this.cleanupFns.push(() => {
+      document.removeEventListener('touchmove', preventRubberBand);
+    });
+  }
+
+  /**
+   * 禁用长按选择和上下文菜单
+   */
+  private disableLongPressGlobal(): void {
+    let style = document.getElementById('os-disable-longpress');
+    if (!style) {
+      style = document.createElement('style');
+      style.id = 'os-disable-longpress';
+      style.textContent = `
+        .os-tablet-mode {
+          -webkit-touch-callout: none;
+          -webkit-user-select: none;
+          user-select: none;
+        }
+        
+        .os-tablet-mode input,
+        .os-tablet-mode textarea,
+        .os-tablet-mode [contenteditable="true"] {
+          -webkit-user-select: text;
+          user-select: text;
+          -webkit-touch-callout: default;
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    // 禁用上下文菜单
+    const preventContextMenu = (e: Event) => {
+      const target = e.target as HTMLElement;
+      // 允许输入框的上下文菜单
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
+        return;
+      }
+      e.preventDefault();
+    };
+
+    document.addEventListener('contextmenu', preventContextMenu);
+    this.cleanupFns.push(() => {
+      document.removeEventListener('contextmenu', preventContextMenu);
+    });
   }
 
   private applyLargeTouchTargets(): void {
@@ -165,6 +315,7 @@ class TabletModeManager {
         min-height: 44px;
         min-width: 44px;
         padding: 12px;
+        font-size: 16px;
       }
       .os-tablet-mode .os-large-touch-targets .os-icon-btn {
         min-width: 44px;
@@ -187,7 +338,7 @@ class TabletModeManager {
   private setupTouchFeedback(): void {
     const handleTouchStart = (e: TouchEvent) => {
       const target = e.target as HTMLElement;
-      if (target) {
+      if (target && !target.closest('input, textarea, [contenteditable]')) {
         target.classList.add('os-touch-active');
       }
     };
@@ -330,7 +481,7 @@ class TabletModeManager {
   }
 
   setEdgeConfig(config: Partial<EdgeGestureConfig>): void {
-    this.edgeConfig = { ...this.edgeConfig, ...config };
+    this.edgeConfig = { ...defaultEdgeConfig, ...edgeConfig, ...config };
   }
 
   onChange(callback: TabletModeListener): () => void {

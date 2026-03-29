@@ -587,3 +587,23 @@ Stage Summary:
   3. state.tsx 初始化内核并运行 BootController
   4. BootStage 显示启动动画和进度
 - 提交: 4af0eab
+
+---
+Task ID: 5
+Agent: Main Agent
+Task: 修复用户登录问题
+
+Work Log:
+- 分析用户登录流程，发现登录成功后调用 window.location.reload()
+- 页面刷新会重新开始整个启动流程，导致登录状态丢失
+- 修改 state.tsx：添加 onLoginSuccess 回调，直接切换 stage
+- 修改 auth.tsx：使用回调而不是刷新页面
+- 修改 main.tsx：传递 onLoginSuccess 回调
+- 运行 lint 检查通过
+- 提交代码
+
+Stage Summary:
+- 用户登录问题已修复
+- 登录成功后直接切换到桌面，不刷新页面
+- OOBE 完成后直接切换到桌面，不刷新页面
+- 提交: 1663947
