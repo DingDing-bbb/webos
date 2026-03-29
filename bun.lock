@@ -4,14 +4,8 @@
   "workspaces": {
     "": {
       "name": "webos-monorepo",
-      "dependencies": {
-        "lucide-react": "^1.7.0",
-      },
       "devDependencies": {
         "@eslint/js": "^10.0.1",
-        "@types/node": "^25.5.0",
-        "@types/react": "^19.2.14",
-        "@types/react-dom": "^19.2.3",
         "@types/webpack-env": "^1.18.8",
         "eslint": "^10.1.0",
         "eslint-plugin-react": "^7.37.5",
@@ -20,31 +14,9 @@
         "typescript-eslint": "^8.57.2",
       },
     },
-    "packages/docs": {
-      "name": "@webos/docs",
-      "version": "1.0.0",
-      "dependencies": {
-        "react": "^19.2.4",
-      },
-      "devDependencies": {
-        "@types/react": "^19.2.14",
-        "@types/react-dom": "^19.2.3",
-      },
-    },
-    "packages/intro": {
-      "name": "@webos/intro",
-      "version": "1.0.0",
-      "dependencies": {
-        "react": "^19.2.4",
-      },
-      "devDependencies": {
-        "@types/react": "^19.2.14",
-        "@types/react-dom": "^19.2.3",
-      },
-    },
     "packages/os": {
       "name": "@webos/os",
-      "version": "1.0.0",
+      "version": "0.0.1-alpha",
       "dependencies": {
         "clsx": "^2.1.1",
         "react": "^19.2.4",
@@ -75,10 +47,8 @@
     },
     "site": {
       "name": "@webos/site",
-      "version": "1.0.0",
+      "version": "0.0.1-alpha",
       "dependencies": {
-        "@webos/docs": "workspace:*",
-        "@webos/intro": "workspace:*",
         "@webos/os": "workspace:*",
         "clsx": "^2.1.1",
         "next": "^16.2.1",
@@ -639,10 +609,6 @@
     "@webassemblyjs/wasm-parser": ["@webassemblyjs/wasm-parser@1.14.1", "", { "dependencies": { "@webassemblyjs/ast": "1.14.1", "@webassemblyjs/helper-api-error": "1.13.2", "@webassemblyjs/helper-wasm-bytecode": "1.13.2", "@webassemblyjs/ieee754": "1.13.2", "@webassemblyjs/leb128": "1.13.2", "@webassemblyjs/utf8": "1.13.2" } }, "sha512-JLBl+KZ0R5qB7mCnud/yyX08jWFw5MsoalJ1pQ4EdFlgj9VdXKGuENGsiCIjegI1W7p91rUlcB/LB5yRJKNTcQ=="],
 
     "@webassemblyjs/wast-printer": ["@webassemblyjs/wast-printer@1.14.1", "", { "dependencies": { "@webassemblyjs/ast": "1.14.1", "@xtuc/long": "4.2.2" } }, "sha512-kPSSXE6De1XOR820C90RIo2ogvZG+c3KiHzqUoO/F34Y2shGzesfqv7o57xrxovZJH/MetF5UjroJ/R/3isoiw=="],
-
-    "@webos/docs": ["@webos/docs@workspace:packages/docs"],
-
-    "@webos/intro": ["@webos/intro@workspace:packages/intro"],
 
     "@webos/os": ["@webos/os@workspace:packages/os"],
 
@@ -1255,8 +1221,6 @@
     "lower-case": ["lower-case@2.0.2", "", { "dependencies": { "tslib": "^2.0.3" } }, "sha512-7fm3l3NAF9WfN6W3JOmf5drwpVqX78JtoGJ3A6W0a6ZnldM41w2fV5D490psKFTpMds8TJse/eHLFFsNHHjHgg=="],
 
     "lru-cache": ["lru-cache@5.1.1", "", { "dependencies": { "yallist": "^3.0.2" } }, "sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w=="],
-
-    "lucide-react": ["lucide-react@1.7.0", "", { "peerDependencies": { "react": "^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0" } }, "sha512-yI7BeItCLZJTXikmK4KNUGCKoGzSvbKlfCvw44bU4fXAL6v3gYS4uHD1jzsLkfwODYwI6Drw5Tu9Z5ulDe0TSg=="],
 
     "magic-string": ["magic-string@0.30.21", "", { "dependencies": { "@jridgewell/sourcemap-codec": "^1.5.5" } }, "sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ=="],
 
