@@ -3,13 +3,15 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3000",
+    "dev": "next dev -p 3000 --turbopack",
     "build": "next build"
   },
   "dependencies": {
     "next": "^16.2.1",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
+    "sql.js": "^1.14.1",
+    "clsx": "^2.1.1",
     "@webos/os": "workspace:*",
     "@webos/docs": "workspace:*",
     "@webos/intro": "workspace:*"

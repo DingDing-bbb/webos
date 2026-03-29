@@ -378,7 +378,7 @@ export default function AppPage() {
 
     // 如果已同意协议，直接跳转到OS
     if (accepted === 'true') {
-      window.location.href = '/os/index.html';
+      window.location.href = '/app/os';
       return;
     }
 
@@ -406,7 +406,7 @@ export default function AppPage() {
     if (!agreed) return;
     localStorage.setItem(AGREEMENT_KEY, 'true');
     // 直接跳转到OS
-    window.location.href = '/os/index.html';
+    window.location.href = '/app/os';
   };
 
   // 主题颜色
