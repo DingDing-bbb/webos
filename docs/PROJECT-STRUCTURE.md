@@ -57,8 +57,7 @@ webos/
 │       │   ├── com.os.browser/
 │       │   ├── com.os.terminal/
 │       │   ├── com.os.settings/
-│       │   ├── com.os.filemanager/
-│       │   └── com.os.docs/
+│       │   └── com.os.filemanager/
 │       │
 │       ├── bootloader/      # 启动加载器
 │       ├── oobe/            # 首次启动向导

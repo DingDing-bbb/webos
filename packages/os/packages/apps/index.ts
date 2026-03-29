@@ -40,10 +40,9 @@ import { appInfo as fileManagerInfo } from './com.os.filemanager';
 import { appInfo as settingsInfo } from './com.os.settings';
 import { appInfo as terminalInfo } from './com.os.terminal';
 import { appInfo as browserInfo } from './com.os.browser';
-import { appInfo as docsInfo } from './com.os.docs';
 
 // 所有应用信息列表
-const allAppInfos = [clockInfo, fileManagerInfo, settingsInfo, terminalInfo, browserInfo, docsInfo];
+const allAppInfos = [clockInfo, fileManagerInfo, settingsInfo, terminalInfo, browserInfo];
 
 // 是否已初始化
 let initialized = false;
