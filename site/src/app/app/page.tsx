@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 
 // 协议同意状态存储 key
 const AGREEMENT_KEY = 'webos-agreement-accepted';
@@ -87,8 +86,6 @@ WebOS 是一个模拟操作系统项目，不提供真实操作系统的功能�
 使用本软件的风险由您自行承担。建议定期备份重要数据，不要在此系统中存储敏感个人信息。`,
     checkbox: '我已阅读并同意以上协议',
     accept: '同意并继续',
-    accepted: '已同意协议',
-    continueToOS: '进入系统',
     footer: '© 2026 WebOS. MIT License.',
   },
   'zh-TW': {
@@ -170,8 +167,6 @@ WebOS 是一個模擬操作系統項目，不提供真實操作系統的功能�
 使用本軟件的風險由您自行承擔。建議定期備份重要數據，不要在此系統中存儲敏感個人信息。`,
     checkbox: '我已閱讀並同意以上協議',
     accept: '同意並繼續',
-    accepted: '已同意協議',
-    continueToOS: '進入系統',
     footer: '© 2026 WebOS. MIT License.',
   },
   en: {
@@ -253,8 +248,6 @@ In no event shall the developers and contributors be liable for any damages aris
 You assume all risks associated with using this software. We recommend backing up important data regularly and not storing sensitive personal information in this system.`,
     checkbox: 'I have read and agree to the above agreements',
     accept: 'Agree & Continue',
-    accepted: 'Agreement Accepted',
-    continueToOS: 'Enter System',
     footer: '© 2026 WebOS. MIT License.',
   },
 };
@@ -287,12 +280,6 @@ const FileTextIcon = () => (
 const AlertIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="18" height="18">
     <path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
-  </svg>
-);
-
-const CheckIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="40" height="40">
-    <path d="M20 6L9 17l-5-5"/>
   </svg>
 );
 
@@ -371,12 +358,10 @@ function renderMarkdown(text: string, theme: Theme): React.ReactNode {
 }
 
 export default function AppPage() {
-  const router = useRouter();
   const [lang, setLang] = useState<Lang>('zh');
   const [theme, setTheme] = useState<Theme>('light');
   const [activeTab, setActiveTab] = useState<TabKey>('tos');
   const [agreed, setAgreed] = useState(false);
-  const [alreadyAccepted, setAlreadyAccepted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -387,11 +372,16 @@ export default function AppPage() {
     const savedLang = localStorage.getItem('webos-lang') as Lang;
     const savedTheme = localStorage.getItem('webos-theme') as Theme;
     const accepted = localStorage.getItem(AGREEMENT_KEY);
-    
+
     if (savedLang && ['zh', 'zh-TW', 'en'].includes(savedLang)) setLang(savedLang);
     if (savedTheme && ['light', 'dark'].includes(savedTheme)) setTheme(savedTheme);
-    if (accepted === 'true') setAlreadyAccepted(true);
-    
+
+    // 如果已同意协议，直接跳转到OS
+    if (accepted === 'true') {
+      window.location.href = '/os/index.html';
+      return;
+    }
+
     setIsLoading(false);
 
     const checkMobile = () => setIsMobile(window.innerWidth < 640);
@@ -415,11 +405,8 @@ export default function AppPage() {
   const handleAccept = () => {
     if (!agreed) return;
     localStorage.setItem(AGREEMENT_KEY, 'true');
-    setAlreadyAccepted(true);
-  };
-
-  const handleContinue = () => {
-    router.push('/app/os');
+    // 直接跳转到OS
+    window.location.href = '/os/index.html';
   };
 
   // 主题颜色
@@ -475,115 +462,6 @@ export default function AppPage() {
         fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif',
       }}>
         <div style={{ fontSize: '18px', opacity: 0.6 }}>Loading...</div>
-      </div>
-    );
-  }
-
-  // 已同意
-  if (alreadyAccepted) {
-    return (
-      <div style={{
-        minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        background: c.bgGradient,
-        color: c.text,
-        fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif',
-        overscrollBehavior: 'none',
-      }}>
-        {/* Header */}
-        <header style={{
-          position: 'sticky',
-          top: 0,
-          zIndex: 100,
-          background: c.headerBg,
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          borderBottom: `1px solid ${c.border}`,
-        }}>
-          <div style={{
-            maxWidth: '1000px',
-            margin: '0 auto',
-            padding: '0 16px',
-            height: '52px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '12px' : '24px' }}>
-              <a href="/intro" style={{ fontSize: '18px', fontWeight: 600, color: c.text, textDecoration: 'none' }}>
-                WebOS
-              </a>
-              {!isMobile && (
-                <nav style={{ display: 'flex', gap: '20px' }}>
-                  <a href="/intro" style={{ fontSize: '13px', color: c.textMuted, textDecoration: 'none' }}>{t.nav.intro}</a>
-                  <a href="/docs" style={{ fontSize: '13px', color: c.textMuted, textDecoration: 'none' }}>{t.nav.docs}</a>
-                  <span style={{ fontSize: '13px', fontWeight: 500 }}>{t.nav.app}</span>
-                </nav>
-              )}
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <a 
-                href="https://github.com/webos/webos" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                style={{ padding: '8px', color: c.textMuted, display: 'flex', alignItems: 'center', textDecoration: 'none' }}
-                title="GitHub"
-              >
-                <GithubIcon />
-              </a>
-              <button onClick={handleThemeChange} style={{ padding: '8px', background: 'transparent', border: 'none', color: c.textMuted, cursor: 'pointer', borderRadius: '6px' }}>
-                {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
-              </button>
-              <select value={lang} onChange={(e) => handleLangChange(e.target.value as Lang)}
-                style={{ padding: '6px 10px', background: c.card, border: `1px solid ${c.border}`, borderRadius: '6px', color: c.text, fontSize: '13px', cursor: 'pointer' }}>
-                <option value="zh" style={{ background: c.bg }}>简体中文</option>
-                <option value="zh-TW" style={{ background: c.bg }}>繁體中文</option>
-                <option value="en" style={{ background: c.bg }}>English</option>
-              </select>
-            </div>
-          </div>
-        </header>
-
-        {/* Main */}
-        <main style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '32px 16px' }}>
-          <div style={{ textAlign: 'center', maxWidth: '400px' }}>
-            <div style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '72px',
-              height: '72px',
-              background: theme === 'dark' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(16, 185, 129, 0.1)',
-              borderRadius: '50%',
-              marginBottom: '24px',
-            }}>
-              <span style={{ color: '#10b981' }}><CheckIcon /></span>
-            </div>
-            <h1 style={{ fontSize: '28px', fontWeight: 600, marginBottom: '12px' }}>{t.accepted}</h1>
-            <p style={{ fontSize: '15px', color: c.textMuted, marginBottom: '32px', lineHeight: 1.6 }}>
-              {lang === 'zh' ? '您已同意用户协议，可以开始使用 WebOS。' : lang === 'zh-TW' ? '您已同意用戶協議，可以開始使用 WebOS。' : 'You have accepted the agreements. You can now start using WebOS.'}
-            </p>
-            <button onClick={handleContinue} style={{
-              padding: '14px 40px',
-              background: theme === 'dark' ? '#fff' : '#1d1d1f',
-              color: theme === 'dark' ? '#000' : '#fff',
-              fontSize: '15px',
-              fontWeight: 500,
-              borderRadius: '8px',
-              border: 'none',
-              cursor: 'pointer',
-              transition: 'transform 0.15s, opacity 0.15s',
-            }}>
-              {t.continueToOS}
-            </button>
-          </div>
-        </main>
-
-        {/* Footer */}
-        <footer style={{ borderTop: `1px solid ${c.border}`, padding: '20px', textAlign: 'center' }}>
-          <p style={{ fontSize: '13px', color: c.textMuted }}>{t.footer}</p>
-        </footer>
       </div>
     );
   }
