@@ -47,3 +47,13 @@ coverage/
 *.log
 *.tgz
 .npm
+
+# AI Skills - 不需要提交到 git
+skills/
+
+# Webpack 构建产物
+site/public/os/
+
+# Lock 文件（可选，根据团队习惯）
+# bun.lock
+# package-lock.json
