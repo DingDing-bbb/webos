@@ -58,5 +58,7 @@ site/public/os/
 # Agent 工作日志
 worklog.md
 
-# Dev log
-dev.log
+# 临时文件
+*.out.log
+daemon.log
+server.log

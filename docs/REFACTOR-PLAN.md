@@ -10,9 +10,9 @@
 
 | 技术 | 版本 |
 |------|------|
-| Next.js | ^15.1.0 |
+| Next.js | ^16.2.1 |
 | React | ^19.0.0 |
-| TypeScript | ^5.9.0 |
+| TypeScript | ^6.0.2 |
 | Tailwind CSS | ^4.2.2 |
 | Webpack | ^5.88.2 |
 | Bun | 运行时 |
