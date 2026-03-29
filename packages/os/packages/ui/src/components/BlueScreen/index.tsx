@@ -3,6 +3,15 @@
 import React, { useState, useEffect } from 'react';
 import type { SystemError } from '@kernel/core/errorHandler';
 
+// 系统配置（Turbopack 不支持 DefinePlugin）
+const OS_NAME = typeof __OS_NAME__ !== 'undefined' ? __OS_NAME__ : 'WebOS';
+const OS_VERSION = typeof __OS_VERSION__ !== 'undefined' ? __OS_VERSION__ : '0.0.1';
+const BUILD_TIME = typeof __BUILD_TIME__ !== 'undefined' ? __BUILD_TIME__ : new Date().toISOString();
+
+declare const __OS_NAME__: string | undefined;
+declare const __OS_VERSION__: string | undefined;
+declare const __BUILD_TIME__: string | undefined;
+
 interface BlueScreenProps {
   errors: SystemError[];
   errorCount: number;
@@ -74,7 +83,7 @@ export const BlueScreen: React.FC<BlueScreenProps> = ({
 
   // 生成错误摘要（包含时间格式化函数）
   const errorSummary = `
-A problem has been detected and ${__OS_NAME__} has been shut down to prevent damage.
+A problem has been detected and ${OS_NAME} has been shut down to prevent damage.
 
 ERROR_CODE: ${latestError?.code || 'UNKNOWN'}
 
@@ -301,7 +310,7 @@ Advanced troubleshooting:
           visit the system documentation or contact your administrator.
         </p>
         <p style={{ margin: '8px 0 0 0', opacity: 0.7 }}>
-          {__OS_NAME__} Version {__OS_VERSION__} | Build {__BUILD_TIME__}
+          {OS_NAME} Version {OS_VERSION} | Build {BUILD_TIME}
         </p>
       </div>
 

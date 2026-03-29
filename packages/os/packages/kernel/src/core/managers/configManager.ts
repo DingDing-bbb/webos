@@ -2,6 +2,10 @@
  * Config Manager - 配置管理
  */
 
+// 系统配置（Turbopack 不支持 DefinePlugin）
+const OS_NAME = typeof __OS_NAME__ !== 'undefined' ? __OS_NAME__ : 'WebOS';
+declare const __OS_NAME__: string | undefined;
+
 export class ConfigManager {
   private config: Map<string, unknown> = new Map();
   private storageKey = 'webos-config';
@@ -41,7 +45,7 @@ export class ConfigManager {
   }
 
   getSystemName(): string {
-    return this.get<string>('systemName') || __OS_NAME__;
+    return this.get<string>('systemName') || OS_NAME;
   }
 
   setSystemName(name: string): void {

@@ -14,6 +14,11 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import type { LocaleConfig } from '@kernel/types';
 
+// 系统配置（Turbopack 不支持 DefinePlugin）
+const OS_NAME = typeof __OS_NAME__ !== 'undefined' ? __OS_NAME__ : 'WebOS';
+
+declare const __OS_NAME__: string | undefined;
+
 // ============================================================================
 // Types
 // ============================================================================
@@ -217,7 +222,7 @@ export const OOBE: React.FC<OOBEProps> = ({ onComplete }) => {
           fontWeight="700"
           letterSpacing="-1"
         >
-          {__OS_NAME__}
+          {OS_NAME}
         </text>
       </svg>
       <p className="os-oobe-welcome-desc">{t('oobe.welcomeDesc')}</p>

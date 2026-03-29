@@ -5,6 +5,13 @@ import { useRouter } from 'next/navigation';
 
 const AGREEMENT_KEY = 'webos-agreement-accepted';
 
+// 注入全局变量（必须在组件加载前执行）
+if (typeof globalThis !== 'undefined') {
+  (globalThis as any).__OS_NAME__ = 'WebOS';
+  (globalThis as any).__OS_VERSION__ = '0.0.1';
+  (globalThis as any).__BUILD_TIME__ = new Date().toISOString();
+}
+
 export default function OSPage() {
   const router = useRouter();
   const [ready, setReady] = useState(false);
@@ -16,6 +23,7 @@ export default function OSPage() {
       return;
     }
 
+    // 动态导入确保全局变量已注入
     import('./main').then((mod) => {
       setComponent(() => mod.default);
       setReady(true);

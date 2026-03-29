@@ -8,6 +8,7 @@
 
 import React from 'react';
 import { Spinner } from '../Spinner';
+import { OS_NAME, OS_VERSION } from '../../config';
 
 // ============================================================================
 // Types
@@ -97,7 +98,7 @@ export const BootUI: React.FC<BootUIProps> = ({
             fontWeight="700"
             letterSpacing="-1"
           >
-            {__OS_NAME__}
+            {OS_NAME}
           </text>
         </svg>
       </div>
@@ -114,7 +115,7 @@ export const BootUI: React.FC<BootUIProps> = ({
 
       {/* Version Info */}
       <div className="os-boot-version">
-        v{__OS_VERSION__}
+        v{OS_VERSION}
       </div>
     </div>
   );

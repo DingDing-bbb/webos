@@ -4,6 +4,12 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { TerminalIcon } from './icon';
 import type { AppInfo } from '../../types';
 
+// 系统配置（Turbopack 不支持 DefinePlugin）
+const OS_NAME = typeof __OS_NAME__ !== 'undefined' ? __OS_NAME__ : 'WebOS';
+const OS_VERSION = typeof __OS_VERSION__ !== 'undefined' ? __OS_VERSION__ : '0.0.1';
+declare const __OS_NAME__: string | undefined;
+declare const __OS_VERSION__: string | undefined;
+
 interface TerminalProps {
   windowId?: string;
 }
@@ -28,7 +34,7 @@ export const Terminal: React.FC<TerminalProps> = () => {
   useEffect(() => {
     // 显示欢迎信息
     setLines([
-      { type: 'output', content: `${__OS_NAME__} Terminal v${__OS_VERSION__}` },
+      { type: 'output', content: `${OS_NAME} Terminal v${OS_VERSION}` },
       { type: 'output', content: t('terminal.welcome') },
       { type: 'output', content: t('terminal.prompt') },
       { type: 'output', content: '' }

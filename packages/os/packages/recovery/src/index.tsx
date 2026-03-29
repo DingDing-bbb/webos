@@ -6,6 +6,13 @@ import React, { useState, useEffect } from 'react';
 import type { BootError, BootStatus } from '@bootloader';
 import { bootloader } from '@bootloader';
 
+// 系统配置（Turbopack 不支持 DefinePlugin）
+const OS_NAME = typeof __OS_NAME__ !== 'undefined' ? __OS_NAME__ : 'WebOS';
+const OS_VERSION = typeof __OS_VERSION__ !== 'undefined' ? __OS_VERSION__ : '0.0.1';
+
+declare const __OS_NAME__: string | undefined;
+declare const __OS_VERSION__: string | undefined;
+
 interface RecoveryModeProps {
   status: BootStatus;
   onRetry: () => void;
@@ -166,7 +173,7 @@ export const RecoveryMode: React.FC<RecoveryModeProps> = ({
             fontSize="24"
             fontWeight="300"
           >
-            {__OS_NAME__}
+            {OS_NAME}
           </text>
         </svg>
         <div style={{
@@ -427,7 +434,7 @@ export const RecoveryMode: React.FC<RecoveryModeProps> = ({
         color: '#444',
         fontSize: '11px'
       }}>
-        {__OS_NAME__} v{__OS_VERSION__} | Recovery Mode
+        {OS_NAME} v{OS_VERSION} | Recovery Mode
         {canReset && ' | Dev Plugin Active'}
       </div>
     </div>

@@ -8,6 +8,12 @@ import type { TaskbarDisplayMode } from '@ui/components/Taskbar';
 import { SettingsIcon } from './icon';
 import type { AppInfo } from '../../types';
 
+// 系统配置（Turbopack 不支持 DefinePlugin）
+const OS_NAME = typeof __OS_NAME__ !== 'undefined' ? __OS_NAME__ : 'WebOS';
+const OS_VERSION = typeof __OS_VERSION__ !== 'undefined' ? __OS_VERSION__ : '0.0.1';
+declare const __OS_NAME__: string | undefined;
+declare const __OS_VERSION__: string | undefined;
+
 // 更新管理器类型
 interface UpdateManager {
   init: () => void;
@@ -95,7 +101,7 @@ const TIME_FORMATS = [
 
 export const Settings: React.FC<SettingsProps> = () => {
   const [currentSection, setCurrentSection] = useState<SettingsSection>('system');
-  const [systemName, setSystemName] = useState(__OS_NAME__);
+  const [systemName, setSystemName] = useState(OS_NAME);
   const [currentLocale, setCurrentLocale] = useState('en');
   const [locales, setLocales] = useState<LocaleConfig[]>([]);
   const [timezone, setTimezone] = useState('UTC+8');
@@ -485,7 +491,7 @@ export const Settings: React.FC<SettingsProps> = () => {
           className="settings-input"
           value={systemName}
           onChange={(e) => handleSystemNameChange(e.target.value)}
-          placeholder={__OS_NAME__}
+          placeholder={OS_NAME}
         />
         <p className="settings-hint">{t('settings.systemNameHint')}</p>
       </div>
@@ -529,7 +535,7 @@ export const Settings: React.FC<SettingsProps> = () => {
             fontSize: '14px',
             color: 'var(--os-color-text)'
           }}>
-            v{__OS_VERSION__}
+            v{OS_VERSION}
           </span>
           <button
             className="settings-button secondary"
