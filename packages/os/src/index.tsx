@@ -46,14 +46,14 @@ updateManager.init();
 // 辅助函数
 // ============================================================================
 
-// 平板模式检测
+// 平板模式检测 - 只有用户明确设置才启用
 const checkTabletMode = (): boolean => {
   const saved = localStorage.getItem('webos-tablet-mode');
   if (saved !== null) {
     return saved === 'true';
   }
-  const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-  return isTouch;
+  // 默认不启用平板模式
+  return false;
 };
 
 // 应用平板模式样式
@@ -65,7 +65,7 @@ const applyTabletMode = (enabled: boolean) => {
   }
 };
 
-// 初始化平板模式
+// 初始化平板模式（默认关闭）
 const initialTabletMode = checkTabletMode();
 applyTabletMode(initialTabletMode);
 
@@ -116,6 +116,10 @@ const App: React.FC = () => {
 
   // 获取所有已注册的应用
   const registeredApps = React.useMemo(() => getRegisteredApps(), []);
+  
+  // 窗口容器 ref - 必须在所有条件返回之前声明
+  const windowContainerRef = React.useRef<HTMLDivElement | null>(null);
+  const taskbarHeight = isTabletMode ? 56 : 48;
 
   // ----------------------------------------
   // 订阅外部状态
@@ -155,6 +159,14 @@ const App: React.FC = () => {
     window.addEventListener('startmenu:toggle', handleToggle);
     return () => window.removeEventListener('startmenu:toggle', handleToggle);
   }, []);
+
+  // 设置窗口容器 - 当登录状态改变时
+  React.useEffect(() => {
+    if (isLoggedIn && windowContainerRef.current && window.webos) {
+      window.webos.setWindowContainer(windowContainerRef.current);
+      console.log('[WebOS] Window container set');
+    }
+  }, [isLoggedIn]);
 
   // ----------------------------------------
   // OOBE 和 用户认证流程
@@ -493,8 +505,6 @@ const App: React.FC = () => {
     );
   }
 
-  const taskbarHeight = isTabletMode ? 56 : 48;
-
   // 渲染桌面
   return (
     <>
@@ -510,6 +520,21 @@ const App: React.FC = () => {
           onOpen: () => openApp(app.id)
         }))}
         wallpaper={wallpaperConfig}
+      />
+      
+      {/* 窗口容器 */}
+      <div 
+        ref={windowContainerRef}
+        id="webos-window-container"
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: taskbarHeight,
+          overflow: 'hidden',
+          pointerEvents: 'none',
+        }}
       />
       
       <Taskbar

@@ -63,8 +63,8 @@ export interface DesktopIconItem {
   name: string;
   /** Icon element */
   icon: React.ReactNode;
-  /** Handler when icon is opened (double-click) */
-  onOpen: () => void;
+  /** Handler when icon is opened (double-click) - optional if onIconOpen is provided */
+  onOpen?: () => void;
 }
 
 /**
@@ -119,6 +119,8 @@ interface DesktopProps {
   wallpaper?: WallpaperConfig;
   /** Children (typically windows) */
   children?: React.ReactNode;
+  /** Handler when icon is opened (double-click) - alternative to icon.onOpen */
+  onIconOpen?: (id: string) => void;
 }
 
 // ============================================================================
@@ -296,7 +298,7 @@ interface DesktopIconProps {
   isSelected: boolean;
   onSelect: (id: string, e: React.MouseEvent) => void;
   onDragStart: (id: string, e: React.MouseEvent) => void;
-  onDoubleClick: () => void;
+  onDoubleClick?: () => void;
   onContextMenu: (e: React.MouseEvent) => void;
 }
 
@@ -325,7 +327,7 @@ const DesktopIcon: React.FC<DesktopIconProps> = ({
       }}
       onDoubleClick={(e) => {
         e.stopPropagation();
-        onDoubleClick();
+        onDoubleClick?.();
       }}
       onMouseDown={(e) => {
         if (e.button === 0) {
@@ -357,6 +359,7 @@ export const Desktop: React.FC<DesktopProps> = ({
   icons,
   wallpaper = { type: 'soft' },
   children,
+  onIconOpen,
 }) => {
   const displayIcons = useMemo(() => apps || icons || [], [apps, icons]);
   const desktopRef = useRef<HTMLDivElement>(null);
@@ -876,7 +879,13 @@ export const Desktop: React.FC<DesktopProps> = ({
             isSelected={selectedIcons.has(icon.id)}
             onSelect={handleIconSelect}
             onDragStart={handleDragStart}
-            onDoubleClick={icon.onOpen}
+            onDoubleClick={() => {
+              if (icon.onOpen) {
+                icon.onOpen();
+              } else if (onIconOpen) {
+                onIconOpen(icon.id);
+              }
+            }}
             onContextMenu={(e) => handleIconContextMenu(icon.id, e)}
           />
         ))}

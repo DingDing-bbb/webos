@@ -11,6 +11,7 @@ export default tseslint.config(
       'node_modules/**',
       '.next/**',
       'site/.next/**',
+      'site/public/**',  // 构建输出
       '**/*.config.js',
       '**/*.config.ts',
       '**/next-env.d.ts',

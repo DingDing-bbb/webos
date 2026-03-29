@@ -50,7 +50,7 @@ export default function OSMain() {
         />
       );
     case 'desktop':
-      return <DesktopStage {...props.desktop} />;
+      return <DesktopStage />;
     default:
       return null;
   }

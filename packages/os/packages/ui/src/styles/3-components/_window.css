@@ -238,6 +238,7 @@
 .os-tablet-mode .os-window-header {
   height: var(--os-window-header-height-tablet);
   cursor: grab;
+  touch-action: none;
 }
 
 .os-tablet-mode .os-window-header:active {
@@ -250,10 +251,56 @@
   margin-right: 10px;
 }
 
+/* 触摸设备窗口缩放手柄增大 */
+.os-touch-mode .os-window-resize-handle,
+.os-tablet-mode .os-window-resize-handle {
+  min-width: 20px;
+  min-height: 20px;
+  touch-action: none;
+}
+
+.os-touch-mode .os-window-resize-handle.n,
+.os-touch-mode .os-window-resize-handle.s,
+.os-tablet-mode .os-window-resize-handle.n,
+.os-tablet-mode .os-window-resize-handle.s {
+  height: 14px;
+}
+
+.os-touch-mode .os-window-resize-handle.e,
+.os-touch-mode .os-window-resize-handle.w,
+.os-tablet-mode .os-window-resize-handle.e,
+.os-tablet-mode .os-window-resize-handle.w {
+  width: 14px;
+}
+
+.os-touch-mode .os-window-resize-handle.nw,
+.os-touch-mode .os-window-resize-handle.ne,
+.os-touch-mode .os-window-resize-handle.sw,
+.os-touch-mode .os-window-resize-handle.se,
+.os-tablet-mode .os-window-resize-handle.nw,
+.os-tablet-mode .os-window-resize-handle.ne,
+.os-tablet-mode .os-window-resize-handle.sw,
+.os-tablet-mode .os-window-resize-handle.se {
+  width: 24px;
+  height: 24px;
+}
+
+/* 拖动时的视觉反馈 */
+.os-window.dragging {
+  opacity: 0.95;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.35);
+}
+
+/* 触摸拖动反馈 */
+.os-touch-mode .os-window.dragging {
+  box-shadow: 0 32px 64px rgba(0, 0, 0, 0.4);
+}
+
 /* 触摸缩放手柄 */
 .os-window-touch-resize-handle {
   background: transparent;
   z-index: 10;
+  touch-action: none;
 }
 
 .os-window-touch-resize-handle:active {
@@ -268,6 +315,195 @@
 .os-window-touch-resize-s { cursor: s-resize; }
 .os-window-touch-resize-e { cursor: e-resize; }
 .os-window-touch-resize-w { cursor: w-resize; }
+
+/* ========================================
+   Desktop Window 样式兼容
+   ======================================== */
+
+.desktop-window {
+  position: absolute;
+  background: var(--os-window-bg, rgba(255, 255, 255, 0.95));
+  border: 1px solid var(--os-color-border, rgba(0, 0, 0, 0.1));
+  border-radius: var(--os-radius-md, 8px);
+  box-shadow: var(--os-shadow-window, 0 8px 32px rgba(0, 0, 0, 0.15));
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  pointer-events: auto;
+}
+
+.desktop-window.active {
+  border-color: var(--os-color-primary, #0078d4);
+  box-shadow: var(--os-shadow-window-active, 0 12px 48px rgba(0, 120, 212, 0.2));
+}
+
+.desktop-window.dragging {
+  transition: none !important;
+  cursor: grabbing;
+  opacity: 0.95;
+}
+
+.desktop-window.resizing {
+  transition: none !important;
+}
+
+/* 窗口标题栏 */
+.desktop-window-titlebar {
+  display: flex;
+  align-items: center;
+  height: 32px;
+  background: var(--os-window-header-bg, transparent);
+  padding: 0 8px;
+  user-select: none;
+  -webkit-user-select: none;
+  flex-shrink: 0;
+  touch-action: none;
+  cursor: grab;
+}
+
+.desktop-window-titlebar:active {
+  cursor: grabbing;
+}
+
+.desktop-window.active .desktop-window-titlebar {
+  background: var(--os-color-primary, #0078d4);
+  color: white;
+}
+
+.desktop-window-titlebar-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.desktop-window-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+}
+
+.desktop-window-title {
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 窗口控制按钮 */
+.desktop-window-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  order: -1;
+}
+
+.desktop-window-control {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.1s ease;
+  touch-action: manipulation;
+}
+
+.desktop-window-control:hover {
+  transform: scale(1.15);
+}
+
+.desktop-window-minimize {
+  background: #febc2e;
+}
+
+.desktop-window-maximize {
+  background: #28c840;
+}
+
+.desktop-window-close {
+  background: #ff5f57;
+}
+
+/* 窗口内容 */
+.desktop-window-content {
+  flex: 1;
+  overflow: auto;
+  background: var(--os-color-bg, #fff);
+  min-height: 0;
+  /* iOS滚动优化 */
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* 窗口阴影和毛玻璃效果 */
+.desktop-window-acrylic {
+  position: absolute;
+  inset: 0;
+  background: inherit;
+  z-index: -1;
+}
+
+.desktop-window-shadow {
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* 缩放手柄 */
+.desktop-resize-handle {
+  position: absolute;
+  background: transparent;
+  touch-action: none;
+  z-index: 10;
+}
+
+.desktop-resize-handle.corner {
+  width: 12px;
+  height: 12px;
+}
+
+.desktop-resize-handle.edge {
+  /* 边缘手柄样式 */
+}
+
+/* 触摸设备增大缩放手柄 */
+.os-touch-mode .desktop-resize-handle.corner {
+  width: 24px;
+  height: 24px;
+}
+
+.os-touch-mode .desktop-resize-handle.edge {
+  min-width: 14px;
+  min-height: 14px;
+}
+
+/* 毛玻璃效果支持 */
+@supports (backdrop-filter: blur(20px)) or (-webkit-backdrop-filter: blur(20px)) {
+  .desktop-window {
+    background: rgba(255, 255, 255, 0.85);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    backdrop-filter: blur(20px) saturate(180%);
+  }
+
+  .desktop-window-titlebar {
+    background: transparent;
+  }
+
+  .desktop-window.active .desktop-window-titlebar {
+    background: transparent;
+    color: var(--os-color-text, inherit);
+  }
+}
 
 /* ========================================
    增强样式（毛玻璃）

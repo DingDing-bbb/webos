@@ -32,14 +32,14 @@ export interface EdgeGestureConfig {
 }
 
 const defaultConfig: TabletModeConfig = {
-  autoDetect: true,
+  autoDetect: false,  // 默认不自动检测，避免误判
   forceTabletMode: false,
   largerTouchTargets: true,
   disableHoverStates: true,
   enableEdgeGestures: true,
   enableTouchFeedback: true,
   autoShowKeyboard: true,
-  taskbarAutoHide: true,
+  taskbarAutoHide: false,  // 默认不自动隐藏任务栏
   disableIOSRubberBand: true,
   disableDoubleTapZoom: true,
   disableLongPress: true
@@ -455,6 +455,10 @@ class TabletModeManager {
 
   getModeChangeReason(): ModeChangeReason {
     return this.modeChangeReason;
+  }
+
+  private notifyListeners(): void {
+    this.listeners.forEach(listener => listener(this.isTabletMode));
   }
 
   enable(): void {

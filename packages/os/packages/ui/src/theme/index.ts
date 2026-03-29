@@ -6,11 +6,12 @@
 // Theme types
 export type ThemeMode = 'light' | 'dark' | 'system';
 export type AccentColor = 'blue' | 'purple' | 'pink' | 'red' | 'orange' | 'yellow' | 'green' | 'teal';
+export type BlurIntensity = 'low' | 'medium' | 'high' | 'ultra';
 
 export interface ThemeConfig {
   mode: ThemeMode;
   accent: AccentColor;
-  blurIntensity: 'low' | 'medium' | 'high' | 'ultra';
+  blurIntensity: BlurIntensity;
   transparency: number; // 0-100
   animations: boolean;
   noiseTexture: boolean;

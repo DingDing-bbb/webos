@@ -25,6 +25,23 @@ class OSWindow extends HTMLElement {
   private onMinimizeCallback: (() => void) | null = null;
   private onMaximizeCallback: (() => void) | null = null;
   private onFocusCallback: (() => void) | null = null;
+  
+  // Touch support
+  private touchStartX = 0;
+  private touchStartY = 0;
+  private touchStartWindowX = 0;
+  private touchStartWindowY = 0;
+  private isTouchDragging = false;
+  private lastTapTime = 0;
+  private lastTapX = 0;
+  private lastTapY = 0;
+  private touchResizeDirection = '';
+  private touchResizeStartX = 0;
+  private touchResizeStartY = 0;
+  private touchResizeStartWidth = 0;
+  private touchResizeStartHeight = 0;
+  private touchResizeStartX_pos = 0;
+  private touchResizeStartY_pos = 0;
 
   static get observedAttributes() {
     return ['data-window-id', 'data-active'];
@@ -125,8 +142,11 @@ class OSWindow extends HTMLElement {
   }
 
   private attachEventListeners() {
-    // 拖拽标题栏
+    // 拖拽标题栏 - 鼠标事件
     this.headerEl?.addEventListener('mousedown', this.handleDragStart);
+    
+    // 拖拽标题栏 - 触摸事件
+    this.headerEl?.addEventListener('touchstart', this.handleTouchStart, { passive: false });
     
     // 控制按钮
     this.querySelector('.os-window-btn.close')?.addEventListener('click', (e) => {
@@ -144,23 +164,38 @@ class OSWindow extends HTMLElement {
       this.onMaximizeCallback?.();
     });
 
-    // 缩放手柄
+    // 缩放手柄 - 鼠标事件
     this.querySelectorAll('.os-window-resize-handle').forEach(handle => {
       handle.addEventListener('mousedown', this.handleResizeStart as EventListener);
+      // 触摸事件
+      handle.addEventListener('touchstart', this.handleTouchResizeStart as EventListener, { passive: false });
     });
 
-    // 焦点
+    // 焦点 - 鼠标事件
     this.addEventListener('mousedown', () => {
       this.onFocusCallback?.();
     });
+    
+    // 焦点 - 触摸事件
+    this.addEventListener('touchstart', () => {
+      this.onFocusCallback?.();
+    }, { passive: true });
   }
 
   private removeEventListeners() {
+    // 鼠标事件
     this.headerEl?.removeEventListener('mousedown', this.handleDragStart);
     document.removeEventListener('mousemove', this.handleDragMove);
     document.removeEventListener('mouseup', this.handleDragEnd);
     document.removeEventListener('mousemove', this.handleResizeMove);
     document.removeEventListener('mouseup', this.handleResizeEnd);
+    
+    // 触摸事件
+    this.headerEl?.removeEventListener('touchstart', this.handleTouchStart);
+    document.removeEventListener('touchmove', this.handleTouchMove);
+    document.removeEventListener('touchend', this.handleTouchEnd);
+    document.removeEventListener('touchmove', this.handleTouchResizeMove);
+    document.removeEventListener('touchend', this.handleTouchResizeEnd);
   }
 
   private handleDragStart = (e: MouseEvent) => {
@@ -275,6 +310,157 @@ class OSWindow extends HTMLElement {
     
     document.removeEventListener('mousemove', this.handleResizeMove);
     document.removeEventListener('mouseup', this.handleResizeEnd);
+  };
+
+  // ========================================
+  // Touch Event Handlers
+  // ========================================
+
+  private handleTouchStart = (e: TouchEvent) => {
+    if ((e.target as HTMLElement).classList.contains('os-window-btn')) return;
+    if (this.state.isMaximized) return;
+    
+    const touch = e.touches[0];
+    if (!touch) return;
+    
+    e.preventDefault();
+    
+    this.touchStartX = touch.clientX;
+    this.touchStartY = touch.clientY;
+    this.touchStartWindowX = this.state.x;
+    this.touchStartWindowY = this.state.y;
+    this.isTouchDragging = false;
+    
+    // Check for double tap to maximize
+    const now = Date.now();
+    const timeDiff = now - this.lastTapTime;
+    
+    if (timeDiff < 300 && 
+        Math.abs(touch.clientX - this.lastTapX) < 30 && 
+        Math.abs(touch.clientY - this.lastTapY) < 30) {
+      // Double tap - toggle maximize
+      if (this.state.maximizable) {
+        this.onMaximizeCallback?.();
+      }
+      this.lastTapTime = 0;
+      return;
+    }
+    
+    this.lastTapTime = now;
+    this.lastTapX = touch.clientX;
+    this.lastTapY = touch.clientY;
+    
+    this.classList.add('dragging');
+    
+    document.addEventListener('touchmove', this.handleTouchMove, { passive: false });
+    document.addEventListener('touchend', this.handleTouchEnd);
+  };
+
+  private handleTouchMove = (e: TouchEvent) => {
+    const touch = e.touches[0];
+    if (!touch) return;
+    
+    const dx = touch.clientX - this.touchStartX;
+    const dy = touch.clientY - this.touchStartY;
+    
+    // Start dragging only after moving a bit (to distinguish from tap)
+    if (!this.isTouchDragging && (Math.abs(dx) > 5 || Math.abs(dy) > 5)) {
+      this.isTouchDragging = true;
+    }
+    
+    if (!this.isTouchDragging) return;
+    
+    e.preventDefault();
+    
+    this.state.x = this.touchStartWindowX + dx;
+    this.state.y = Math.max(0, this.touchStartWindowY + dy);
+    
+    this.style.left = `${this.state.x}px`;
+    this.style.top = `${this.state.y}px`;
+  };
+
+  private handleTouchEnd = () => {
+    this.isTouchDragging = false;
+    this.classList.remove('dragging');
+    
+    document.removeEventListener('touchmove', this.handleTouchMove);
+    document.removeEventListener('touchend', this.handleTouchEnd);
+  };
+
+  private handleTouchResizeStart = (e: TouchEvent) => {
+    if (this.state.isMaximized) return;
+    
+    const touch = e.touches[0];
+    if (!touch) return;
+    
+    const target = e.target as HTMLElement;
+    this.touchResizeDirection = target.dataset.dir || '';
+    
+    if (!this.touchResizeDirection) return;
+    
+    e.preventDefault();
+    e.stopPropagation();
+    
+    this.touchResizeStartX = touch.clientX;
+    this.touchResizeStartY = touch.clientY;
+    this.touchResizeStartWidth = this.state.width;
+    this.touchResizeStartHeight = this.state.height;
+    this.touchResizeStartX_pos = this.state.x;
+    this.touchResizeStartY_pos = this.state.y;
+    
+    this.classList.add('resizing');
+    
+    document.addEventListener('touchmove', this.handleTouchResizeMove, { passive: false });
+    document.addEventListener('touchend', this.handleTouchResizeEnd);
+  };
+
+  private handleTouchResizeMove = (e: TouchEvent) => {
+    if (!this.touchResizeDirection) return;
+    
+    const touch = e.touches[0];
+    if (!touch) return;
+    
+    e.preventDefault();
+    
+    const dx = touch.clientX - this.touchResizeStartX;
+    const dy = touch.clientY - this.touchResizeStartY;
+    const dir = this.touchResizeDirection;
+    const minW = this.state.minWidth;
+    const minH = this.state.minHeight;
+    
+    let newWidth = this.touchResizeStartWidth;
+    let newHeight = this.touchResizeStartHeight;
+    let newX = this.touchResizeStartX_pos;
+    let newY = this.touchResizeStartY_pos;
+    
+    if (dir.includes('e')) newWidth = Math.max(minW, this.touchResizeStartWidth + dx);
+    if (dir.includes('w')) {
+      newWidth = Math.max(minW, this.touchResizeStartWidth - dx);
+      if (newWidth > minW) newX = this.touchResizeStartX_pos + dx;
+    }
+    if (dir.includes('s')) newHeight = Math.max(minH, this.touchResizeStartHeight + dy);
+    if (dir.includes('n')) {
+      newHeight = Math.max(minH, this.touchResizeStartHeight - dy);
+      if (newHeight > minH) newY = Math.max(0, this.touchResizeStartY_pos + dy);
+    }
+    
+    this.state.width = newWidth;
+    this.state.height = newHeight;
+    this.state.x = newX;
+    this.state.y = newY;
+    
+    this.style.width = `${newWidth}px`;
+    this.style.height = `${newHeight}px`;
+    this.style.left = `${newX}px`;
+    this.style.top = `${newY}px`;
+  };
+
+  private handleTouchResizeEnd = () => {
+    this.touchResizeDirection = '';
+    this.classList.remove('resizing');
+    
+    document.removeEventListener('touchmove', this.handleTouchResizeMove);
+    document.removeEventListener('touchend', this.handleTouchResizeEnd);
   };
 
   // 公共 API

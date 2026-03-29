@@ -105,7 +105,8 @@ function loadBookmarks(): Bookmark[] {
   }
 }
 
-function _saveBookmark(bookmark: Bookmark): void {
+// Save bookmark to localStorage (exported for future use)
+export function saveBookmark(bookmark: Bookmark): void {
   const bookmarks = loadBookmarks();
   bookmarks.push(bookmark);
   localStorage.setItem('browser-bookmarks', JSON.stringify(bookmarks));

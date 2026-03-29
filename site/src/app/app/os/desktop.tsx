@@ -5,53 +5,77 @@ import { getRegisteredApps } from '@apps';
 import type { WindowState } from '@kernel/types';
 import React from 'react';
 
-interface DesktopStageProps {
-  containerRef?: React.RefObject<HTMLDivElement>;
-}
-
-export function DesktopStage({ containerRef: _externalRef }: DesktopStageProps) {
-  // 使用内部 ref 作为窗口容器
-  const internalContainerRef = useRef<HTMLDivElement>(null);
-  const containerRef = _externalRef || internalContainerRef;
+export function DesktopStage() {
+  // 窗口容器 ref
+  const containerRef = useRef<HTMLDivElement>(null);
+  // 是否已初始化
+  const initializedRef = useRef(false);
   
   const [windows, setWindows] = useState<WindowState[]>([]);
   const [startOpen, setStartOpen] = useState(false);
   const [wallpaper, setWallpaper] = useState({ type: 'soft' as const });
+  const [containerReady, setContainerReady] = useState(false);
 
   // 获取应用列表
   const apps = getRegisteredApps();
 
-  // 设置窗口容器 - 在组件挂载后立即设置
+  // 设置窗口容器 - 必须在容器 DOM 挂载后设置
   useEffect(() => {
-    const setContainer = () => {
-      if (containerRef.current) {
-        console.log('[Desktop] Container element:', containerRef.current);
-        if (window.webos) {
-          console.log('[Desktop] Setting window container via webos API');
-          window.webos.setWindowContainer(containerRef.current);
-        } else {
-          console.warn('[Desktop] window.webos not available');
-        }
-      } else {
-        console.warn('[Desktop] containerRef.current is null, retrying...');
-        // 重试
-        setTimeout(setContainer, 100);
+    if (initializedRef.current) return;
+    
+    const initContainer = () => {
+      if (containerRef.current && window.webos) {
+        console.log('[Desktop] Setting window container');
+        window.webos.setWindowContainer(containerRef.current);
+        initializedRef.current = true;
+        setContainerReady(true);
+        return true;
       }
+      return false;
     };
     
-    // 延迟一帧确保 DOM 已挂载
-    requestAnimationFrame(setContainer);
-  }, [containerRef]);
+    // 立即尝试
+    if (!initContainer()) {
+      // 如果失败，使用 MutationObserver 等待容器挂载
+      const observer = new MutationObserver(() => {
+        if (initContainer()) {
+          observer.disconnect();
+        }
+      });
+      
+      observer.observe(document.body, { childList: true, subtree: true });
+      
+      // 备用：定时器重试
+      const timer = setInterval(() => {
+        if (initContainer()) {
+          clearInterval(timer);
+        }
+      }, 50);
+      
+      return () => {
+        observer.disconnect();
+        clearInterval(timer);
+      };
+    }
+  }, []);
 
   // 更新窗口列表
   useEffect(() => {
-    const timer = setInterval(() => {
+    if (!containerReady) return;
+    
+    const updateWindows = () => {
       if (window.webos) {
         setWindows(window.webos.window.getAll());
       }
-    }, 100);
+    };
+    
+    // 立即更新一次
+    updateWindows();
+    
+    // 定时更新
+    const timer = setInterval(updateWindows, 100);
     return () => clearInterval(timer);
-  }, []);
+  }, [containerReady]);
 
   // 加载设置
   useEffect(() => {
@@ -61,14 +85,14 @@ export function DesktopStage({ containerRef: _externalRef }: DesktopStageProps) 
 
   // 打开应用
   const openApp = useCallback((appId: string) => {
-    const app = apps.find(a => a.id === appId);
-    if (!app) {
-      console.error('[Desktop] App not found:', appId);
+    if (!window.webos) {
+      console.error('[Desktop] window.webos not available');
       return;
     }
     
-    if (!window.webos) {
-      console.error('[Desktop] window.webos not available');
+    const app = apps.find(a => a.id === appId);
+    if (!app) {
+      console.error('[Desktop] App not found:', appId);
       return;
     }
 
@@ -84,11 +108,10 @@ export function DesktopStage({ containerRef: _externalRef }: DesktopStageProps) 
       root.render(React.createElement(app.component));
 
       // 打开窗口
-      const windowId = window.webos!.window.open({
+      const windowId = window.webos!.window.open(appId, {
         title: window.webos!.t(app.nameKey) || app.name,
         width: app.defaultWidth || 700,
         height: app.defaultHeight || 450,
-        appId,
         content: container
       });
       
@@ -98,12 +121,11 @@ export function DesktopStage({ containerRef: _externalRef }: DesktopStageProps) 
     });
   }, [apps]);
 
-  // 桌面图标
+  // 桌面图标 - 符合 DesktopIconItem 接口
   const desktopApps = apps.map(app => ({
     id: app.id,
     name: window.webos?.t(app.nameKey) || app.name,
-    icon: React.createElement(app.icon, { size: 48 }),
-    onOpen: () => openApp(app.id)
+    icon: React.createElement(app.icon, { size: 48 })
   }));
 
   // 开始菜单应用
@@ -118,14 +140,16 @@ export function DesktopStage({ containerRef: _externalRef }: DesktopStageProps) 
 
   return (
     <>
-      <Desktop apps={desktopApps} wallpaper={wallpaper}>
+      <Desktop icons={desktopApps} wallpaper={wallpaper} onIconOpen={(id) => openApp(id)}>
         <div
           ref={containerRef}
+          id="webos-window-container"
           style={{
             position: 'absolute',
             inset: 0,
             bottom: taskbarHeight,
             overflow: 'hidden',
+            pointerEvents: 'none',
           }}
         />
       </Desktop>

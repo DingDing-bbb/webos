@@ -4,13 +4,13 @@
  */
 
 import React, { useState } from 'react';
-import { useTheme, AccentColor, ThemeMode, BlurIntensity } from '@webos/ui/theme';
-import { Button, Icon, Heading, Text, Divider, Spacer } from '@webos/ui/base';
-import { Stack, Flex, Box, Container, Grid } from '@webos/ui/layout';
-import { Menu, Breadcrumb } from '@webos/ui/navigation';
-import { Select, Switch, Slider } from '@webos/ui/input';
-import { Card } from '@webos/ui/display';
-import { Modal } from '@webos/ui/feedback';
+import { useTheme, AccentColor, ThemeMode, BlurIntensity } from '@ui/theme';
+import { Button, Icon, Heading, Text, Divider, Spacer } from '@ui/base';
+import { Stack, Flex, Box, Container, Grid } from '@ui/layout';
+import { Menu, Breadcrumb } from '@ui/navigation';
+import { Select, Switch, Slider } from '@ui/input';
+import { Card } from '@ui/display';
+import { Modal } from '@ui/feedback';
 import { VisualEffectsPanel } from './panes/VisualEffects';
 import './styles.css';
 
@@ -72,7 +72,7 @@ export const SettingsApp: React.FC = () => {
 
       {/* 主内容区 */}
       <main className="settings-main">
-        <Container maxWidth="lg">
+        <Container size="lg">
           {renderContent()}
         </Container>
       </main>

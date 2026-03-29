@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { bootloader, BootController, type BootStatus } from '@bootloader';
 
 type Stage = 'boot' | 'recovery' | 'oobe' | 'lock' | 'desktop';
@@ -17,7 +17,6 @@ interface OSState {
       systemName: string;
       onLoginSuccess: () => void;
     };
-    desktop: { containerRef: React.RefObject<HTMLDivElement> };
     recovery: {
       status: BootStatus;
       onRetry: () => void;
@@ -36,7 +35,6 @@ const initialBootStatus: BootStatus = {
 };
 
 export function useOSState(): OSState {
-  const containerRef = useRef<HTMLDivElement>(null);
   const [stage, setStage] = useState<Stage>('boot');
   const [bootStatus, setBootStatus] = useState<BootStatus>(initialBootStatus);
   const [bootProgress, setBootProgress] = useState(0);
@@ -73,12 +71,7 @@ export function useOSState(): OSState {
       if (!mounted) return;
       initWebOS();
 
-      // 2. 设置窗口容器
-      if (containerRef.current && window.webos) {
-        window.webos.setWindowContainer(containerRef.current);
-      }
-
-      // 3. 运行启动控制器
+      // 2. 运行启动控制器
       const controller = new BootController();
       
       controller.setProgressHandler((task, progress) => {
@@ -103,14 +96,14 @@ export function useOSState(): OSState {
         }
       }
 
-      // 4. 完成启动
+      // 3. 完成启动
       setBootMessage('Welcome!');
       setBootProgress(100);
       await new Promise(r => setTimeout(r, 300));
 
       if (!mounted) return;
 
-      // 5. 检查是否有保存的会话状态
+      // 4. 检查是否有保存的会话状态
       if (window.webos?.fs?.exists('/tmp/.session')) {
         try {
           const content = window.webos.fs.read('/tmp/.session');
@@ -146,7 +139,7 @@ export function useOSState(): OSState {
         }
       }
 
-      // 6. 正常流程
+      // 5. 正常流程
       if (!window.webos) {
         setStage('desktop');
         return;
@@ -230,7 +223,6 @@ export function useOSState(): OSState {
         systemName, 
         onLoginSuccess: handleLoginSuccess 
       },
-      desktop: { containerRef },
       recovery: {
         status: bootStatus,
         onRetry: handleRetry,

@@ -136,7 +136,7 @@ export class HTMLParser {
     return doc;
   }
   
-  private _parseContent(html: string, doc: DocumentNode, head: ElementNode, body: ElementNode): void {
+  private _parseContent(html: string, doc: DocumentNode, _head: ElementNode, body: ElementNode): void {
     // 提取 title
     const titleMatch = html.match(/<title[^>]*>([^<]*)<\/title>/i);
     if (titleMatch) {
@@ -221,7 +221,16 @@ export interface LayoutBox {
 }
 
 export class LayoutEngine {
-  constructor(private viewportWidth: number, private viewportHeight: number) {}
+  private _viewportWidth: number;
+  private _viewportHeight: number;
+  
+  constructor(viewportWidth: number, viewportHeight: number) {
+    this._viewportWidth = viewportWidth;
+    this._viewportHeight = viewportHeight;
+  }
+  
+  get viewportWidth(): number { return this._viewportWidth; }
+  get viewportHeight(): number { return this._viewportHeight; }
   
   layout(root: ElementNode): LayoutBox {
     return this._layoutElement(root, 0, 0, this.viewportWidth);

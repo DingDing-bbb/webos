@@ -7,19 +7,21 @@ import React, { useState, useCallback, useRef, useEffect, createContext, useCont
 
 // ========== Types ==========
 export interface MenuItemProps {
-  key: string;
+  key?: string;
+  id?: string;
   label: React.ReactNode;
   icon?: React.ReactNode;
   disabled?: boolean;
   danger?: boolean;
   divider?: boolean;
+  active?: boolean;
   children?: MenuItemProps[];
   onClick?: () => void;
 }
 
 export interface MenuProps {
   items: MenuItemProps[];
-  mode?: 'horizontal' | 'vertical' | 'inline';
+  mode?: 'horizontal' | 'vertical' | 'inline' | 'sidebar';
   defaultSelectedKey?: string;
   defaultOpenKeys?: string[];
   selectedKey?: string;
@@ -29,7 +31,20 @@ export interface MenuProps {
   className?: string;
   style?: React.CSSProperties;
   acrylic?: boolean;
+  variant?: 'default' | 'sidebar';
 }
+
+// Helper to get item key (used for debugging)
+const _getItemKey = (item: MenuItemProps): string => item.key || item.id || '';
+
+// Helper to normalize items with keys
+const normalizeItems = (items: MenuItemProps[]): MenuItemProps[] => {
+  return items.map((item, index) => ({
+    ...item,
+    key: item.key || item.id || `item-${index}`,
+    children: item.children ? normalizeItems(item.children) : undefined,
+  }));
+};
 
 interface MenuContextType {
   selectedKey: string;
@@ -298,6 +313,9 @@ export const Menu: React.FC<MenuProps> = ({
     onToggle: handleToggle,
   };
 
+  // Normalize items to ensure all have keys
+  const normalizedItems = normalizeItems(items);
+
   return (
     <MenuContext.Provider value={contextValue}>
       <ul
@@ -312,7 +330,7 @@ export const Menu: React.FC<MenuProps> = ({
         role="menu"
         aria-orientation={mode === 'horizontal' ? 'horizontal' : 'vertical'}
       >
-        {items.map((item) =>
+        {normalizedItems.map((item) =>
           item.divider ? (
             <li key={item.key} className="nav-menu-divider" role="separator" />
           ) : item.children ? (
