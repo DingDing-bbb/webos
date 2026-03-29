@@ -74,37 +74,23 @@ webos/
 │   ├── UI-FRAMEWORK.md
 │   └── THIRD-PARTY-APPS.md
 │
-└── skills/                  # ⚠️ AI 技能包（待确认是否保留）
-    ├── docx/
-    ├── pptx/
-    ├── pdf/
-    ├── xlsx/
-    ├── ASR/
-    ├── TTS/
-    ├── VLM/
-    ├── LLM/
-    ├── image-generation/
-    ├── video-generation/
-    ├── web-search/
-    └── ... (40+ 技能包)
+└── skills/                  # AI 技能包（已从 git 排除，本地保留）
 ```
 
 ## 已清理的内容
 
-- ❌ `packages/docs/` - 旧代码，已删除
-- ❌ `packages/intro/` - 旧代码，已删除
-- ❌ `site/public/os/` - 构建产物，已删除
+- ✅ `packages/docs/` - 旧代码，已删除
+- ✅ `packages/intro/` - 旧代码，已删除
+- ✅ `site/public/os/` - 构建产物，已删除
+- ✅ `skills/` - 已从 git 排除（文件保留在本地）
 
-## 待确认
+## .gitignore 配置
 
-### `skills/` 目录
-这是一个庞大的目录，包含 40+ 个 AI 技能包（文档处理、图像生成、语音识别等）。
-这些看起来是 AI Agent 的工具包，不是 WebOS 操作系统的一部分。
+项目已配置以下排除规则：
+```
+# AI Skills - 不需要提交到 git
+skills/
 
-**请确认是否删除？**
-
-## 建议的进一步整理
-
-1. **合并 UI 组件** - `ui/src/desktop/` 和 `ui/src/components/` 有重叠，可以合并
-2. **删除未使用的组件** - 检查 `ui/src/navigation/`、`ui/src/display/` 等是否都在使用
-3. **精简 README** - 很多包都有 README.md，可以考虑只保留核心文档
+# Webpack 构建产物
+site/public/os/
+```
