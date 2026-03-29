@@ -62,3 +62,12 @@ worklog.md
 *.out.log
 daemon.log
 server.log
+dev.log
+
+# 进程文件
+.next.pid
+.server.pid
+.server-starting
+
+# 上传目录
+upload/
