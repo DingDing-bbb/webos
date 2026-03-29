@@ -1,167 +1,268 @@
-// 设备检测模块
+/**
+ * 设备检测模块
+ * 基于 Windows 硬件兼容性规范
+ */
 
-export type DeviceType = 'desktop' | 'tablet' | 'mobile';
+export type DeviceType = 'desktop' | 'tablet' | 'phone' | 'twoInOne';
 
-export interface DeviceInfo {
+export type InputMode = 'mouse' | 'touch' | 'pen';
+
+export type DeviceCapability = {
+  touch: boolean;
+  pen: boolean;
+  mouse: boolean;
+  keyboard: boolean;
+  accelerometer: boolean;
+  gyroscope: boolean;
+};
+
+export type DeviceInfo = {
   type: DeviceType;
-  isTouch: boolean;
-  isMobile: boolean;
-  isTablet: boolean;
-  isDesktop: boolean;
-  screenWidth: number;
-  screenHeight: number;
-  pixelRatio: number;
+  inputMode: InputMode;
+  capabilities: DeviceCapability;
+  screen: {
+    width: number;
+    height: number;
+    physicalWidth: number | null;
+    physicalHeight: number | null;
+    pixelRatio: number;
+    touchPoints: number;
+  };
   orientation: 'portrait' | 'landscape';
-}
+  isTabletMode: boolean;
+  isConvertible: boolean;
+};
 
 class DeviceDetector {
-  private deviceInfo: DeviceInfo;
+  private info: DeviceInfo;
   private listeners: Set<(info: DeviceInfo) => void> = new Set();
 
   constructor() {
-    this.deviceInfo = this.detect();
+    this.info = this.detect();
     this.setupListeners();
   }
 
   private detect(): DeviceInfo {
-    const ua = navigator.userAgent.toLowerCase();
-    const screenWidth = window.innerWidth;
-    const screenHeight = window.innerHeight;
-    
-    // 检测触摸支持
-    const isTouch = this.checkTouchSupport();
-    
-    // 检测设备类型
-    const isTablet = this.checkTablet(ua, screenWidth);
-    const isMobile = this.checkMobile(ua, screenWidth) && !isTablet;
-    const isDesktop = !isTablet && !isMobile;
-    
-    // 确定设备类型
-    let type: DeviceType = 'desktop';
-    if (isMobile) type = 'mobile';
-    else if (isTablet) type = 'tablet';
+    const capabilities = this.detectCapabilities();
+    const screen = this.getScreenInfo();
+    const type = this.determineDeviceType(capabilities, screen);
+    const inputMode = this.determineInputMode(capabilities);
+    const isConvertible = this.checkConvertible(capabilities, screen);
+    const isTabletMode = this.checkTabletMode(capabilities, type);
 
     return {
       type,
-      isTouch,
-      isMobile,
-      isTablet,
-      isDesktop,
-      screenWidth,
-      screenHeight,
-      pixelRatio: window.devicePixelRatio || 1,
-      orientation: screenWidth > screenHeight ? 'landscape' : 'portrait'
+      inputMode,
+      capabilities,
+      screen,
+      orientation: screen.width > screen.height ? 'landscape' : 'portrait',
+      isTabletMode,
+      isConvertible
     };
   }
 
-  private checkTouchSupport(): boolean {
-    return (
-      'ontouchstart' in window ||
-      navigator.maxTouchPoints > 0 ||
-      ((navigator as unknown as { msMaxTouchPoints?: number }).msMaxTouchPoints ?? 0) > 0
-    );
+  private detectCapabilities(): DeviceCapability {
+    return {
+      touch: this.hasTouch(),
+      pen: this.hasPen(),
+      mouse: this.hasMouse(),
+      keyboard: this.hasKeyboard(),
+      accelerometer: this.hasAccelerometer(),
+      gyroscope: this.hasGyroscope()
+    };
   }
 
-  private checkTablet(ua: string, screenWidth: number): boolean {
-    // 平板检测
-    const tabletPatterns = [
-      /ipad/i,
-      /android(?!.*mobile)/i,
-      /tablet/i,
-      /kindle/i,
-      /silk/i,
-      /playbook/i
-    ];
+  private hasTouch(): boolean {
+    if ('ontouchstart' in window) return true;
+    if (navigator.maxTouchPoints > 0) return true;
+    const msMaxTouchPoints = (navigator as unknown as { msMaxTouchPoints?: number }).msMaxTouchPoints;
+    if (msMaxTouchPoints && msMaxTouchPoints > 0) return true;
+    return false;
+  }
 
-    // UA 检测
-    if (tabletPatterns.some(pattern => pattern.test(ua))) {
-      return true;
+  private hasPen(): boolean {
+    if ('PointerEvent' in window) {
+      return (navigator as unknown as { maxTouchPoints?: number }).maxTouchPoints !== undefined;
+    }
+    return false;
+  }
+
+  private hasMouse(): boolean {
+    return window.matchMedia('(pointer: fine)').matches;
+  }
+
+  private hasKeyboard(): boolean {
+    return typeof navigator.keyboard !== 'undefined' || !('ontouchstart' in window);
+  }
+
+  private hasAccelerometer(): boolean {
+    return 'Accelerometer' in window;
+  }
+
+  private hasGyroscope(): boolean {
+    return 'Gyroscope' in window;
+  }
+
+  private getScreenInfo(): DeviceInfo['screen'] {
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+
+    return {
+      width,
+      height,
+      physicalWidth: this.getPhysicalDimension(width),
+      physicalHeight: this.getPhysicalDimension(height),
+      pixelRatio: window.devicePixelRatio || 1,
+      touchPoints: navigator.maxTouchPoints || 0
+    };
+  }
+
+  private getPhysicalDimension(pixels: number): number | null {
+    const dpi = 96;
+    const ratio = window.devicePixelRatio || 1;
+    return (pixels / dpi) * ratio;
+  }
+
+  private determineDeviceType(capabilities: DeviceCapability, screen: DeviceInfo['screen']): DeviceType {
+    const ua = navigator.userAgent.toLowerCase();
+    const isIPad = /ipad/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const isAndroidTablet = /android(?!.*mobile)/i.test(ua);
+    const isPhone = /iphone|ipod|android.*mobile|windows phone/i.test(ua);
+
+    if (isPhone) return 'phone';
+
+    if (isIPad || isAndroidTablet) return 'tablet';
+
+    if (capabilities.touch && screen.width >= 1024 && screen.width <= 1366) {
+      if (capabilities.mouse || capabilities.keyboard) {
+        return 'twoInOne';
+      }
+      return 'tablet';
     }
 
-    // 屏幕尺寸检测 (触摸设备 + 大屏幕 = 可能是平板)
-    const isTouch = this.checkTouchSupport();
-    if (isTouch && screenWidth >= 600 && screenWidth <= 1366) {
-      return true;
+    if (capabilities.touch && screen.touchPoints > 0) {
+      return 'twoInOne';
     }
 
-    // iPad Pro 伪装成桌面浏览器时的检测
-    if (isTouch && screenWidth >= 1024 && navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) {
+    return 'desktop';
+  }
+
+  private determineInputMode(capabilities: DeviceCapability): InputMode {
+    const coarsePointer = window.matchMedia('(pointer: coarse)').matches;
+    const finePointer = window.matchMedia('(pointer: fine)').matches;
+
+    if (coarsePointer && capabilities.touch) {
+      return 'touch';
+    }
+
+    if (capabilities.pen && !finePointer) {
+      return 'pen';
+    }
+
+    return 'mouse';
+  }
+
+  private checkConvertible(capabilities: DeviceCapability, screen: DeviceInfo['screen']): boolean {
+    if (screen.touchPoints > 0 && capabilities.mouse) {
       return true;
     }
+    if (capabilities.touch && capabilities.keyboard) {
+      return true;
+    }
+    return false;
+  }
+
+  private checkTabletMode(capabilities: DeviceCapability, type: DeviceType): boolean {
+    const coarsePointer = window.matchMedia('(pointer: coarse)').matches;
+
+    if (type === 'tablet') return true;
+    if (type === 'phone') return true;
+    if (type === 'twoInOne' && coarsePointer) return true;
 
     return false;
   }
 
-  private checkMobile(ua: string, screenWidth: number): boolean {
-    const mobilePatterns = [
-      /iphone/i,
-      /ipod/i,
-      /android.*mobile/i,
-      /windows phone/i,
-      /blackberry/i,
-      /webos/i,
-      /mobile/i
-    ];
-
-    return mobilePatterns.some(pattern => pattern.test(ua)) || screenWidth < 600;
-  }
-
   private setupListeners(): void {
-    // 监听屏幕变化
-    window.addEventListener('resize', () => {
-      this.updateDeviceInfo();
-    });
+    window.addEventListener('resize', () => this.handleResize());
+    window.addEventListener('orientationchange', () => this.handleOrientationChange());
 
-    // 监听方向变化
-    window.addEventListener('orientationchange', () => {
-      setTimeout(() => this.updateDeviceInfo(), 100);
-    });
+    const coarseQuery = window.matchMedia('(pointer: coarse)');
+    coarseQuery.addEventListener('change', () => this.handlePointerChange());
 
-    // 监听触摸模式变化 (某些设备可以切换模式)
-    window.matchMedia('(pointer: coarse)').addEventListener('change', () => {
-      this.updateDeviceInfo();
-    });
+    const fineQuery = window.matchMedia('(pointer: fine)');
+    fineQuery.addEventListener('change', () => this.handlePointerChange());
+
+    if ('visualViewport' in window) {
+      window.visualViewport?.addEventListener('resize', () => this.handleResize());
+    }
   }
 
-  private updateDeviceInfo(): void {
-    const oldType = this.deviceInfo.type;
-    this.deviceInfo = this.detect();
-    
-    if (oldType !== this.deviceInfo.type) {
+  private handleResize(): void {
+    this.updateInfo();
+  }
+
+  private handleOrientationChange(): void {
+    setTimeout(() => this.updateInfo(), 100);
+  }
+
+  private handlePointerChange(): void {
+    this.updateInfo();
+  }
+
+  private updateInfo(): void {
+    const oldType = this.info.type;
+    const oldTabletMode = this.info.isTabletMode;
+    this.info = this.detect();
+
+    if (oldType !== this.info.type || oldTabletMode !== this.info.isTabletMode) {
       this.notifyListeners();
     }
   }
 
   private notifyListeners(): void {
-    this.listeners.forEach(listener => listener(this.deviceInfo));
+    this.listeners.forEach(listener => listener(this.info));
   }
 
-  // 公共 API
   getInfo(): DeviceInfo {
-    return { ...this.deviceInfo };
+    return { ...this.info };
   }
 
   getType(): DeviceType {
-    return this.deviceInfo.type;
+    return this.info.type;
   }
 
   isTablet(): boolean {
-    return this.deviceInfo.isTablet;
+    return this.info.type === 'tablet' || this.info.type === 'twoInOne';
   }
 
-  isMobile(): boolean {
-    return this.deviceInfo.isMobile;
+  isPhone(): boolean {
+    return this.info.type === 'phone';
   }
 
   isDesktop(): boolean {
-    return this.deviceInfo.isDesktop;
+    return this.info.type === 'desktop';
   }
 
   isTouchDevice(): boolean {
-    return this.deviceInfo.isTouch;
+    return this.info.capabilities.touch;
   }
 
-  // 订阅设备变化
+  isConvertibleDevice(): boolean {
+    return this.info.isConvertible;
+  }
+
+  isInTabletMode(): boolean {
+    return this.info.isTabletMode;
+  }
+
+  getInputMode(): InputMode {
+    return this.info.inputMode;
+  }
+
+  getOrientation(): 'portrait' | 'landscape' {
+    return this.info.orientation;
+  }
+
   onChange(callback: (info: DeviceInfo) => void): () => void {
     this.listeners.add(callback);
     return () => this.listeners.delete(callback);

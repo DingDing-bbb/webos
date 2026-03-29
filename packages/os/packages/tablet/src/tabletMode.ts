@@ -1,15 +1,30 @@
-// 平板模式管理器
+/**
+ * 平板模式管理器
+ * 基于 Windows 11 触控优化和二合一设备交互规范
+ */
 
 import { deviceDetector } from './deviceDetector';
+import { gestureDetector } from './gestures';
 import { touchHandler } from './touchHandler';
 import type { DeviceInfo } from './deviceDetector';
+import type { GestureEvent } from './gestures';
 
 export interface TabletModeConfig {
   autoDetect: boolean;
   forceTabletMode: boolean;
   largerTouchTargets: boolean;
   disableHoverStates: boolean;
-  enableSwipeGestures: boolean;
+  enableEdgeGestures: boolean;
+  enableTouchFeedback: boolean;
+  autoShowKeyboard: boolean;
+  taskbarAutoHide: boolean;
+}
+
+export interface EdgeGestureConfig {
+  leftSwipeAction: 'startMenu' | 'back' | 'none';
+  rightSwipeAction: 'actionCenter' | 'notifications' | 'none';
+  topSwipeAction: 'fullscreen' | 'none';
+  bottomSwipeAction: 'taskbar' | 'none';
 }
 
 const defaultConfig: TabletModeConfig = {
@@ -17,39 +32,79 @@ const defaultConfig: TabletModeConfig = {
   forceTabletMode: false,
   largerTouchTargets: true,
   disableHoverStates: true,
-  enableSwipeGestures: true
+  enableEdgeGestures: true,
+  enableTouchFeedback: true,
+  autoShowKeyboard: true,
+  taskbarAutoHide: true
 };
+
+const defaultEdgeConfig: EdgeGestureConfig = {
+  leftSwipeAction: 'startMenu',
+  rightSwipeAction: 'actionCenter',
+  topSwipeAction: 'fullscreen',
+  bottomSwipeAction: 'taskbar'
+};
+
+type TabletModeListener = (isTabletMode: boolean) => void;
+type ModeChangeReason = 'auto' | 'manual' | 'sensor';
 
 class TabletModeManager {
   private config: TabletModeConfig;
+  private edgeConfig: EdgeGestureConfig;
   private isTabletMode = false;
-  private listeners: Set<(isTablet: boolean) => void> = new Set();
+  private listeners: Set<TabletModeListener> = new Set();
   private cleanupFns: (() => void)[] = [];
+  private modeChangeReason: ModeChangeReason = 'auto';
 
-  constructor(config: Partial<TabletModeConfig> = {}) {
+  constructor(
+    config: Partial<TabletModeConfig> = {},
+    edgeConfig: Partial<EdgeGestureConfig> = {}
+  ) {
     this.config = { ...defaultConfig, ...config };
-    
+    this.edgeConfig = { ...defaultEdgeConfig, ...edgeConfig };
+
     if (this.config.autoDetect) {
       this.setupAutoDetect();
     }
   }
 
   private setupAutoDetect(): void {
-    // 初始检测
-    this.updateMode(deviceDetector.getInfo());
+    this.updateMode(deviceDetector.getInfo(), 'auto');
 
-    // 监听设备变化
     const unsubscribe = deviceDetector.onChange((info) => {
-      this.updateMode(info);
+      this.updateMode(info, 'auto');
     });
     this.cleanupFns.push(unsubscribe);
+
+    this.setupModeSwitchDetection();
   }
 
-  private updateMode(info: DeviceInfo): void {
-    const shouldBeTablet = this.config.forceTabletMode || info.isTablet || info.isTouch;
-    
+  private setupModeSwitchDetection(): void {
+    const checkMode = () => {
+      const info = deviceDetector.getInfo();
+      if (info.isConvertible) {
+        this.updateMode(info, 'sensor');
+      }
+    };
+
+    if ('screen' in window && 'orientation' in screen) {
+      (screen.orientation as unknown as { addEventListener?: (type: string, handler: () => void) => void }).addEventListener?.('change', checkMode);
+    }
+
+    window.addEventListener('orientationchange', () => {
+      setTimeout(checkMode, 100);
+    });
+
+    const mediaQuery = window.matchMedia('(pointer: coarse)');
+    mediaQuery.addEventListener('change', checkMode);
+  }
+
+  private updateMode(info: DeviceInfo, reason: ModeChangeReason): void {
+    const shouldBeTablet = this.config.forceTabletMode || info.isTabletMode;
+
     if (shouldBeTablet !== this.isTabletMode) {
       this.isTabletMode = shouldBeTablet;
+      this.modeChangeReason = reason;
       this.applyMode();
       this.notifyListeners();
     }
@@ -61,65 +116,86 @@ class TabletModeManager {
     if (this.isTabletMode) {
       html.classList.add('os-tablet-mode');
       html.classList.remove('os-desktop-mode');
-      
-      // 增大触摸目标
+      html.setAttribute('data-input-mode', 'touch');
+
       if (this.config.largerTouchTargets) {
         html.classList.add('os-large-touch-targets');
+        this.applyLargeTouchTargets();
       }
-      
-      // 禁用悬停状态（防止触摸设备上的"粘滞"悬停效果）
+
       if (this.config.disableHoverStates) {
         html.classList.add('os-no-hover');
       }
-      
-      // 启用滑动手势
-      if (this.config.enableSwipeGestures) {
-        this.setupSwipeGestures();
+
+      if (this.config.enableTouchFeedback) {
+        html.classList.add('os-touch-feedback');
+        this.setupTouchFeedback();
       }
+
+      if (this.config.enableEdgeGestures) {
+        this.setupEdgeGestures();
+      }
+
+      if (this.config.taskbarAutoHide) {
+        html.classList.add('os-taskbar-autohide');
+      }
+
+      this.setupKeyboardHandling();
     } else {
       html.classList.remove('os-tablet-mode');
       html.classList.add('os-desktop-mode');
+      html.setAttribute('data-input-mode', 'mouse');
       html.classList.remove('os-large-touch-targets');
       html.classList.remove('os-no-hover');
-      this.cleanupSwipeGestures();
+      html.classList.remove('os-touch-feedback');
+      html.classList.remove('os-taskbar-autohide');
     }
   }
 
-  private setupSwipeGestures(): void {
-    // 从屏幕边缘滑动打开开始菜单
-    let startX = 0;
-    let startY = 0;
+  private applyLargeTouchTargets(): void {
+    const style = document.createElement('style');
+    style.id = 'os-tablet-touch-targets';
+    style.textContent = `
+      .os-tablet-mode .os-large-touch-targets button,
+      .os-tablet-mode .os-large-touch-targets a,
+      .os-tablet-mode .os-large-touch-targets [role="button"],
+      .os-tablet-mode .os-large-touch-targets input,
+      .os-tablet-mode .os-large-touch-targets select,
+      .os-tablet-mode .os-large-touch-targets textarea {
+        min-height: 44px;
+        min-width: 44px;
+        padding: 12px;
+      }
+      .os-tablet-mode .os-large-touch-targets .os-icon-btn {
+        min-width: 44px;
+        min-height: 44px;
+      }
+      .os-tablet-mode .os-large-touch-targets .os-menu-item {
+        min-height: 48px;
+        padding: 12px 16px;
+      }
+      .os-tablet-mode .os-large-touch-targets .os-list-item {
+        min-height: 48px;
+      }
+    `;
 
+    const existing = document.getElementById('os-tablet-touch-targets');
+    if (existing) existing.remove();
+    document.head.appendChild(style);
+  }
+
+  private setupTouchFeedback(): void {
     const handleTouchStart = (e: TouchEvent) => {
-      const touch = e.touches[0];
-      if (touch) {
-        startX = touch.clientX;
-        startY = touch.clientY;
+      const target = e.target as HTMLElement;
+      if (target) {
+        target.classList.add('os-touch-active');
       }
     };
 
     const handleTouchEnd = (e: TouchEvent) => {
-      const touch = e.changedTouches[0];
-      if (!touch) return;
-      
-      const endX = touch.clientX;
-      const endY = touch.clientY;
-      const deltaX = endX - startX;
-      const deltaY = endY - startY;
-
-      // 从左边缘向右滑动 - 打开开始菜单
-      if (startX < 20 && deltaX > 100 && Math.abs(deltaY) < 50) {
-        window.dispatchEvent(new CustomEvent('tablet:openStartMenu'));
-      }
-
-      // 从顶部向下滑动 - 显示通知
-      if (startY < 20 && deltaY > 100 && Math.abs(deltaX) < 50) {
-        window.dispatchEvent(new CustomEvent('tablet:showNotifications'));
-      }
-
-      // 从底部向上滑动 - 显示任务栏（如果隐藏）
-      if (startY > window.innerHeight - 20 && deltaY < -100 && Math.abs(deltaX) < 50) {
-        window.dispatchEvent(new CustomEvent('tablet:showTaskbar'));
+      const target = e.target as HTMLElement;
+      if (target) {
+        setTimeout(() => target.classList.remove('os-touch-active'), 100);
       }
     };
 
@@ -132,27 +208,112 @@ class TabletModeManager {
     });
   }
 
-  private cleanupSwipeGestures(): void {
-    // 手势清理已由 cleanupFns 处理
+  private setupEdgeGestures(): void {
+    const cleanup = gestureDetector.createRecognizer(document.body, {
+      onEdgeSwipe: (e: GestureEvent) => {
+        if (!e.edge || !e.direction) return;
+
+        const { edge, direction } = e;
+
+        switch (edge) {
+          case 'left':
+            if (direction === 'right') {
+              this.handleEdgeAction(this.edgeConfig.leftSwipeAction);
+            }
+            break;
+          case 'right':
+            if (direction === 'left') {
+              this.handleEdgeAction(this.edgeConfig.rightSwipeAction);
+            }
+            break;
+          case 'top':
+            if (direction === 'down') {
+              this.handleEdgeAction(this.edgeConfig.topSwipeAction);
+            }
+            break;
+          case 'bottom':
+            if (direction === 'up') {
+              this.handleEdgeAction(this.edgeConfig.bottomSwipeAction);
+            }
+            break;
+        }
+      }
+    });
+
+    this.cleanupFns.push(cleanup);
   }
 
-  private notifyListeners(): void {
-    this.listeners.forEach(listener => listener(this.isTabletMode));
+  private handleEdgeAction(action: string): void {
+    switch (action) {
+      case 'startMenu':
+        window.dispatchEvent(new CustomEvent('tablet:openStartMenu'));
+        break;
+      case 'actionCenter':
+        window.dispatchEvent(new CustomEvent('tablet:openActionCenter'));
+        break;
+      case 'notifications':
+        window.dispatchEvent(new CustomEvent('tablet:showNotifications'));
+        break;
+      case 'taskbar':
+        window.dispatchEvent(new CustomEvent('tablet:showTaskbar'));
+        break;
+      case 'back':
+        window.dispatchEvent(new CustomEvent('tablet:navigateBack'));
+        break;
+      case 'fullscreen':
+        window.dispatchEvent(new CustomEvent('tablet:toggleFullscreen'));
+        break;
+    }
   }
 
-  // 公共 API
+  private setupKeyboardHandling(): void {
+    if (!this.config.autoShowKeyboard) return;
+
+    const handleFocus = (e: FocusEvent) => {
+      const target = e.target as HTMLElement;
+      if (
+        target &&
+        (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)
+      ) {
+        window.dispatchEvent(new CustomEvent('tablet:showKeyboard'));
+      }
+    };
+
+    const handleBlur = (e: FocusEvent) => {
+      const target = e.target as HTMLElement;
+      if (
+        target &&
+        (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)
+      ) {
+        window.dispatchEvent(new CustomEvent('tablet:hideKeyboard'));
+      }
+    };
+
+    document.addEventListener('focus', handleFocus, true);
+    document.addEventListener('blur', handleBlur, true);
+
+    this.cleanupFns.push(() => {
+      document.removeEventListener('focus', handleFocus, true);
+      document.removeEventListener('blur', handleBlur, true);
+    });
+  }
+
   isEnabled(): boolean {
     return this.isTabletMode;
   }
 
+  getModeChangeReason(): ModeChangeReason {
+    return this.modeChangeReason;
+  }
+
   enable(): void {
     this.config.forceTabletMode = true;
-    this.updateMode(deviceDetector.getInfo());
+    this.updateMode(deviceDetector.getInfo(), 'manual');
   }
 
   disable(): void {
     this.config.forceTabletMode = false;
-    this.updateMode(deviceDetector.getInfo());
+    this.updateMode(deviceDetector.getInfo(), 'manual');
   }
 
   toggle(): void {
@@ -163,22 +324,32 @@ class TabletModeManager {
     }
   }
 
-  onChange(callback: (isTablet: boolean) => void): () => void {
+  setConfig(config: Partial<TabletModeConfig>): void {
+    this.config = { ...this.config, ...config };
+    this.updateMode(deviceDetector.getInfo(), this.modeChangeReason);
+  }
+
+  setEdgeConfig(config: Partial<EdgeGestureConfig>): void {
+    this.edgeConfig = { ...this.edgeConfig, ...config };
+  }
+
+  onChange(callback: TabletModeListener): () => void {
     this.listeners.add(callback);
     return () => this.listeners.delete(callback);
   }
 
-  // 为窗口启用触摸支持
   enableWindowTouch(windowEl: HTMLElement): void {
     touchHandler.enableTouchForWindow(windowEl);
   }
 
-  // 移除窗口触摸支持
   disableWindowTouch(windowEl: HTMLElement): void {
     touchHandler.disableTouchForWindow(windowEl);
   }
 
-  // 清理
+  optimizeTouchTargets(container: HTMLElement): void {
+    touchHandler.optimizeAllTouchTargets(container);
+  }
+
   destroy(): void {
     this.cleanupFns.forEach(fn => fn());
     this.cleanupFns = [];

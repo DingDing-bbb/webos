@@ -1,0 +1,493 @@
+/**
+ * 平板模式触控优化样式
+ * 基于 Windows 11 触控优化设计原则
+ */
+
+/* ============================================
+   平板模式基础样式
+   ============================================ */
+
+.os-tablet-mode {
+  --os-touch-target-size: 44px;
+  --os-touch-target-spacing: 8px;
+  --os-touch-padding: 12px;
+  --os-touch-feedback-color: rgba(0, 120, 212, 0.1);
+  --os-touch-active-color: rgba(0, 120, 212, 0.2);
+  --os-edge-gesture-zone: 20px;
+}
+
+.os-desktop-mode {
+  --os-touch-target-size: auto;
+  --os-touch-target-spacing: auto;
+  --os-touch-padding: auto;
+}
+
+/* ============================================
+   大触摸目标样式
+   ============================================ */
+
+.os-large-touch-targets button,
+.os-large-touch-targets [role="button"],
+.os-large-touch-targets .os-btn {
+  min-height: var(--os-touch-target-size);
+  min-width: var(--os-touch-target-size);
+  padding: var(--os-touch-padding);
+}
+
+.os-large-touch-targets a {
+  min-height: var(--os-touch-target-size);
+  padding: var(--os-touch-padding);
+  display: inline-flex;
+  align-items: center;
+}
+
+.os-large-touch-targets input[type="text"],
+.os-large-touch-targets input[type="search"],
+.os-large-touch-targets input[type="email"],
+.os-large-touch-targets input[type="password"],
+.os-large-touch-targets input[type="number"],
+.os-large-touch-targets textarea,
+.os-large-touch-targets select {
+  min-height: var(--os-touch-target-size);
+  font-size: 16px;
+  padding: var(--os-touch-padding);
+}
+
+.os-large-touch-targets .os-icon-btn,
+.os-large-touch-targets .os-icon-button {
+  min-width: var(--os-touch-target-size);
+  min-height: var(--os-touch-target-size);
+  padding: 10px;
+}
+
+.os-large-touch-targets .os-menu-item {
+  min-height: 48px;
+  padding: 12px 16px;
+}
+
+.os-large-touch-targets .os-list-item {
+  min-height: 48px;
+  padding: 12px 16px;
+}
+
+.os-large-touch-targets .os-tab {
+  min-height: 48px;
+  min-width: 80px;
+  padding: 12px 20px;
+}
+
+.os-large-touch-targets .os-checkbox,
+.os-large-touch-targets .os-radio {
+  min-width: var(--os-touch-target-size);
+  min-height: var(--os-touch-target-size);
+}
+
+.os-large-touch-targets .os-switch {
+  min-width: 52px;
+  min-height: 32px;
+}
+
+/* ============================================
+   触摸反馈样式
+   ============================================ */
+
+.os-touch-feedback .os-btn:active,
+.os-touch-feedback button:active,
+.os-touch-feedback [role="button"]:active,
+.os-touch-feedback .os-touch-active {
+  background-color: var(--os-touch-active-color) !important;
+  transform: scale(0.98);
+  transition: transform 0.1s ease, background-color 0.1s ease;
+}
+
+.os-touch-feedback .os-list-item:active,
+.os-touch-feedback .os-menu-item:active {
+  background-color: var(--os-touch-active-color);
+}
+
+.os-touch-feedback .os-icon-btn:active {
+  transform: scale(0.95);
+}
+
+/* ============================================
+   禁用悬停状态（触摸设备优化）
+   ============================================ */
+
+.os-no-hover .os-btn:hover,
+.os-no-hover button:hover,
+.os-no-hover [role="button"]:hover,
+.os-no-hover a:hover {
+  background-color: inherit;
+  transform: none;
+}
+
+.os-no-hover .os-dropdown:hover,
+.os-no-hover .os-menu:hover {
+  display: none;
+}
+
+.os-no-hover .os-tooltip:hover {
+  visibility: hidden;
+}
+
+/* ============================================
+   窗口触摸交互样式
+   ============================================ */
+
+.os-window-dragging {
+  opacity: 0.9;
+  cursor: grabbing !important;
+  transition: none !important;
+}
+
+.os-window-resizing {
+  transition: none !important;
+}
+
+.os-touch-resize-handle {
+  background: transparent;
+  position: absolute;
+  z-index: 10;
+  touch-action: none;
+}
+
+.os-touch-resize-handle:hover,
+.os-touch-resize-handle:active {
+  background: rgba(0, 120, 212, 0.2);
+}
+
+.os-touch-resize-n {
+  cursor: ns-resize;
+}
+
+.os-touch-resize-s {
+  cursor: ns-resize;
+}
+
+.os-touch-resize-e {
+  cursor: ew-resize;
+}
+
+.os-touch-resize-w {
+  cursor: ew-resize;
+}
+
+.os-touch-resize-ne,
+.os-touch-resize-sw {
+  cursor: nesw-resize;
+}
+
+.os-touch-resize-nw,
+.os-touch-resize-se {
+  cursor: nwse-resize;
+}
+
+/* ============================================
+   任务栏自动隐藏
+   ============================================ */
+
+.os-taskbar-autohide .os-taskbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  transform: translateY(calc(100% - 4px));
+  transition: transform 0.2s ease;
+}
+
+.os-taskbar-autohide .os-taskbar:hover,
+.os-taskbar-autohide .os-taskbar:focus-within,
+.os-taskbar-autohide .os-taskbar.os-taskbar-visible {
+  transform: translateY(0);
+}
+
+.os-taskbar-autohide .os-taskbar-trigger {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 8px;
+  z-index: 999;
+}
+
+/* ============================================
+   开始菜单平板样式
+   ============================================ */
+
+.os-tablet-mode .os-start-menu {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  border-radius: 0;
+}
+
+.os-tablet-mode .os-start-menu-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 16px;
+  padding: 24px;
+}
+
+.os-tablet-mode .os-start-menu-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 90px;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.os-tablet-mode .os-start-menu-item-icon {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 8px;
+}
+
+.os-tablet-mode .os-start-menu-item-label {
+  font-size: 12px;
+  text-align: center;
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ============================================
+   操作中心平板样式
+   ============================================ */
+
+.os-tablet-mode .os-action-center {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  right: 0;
+  border-radius: 0;
+}
+
+.os-tablet-mode .os-quick-action {
+  min-width: 80px;
+  min-height: 80px;
+  padding: 16px;
+  flex-direction: column;
+}
+
+.os-tablet-mode .os-quick-action-icon {
+  width: 32px;
+  height: 32px;
+  margin-bottom: 8px;
+}
+
+/* ============================================
+   通知平板样式
+   ============================================ */
+
+.os-tablet-mode .os-notification {
+  width: calc(100% - 32px);
+  margin: 16px;
+  border-radius: 12px;
+}
+
+.os-tablet-mode .os-notification-content {
+  padding: 20px;
+}
+
+.os-tablet-mode .os-notification-actions {
+  display: flex;
+  gap: 8px;
+  padding: 12px 20px;
+}
+
+.os-tablet-mode .os-notification-action {
+  flex: 1;
+  min-height: var(--os-touch-target-size);
+}
+
+/* ============================================
+   触摸键盘样式
+   ============================================ */
+
+.os-touch-keyboard {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10000;
+  background: var(--os-color-bg-secondary, #f0f0f0);
+  border-top: 1px solid var(--os-color-border, #e0e0e0);
+  padding: 8px;
+  transform: translateY(100%);
+  transition: transform 0.2s ease;
+}
+
+.os-touch-keyboard.os-visible {
+  transform: translateY(0);
+}
+
+.os-touch-keyboard-row {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.os-touch-keyboard-key {
+  min-width: var(--os-touch-target-size);
+  min-height: var(--os-touch-target-size);
+  border-radius: 6px;
+  border: none;
+  background: var(--os-color-bg, #fff);
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: manipulation;
+}
+
+.os-touch-keyboard-key:active {
+  background: var(--os-color-primary, #0078d4);
+  color: white;
+}
+
+.os-touch-keyboard-key.os-key-space {
+  flex: 1;
+  max-width: 300px;
+}
+
+.os-touch-keyboard-key.os-key-backspace,
+.os-touch-keyboard-key.os-key-enter {
+  min-width: 60px;
+}
+
+/* ============================================
+   分屏视图样式
+   ============================================ */
+
+.os-tablet-mode .os-split-view {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+.os-tablet-mode .os-split-view-divider {
+  width: 8px;
+  background: var(--os-color-border, #e0e0e0);
+  cursor: ew-resize;
+  touch-action: none;
+}
+
+.os-tablet-mode .os-split-view-divider:active {
+  background: var(--os-color-primary, #0078d4);
+}
+
+.os-tablet-mode .os-snap-assist {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: grid;
+  grid-template-columns: repeat(3, 100px);
+  gap: 16px;
+  padding: 24px;
+  background: var(--os-color-bg-secondary, #f0f0f0);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.os-tablet-mode .os-snap-option {
+  width: 100px;
+  height: 70px;
+  border: 2px solid var(--os-color-border, #e0e0e0);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.os-tablet-mode .os-snap-option:active {
+  border-color: var(--os-color-primary, #0078d4);
+  background: var(--os-touch-feedback-color);
+}
+
+/* ============================================
+   滚动优化
+   ============================================ */
+
+.os-tablet-mode .os-scrollable {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+.os-tablet-mode .os-scrollable::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.os-tablet-mode .os-scrollable::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.os-tablet-mode .os-scrollable::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 2px;
+}
+
+/* ============================================
+   暗色主题适配
+   ============================================ */
+
+[data-theme="dark"] .os-touch-feedback .os-btn:active,
+[data-theme="dark"] .os-touch-feedback button:active,
+[data-theme="dark"] .os-touch-feedback .os-touch-active {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+[data-theme="dark"] .os-touch-resize-handle:hover,
+[data-theme="dark"] .os-touch-resize-handle:active {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .os-touch-keyboard {
+  background: var(--os-color-bg-secondary, #2d2d2d);
+  border-top-color: var(--os-color-border, #444);
+}
+
+[data-theme="dark"] .os-touch-keyboard-key {
+  background: var(--os-color-bg, #3d3d3d);
+  color: var(--os-color-text, #fff);
+}
+
+/* ============================================
+   响应式断点
+   ============================================ */
+
+@media (max-width: 600px) {
+  .os-tablet-mode .os-start-menu-content {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .os-tablet-mode .os-quick-action {
+    min-width: 70px;
+    min-height: 70px;
+  }
+}
+
+@media (min-width: 601px) and (max-width: 1024px) {
+  .os-tablet-mode .os-start-menu-content {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+@media (orientation: portrait) {
+  .os-tablet-mode .os-split-view {
+    flex-direction: column;
+  }
+
+  .os-tablet-mode .os-split-view-divider {
+    width: 100%;
+    height: 8px;
+    cursor: ns-resize;
+  }
+}
