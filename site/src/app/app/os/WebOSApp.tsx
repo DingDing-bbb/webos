@@ -3,7 +3,7 @@
 // 首先导入配置，注入全局变量
 import './os-config';
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 
 // 定义全局变量（在构建时由 DefinePlugin 注入，这里提供默认值）
 declare const __OS_NAME__: string;
@@ -73,6 +73,9 @@ const WebOSApp: React.FC = () => {
   // 状态管理
   // ----------------------------------------
   
+  // 窗口容器引用
+  const windowContainerRef = useRef<HTMLDivElement>(null);
+  
   // 启动状态
   const [bootStatus, setBootStatus] = useState<BootStatus>({
     stage: 'idle',
@@ -129,7 +132,21 @@ const WebOSApp: React.FC = () => {
     if (saved) {
       setTaskbarDisplayMode(saved as TaskbarDisplayMode);
     }
+    
+    // 设置窗口容器
+    if (windowContainerRef.current && window.webos) {
+      window.webos.setWindowContainer(windowContainerRef.current);
+      console.log('[WebOS] Window container set on init');
+    }
   }, []);
+  
+  // 在登录后重新设置窗口容器（因为容器在登录后才渲染）
+  useEffect(() => {
+    if (isLoggedIn && windowContainerRef.current && window.webos) {
+      window.webos.setWindowContainer(windowContainerRef.current);
+      console.log('[WebOS] Window container set after login');
+    }
+  }, [isLoggedIn]);
 
   // ----------------------------------------
   // 订阅外部状态
@@ -522,10 +539,6 @@ const WebOSApp: React.FC = () => {
   // 渲染桌面
   return (
     <>
-      <div
-        style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: taskbarHeight, overflow: 'hidden' }}
-      />
-      
       <Desktop 
         apps={registeredApps.map(app => ({
           id: app.id,
@@ -534,7 +547,21 @@ const WebOSApp: React.FC = () => {
           onOpen: () => openApp(app.id)
         }))}
         wallpaper={wallpaperConfig}
-      />
+      >
+        {/* 窗口容器 - 窗口管理器会在这里渲染窗口 */}
+        <div 
+          ref={windowContainerRef}
+          className="os-windows-container"
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: taskbarHeight,
+            overflow: 'hidden',
+          }}
+        />
+      </Desktop>
       
       <Taskbar
         windows={windows}
