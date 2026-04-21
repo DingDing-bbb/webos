@@ -11,11 +11,11 @@ export type { CheckboxProps } from './Checkbox';
 export { Radio, RadioGroup } from './Radio';
 export type { RadioProps, RadioGroupProps } from './Radio';
 
-export { Slider, RangeSlider } from './Slider';
-export type { SliderProps, RangeSliderProps } from './Slider';
+export { Slider } from './Slider';
+export type { SliderProps } from './Slider';
 
-export { Select, Option } from './Select';
-export type { SelectProps, OptionProps } from './Select';
+export { Select } from './Select';
+export type { SelectProps } from './Select';
 
 export { Input } from './Input';
 export type { InputProps } from './Input';

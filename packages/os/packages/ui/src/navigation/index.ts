@@ -3,29 +3,29 @@
  * 导航组件库
  */
 
-export { Menu, MenuItem, MenuGroup, MenuDivider } from './Menu';
-export type { MenuProps, MenuItemProps, MenuGroupProps } from './Menu';
+export { Menu } from './Menu';
+export type { MenuProps, MenuItemProps } from './Menu';
 
 export { Breadcrumb, BreadcrumbItem } from './Breadcrumb';
-export type { BreadcrumbProps, BreadcrumbItemProps } from './Breadcrumb';
+export type { BreadcrumbProps } from './Breadcrumb';
 
-export { Tabs, Tab, TabPane } from './Tabs';
-export type { TabsProps, TabProps, TabPaneProps } from './Tabs';
+export { Tabs, TabPane } from './Tabs';
+export type { TabsProps, TabPaneProps } from './Tabs';
 
-export { Dropdown, DropdownItem, DropdownDivider } from './Dropdown';
-export type { DropdownProps, DropdownItemProps } from './Dropdown';
+export { Dropdown, DropdownItem } from './Dropdown';
+export type { DropdownProps } from './Dropdown';
 
 export { Pagination } from './Pagination';
 export type { PaginationProps } from './Pagination';
 
-export { Steps, Step } from './Steps';
-export type { StepsProps, StepProps } from './Steps';
+export { Steps } from './Steps';
+export type { StepsProps } from './Steps';
 
-export { Anchor, AnchorLink } from './Anchor';
-export type { AnchorProps, AnchorLinkProps } from './Anchor';
+export { Anchor } from './Anchor';
+export type { AnchorProps } from './Anchor';
 
-export { Tree, TreeNode } from './Tree';
-export type { TreeProps, TreeNodeProps } from './Tree';
+export { Tree } from './Tree';
+export type { TreeProps } from './Tree';
 
 export { Sidebar, SidebarItem, SidebarGroup } from './Sidebar';
-export type { SidebarProps, SidebarItemProps, SidebarGroupProps } from './Sidebar';
+export type { SidebarProps, SidebarGroupProps } from './Sidebar';

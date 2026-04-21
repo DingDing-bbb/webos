@@ -25,6 +25,7 @@
  */
 
 import React, { useState, useMemo, useCallback, useRef, useEffect, memo } from 'react';
+import type { JSX } from 'react';
 
 // ============================================================================
 // Types

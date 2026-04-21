@@ -21,6 +21,7 @@
  */
 
 import React, { useState, useEffect, useRef, useCallback, useMemo, memo } from 'react';
+import type { JSX } from 'react';
 
 // ============================================================================
 // Types
@@ -393,7 +394,7 @@ export function List<T>({
   onItemClick,
   onScroll,
 }: ListProps<T>): JSX.Element {
-  const defaultKeyExtractor = useCallback((item: T, index: number) => `list-item-${index}`, []);
+  const defaultKeyExtractor = useCallback((_item: T, index: number) => `list-item-${index}`, []);
 
   const extractor = keyExtractor || defaultKeyExtractor;
 
@@ -490,7 +491,7 @@ export function GridList<T>({
   className = '',
   style,
 }: GridListProps<T>): JSX.Element {
-  const defaultKeyExtractor = useCallback((item: T, index: number) => `grid-item-${index}`, []);
+  const defaultKeyExtractor = useCallback((_item: T, index: number) => `grid-item-${index}`, []);
 
   const extractor = keyExtractor || defaultKeyExtractor;
 

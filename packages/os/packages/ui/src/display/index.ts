@@ -15,11 +15,11 @@ export type { ListProps, ListItemProps } from './List';
 export { Timeline, TimelineItem } from './Timeline';
 export type { TimelineProps, TimelineItemProps } from './Timeline';
 
-export { Tree, TreeNode } from './Tree';
-export type { TreeProps, TreeNodeProps } from './Tree';
+export { Tree } from './Tree';
+export type { TreeProps } from './Tree';
 
-export { Collapse, CollapseItem } from './Collapse';
-export type { CollapseProps, CollapseItemProps } from './Collapse';
+export { Collapse } from './Collapse';
+export type { CollapseProps } from './Collapse';
 
 export { Calendar } from './Calendar';
 export type { CalendarProps } from './Calendar';

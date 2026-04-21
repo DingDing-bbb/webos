@@ -27,6 +27,7 @@
  */
 
 import React, { forwardRef, useMemo } from 'react';
+import type { JSX } from 'react';
 
 // ============================================================================
 // Types

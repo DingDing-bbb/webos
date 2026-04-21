@@ -121,7 +121,7 @@ class SecureUserManager {
   private currentSession: UserSession | null = null;
 
   /** Master key for database operations (memory only) */
-  private masterKey: string | null = null;
+  private _masterKey: string | null = null;
 
   /** State change listeners */
   private listeners: Set<() => void> = new Set();
@@ -328,7 +328,7 @@ class SecureUserManager {
 
             if (users.length > 0) {
               // User exists - log them in
-              this.masterKey = password;
+              this._masterKey = password;
               this.currentSession = {
                 user: this.rowToUser(users[0]),
                 loginTime: new Date(),
@@ -393,7 +393,7 @@ class SecureUserManager {
       await saveDatabase();
 
       // Create session
-      this.masterKey = password;
+      this._masterKey = password;
       this.currentSession = {
         user: {
           username,
@@ -479,7 +479,7 @@ class SecureUserManager {
       await saveDatabase();
 
       // Create session
-      this.masterKey = password;
+      this._masterKey = password;
       this.currentSession = {
         user: this.rowToUser(userRow),
         loginTime: new Date(),
@@ -517,7 +517,7 @@ class SecureUserManager {
    */
   async logout(): Promise<void> {
     this.currentSession = null;
-    this.masterKey = null;
+    this._masterKey = null;
     this._isLocked = true;
     closeDatabase();
     this.notifyListeners();
@@ -529,7 +529,7 @@ class SecureUserManager {
    */
   lock(): void {
     this._isLocked = true;
-    this.masterKey = null;
+    this._masterKey = null;
     this.notifyListeners();
   }
 
@@ -693,7 +693,7 @@ class SecureUserManager {
       ]);
 
       await saveDatabase();
-      this.masterKey = newPassword;
+      this._masterKey = newPassword;
 
       return { success: true };
     } catch (error) {
@@ -886,7 +886,7 @@ class SecureUserManager {
       await deleteDatabase();
 
       this.currentSession = null;
-      this.masterKey = null;
+      this._masterKey = null;
       this._isLocked = true;
 
       this.notifyListeners();
@@ -912,7 +912,7 @@ class SecureUserManager {
     }
 
     this.currentSession = null;
-    this.masterKey = null;
+    this._masterKey = null;
     this._isReady = true;
     this._isLocked = true;
 

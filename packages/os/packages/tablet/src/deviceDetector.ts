@@ -177,7 +177,7 @@ class DeviceDetector {
     return false;
   }
 
-  private checkTabletMode(capabilities: DeviceCapability, type: DeviceType): boolean {
+  private checkTabletMode(_capabilities: DeviceCapability, type: DeviceType): boolean {
     const coarsePointer = window.matchMedia('(pointer: coarse)').matches;
 
     if (type === 'tablet') return true;
