@@ -72,8 +72,8 @@ const nextConfig = {
 
   // GitHub Pages 静态导出
   output: 'export',
-  basePath: '/webos',
-  assetPrefix: '/webos',
+  basePath: process.env.GITHUB_PAGES ? '/webos' : undefined,
+  assetPrefix: process.env.GITHUB_PAGES ? '/webos' : undefined,
   images: { unoptimized: true },
   trailingSlash: true,
 
