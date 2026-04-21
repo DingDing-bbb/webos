@@ -31,13 +31,7 @@
       "@app": ["packages/os/packages/apps/index.ts"],
       "@app/*": ["packages/os/packages/apps/*"],
       "@apps": ["packages/os/packages/apps/index.ts"],
-      "@apps/*": ["packages/os/packages/apps/*"],
-      "@webos/intro": ["packages/intro/src/index.tsx"],
-      "@webos/intro/*": ["packages/intro/src/*"],
-      "@webos/docs": ["packages/docs/src/index.tsx"],
-      "@webos/docs/*": ["packages/docs/src/*"],
-      "@webos/os": ["packages/os/src/index.tsx"],
-      "@webos/os/*": ["packages/os/src/*"]
+      "@apps/*": ["packages/os/packages/apps/*"]
     }
   },
   "include": [
@@ -46,11 +40,7 @@
     "next-env.d.ts",
     ".next/types/**/*.ts",
     "../packages/os/**/*.ts",
-    "../packages/os/**/*.tsx",
-    "../packages/intro/**/*.ts",
-    "../packages/intro/**/*.tsx",
-    "../packages/docs/**/*.ts",
-    "../packages/docs/**/*.tsx"
+    "../packages/os/**/*.tsx"
   ],
   "exclude": ["node_modules"]
 }

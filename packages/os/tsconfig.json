@@ -21,6 +21,6 @@
       "@apps/*": ["packages/apps/*"]
     }
   },
-  "include": ["src/**/*", "packages/**/*", "global.d.ts"],
+  "include": ["packages/**/*", "global.d.ts"],
   "exclude": ["node_modules", "dist"]
 }
