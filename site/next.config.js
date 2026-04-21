@@ -12,12 +12,9 @@ const OS_PACKAGES = path.resolve(OS_DIR, 'packages');
 
 // Webpack 路径别名配置（使用绝对路径）
 const webpackResolveAlias = {
-  // Kernel
   '@kernel': path.resolve(OS_PACKAGES, 'kernel/src'),
   '@kernel/types': path.resolve(OS_PACKAGES, 'kernel/src/types.ts'),
   '@kernel/core': path.resolve(OS_PACKAGES, 'kernel/src/core'),
-
-  // UI
   '@ui': path.resolve(OS_PACKAGES, 'ui/src'),
   '@ui/base': path.resolve(OS_PACKAGES, 'ui/src/base'),
   '@ui/theme': path.resolve(OS_PACKAGES, 'ui/src/theme'),
@@ -30,38 +27,21 @@ const webpackResolveAlias = {
   '@ui/hooks': path.resolve(OS_PACKAGES, 'ui/src/hooks'),
   '@ui/utils': path.resolve(OS_PACKAGES, 'ui/src/utils'),
   '@webos/ui': path.resolve(OS_PACKAGES, 'ui/src'),
-
-  // i18n
   '@i18n': path.resolve(OS_PACKAGES, 'i18n/src'),
-
-  // OOBE
   '@oobe': path.resolve(OS_PACKAGES, 'oobe/src'),
-
-  // Bootloader
   '@bootloader': path.resolve(OS_PACKAGES, 'bootloader/src'),
-
-  // Recovery
   '@recovery': path.resolve(OS_PACKAGES, 'recovery/src'),
-
-  // Tablet
   '@tablet': path.resolve(OS_PACKAGES, 'tablet/src'),
-
-  // Apps
   '@app': path.resolve(OS_PACKAGES, 'apps'),
   '@apps': path.resolve(OS_PACKAGES, 'apps'),
-
-  // SDK
   '@webos/sdk': path.resolve(OS_PACKAGES, 'sdk/src'),
 };
 
 // Turbopack 需要使用相对路径
 const turbopackResolveAlias = {
-  // Kernel
   '@kernel': '../packages/os/packages/kernel/src',
   '@kernel/types': '../packages/os/packages/kernel/src/types.ts',
   '@kernel/core': '../packages/os/packages/kernel/src/core',
-
-  // UI
   '@ui': '../packages/os/packages/ui/src',
   '@ui/base': '../packages/os/packages/ui/src/base',
   '@ui/theme': '../packages/os/packages/ui/src/theme',
@@ -74,33 +54,26 @@ const turbopackResolveAlias = {
   '@ui/hooks': '../packages/os/packages/ui/src/hooks',
   '@ui/utils': '../packages/os/packages/ui/src/utils',
   '@webos/ui': '../packages/os/packages/ui/src',
-
-  // i18n
   '@i18n': '../packages/os/packages/i18n/src',
-
-  // OOBE
   '@oobe': '../packages/os/packages/oobe/src',
-
-  // Bootloader
   '@bootloader': '../packages/os/packages/bootloader/src',
-
-  // Recovery
   '@recovery': '../packages/os/packages/recovery/src',
-
-  // Tablet
   '@tablet': '../packages/os/packages/tablet/src',
-
-  // Apps
   '@app': '../packages/os/packages/apps',
   '@apps': '../packages/os/packages/apps',
-
-  // SDK
   '@webos/sdk': '../packages/os/packages/sdk/src',
 };
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+
+  // GitHub Pages 静态导出
+  output: 'export',
+  basePath: '/webos',
+  assetPrefix: '/webos',
+  images: { unoptimized: true },
+  trailingSlash: true,
 
   // Turbopack 配置
   turbopack: {
@@ -147,9 +120,6 @@ const nextConfig = {
 
     return config;
   },
-
-  // 输出配置
-  output: 'standalone',
 };
 
 module.exports = nextConfig;
