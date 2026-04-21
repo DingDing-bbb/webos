@@ -1,60 +1,80 @@
-# 快速开始
+# WebOS 入门指南
 
-欢迎使用 WebOS SDK！本指南将帮助您快速入门。
+## 环境要求
 
-## 系统要求
-
-- Node.js 18+
-- Bun 或 npm
-- 现代浏览器（Chrome 80+, Firefox 75+, Safari 14+）
+- [Bun](https://bun.sh) 1.0 或更高版本（推荐）
+- Node.js 18+（备选，但建议使用 Bun）
 
 ## 安装
 
-```bash
-# 使用 bun
-bun add @webos/sdk
+克隆仓库并安装依赖：
 
-# 或使用 npm
-npm install @webos/sdk
+```bash
+git clone https://github.com/DingDing-bbb/webos.git
+cd webos
+bun install
 ```
 
-## 创建第一个应用
+## 开发
 
-### 1. 使用 CLI 创建
+启动开发服务器（Next.js + Turbopack）：
 
 ```bash
-# 创建新应用
-webos-sdk create com.example.myapp
-
-# 进入项目目录
-cd myapp
-
-# 安装依赖
-bun install
-
-# 启动开发模式
 bun run dev
 ```
 
-### 2. 手动创建
+访问 http://localhost:3000 即可预览 WebOS 桌面环境。
 
-创建项目结构：
+## 构建
 
+生成静态站点（用于部署到 GitHub Pages 等）：
+
+```bash
+bun run build
 ```
-my-app/
-├── src/
-│   ├── index.tsx      # 入口文件
-│   ├── App.tsx        # 主组件
-│   └── icon.tsx       # 图标组件
-├── locales/
-│   ├── en.json        # 英文翻译
-│   └── zh-CN.json     # 中文翻译
-├── appinfo.json       # 应用配置
-└── package.json
+
+输出目录：site/out/
+
+## 使用 SDK
+
+WebOS 提供了命令行工具 webos-sdk，用于创建、构建和测试应用。
+
+### 创建一个新应用
+
+```bash
+cd packages/os/packages/sdk
+bun run build  # 首次使用需要编译 SDK
+./dist/cli.js create my-app
+cd my-app
+bun install
 ```
+
+### 构建应用
+
+```bash
+webos-sdk build
+```
+
+### 监听模式（自动重建）
+
+```bash
+webos-sdk build --watch
+```
+
+### 运行测试
+
+```bash
+webos-sdk test
+```
+
+## 项目结构
+
+- `site/` - Next.js 主站点（包含 WebOS 桌面 UI）
+- `packages/os/packages/` - 核心模块（kernel, ui, apps, sdk...）
+- `packages/os/packages/sdk` - CLI 开发工具
 
 ## 下一步
 
-- [应用配置](./app-config.md) - 了解应用配置选项
-- [React Hooks](./hooks.md) - 学习可用的 React Hooks
-- [API 参考](./api.md) - 查看完整的 API 文档
+- 查看 [CLI 工具文档](cli.md)
+- 查看 [API 参考](api.md)
+- 查看 [应用配置](app-config.md)
