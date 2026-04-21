@@ -23,5 +23,8 @@
     "components",
     "layered"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "lucide-react": "^1.8.0"
+  }
 }
