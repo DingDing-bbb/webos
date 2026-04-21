@@ -15,9 +15,20 @@ const webpackResolveAlias = {
   // Kernel
   '@kernel': path.resolve(OS_PACKAGES, 'kernel/src'),
   '@kernel/types': path.resolve(OS_PACKAGES, 'kernel/src/types.ts'),
+  '@kernel/core': path.resolve(OS_PACKAGES, 'kernel/src/core'),
 
   // UI
   '@ui': path.resolve(OS_PACKAGES, 'ui/src'),
+  '@ui/base': path.resolve(OS_PACKAGES, 'ui/src/base'),
+  '@ui/theme': path.resolve(OS_PACKAGES, 'ui/src/theme'),
+  '@ui/display': path.resolve(OS_PACKAGES, 'ui/src/display'),
+  '@ui/feedback': path.resolve(OS_PACKAGES, 'ui/src/feedback'),
+  '@ui/input': path.resolve(OS_PACKAGES, 'ui/src/input'),
+  '@ui/layout': path.resolve(OS_PACKAGES, 'ui/src/layout'),
+  '@ui/navigation': path.resolve(OS_PACKAGES, 'ui/src/navigation'),
+  '@ui/components': path.resolve(OS_PACKAGES, 'ui/src/components'),
+  '@ui/hooks': path.resolve(OS_PACKAGES, 'ui/src/hooks'),
+  '@ui/utils': path.resolve(OS_PACKAGES, 'ui/src/utils'),
   '@webos/ui': path.resolve(OS_PACKAGES, 'ui/src'),
 
   // i18n
@@ -38,6 +49,9 @@ const webpackResolveAlias = {
   // Apps
   '@app': path.resolve(OS_PACKAGES, 'apps'),
   '@apps': path.resolve(OS_PACKAGES, 'apps'),
+
+  // SDK
+  '@webos/sdk': path.resolve(OS_PACKAGES, 'sdk/src'),
 };
 
 // Turbopack 需要使用相对路径
@@ -45,9 +59,20 @@ const turbopackResolveAlias = {
   // Kernel
   '@kernel': '../packages/os/packages/kernel/src',
   '@kernel/types': '../packages/os/packages/kernel/src/types.ts',
+  '@kernel/core': '../packages/os/packages/kernel/src/core',
 
   // UI
   '@ui': '../packages/os/packages/ui/src',
+  '@ui/base': '../packages/os/packages/ui/src/base',
+  '@ui/theme': '../packages/os/packages/ui/src/theme',
+  '@ui/display': '../packages/os/packages/ui/src/display',
+  '@ui/feedback': '../packages/os/packages/ui/src/feedback',
+  '@ui/input': '../packages/os/packages/ui/src/input',
+  '@ui/layout': '../packages/os/packages/ui/src/layout',
+  '@ui/navigation': '../packages/os/packages/ui/src/navigation',
+  '@ui/components': '../packages/os/packages/ui/src/components',
+  '@ui/hooks': '../packages/os/packages/ui/src/hooks',
+  '@ui/utils': '../packages/os/packages/ui/src/utils',
   '@webos/ui': '../packages/os/packages/ui/src',
 
   // i18n
@@ -68,6 +93,9 @@ const turbopackResolveAlias = {
   // Apps
   '@app': '../packages/os/packages/apps',
   '@apps': '../packages/os/packages/apps',
+
+  // SDK
+  '@webos/sdk': '../packages/os/packages/sdk/src',
 };
 
 /** @type {import('next').NextConfig} */
@@ -79,7 +107,7 @@ const nextConfig = {
     resolveAlias: turbopackResolveAlias,
   },
 
-  // Webpack 配置
+  // Webpack 配置（Next.js 生产构建使用）
   webpack: (config, { isServer }) => {
     config.resolve.alias = {
       ...config.resolve.alias,
@@ -119,12 +147,6 @@ const nextConfig = {
 
     return config;
   },
-
-  // 允许的开发来源
-  allowedDevOrigins: [
-    'preview-chat-83a703b1-4689-40c0-900d-8067f6ea5e30.space.z.ai',
-    'preview-chat-f71f39e6-5f0e-4eb6-94d5-8047d63f91cd.space.z.ai',
-  ],
 
   // 输出配置
   output: 'standalone',
