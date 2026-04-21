@@ -27,12 +27,15 @@ export function useThrottle<T>(value: T, limit: number): T {
   const lastRan = useRef(Date.now());
 
   useEffect(() => {
-    const handler = setTimeout(() => {
-      if (Date.now() - lastRan.current >= limit) {
-        setThrottledValue(value);
-        lastRan.current = Date.now();
-      }
-    }, limit - (Date.now() - lastRan.current));
+    const handler = setTimeout(
+      () => {
+        if (Date.now() - lastRan.current >= limit) {
+          setThrottledValue(value);
+          lastRan.current = Date.now();
+        }
+      },
+      limit - (Date.now() - lastRan.current)
+    );
 
     return () => {
       clearTimeout(handler);
@@ -43,9 +46,7 @@ export function useThrottle<T>(value: T, limit: number): T {
 }
 
 // ========== useClickOutside ==========
-export function useClickOutside<T extends HTMLElement>(
-  callback: () => void
-): React.RefObject<T> {
+export function useClickOutside<T extends HTMLElement>(callback: () => void): React.RefObject<T> {
   const ref = useRef<T>(null);
 
   useEffect(() => {
@@ -246,9 +247,7 @@ export function useScrollLock(lock: boolean): void {
 }
 
 // ========== useFocusTrap ==========
-export function useFocusTrap<T extends HTMLElement>(
-  active: boolean
-): React.RefObject<T> {
+export function useFocusTrap<T extends HTMLElement>(active: boolean): React.RefObject<T> {
   const ref = useRef<T>(null);
 
   useEffect(() => {

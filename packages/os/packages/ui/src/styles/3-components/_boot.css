@@ -15,7 +15,9 @@
   align-items: center;
   justify-content: center;
   z-index: var(--os-z-boot);
-  transition: opacity 0.3s ease, visibility 0.3s ease;
+  transition:
+    opacity 0.3s ease,
+    visibility 0.3s ease;
 }
 
 .os-boot-screen.hidden {

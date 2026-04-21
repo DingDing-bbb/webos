@@ -2,7 +2,7 @@
   "system.name": "WebOS",
   "system.version": "Version",
   "system.buildTime": "Build Time",
-  
+
   "oobe.welcome": "Welcome to WebOS",
   "oobe.welcomeDesc": "Let's set up your system in a few quick steps.",
   "oobe.userSetup": "Create Your Account",
@@ -36,10 +36,10 @@
   "oobe.themeLightDesc": "Light appearance",
   "oobe.themeDarkDesc": "Dark appearance",
   "oobe.themeSystemDesc": "Match system settings",
-  
+
   "boot.loading": "Loading",
   "boot.starting": "Starting WebOS...",
-  
+
   "desktop.applications": "Applications",
   "desktop.documents": "Documents",
   "desktop.downloads": "Downloads",
@@ -47,13 +47,13 @@
   "desktop.music": "Music",
   "desktop.videos": "Videos",
   "desktop.trash": "Trash",
-  
+
   "taskbar.start": "Start",
   "taskbar.search": "Search",
   "taskbar.searchPlaceholder": "Search applications...",
   "taskbar.time": "Time",
   "taskbar.date": "Date",
-  
+
   "menu.settings": "Settings",
   "menu.about": "About",
   "menu.shutdown": "Shut Down",
@@ -61,12 +61,12 @@
   "menu.logout": "Log Out",
   "menu.lock": "Lock Screen",
   "menu.allApps": "All Applications",
-  
+
   "window.close": "Close",
   "window.minimize": "Minimize",
   "window.maximize": "Maximize",
   "window.restore": "Restore",
-  
+
   "app.fileManager": "File Manager",
   "app.clock": "Clock",
   "app.terminal": "Terminal",
@@ -85,7 +85,7 @@
   "app.browser.clearHistory": "Clear Browsing History",
   "app.browser.noBookmarks": "No bookmarks yet, click the star icon to add one",
   "app.browser.noHistory": "No browsing history yet",
-  
+
   "category.system": "System",
   "category.productivity": "Productivity",
   "category.media": "Media",
@@ -93,7 +93,7 @@
   "category.network": "Network",
   "category.development": "Development",
   "category.utilities": "Utilities",
-  
+
   "file.name": "Name",
   "file.size": "Size",
   "file.type": "Type",
@@ -117,7 +117,7 @@
   "file.permissions.write": "Write",
   "file.permissions.execute": "Execute",
   "file.directory": "Directory",
-  
+
   "settings.title": "Settings",
   "settings.system": "System",
   "settings.language": "Language",
@@ -234,21 +234,21 @@
   "terminal.su.success": "Authentication successful. Now running as root.",
   "terminal.su.failed": "Authentication failed.",
   "terminal.already.root": "You are already root.",
-  
+
   "auth.title": "Authentication Required",
   "auth.password": "Password",
   "auth.submit": "Submit",
   "auth.cancel": "Cancel",
   "auth.incorrect": "Incorrect password",
   "auth.required": "Authentication required to perform this action",
-  
+
   "notify.alarm": "Alarm",
   "notify.reminder": "Reminder",
   "notify.warning": "Warning",
   "notify.error": "Error",
   "notify.success": "Success",
   "notify.info": "Information",
-  
+
   "clock.setAlarm": "Set Alarm",
   "clock.alarmSet": "Alarm set for",
   "clock.clearAlarm": "Clear Alarm",
@@ -257,7 +257,7 @@
   "clock.second": "Second",
   "clock.today": "Today",
   "clock.tomorrow": "Tomorrow",
-  
+
   "about.title": "About",
   "about.systemName": "System Name",
   "about.version": "Version",
@@ -267,7 +267,7 @@
   "about.changelog": "Changelog",
   "about.userInterface": "User Interface",
   "about.openSource": "Open Source Project",
-  
+
   "common.save": "Save",
   "common.cancel": "Cancel",
   "common.delete": "Delete",
@@ -293,7 +293,7 @@
   "common.info": "Information",
   "common.enabled": "Enabled",
   "common.disabled": "Disabled",
-  
+
   "error.applicationError": "Application Error",
   "error.systemError": "System Error",
   "error.errorCode": "Error Code",
@@ -305,7 +305,7 @@
   "error.copied": "Copied!",
   "error.retry": "Retry",
   "error.close": "Close",
-  
+
   "bluescreen.title": "Your system ran into a problem",
   "bluescreen.subtitle": "This is a system-level error that requires attention.",
   "bluescreen.consecutiveErrors": "Consecutive Errors",
@@ -315,7 +315,7 @@
   "bluescreen.resetSystem": "Reset System",
   "bluescreen.scanForHelp": "Scan for help",
   "bluescreen.moreInfo": "For more information about this issue and possible fixes, visit the system documentation or contact your administrator.",
-  
+
   "recovery.title": "Recovery Mode",
   "recovery.systemErrorDetected": "System Error Detected",
   "recovery.totalErrors": "Total Errors",
@@ -334,7 +334,7 @@
   "recovery.helpStep2": "Check your network connection",
   "recovery.helpStep3": "Clear browser cache and reload",
   "recovery.helpStep4": "Reset system to factory defaults",
-  
+
   "contextMenu.view": "View",
   "contextMenu.sortBy": "Sort by",
   "contextMenu.refresh": "Refresh",

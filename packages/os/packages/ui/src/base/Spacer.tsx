@@ -89,7 +89,9 @@ export const Spacer = forwardRef<HTMLDivElement, SpacerProps>(
         debug && 'webos-spacer--debug',
         invisible && 'webos-spacer--invisible',
         className,
-      ].filter(Boolean).join(' ');
+      ]
+        .filter(Boolean)
+        .join(' ');
 
       return classes;
     }, [direction, flex, debug, invisible, className]);
@@ -235,11 +237,7 @@ export interface InlineSpacerProps extends Omit<SpacerProps, 'direction'> {
   size?: SpacerSize;
 }
 
-export const InlineSpacer: React.FC<InlineSpacerProps> = ({
-  size = 'sm',
-  style,
-  ...props
-}) => (
+export const InlineSpacer: React.FC<InlineSpacerProps> = ({ size = 'sm', style, ...props }) => (
   <span
     className={`webos-inline-spacer webos-inline-spacer--${size}`}
     style={{
@@ -430,7 +428,9 @@ export const Stack = forwardRef<HTMLDivElement, StackProps>(
         inline && 'webos-stack--inline',
         divider && 'webos-stack--divider',
         className,
-      ].filter(Boolean).join(' ');
+      ]
+        .filter(Boolean)
+        .join(' ');
 
       return classes;
     }, [direction, align, justify, wrap, inline, divider, className]);
@@ -443,7 +443,18 @@ export const Stack = forwardRef<HTMLDivElement, StackProps>(
         display: inline ? 'inline-flex' : 'flex',
         flexDirection: direction,
         alignItems: align === 'start' ? 'flex-start' : align === 'end' ? 'flex-end' : align,
-        justifyContent: justify === 'between' ? 'space-between' : justify === 'around' ? 'space-around' : justify === 'evenly' ? 'space-evenly' : justify === 'start' ? 'flex-start' : justify === 'end' ? 'flex-end' : justify,
+        justifyContent:
+          justify === 'between'
+            ? 'space-between'
+            : justify === 'around'
+              ? 'space-around'
+              : justify === 'evenly'
+                ? 'space-evenly'
+                : justify === 'start'
+                  ? 'flex-start'
+                  : justify === 'end'
+                    ? 'flex-end'
+                    : justify,
         flexWrap: wrap ? 'wrap' : 'nowrap',
         gap: gapValue,
         ...style,

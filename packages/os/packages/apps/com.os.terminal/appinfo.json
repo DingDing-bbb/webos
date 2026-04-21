@@ -18,11 +18,7 @@
   "category": "developer",
   "author": "OS Team",
   "license": "MIT",
-  "permissions": [
-    "filesystem.read",
-    "filesystem.write",
-    "user.authenticate"
-  ],
+  "permissions": ["filesystem.read", "filesystem.write", "user.authenticate"],
   "minPlatformVersion": "1.0.0",
   "window": {
     "defaultWidth": 700,

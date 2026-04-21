@@ -35,16 +35,16 @@ function App() {
 
   if (showOOBE) {
     return (
-      <OOBE 
+      <OOBE
         onComplete={(data) => {
           console.log('User:', data.username);
           console.log('Language:', data.language);
           console.log('System Name:', data.systemName);
           console.log('Tablet Mode:', data.tabletMode);
           console.log('Theme:', data.theme);
-          
+
           setShowOOBE(false);
-        }} 
+        }}
       />
     );
   }
@@ -55,11 +55,11 @@ function App() {
 
 ```typescript
 interface OOBECompleteData {
-  username: string;        // 用户名
-  password: string;        // 密码
-  language: string;        // 语言代码（如 'zh-CN'）
-  systemName?: string;     // 系统名称
-  tabletMode?: boolean;    // 是否启用平板模式
+  username: string; // 用户名
+  password: string; // 密码
+  language: string; // 语言代码（如 'zh-CN'）
+  systemName?: string; // 系统名称
+  tabletMode?: boolean; // 是否启用平板模式
   theme?: 'light' | 'dark'; // 主题
 }
 ```

@@ -37,7 +37,7 @@ export const SecureLockScreen: React.FC<SecureLockScreenProps> = ({
   onSetup,
   onLogin,
   onUnlock,
-  systemName = 'WebOS'
+  systemName = 'WebOS',
 }) => {
   // 状态
   const [screenState, setScreenState] = useState<ScreenState>('loading');
@@ -265,19 +265,21 @@ export const SecureLockScreen: React.FC<SecureLockScreenProps> = ({
                 />
               </div>
 
-              {error && (
-                <div className="lockscreen-error">{error}</div>
-              )}
+              {error && <div className="lockscreen-error">{error}</div>}
 
-              <button
-                type="submit"
-                className="lockscreen-setup-btn"
-                disabled={isLoading}
-              >
+              <button type="submit" className="lockscreen-setup-btn" disabled={isLoading}>
                 {isLoading ? (
                   <span className="lockscreen-loading-inline">
                     <svg className="lockscreen-spinner" viewBox="0 0 24 24">
-                      <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="2" strokeDasharray="31.4 31.4" />
+                      <circle
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeDasharray="31.4 31.4"
+                      />
                     </svg>
                     Creating...
                   </span>
@@ -312,21 +314,18 @@ export const SecureLockScreen: React.FC<SecureLockScreenProps> = ({
             <div className="lockscreen-users">
               <div className="lockscreen-users-title">{systemName}</div>
               <div className="lockscreen-users-list">
-                {users.map(user => (
+                {users.map((user) => (
                   <div
                     key={user.username}
                     className="lockscreen-user-card"
                     onClick={() => handleSelectUser(user.username)}
                   >
                     <div className="lockscreen-user-avatar">
-                      {user.displayName?.charAt(0).toUpperCase() || user.username.charAt(0).toUpperCase()}
+                      {user.displayName?.charAt(0).toUpperCase() ||
+                        user.username.charAt(0).toUpperCase()}
                     </div>
-                    <div className="lockscreen-user-name">
-                      {user.displayName || user.username}
-                    </div>
-                    {user.role === 'root' && (
-                      <div className="lockscreen-user-badge">Admin</div>
-                    )}
+                    <div className="lockscreen-user-name">{user.displayName || user.username}</div>
+                    {user.role === 'root' && <div className="lockscreen-user-badge">Admin</div>}
                   </div>
                 ))}
               </div>
@@ -338,7 +337,7 @@ export const SecureLockScreen: React.FC<SecureLockScreenProps> = ({
   }
 
   // 渲染密码输入界面
-  const currentUser = users.find(u => u.username === selectedUser);
+  const currentUser = users.find((u) => u.username === selectedUser);
 
   return (
     <div className="lockscreen-container">
@@ -347,7 +346,14 @@ export const SecureLockScreen: React.FC<SecureLockScreenProps> = ({
         <div className="lockscreen-password">
           {users.length > 1 && (
             <button className="lockscreen-back-btn" onClick={handleBack}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
                 <path d="M19 12H5M12 19l-7-7 7-7" />
               </svg>
             </button>
@@ -355,12 +361,10 @@ export const SecureLockScreen: React.FC<SecureLockScreenProps> = ({
 
           <div className="lockscreen-password-user">
             <div className="lockscreen-user-avatar large">
-              {currentUser?.displayName?.charAt(0).toUpperCase() 
-                || selectedUser?.charAt(0).toUpperCase()}
+              {currentUser?.displayName?.charAt(0).toUpperCase() ||
+                selectedUser?.charAt(0).toUpperCase()}
             </div>
-            <div className="lockscreen-user-name">
-              {currentUser?.displayName || selectedUser}
-            </div>
+            <div className="lockscreen-user-name">{currentUser?.displayName || selectedUser}</div>
             {currentUser?.role === 'root' && (
               <div className="lockscreen-user-role">Administrator</div>
             )}
@@ -386,33 +390,40 @@ export const SecureLockScreen: React.FC<SecureLockScreenProps> = ({
                 {showPassword ? '🙈' : '👁️'}
               </button>
             </div>
-            
-            {error && (
-              <div className="lockscreen-error">{error}</div>
-            )}
 
-            <button 
-              type="submit" 
-              className="lockscreen-submit-btn"
-              disabled={isLoading}
-            >
+            {error && <div className="lockscreen-error">{error}</div>}
+
+            <button type="submit" className="lockscreen-submit-btn" disabled={isLoading}>
               {isLoading ? (
                 <span className="lockscreen-loading">
                   <svg className="lockscreen-spinner" viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="2" strokeDasharray="31.4 31.4" />
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeDasharray="31.4 31.4"
+                    />
                   </svg>
                 </span>
               ) : (
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
                   <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>
               )}
             </button>
           </form>
 
-          <div className="lockscreen-hint">
-            Press Enter to login
-          </div>
+          <div className="lockscreen-hint">Press Enter to login</div>
 
           <div className="lockscreen-security-info">
             <span>🔒 PBKDF2 100K iterations</span>

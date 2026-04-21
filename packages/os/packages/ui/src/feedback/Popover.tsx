@@ -319,11 +319,7 @@ export const Popover = forwardRef<PopoverRef, PopoverProps>(
 
     return (
       <>
-        <div
-          ref={triggerRef}
-          className="popover-trigger"
-          {...getTriggerProps()}
-        >
+        <div ref={triggerRef} className="popover-trigger" {...getTriggerProps()}>
           {triggerElement}
         </div>
 
@@ -341,19 +337,11 @@ export const Popover = forwardRef<PopoverRef, PopoverProps>(
             onMouseEnter={trigger === 'hover' ? show : undefined}
             onMouseLeave={trigger === 'hover' ? hide : undefined}
           >
-            {title && (
-              <div className="popover__title">
-                {title}
-              </div>
-            )}
+            {title && <div className="popover__title">{title}</div>}
 
-            <div className="popover__content">
-              {content}
-            </div>
+            <div className="popover__content">{content}</div>
 
-            {showArrow && (
-              <div className={`popover__arrow popover__arrow--${actualPosition}`} />
-            )}
+            {showArrow && <div className={`popover__arrow popover__arrow--${actualPosition}`} />}
           </div>
         )}
       </>

@@ -32,14 +32,7 @@
  * ```
  */
 
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-  useRef,
-  useEffect,
-} from 'react';
+import React, { createContext, useContext, useState, useCallback, useRef, useEffect } from 'react';
 
 // ============================================================================
 // Types
@@ -116,7 +109,7 @@ export const ConfirmProvider: React.FC<ConfirmProviderProps> = ({ children }) =>
   const confirmRef = useRef<HTMLDivElement>(null);
 
   const show = useCallback((options: ConfirmOptions): Promise<boolean> => {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       const id = `confirm-${Date.now()}`;
       setConfirmState({
         ...options,
@@ -129,7 +122,7 @@ export const ConfirmProvider: React.FC<ConfirmProviderProps> = ({ children }) =>
   const handleConfirm = useCallback(async () => {
     if (!confirmState) return;
 
-    setConfirmState(prev => prev ? { ...prev, isLoading: true } : null);
+    setConfirmState((prev) => (prev ? { ...prev, isLoading: true } : null));
 
     try {
       if (confirmState.confirmButton?.onClick) {
@@ -268,7 +261,7 @@ export const ConfirmProvider: React.FC<ConfirmProviderProps> = ({ children }) =>
                     </svg>
                   </span>
                 ) : (
-                  confirmState.confirmButton?.label ?? confirmState.confirmText ?? 'Confirm'
+                  (confirmState.confirmButton?.label ?? confirmState.confirmText ?? 'Confirm')
                 )}
               </button>
             </div>

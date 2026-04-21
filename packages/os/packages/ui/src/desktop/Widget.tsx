@@ -115,7 +115,9 @@ export const Widget: React.FC<WidgetProps> = ({
 
   const widgetRef = useRef<HTMLDivElement>(null);
   const dragStartRef = useRef<{ x: number; y: number; posX: number; posY: number } | null>(null);
-  const resizeStartRef = useRef<{ x: number; y: number; width: number; height: number } | null>(null);
+  const resizeStartRef = useRef<{ x: number; y: number; width: number; height: number } | null>(
+    null
+  );
 
   // ========================================
   // Drag Handlers
@@ -180,8 +182,10 @@ export const Widget: React.FC<WidgetProps> = ({
       const handleMouseMove = (moveEvent: MouseEvent) => {
         if (!resizeStartRef.current) return;
 
-        let newWidth = resizeStartRef.current.width + (moveEvent.clientX - resizeStartRef.current.x);
-        let newHeight = resizeStartRef.current.height + (moveEvent.clientY - resizeStartRef.current.y);
+        let newWidth =
+          resizeStartRef.current.width + (moveEvent.clientX - resizeStartRef.current.x);
+        let newHeight =
+          resizeStartRef.current.height + (moveEvent.clientY - resizeStartRef.current.y);
 
         // Clamp to min/max
         newWidth = Math.max(minSize.width, Math.min(maxSize?.width ?? Infinity, newWidth));
@@ -219,13 +223,15 @@ export const Widget: React.FC<WidgetProps> = ({
     <div
       ref={widgetRef}
       className={`desktop-widget ${isDragging ? 'dragging' : ''} ${isResizing ? 'resizing' : ''} ${isCollapsed ? 'collapsed' : ''} ${className}`}
-      style={{
-        left: position.x,
-        top: position.y,
-        width: size.width,
-        height: isCollapsed ? 'auto' : size.height,
-        '--acrylic-intensity': acrylicIntensity,
-      } as React.CSSProperties}
+      style={
+        {
+          left: position.x,
+          top: position.y,
+          width: size.width,
+          height: isCollapsed ? 'auto' : size.height,
+          '--acrylic-intensity': acrylicIntensity,
+        } as React.CSSProperties
+      }
     >
       {/* Acrylic Background */}
       <div className="desktop-widget-acrylic" />

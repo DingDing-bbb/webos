@@ -11,9 +11,9 @@ interface PasswordSetupProps {
   skipPassword?: boolean; // 是否允许跳过密码设置
 }
 
-export const PasswordSetup: React.FC<PasswordSetupProps> = ({ 
+export const PasswordSetup: React.FC<PasswordSetupProps> = ({
   onComplete,
-  skipPassword = true 
+  skipPassword = true,
 }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -47,7 +47,7 @@ export const PasswordSetup: React.FC<PasswordSetupProps> = ({
     return { label: 'Strong', color: '#4caf50' };
   };
 
-  const validateForm = (): boolean => {
+  const validateForm = useCallback((): boolean => {
     if (!username.trim()) {
       setError('Username is required');
       return false;
@@ -77,38 +77,38 @@ export const PasswordSetup: React.FC<PasswordSetupProps> = ({
     }
 
     return true;
-  };
+  }, [username, password, confirmPassword]);
 
-  const handleSubmit = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!validateForm()) return;
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
 
-    setIsLoading(true);
-    setError('');
+      if (!validateForm()) return;
 
-    try {
-      // 如果没有设置密码，使用用户名作为默认密码（不推荐但允许）
-      const actualPassword = password || username + '_default_' + Date.now();
-      
-      const result = await secureUserManager.createFirstUser(
-        username.trim(),
-        actualPassword,
-        { displayName: displayName.trim() || username.trim() }
-      );
+      setIsLoading(true);
+      setError('');
 
-      if (result.success) {
-        onComplete(true);
-      } else {
-        setError(result.error || 'Failed to create user');
+      try {
+        // 如果没有设置密码，使用用户名作为默认密码（不推荐但允许）
+        const actualPassword = password || username + '_default_' + Date.now();
+
+        const result = await secureUserManager.createFirstUser(username.trim(), actualPassword, {
+          displayName: displayName.trim() || username.trim(),
+        });
+
+        if (result.success) {
+          onComplete(true);
+        } else {
+          setError(result.error || 'Failed to create user');
+        }
+      } catch {
+        setError('An error occurred during setup');
+      } finally {
+        setIsLoading(false);
       }
-    } catch {
-      setError('An error occurred during setup');
-    } finally {
-      setIsLoading(false);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [username, password, confirmPassword, displayName, onComplete]);
+    },
+    [username, password, displayName, onComplete, validateForm]
+  );
 
   const handleSkip = useCallback(async () => {
     // 创建一个默认用户，没有密码保护
@@ -116,12 +116,10 @@ export const PasswordSetup: React.FC<PasswordSetupProps> = ({
     try {
       const defaultUsername = 'user';
       const defaultPassword = 'user_' + Date.now();
-      
-      const result = await secureUserManager.createFirstUser(
-        defaultUsername,
-        defaultPassword,
-        { displayName: 'User' }
-      );
+
+      const result = await secureUserManager.createFirstUser(defaultUsername, defaultPassword, {
+        displayName: 'User',
+      });
 
       if (result.success) {
         onComplete(true);
@@ -155,14 +153,14 @@ export const PasswordSetup: React.FC<PasswordSetupProps> = ({
             disabled={isLoading}
             autoFocus
           />
-          <span className="os-password-hint">
-            Letters, numbers, underscore, and hyphen only
-          </span>
+          <span className="os-password-hint">Letters, numbers, underscore, and hyphen only</span>
         </div>
 
         {/* 显示名称 */}
         <div className="os-password-field">
-          <label>Display Name <span className="os-optional">(optional)</span></label>
+          <label>
+            Display Name <span className="os-optional">(optional)</span>
+          </label>
           <input
             type="text"
             className="os-password-input"
@@ -176,7 +174,7 @@ export const PasswordSetup: React.FC<PasswordSetupProps> = ({
         {/* 密码 */}
         <div className="os-password-field">
           <label>
-            Password 
+            Password
             {skipPassword && <span className="os-optional">(recommended)</span>}
           </label>
           <div className="os-password-input-wrapper">
@@ -194,34 +192,46 @@ export const PasswordSetup: React.FC<PasswordSetupProps> = ({
               onClick={() => setShowPassword(!showPassword)}
             >
               {showPassword ? (
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
-                  <line x1="1" y1="1" x2="23" y2="23"/>
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                  <line x1="1" y1="1" x2="23" y2="23" />
                 </svg>
               ) : (
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                  <circle cx="12" cy="12" r="3"/>
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                  <circle cx="12" cy="12" r="3" />
                 </svg>
               )}
             </button>
           </div>
-          
+
           {/* 密码强度指示器 */}
           {password && (
             <div className="os-password-strength">
               <div className="os-password-strength-bar">
-                <div 
+                <div
                   className="os-password-strength-fill"
-                  style={{ 
+                  style={{
                     width: `${(passwordStrength / 5) * 100}%`,
-                    background: getStrengthLabel().color 
+                    background: getStrengthLabel().color,
                   }}
                 />
               </div>
-              <span style={{ color: getStrengthLabel().color }}>
-                {getStrengthLabel().label}
-              </span>
+              <span style={{ color: getStrengthLabel().color }}>{getStrengthLabel().label}</span>
             </div>
           )}
         </div>
@@ -247,10 +257,17 @@ export const PasswordSetup: React.FC<PasswordSetupProps> = ({
         {/* 错误信息 */}
         {error && (
           <div className="os-password-error-block">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="12" cy="12" r="10"/>
-              <line x1="12" y1="8" x2="12" y2="12"/>
-              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
             </svg>
             {error}
           </div>
@@ -258,11 +275,7 @@ export const PasswordSetup: React.FC<PasswordSetupProps> = ({
 
         {/* 提交按钮 */}
         <div className="os-password-actions">
-          <button 
-            type="submit" 
-            className="os-password-submit"
-            disabled={isLoading}
-          >
+          <button type="submit" className="os-password-submit" disabled={isLoading}>
             {isLoading ? (
               <>
                 <span className="os-password-spinner" />
@@ -288,12 +301,22 @@ export const PasswordSetup: React.FC<PasswordSetupProps> = ({
 
       {/* 安全提示 */}
       <div className="os-password-security-note">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
         </svg>
         <div>
           <strong>Your data is encrypted</strong>
-          <p>Password is hashed with PBKDF2 (100,000 iterations) and stored with AES-256-GCM encryption.</p>
+          <p>
+            Password is hashed with PBKDF2 (100,000 iterations) and stored with AES-256-GCM
+            encryption.
+          </p>
         </div>
       </div>
     </div>

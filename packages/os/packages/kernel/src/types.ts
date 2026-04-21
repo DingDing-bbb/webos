@@ -1,7 +1,14 @@
 // 系统核心类型定义
 
 // 应用相关类型 - 重新定义以避免循环依赖
-export type AppCategory = 'system' | 'productivity' | 'media' | 'games' | 'network' | 'development' | 'utilities';
+export type AppCategory =
+  | 'system'
+  | 'productivity'
+  | 'media'
+  | 'games'
+  | 'network'
+  | 'development'
+  | 'utilities';
 
 export interface IconProps {
   size?: number;
@@ -30,7 +37,13 @@ export interface AppInfo {
   entry?: string;
 }
 
-export type AppPermission = 'fs:read' | 'fs:write' | 'network' | 'notification' | 'clipboard' | 'storage';
+export type AppPermission =
+  | 'fs:read'
+  | 'fs:write'
+  | 'network'
+  | 'notification'
+  | 'clipboard'
+  | 'storage';
 
 export type AppStatus = 'running' | 'stopped' | 'installed' | 'pending';
 
@@ -220,13 +233,23 @@ export interface WebOSAPI {
     mkdir: (path: string, recursive?: boolean) => boolean;
     remove: (path: string) => boolean;
     delete: (path: string) => boolean;
-    readdir: (path: string) => { name: string; type: 'file' | 'directory'; permissions: string; owner: string; size: number; modifiedAt: Date }[];
+    readdir: (path: string) => {
+      name: string;
+      type: 'file' | 'directory';
+      permissions: string;
+      owner: string;
+      size: number;
+      modifiedAt: Date;
+    }[];
     stat: (path: string) => FileSystemNode | null;
     chmod: (path: string, mode: string) => boolean;
     getPermissions: (path: string) => string;
     setPermissions: (path: string, permissions: string, requireAuth?: boolean) => boolean;
     getNode: (path: string) => FileSystemNode | null;
-    watch: (path: string, listener: (event: { type: string; path: string; timestamp: Date }) => void) => () => void;
+    watch: (
+      path: string,
+      listener: (event: { type: string; path: string; timestamp: Date }) => void
+    ) => () => void;
     resolve: (...paths: string[]) => string;
     dirname: (path: string) => string;
     basename: (path: string) => string;
@@ -252,7 +275,11 @@ export interface WebOSAPI {
     getAllUsers: () => User[];
     getRealUsers: () => User[];
     hasUsers: () => boolean;
-    createUser: (username: string, password: string, options?: { role?: UserRole; isRoot?: boolean }) => { success: boolean; user?: User; error?: string };
+    createUser: (
+      username: string,
+      password: string,
+      options?: { role?: UserRole; isRoot?: boolean }
+    ) => { success: boolean; user?: User; error?: string };
     login: (username: string, password: string) => { success: boolean; error?: string };
     logout: () => void;
     isLoggedIn: () => boolean;
@@ -273,21 +300,38 @@ export interface WebOSAPI {
       isReady: () => boolean;
       isInitialized: () => Promise<boolean>;
       isLocked: () => boolean;
-      getState: () => { isInitialized: boolean; isLocked: boolean; hasUsers: boolean; currentUser: User | null };
-      createFirstUser: (username: string, password: string, options?: { displayName?: string }) => Promise<{ success: boolean; user?: User; error?: string }>;
+      getState: () => {
+        isInitialized: boolean;
+        isLocked: boolean;
+        hasUsers: boolean;
+        currentUser: User | null;
+      };
+      createFirstUser: (
+        username: string,
+        password: string,
+        options?: { displayName?: string }
+      ) => Promise<{ success: boolean; user?: User; error?: string }>;
       login: (username: string, password: string) => Promise<{ success: boolean; error?: string }>;
       logout: () => Promise<void>;
       lock: () => void;
       unlock: (password: string) => Promise<{ success: boolean; error?: string }>;
       getCurrentUser: () => User | null;
-      getUserList: (includeRoot?: boolean) => Promise<Array<{ username: string; displayName: string; role: string }>>;
+      getUserList: (
+        includeRoot?: boolean
+      ) => Promise<Array<{ username: string; displayName: string; role: string }>>;
       getTotalUserCount: () => Promise<number>;
-      changePassword: (oldPassword: string, newPassword: string) => Promise<{ success: boolean; error?: string }>;
+      changePassword: (
+        oldPassword: string,
+        newPassword: string
+      ) => Promise<{ success: boolean; error?: string }>;
       updateDisplayName: (displayName: string) => Promise<{ success: boolean; error?: string }>;
       isAdmin: () => boolean;
       isRoot: () => boolean;
       hasPermission: (permission: Permission) => boolean;
-      saveEncryptedData: (key: string, data: string) => Promise<{ success: boolean; error?: string }>;
+      saveEncryptedData: (
+        key: string,
+        data: string
+      ) => Promise<{ success: boolean; error?: string }>;
       getEncryptedData: (key: string) => Promise<string | null>;
       resetSystem: (password: string) => Promise<{ success: boolean; error?: string }>;
       resetAndReinit: () => Promise<void>;

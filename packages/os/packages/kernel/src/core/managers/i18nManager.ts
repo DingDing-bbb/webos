@@ -14,7 +14,7 @@ export class I18nManager {
     { code: 'zh-CN', name: 'Chinese (Simplified)', nativeName: '简体中文' },
     { code: 'zh-TW', name: 'Chinese (Traditional)', nativeName: '繁體中文' },
     { code: 'fr', name: 'French', nativeName: 'Français' },
-    { code: 'de', name: 'German', nativeName: 'Deutsch' }
+    { code: 'de', name: 'German', nativeName: 'Deutsch' },
   ];
   private hiddenLocales: string[] = ['fr', 'de'];
 
@@ -28,10 +28,10 @@ export class I18nManager {
       // 系统
       'system.name': 'WebOS',
       'system.version': 'Version',
-      
+
       // OOBE
       'oobe.welcome': 'Welcome to WebOS',
-      'oobe.welcomeDesc': 'Let\'s set up your system. This will only take a moment.',
+      'oobe.welcomeDesc': "Let's set up your system. This will only take a moment.",
       'oobe.setUsername': 'Create your account',
       'oobe.setPassword': 'Create a password',
       'oobe.selectLanguage': 'Select your language',
@@ -56,33 +56,33 @@ export class I18nManager {
       'oobe.themeLightDesc': 'Bright interface, suitable for daytime use.',
       'oobe.themeDarkDesc': 'Dark interface, reduces eye strain.',
       'oobe.themeSystemDesc': 'Automatically switch based on system settings.',
-      
+
       // 桌面
       'desktop.applications': 'Applications',
       'desktop.documents': 'Documents',
-      
+
       // 任务栏
       'taskbar.start': 'Start',
       'taskbar.search': 'Search',
       'taskbar.searchPlaceholder': 'Search applications...',
-      
+
       // 菜单
       'menu.settings': 'Settings',
       'menu.about': 'About',
       'menu.shutdown': 'Shut Down',
-      
+
       // 窗口
       'window.close': 'Close',
       'window.minimize': 'Minimize',
       'window.maximize': 'Maximize',
       'window.restore': 'Restore',
-      
+
       // 应用
       'app.fileManager': 'File Manager',
       'app.clock': 'Clock',
       'app.terminal': 'Terminal',
       'app.settings': 'Settings',
-      
+
       // 文件管理器
       'file.name': 'Name',
       'file.type': 'Type',
@@ -94,11 +94,12 @@ export class I18nManager {
       'file.permissions.read': 'Read',
       'file.permissions.write': 'Write',
       'file.permissions.execute': 'Execute',
-      
+
       // 终端
       'terminal.welcome': 'Welcome to WebOS Terminal. Type "help" for available commands.',
       'terminal.prompt': 'Type a command to get started.',
-      'terminal.help': 'Available commands: help, time, clear, ls, cat, pwd, cd, mkdir, touch, rm, echo, su, whoami',
+      'terminal.help':
+        'Available commands: help, time, clear, ls, cat, pwd, cd, mkdir, touch, rm, echo, su, whoami',
       'terminal.current.time': 'Current time',
       'terminal.usage': 'Usage',
       'terminal.no.such.file': 'No such file or directory',
@@ -110,7 +111,7 @@ export class I18nManager {
       'terminal.su.failed': 'Authentication failed',
       'terminal.permission.denied': 'Permission denied',
       'terminal.not.found': 'Command not found',
-      
+
       // 设置
       'settings.language': 'Language',
       'settings.systemName': 'System Name',
@@ -143,18 +144,20 @@ export class I18nManager {
       'settings.used': 'Used',
       'settings.available': 'Available',
       'settings.cacheManagement': 'Cache Management',
-      'settings.cacheHint': 'Clearing cache will free up storage space but may cause some data to reload.',
+      'settings.cacheHint':
+        'Clearing cache will free up storage space but may cause some data to reload.',
       'settings.clearCache': 'Clear Cache',
       'settings.cacheCleared': 'Cache Cleared',
       'settings.cacheClearedDesc': 'Cache has been cleared successfully.',
       'settings.resetSystem': 'Reset System',
-      'settings.resetWarning': 'This will delete all data and settings, and restore the system to its initial state. This action cannot be undone.',
+      'settings.resetWarning':
+        'This will delete all data and settings, and restore the system to its initial state. This action cannot be undone.',
       'settings.resetConfirm': 'Are you sure you want to reset the system? All data will be lost!',
       'settings.confirmReset': 'Confirm Reset',
       'settings.restartSystem': 'Restart System',
       'settings.restartHint': 'Restart the system to apply some changes.',
       'settings.restart': 'Restart',
-      
+
       // 壁纸
       'settings.wallpaper': 'Wallpaper',
       'settings.wallpaperDesc': 'Choose your desktop background',
@@ -171,7 +174,7 @@ export class I18nManager {
       'settings.wallpaperOcean': 'Ocean',
       'settings.wallpaperForest': 'Forest',
       'settings.wallpaperCurrent': 'Current Wallpaper',
-      
+
       // 关于
       'about.systemName': 'System Name',
       'about.version': 'Version',
@@ -179,19 +182,19 @@ export class I18nManager {
       'about.kernel': 'Kernel',
       'about.userInterface': 'User Interface',
       'about.openSource': 'Open Source Project',
-      
+
       // 认证
       'auth.password': 'Password',
       'auth.submit': 'Submit',
       'auth.cancel': 'Cancel',
       'auth.incorrect': 'Incorrect password',
       'auth.required': 'Authentication required',
-      
+
       // 时钟
       'notify.alarm': 'Alarm',
       'clock.setAlarm': 'Set Alarm',
       'clock.alarmSet': 'Alarm set for',
-      
+
       // 通用
       'common.save': 'Save',
       'common.error': 'Error',
@@ -199,7 +202,7 @@ export class I18nManager {
       'common.confirm': 'Confirm',
       'common.enabled': 'Enabled',
       'common.disabled': 'Disabled',
-      
+
       // 错误处理
       'error.applicationError': 'Application Error',
       'error.systemError': 'System Error',
@@ -212,18 +215,20 @@ export class I18nManager {
       'error.copied': 'Copied!',
       'error.retry': 'Retry',
       'error.close': 'Close',
-      
+
       // 蓝屏
       'bluescreen.title': 'Your system ran into a problem',
       'bluescreen.subtitle': 'This is a system-level error that requires attention.',
       'bluescreen.consecutiveErrors': 'Consecutive Errors',
-      'bluescreen.errorDescription': 'The system encountered {count} consecutive errors within a short period.',
+      'bluescreen.errorDescription':
+        'The system encountered {count} consecutive errors within a short period.',
       'bluescreen.tryRecover': 'Try to Recover',
       'bluescreen.recovering': 'Recovering...',
       'bluescreen.resetSystem': 'Reset System',
       'bluescreen.scanForHelp': 'Scan for help',
-      'bluescreen.moreInfo': 'For more information about this issue and possible fixes, visit the system documentation.',
-      
+      'bluescreen.moreInfo':
+        'For more information about this issue and possible fixes, visit the system documentation.',
+
       // 恢复模式
       'recovery.title': 'Recovery Mode',
       'recovery.systemErrorDetected': 'System Error Detected',
@@ -242,7 +247,7 @@ export class I18nManager {
       'recovery.helpStep1': 'Try restoring from cache',
       'recovery.helpStep2': 'Check your network connection',
       'recovery.helpStep3': 'Clear browser cache and reload',
-      'recovery.helpStep4': 'Reset system to factory defaults'
+      'recovery.helpStep4': 'Reset system to factory defaults',
     });
 
     // 简体中文
@@ -303,7 +308,8 @@ export class I18nManager {
       'file.permissions.execute': '执行',
       'terminal.welcome': '欢迎使用 WebOS 终端。输入 "help" 查看可用命令。',
       'terminal.prompt': '输入命令开始使用。',
-      'terminal.help': '可用命令: help, time, clear, ls, cat, pwd, cd, mkdir, touch, rm, echo, su, whoami',
+      'terminal.help':
+        '可用命令: help, time, clear, ls, cat, pwd, cd, mkdir, touch, rm, echo, su, whoami',
       'terminal.current.time': '当前时间',
       'terminal.usage': '用法',
       'terminal.no.such.file': '没有那个文件或目录',
@@ -429,7 +435,7 @@ export class I18nManager {
       'recovery.helpStep1': '尝试从缓存恢复',
       'recovery.helpStep2': '检查网络连接',
       'recovery.helpStep3': '清除浏览器缓存并重新加载',
-      'recovery.helpStep4': '将系统重置为出厂默认设置'
+      'recovery.helpStep4': '将系统重置为出厂默认设置',
     });
 
     // 繁体中文
@@ -490,7 +496,8 @@ export class I18nManager {
       'file.permissions.execute': '執行',
       'terminal.welcome': '歡迎使用 WebOS 終端機。輸入 "help" 查看可用命令。',
       'terminal.prompt': '輸入命令開始使用。',
-      'terminal.help': '可用命令: help, time, clear, ls, cat, pwd, cd, mkdir, touch, rm, echo, su, whoami',
+      'terminal.help':
+        '可用命令: help, time, clear, ls, cat, pwd, cd, mkdir, touch, rm, echo, su, whoami',
       'terminal.current.time': '目前時間',
       'terminal.usage': '用法',
       'terminal.no.such.file': '沒有那個檔案或目錄',
@@ -616,7 +623,7 @@ export class I18nManager {
       'recovery.helpStep1': '嘗試從快取復原',
       'recovery.helpStep2': '檢查網路連線',
       'recovery.helpStep3': '清除瀏覽器快取並重新載入',
-      'recovery.helpStep4': '將系統重設為原廠預設值'
+      'recovery.helpStep4': '將系統重設為原廠預設值',
     });
 
     // 其他语言留空（法语、德语）
@@ -631,25 +638,25 @@ export class I18nManager {
   setLocale(locale: string): void {
     if (this.translations.has(locale)) {
       this.currentLocale = locale;
-      this.listeners.forEach(cb => cb(locale));
+      this.listeners.forEach((cb) => cb(locale));
     }
   }
 
   t(key: string, params?: Record<string, string>): string {
     const translations = this.translations.get(this.currentLocale) || {};
     let text = translations[key] || this.translations.get('en')?.[key] || key;
-    
+
     if (params) {
       Object.entries(params).forEach(([k, v]) => {
         text = text.replace(new RegExp(`\\{${k}\\}`, 'g'), v);
       });
     }
-    
+
     return text;
   }
 
   getAvailableLocales(): LocaleConfig[] {
-    return this.availableLocales.filter(l => !this.hiddenLocales.includes(l.code));
+    return this.availableLocales.filter((l) => !this.hiddenLocales.includes(l.code));
   }
 
   getAllLocales(): LocaleConfig[] {

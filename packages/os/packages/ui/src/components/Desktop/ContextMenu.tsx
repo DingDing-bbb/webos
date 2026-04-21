@@ -147,7 +147,9 @@ const MenuItem: React.FC<MenuItemProps> = ({ item, onClose, depth = 0 }) => {
       )}
 
       {hasSubmenu && (
-        <span className="os-context-menu-arrow" aria-hidden="true">›</span>
+        <span className="os-context-menu-arrow" aria-hidden="true">
+          ›
+        </span>
       )}
 
       {/* Submenu */}
@@ -182,13 +184,7 @@ const MenuItem: React.FC<MenuItemProps> = ({ item, onClose, depth = 0 }) => {
 // Context Menu Component
 // ============================================================================
 
-export const ContextMenu: React.FC<ContextMenuProps> = ({
-  isOpen,
-  x,
-  y,
-  items,
-  onClose,
-}) => {
+export const ContextMenu: React.FC<ContextMenuProps> = ({ isOpen, x, y, items, onClose }) => {
   const menuRef = useRef<HTMLUListElement>(null);
   const [position, setPosition] = useState({ x, y });
 
@@ -264,11 +260,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
       }}
     >
       {items.map((item, index) => (
-        <MenuItem
-          key={item.id || `item-${index}`}
-          item={item}
-          onClose={onClose}
-        />
+        <MenuItem key={item.id || `item-${index}`} item={item} onClose={onClose} />
       ))}
     </ul>
   );
@@ -280,33 +272,68 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
 
 export const ContextMenuIcons = {
   View: () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
       <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
       <circle cx="12" cy="12" r="3" />
     </svg>
   ),
   Sort: () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
       <line x1="4" y1="6" x2="20" y2="6" />
       <line x1="4" y1="12" x2="14" y2="12" />
       <line x1="4" y1="18" x2="8" y2="18" />
     </svg>
   ),
   Refresh: () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
       <path d="M23 4v6h-6M1 20v-6h6" />
       <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
     </svg>
   ),
   NewFolder: () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
       <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
       <line x1="12" y1="11" x2="12" y2="17" />
       <line x1="9" y1="14" x2="15" y2="14" />
     </svg>
   ),
   NewFile: () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
       <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
       <polyline points="14 2 14 8 20 8" />
       <line x1="12" y1="18" x2="12" y2="12" />
@@ -314,14 +341,28 @@ export const ContextMenuIcons = {
     </svg>
   ),
   Display: () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
       <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
       <line x1="8" y1="21" x2="16" y2="21" />
       <line x1="12" y1="17" x2="12" y2="21" />
     </svg>
   ),
   Personalize: () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
       <circle cx="13.5" cy="6.5" r=".5" fill="currentColor" />
       <circle cx="17.5" cy="10.5" r=".5" fill="currentColor" />
       <circle cx="8.5" cy="7.5" r=".5" fill="currentColor" />
@@ -330,49 +371,105 @@ export const ContextMenuIcons = {
     </svg>
   ),
   Terminal: () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
       <polyline points="4 17 10 11 4 5" />
       <line x1="12" y1="19" x2="20" y2="19" />
     </svg>
   ),
   Open: () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
       <polygon points="5 3 19 12 5 21 5 3" />
     </svg>
   ),
   Properties: () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
       <circle cx="12" cy="12" r="10" />
       <line x1="12" y1="16" x2="12" y2="12" />
       <line x1="12" y1="8" x2="12.01" y2="8" />
     </svg>
   ),
   Delete: () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
       <polyline points="3 6 5 6 21 6" />
       <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
     </svg>
   ),
   Rename: () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
       <path d="M12 20h9" />
       <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
     </svg>
   ),
   Copy: () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
       <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
       <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
     </svg>
   ),
   Paste: () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
       <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
       <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
     </svg>
   ),
   Cut: () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
       <circle cx="6" cy="6" r="3" />
       <circle cx="6" cy="18" r="3" />
       <line x1="20" y1="4" x2="8.12" y2="15.88" />
@@ -381,7 +478,14 @@ export const ContextMenuIcons = {
     </svg>
   ),
   LargeIcons: () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
       <rect x="3" y="3" width="7" height="7" />
       <rect x="14" y="3" width="7" height="7" />
       <rect x="14" y="14" width="7" height="7" />
@@ -389,7 +493,14 @@ export const ContextMenuIcons = {
     </svg>
   ),
   SmallIcons: () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
       <rect x="3" y="3" width="5" height="5" />
       <rect x="10" y="3" width="5" height="5" />
       <rect x="17" y="3" width="5" height="5" />
@@ -402,7 +513,14 @@ export const ContextMenuIcons = {
     </svg>
   ),
   List: () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
       <line x1="8" y1="6" x2="21" y2="6" />
       <line x1="8" y1="12" x2="21" y2="12" />
       <line x1="8" y1="18" x2="21" y2="18" />
@@ -412,7 +530,14 @@ export const ContextMenuIcons = {
     </svg>
   ),
   Details: () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
       <line x1="4" y1="6" x2="20" y2="6" />
       <line x1="4" y1="10" x2="14" y2="10" />
       <line x1="4" y1="14" x2="18" y2="14" />

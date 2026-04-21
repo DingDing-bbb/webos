@@ -54,7 +54,7 @@ export class UserManager {
     return {
       ...user,
       createdAt: user.createdAt?.toISOString(),
-      lastLogin: user.lastLogin?.toISOString()
+      lastLogin: user.lastLogin?.toISOString(),
     };
   }
 
@@ -62,7 +62,7 @@ export class UserManager {
     return {
       ...data,
       createdAt: data.createdAt ? new Date(data.createdAt as string) : undefined,
-      lastLogin: data.lastLogin ? new Date(data.lastLogin as string) : undefined
+      lastLogin: data.lastLogin ? new Date(data.lastLogin as string) : undefined,
     } as User;
   }
 
@@ -78,7 +78,7 @@ export class UserManager {
           this.currentSession = {
             user,
             loginTime: new Date(data.loginTime),
-            isTemporary: data.isTemporary || false
+            isTemporary: data.isTemporary || false,
           };
         }
       }
@@ -89,11 +89,14 @@ export class UserManager {
 
   private saveSession(): void {
     if (this.currentSession) {
-      localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify({
-        username: this.currentSession.user.username,
-        loginTime: this.currentSession.loginTime.toISOString(),
-        isTemporary: this.currentSession.isTemporary
-      }));
+      localStorage.setItem(
+        SESSION_STORAGE_KEY,
+        JSON.stringify({
+          username: this.currentSession.user.username,
+          loginTime: this.currentSession.loginTime.toISOString(),
+          isTemporary: this.currentSession.isTemporary,
+        })
+      );
     } else {
       localStorage.removeItem(SESSION_STORAGE_KEY);
     }
@@ -148,7 +151,7 @@ export class UserManager {
       permissions,
       displayName: options?.displayName || username,
       createdAt: new Date(),
-      isTemporary: false
+      isTemporary: false,
     };
 
     this.users.set(username, user);
@@ -164,25 +167,29 @@ export class UserManager {
   private getDefaultPermissions(role: UserRole): Permission[] {
     const permissionSets: Record<UserRole, Permission[]> = {
       root: [
-        'read:files', 'write:files', 'delete:files',
-        'read:settings', 'write:settings',
-        'read:users', 'write:users', 'delete:users',
-        'execute:commands', 'admin:system'
+        'read:files',
+        'write:files',
+        'delete:files',
+        'read:settings',
+        'write:settings',
+        'read:users',
+        'write:users',
+        'delete:users',
+        'execute:commands',
+        'admin:system',
       ],
       admin: [
-        'read:files', 'write:files', 'delete:files',
-        'read:settings', 'write:settings',
-        'read:users', 'write:users',
-        'execute:commands'
-      ],
-      user: [
-        'read:files', 'write:files',
+        'read:files',
+        'write:files',
+        'delete:files',
         'read:settings',
-        'execute:commands'
+        'write:settings',
+        'read:users',
+        'write:users',
+        'execute:commands',
       ],
-      guest: [
-        'read:files', 'read:settings'
-      ]
+      user: ['read:files', 'write:files', 'read:settings', 'execute:commands'],
+      guest: ['read:files', 'read:settings'],
     };
 
     return permissionSets[role] || permissionSets.user;
@@ -207,19 +214,22 @@ export class UserManager {
       displayName: 'Temporary User',
       createdAt: new Date(),
       isTemporary: true,
-      temporaryReason: reason
+      temporaryReason: reason,
     };
 
     this.users.set(tempUsername, user);
     this.saveToStorage();
 
     // 存储临时用户信息以便显示
-    localStorage.setItem(TEMP_USER_KEY, JSON.stringify({
-      username: tempUsername,
-      password: tempPassword,
-      reason,
-      createdAt: new Date().toISOString()
-    }));
+    localStorage.setItem(
+      TEMP_USER_KEY,
+      JSON.stringify({
+        username: tempUsername,
+        password: tempPassword,
+        reason,
+        createdAt: new Date().toISOString(),
+      })
+    );
 
     return user;
   }
@@ -287,7 +297,7 @@ export class UserManager {
     this.currentSession = {
       user,
       loginTime: new Date(),
-      isTemporary: user.isTemporary || false
+      isTemporary: user.isTemporary || false,
     };
     this.saveSession();
     this.notifyListeners();
@@ -471,7 +481,7 @@ export class UserManager {
     let hash = 0;
     for (let i = 0; i < password.length; i++) {
       const char = password.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash;
     }
     // 加盐
@@ -479,7 +489,7 @@ export class UserManager {
     const salted = password + salt;
     let hash2 = 0;
     for (let i = 0; i < salted.length; i++) {
-      hash2 = ((hash2 << 5) - hash2) + salted.charCodeAt(i);
+      hash2 = (hash2 << 5) - hash2 + salted.charCodeAt(i);
       hash2 = hash2 & hash2;
     }
     return `${hash}_${hash2}`;
@@ -515,7 +525,7 @@ export class UserManager {
   }
 
   private notifyListeners(): void {
-    this.listeners.forEach(callback => callback());
+    this.listeners.forEach((callback) => callback());
   }
 
   // ==================== 初始化检查 ====================
@@ -531,14 +541,14 @@ export class UserManager {
    * 检查是否有正式账户（非临时）
    */
   hasUsers(): boolean {
-    return Array.from(this.users.values()).some(u => !u.isTemporary);
+    return Array.from(this.users.values()).some((u) => !u.isTemporary);
   }
 
   /**
    * 获取所有正式账户（非临时）
    */
   getRealUsers(): User[] {
-    return Array.from(this.users.values()).filter(u => !u.isTemporary);
+    return Array.from(this.users.values()).filter((u) => !u.isTemporary);
   }
 
   /**
@@ -561,7 +571,7 @@ export class UserManager {
           this.currentSession = {
             user,
             loginTime: new Date(data.loginTime),
-            isTemporary: false
+            isTemporary: false,
           };
           this.notifyListeners();
           return { success: true };
@@ -579,7 +589,7 @@ export class UserManager {
    */
   isOOBEComplete(): boolean {
     // 至少有一个非临时用户
-    return Array.from(this.users.values()).some(u => !u.isTemporary);
+    return Array.from(this.users.values()).some((u) => !u.isTemporary);
   }
 
   /**

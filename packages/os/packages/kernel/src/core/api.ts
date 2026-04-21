@@ -8,7 +8,16 @@ import { windowManager } from './windowManager';
 import { userManager } from './userManager';
 import { secureUserManager } from './secureUserManager';
 import { I18nManager, TimeManager, NotifyManager, ConfigManager, BootManager } from './managers';
-import type { WebOSAPI, WindowOptions, NotifyOptions, UserRole, Permission, AppInfo, AppCategory, AppEventListener } from '../types';
+import type {
+  WebOSAPI,
+  WindowOptions,
+  NotifyOptions,
+  UserRole,
+  Permission,
+  AppInfo,
+  AppCategory,
+  AppEventListener,
+} from '../types';
 
 // 创建并导出 API
 export function createWebOSAPI(): WebOSAPI {
@@ -27,12 +36,12 @@ export function createWebOSAPI(): WebOSAPI {
   const api: WebOSAPI = {
     // 快捷翻译方法
     t: (key: string, params?: Record<string, string>) => i18n.t(key, params),
-    
+
     // 设置窗口容器
     setWindowContainer: (element: HTMLDivElement) => {
       windowManager.setContainer(element);
     },
-    
+
     window: {
       open: (appId: string, options?: WindowOptions) => {
         return windowManager.open({ ...options, appId, title: options?.title || appId });
@@ -42,20 +51,20 @@ export function createWebOSAPI(): WebOSAPI {
       maximize: (id: string) => windowManager.maximize(id),
       restore: (id: string) => windowManager.restore(id),
       focus: (id: string) => windowManager.focus(id),
-      getAll: () => windowManager.getAll()
+      getAll: () => windowManager.getAll(),
     },
 
     notify: {
       show: (title: string, message: string, options?: Partial<NotifyOptions>) => {
         notify.show(title, message, options);
-      }
+      },
     },
 
     time: {
       getCurrent: () => time.getCurrent(),
       setAlarm: (date: Date, callback: () => void) => time.setAlarm(date, callback),
       clearAlarm: (id: string) => time.clearAlarm(id),
-      getAlarms: () => time.getAlarms()
+      getAlarms: () => time.getAlarms(),
     },
 
     fs: {
@@ -80,12 +89,14 @@ export function createWebOSAPI(): WebOSAPI {
         return fileSystem.chmod(path, permissions);
       },
       getNode: (path: string) => fileSystem.getNode(path),
-      watch: (path: string, listener: (event: { type: string; path: string; timestamp: Date }) => void) => 
-        fileSystem.watch(path, listener),
+      watch: (
+        path: string,
+        listener: (event: { type: string; path: string; timestamp: Date }) => void
+      ) => fileSystem.watch(path, listener),
       resolve: (...paths: string[]) => fileSystem.resolve(...paths),
       dirname: (path: string) => fileSystem.dirname(path),
       basename: (path: string) => fileSystem.basename(path),
-      extname: (path: string) => fileSystem.extname(path)
+      extname: (path: string) => fileSystem.extname(path),
     },
 
     user: {
@@ -93,8 +104,11 @@ export function createWebOSAPI(): WebOSAPI {
       getAllUsers: () => userManager.getAllUsers(),
       getRealUsers: () => userManager.getRealUsers(),
       hasUsers: () => userManager.hasUsers(),
-      createUser: (username: string, password: string, options?: { role?: UserRole; isRoot?: boolean }) =>
-        userManager.createUser(username, password, options),
+      createUser: (
+        username: string,
+        password: string,
+        options?: { role?: UserRole; isRoot?: boolean }
+      ) => userManager.createUser(username, password, options),
       login: (username: string, password: string) => userManager.login(username, password),
       logout: () => userManager.logout(),
       isLoggedIn: () => userManager.isLoggedIn(),
@@ -169,7 +183,7 @@ export function createWebOSAPI(): WebOSAPI {
       isTemporarySession: () => userManager.isTemporarySession(),
       tryAutoLogin: () => userManager.tryAutoLogin(),
       subscribe: (callback: () => void) => userManager.subscribe(callback),
-      
+
       // 安全用户管理 (PBKDF2 100K + AES-256-GCM + 加密SQL数据库)
       secure: {
         isReady: () => secureUserManager.isReady(),
@@ -187,16 +201,18 @@ export function createWebOSAPI(): WebOSAPI {
         getTotalUserCount: () => secureUserManager.getTotalUserCount(),
         changePassword: (oldPassword: string, newPassword: string) =>
           secureUserManager.changePassword(oldPassword, newPassword),
-        updateDisplayName: (displayName: string) => secureUserManager.updateDisplayName(displayName),
+        updateDisplayName: (displayName: string) =>
+          secureUserManager.updateDisplayName(displayName),
         isAdmin: () => secureUserManager.isAdmin(),
         isRoot: () => secureUserManager.isRoot(),
         hasPermission: (permission: Permission) => secureUserManager.hasPermission(permission),
-        saveEncryptedData: (key: string, data: string) => secureUserManager.saveEncryptedData(key, data),
+        saveEncryptedData: (key: string, data: string) =>
+          secureUserManager.saveEncryptedData(key, data),
         getEncryptedData: (key: string) => secureUserManager.getEncryptedData(key),
         resetSystem: (password: string) => secureUserManager.resetSystem(password),
         resetAndReinit: () => secureUserManager.resetAndReinit(),
-        subscribe: (callback: () => void) => secureUserManager.subscribe(callback)
-      }
+        subscribe: (callback: () => void) => secureUserManager.subscribe(callback),
+      },
     },
 
     i18n: {
@@ -207,21 +223,21 @@ export function createWebOSAPI(): WebOSAPI {
       },
       t: (key: string, params?: Record<string, string>) => i18n.t(key, params),
       getAvailableLocales: () => i18n.getAvailableLocales(),
-      onLocaleChange: (callback: (locale: string) => void) => i18n.onLocaleChange(callback)
+      onLocaleChange: (callback: (locale: string) => void) => i18n.onLocaleChange(callback),
     },
 
     config: {
       get: <T>(key: string) => config.get<T>(key),
       set: <T>(key: string, value: T) => config.set(key, value),
       getSystemName: () => config.getSystemName(),
-      setSystemName: (name: string) => config.setSystemName(name)
+      setSystemName: (name: string) => config.setSystemName(name),
     },
 
     boot: {
       isComplete: () => boot.isComplete(),
       isOOBEComplete: () => boot.isOOBEComplete(),
       completeOOBE: () => boot.completeOOBE(),
-      reset: () => boot.reset()
+      reset: () => boot.reset(),
     },
 
     apps: {
@@ -237,8 +253,8 @@ export function createWebOSAPI(): WebOSAPI {
       launch: (appId: string) => appRegistry.launch(appId),
       close: (instanceId: string) => appRegistry.close(instanceId),
       getCategories: () => appRegistry.getCategories(),
-      subscribe: (listener: AppEventListener) => appRegistry.subscribe(listener)
-    }
+      subscribe: (listener: AppEventListener) => appRegistry.subscribe(listener),
+    },
   };
 
   return api;
@@ -251,12 +267,12 @@ export function initWebOS(): void {
     console.log('[WebOS] Already initialized, skipping...');
     return;
   }
-  
+
   const api = createWebOSAPI();
-  
+
   // 暴露到全局
   (window as unknown as { webos: WebOSAPI }).webos = api;
-  
+
   // 设置通知容器
   const createNotificationContainer = () => {
     const container = document.createElement('div');
@@ -265,7 +281,7 @@ export function initWebOS(): void {
     document.body.appendChild(container);
     return container;
   };
-  
+
   // 延迟设置通知容器
   if (document.body) {
     const notify = new NotifyManager();

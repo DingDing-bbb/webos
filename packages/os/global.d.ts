@@ -23,9 +23,23 @@ declare module '@kernel' {
 
 declare module '@ui' {
   export const BootScreen: React.FC<{ onComplete: () => void | Promise<void> }>;
-  export const Desktop: React.FC<{ onOpenApp: (appId: string, title: string) => void; wallpaper: import('./packages/ui/src/components/Desktop').WallpaperConfig }>;
-  export const Taskbar: React.FC<{ windows: import('./packages/kernel/src/types').WindowState[]; onWindowClick: (id: string) => void; onStartClick: () => void; isStartMenuOpen: boolean }>;
-  export const StartMenu: React.FC<{ isOpen: boolean; onClose: () => void; apps: { id: string; name: string; onClick: () => void }[]; onSettings: () => void; onShutdown: () => void }>;
+  export const Desktop: React.FC<{
+    onOpenApp: (appId: string, title: string) => void;
+    wallpaper: import('./packages/ui/src/components/Desktop').WallpaperConfig;
+  }>;
+  export const Taskbar: React.FC<{
+    windows: import('./packages/kernel/src/types').WindowState[];
+    onWindowClick: (id: string) => void;
+    onStartClick: () => void;
+    isStartMenuOpen: boolean;
+  }>;
+  export const StartMenu: React.FC<{
+    isOpen: boolean;
+    onClose: () => void;
+    apps: { id: string; name: string; onClick: () => void }[];
+    onSettings: () => void;
+    onShutdown: () => void;
+  }>;
   export const NotificationContainer: React.FC;
   export const ErrorDialogContainer: React.FC;
   export const BlueScreenContainer: React.FC;
@@ -41,13 +55,23 @@ declare module '@ui' {
 }
 
 declare module '@oobe' {
-  export const OOBE: React.FC<{ onComplete: (data: { username: string; password: string; language: string; systemName?: string; tabletMode?: boolean }) => void }>;
+  export const OOBE: React.FC<{
+    onComplete: (data: {
+      username: string;
+      password: string;
+      language: string;
+      systemName?: string;
+      tabletMode?: boolean;
+    }) => void;
+  }>;
 }
 
 declare module '@bootloader' {
   export const bootloader: {
     getStatus: () => import('./packages/bootloader/src').BootStatus;
-    subscribe: (callback: (status: import('./packages/bootloader/src').BootStatus) => void) => () => void;
+    subscribe: (
+      callback: (status: import('./packages/bootloader/src').BootStatus) => void
+    ) => () => void;
     boot: () => Promise<boolean>;
     recoverFromCache: () => Promise<boolean>;
     resetSystem: () => Promise<void>;

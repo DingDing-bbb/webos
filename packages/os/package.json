@@ -1,6 +1,6 @@
 {
   "name": "@webos/os",
-  "version": "1.0.0",
+  "version": "0.0.1-alpha",
   "description": "Complete WebOS Operating System",
   "main": "src/index.tsx",
   "scripts": {
@@ -38,6 +38,18 @@
     "packages/*",
     "packages/apps/*"
   ],
-  "keywords": ["webos", "os"],
-  "license": "MIT"
+  "keywords": [
+    "webos",
+    "os",
+    "web-based",
+    "operating-system",
+    "react",
+    "typescript"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DingDing-bbb/webos.git",
+    "directory": "packages/os"
+  }
 }

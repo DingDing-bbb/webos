@@ -8,26 +8,54 @@ import type { TaskbarDisplayMode } from '@ui/components/Taskbar';
 import { SettingsIcon } from './icon';
 import type { AppInfo } from '../../types';
 
+// 系统配置（Turbopack 不支持 DefinePlugin）
+const OS_NAME = typeof __OS_NAME__ !== 'undefined' ? __OS_NAME__ : 'WebOS';
+const OS_VERSION = typeof __OS_VERSION__ !== 'undefined' ? __OS_VERSION__ : '0.0.1';
+declare const __OS_NAME__: string | undefined;
+declare const __OS_VERSION__: string | undefined;
+
 // 更新管理器类型
 interface UpdateManager {
   init: () => void;
   checkForUpdate: () => Promise<void>;
   setAutoUpdate: (enabled: boolean) => void;
   getConfig: () => { autoUpdate: boolean };
-  subscribe: (callback: (status: { hasUpdate: boolean; isChecking: boolean; isUpdating: boolean; currentVersion: string; latestVersion: string | null }) => void) => () => void;
-  getStatus: () => { hasUpdate: boolean; isChecking: boolean; isUpdating: boolean; currentVersion: string; latestVersion: string | null };
+  subscribe: (
+    callback: (status: {
+      hasUpdate: boolean;
+      isChecking: boolean;
+      isUpdating: boolean;
+      currentVersion: string;
+      latestVersion: string | null;
+    }) => void
+  ) => () => void;
+  getStatus: () => {
+    hasUpdate: boolean;
+    isChecking: boolean;
+    isUpdating: boolean;
+    currentVersion: string;
+    latestVersion: string | null;
+  };
 }
 
 // 获取更新管理器
 const getUpdateManager = (): UpdateManager => {
-  return (window as unknown as { updateManager?: UpdateManager }).updateManager || {
-    init: () => {},
-    checkForUpdate: async () => {},
-    setAutoUpdate: () => {},
-    getConfig: () => ({ autoUpdate: true }),
-    subscribe: () => () => {},
-    getStatus: () => ({ hasUpdate: false, isChecking: false, isUpdating: false, currentVersion: '0.0.1-alpha', latestVersion: null })
-  };
+  return (
+    (window as unknown as { updateManager?: UpdateManager }).updateManager || {
+      init: () => {},
+      checkForUpdate: async () => {},
+      setAutoUpdate: () => {},
+      getConfig: () => ({ autoUpdate: true }),
+      subscribe: () => () => {},
+      getStatus: () => ({
+        hasUpdate: false,
+        isChecking: false,
+        isUpdating: false,
+        currentVersion: '0.0.1-alpha',
+        latestVersion: null,
+      }),
+    }
+  );
 };
 
 const updateManager = getUpdateManager();
@@ -36,17 +64,45 @@ interface SettingsProps {
   windowId?: string;
 }
 
-type SettingsSection = 'system' | 'language' | 'datetime' | 'display' | 'wallpaper' | 'storage' | 'recovery' | 'about';
+type SettingsSection =
+  | 'system'
+  | 'language'
+  | 'datetime'
+  | 'display'
+  | 'wallpaper'
+  | 'storage'
+  | 'recovery'
+  | 'about';
 
 // 预设壁纸列表
 const PRESET_WALLPAPERS: { id: WallpaperType; thumbnailClass: string; labelKey: string }[] = [
   { id: 'soft', thumbnailClass: 'wallpaper-thumbnail-soft', labelKey: 'settings.wallpaperSoft' },
-  { id: 'animated', thumbnailClass: 'wallpaper-thumbnail-animated', labelKey: 'settings.wallpaperAnimated' },
-  { id: 'sunrise', thumbnailClass: 'wallpaper-thumbnail-sunrise', labelKey: 'settings.wallpaperSunrise' },
+  {
+    id: 'animated',
+    thumbnailClass: 'wallpaper-thumbnail-animated',
+    labelKey: 'settings.wallpaperAnimated',
+  },
+  {
+    id: 'sunrise',
+    thumbnailClass: 'wallpaper-thumbnail-sunrise',
+    labelKey: 'settings.wallpaperSunrise',
+  },
   { id: 'ocean', thumbnailClass: 'wallpaper-thumbnail-ocean', labelKey: 'settings.wallpaperOcean' },
-  { id: 'forest', thumbnailClass: 'wallpaper-thumbnail-forest', labelKey: 'settings.wallpaperForest' },
-  { id: 'catgirl-static', thumbnailClass: 'wallpaper-thumbnail-catgirl-static', labelKey: 'settings.wallpaperCatgirlStatic' },
-  { id: 'catgirl-animated', thumbnailClass: 'wallpaper-thumbnail-catgirl-animated', labelKey: 'settings.wallpaperCatgirlAnimated' },
+  {
+    id: 'forest',
+    thumbnailClass: 'wallpaper-thumbnail-forest',
+    labelKey: 'settings.wallpaperForest',
+  },
+  {
+    id: 'catgirl-static',
+    thumbnailClass: 'wallpaper-thumbnail-catgirl-static',
+    labelKey: 'settings.wallpaperCatgirlStatic',
+  },
+  {
+    id: 'catgirl-animated',
+    thumbnailClass: 'wallpaper-thumbnail-catgirl-animated',
+    labelKey: 'settings.wallpaperCatgirlAnimated',
+  },
 ];
 
 // 时区列表
@@ -95,7 +151,7 @@ const TIME_FORMATS = [
 
 export const Settings: React.FC<SettingsProps> = () => {
   const [currentSection, setCurrentSection] = useState<SettingsSection>('system');
-  const [systemName, setSystemName] = useState(__OS_NAME__);
+  const [systemName, setSystemName] = useState(OS_NAME);
   const [currentLocale, setCurrentLocale] = useState('en');
   const [locales, setLocales] = useState<LocaleConfig[]>([]);
   const [timezone, setTimezone] = useState('UTC+8');
@@ -107,17 +163,23 @@ export const Settings: React.FC<SettingsProps> = () => {
   const [showConfirmReset, setShowConfirmReset] = useState(false);
   const [storageInfo, setStorageInfo] = useState({ used: 0, total: 50 * 1024 * 1024 });
   const [autoUpdateEnabled, setAutoUpdateEnabled] = useState(true);
-  const [updateStatus, setUpdateStatus] = useState<{ isChecking: boolean; lastCheckTime: number | null }>({
+  const [updateStatus, setUpdateStatus] = useState<{
+    isChecking: boolean;
+    lastCheckTime: number | null;
+  }>({
     isChecking: false,
-    lastCheckTime: null
+    lastCheckTime: null,
   });
-  
+
   // 壁纸状态
   const [wallpaperType, setWallpaperType] = useState<WallpaperType>('soft');
-  const [customWallpaper, setCustomWallpaper] = useState<{ type: 'image' | 'video'; url: string } | null>(null);
+  const [customWallpaper, setCustomWallpaper] = useState<{
+    type: 'image' | 'video';
+    url: string;
+  } | null>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
-  
+
   // 任务栏显示模式
   const [taskbarDisplayMode, setTaskbarDisplayMode] = useState<TaskbarDisplayMode>('icon-name');
 
@@ -125,20 +187,30 @@ export const Settings: React.FC<SettingsProps> = () => {
   const [currentResolution, setCurrentResolution] = useState({ width: 1280, height: 720 });
   const [currentScaling, setCurrentScaling] = useState(1.0);
   const [autoAdjust, setAutoAdjustState] = useState(true);
-  const [resolutionPresets, setResolutionPresets] = useState<{ name: string; resolution: { width: number; height: number }; recommended?: boolean }[]>([]);
-  const [scalingPresets, setScalingPresets] = useState<{ value: number; label: string; description: string }[]>([]);
+  const [resolutionPresets, setResolutionPresets] = useState<
+    { name: string; resolution: { width: number; height: number }; recommended?: boolean }[]
+  >([]);
+  const [scalingPresets, setScalingPresets] = useState<
+    { value: number; label: string; description: string }[]
+  >([]);
 
   // 分辨率管理器引用
   const resManagerRef = useRef<{
     getCurrentMode: () => { resolution: { width: number; height: number }; scaling: number };
-    getAvailablePresets: () => { name: string; resolution: { width: number; height: number }; recommended?: boolean }[];
+    getAvailablePresets: () => {
+      name: string;
+      resolution: { width: number; height: number };
+      recommended?: boolean;
+    }[];
     getAvailableScaling: () => { value: number; label: string; description: string }[];
     setPresetResolution: (preset: { resolution: { width: number; height: number } }) => void;
     setScaling: (scaling: number) => void;
     setAutoAdjust: (enabled: boolean) => void;
     isAutoAdjust: () => boolean;
     detectAndSetResolution: () => void;
-    subscribe: (callback: (mode: { resolution: { width: number; height: number }; scaling: number }) => void) => () => void;
+    subscribe: (
+      callback: (mode: { resolution: { width: number; height: number }; scaling: number }) => void
+    ) => () => void;
   } | null>(null);
 
   const t = useCallback((key: string): string => {
@@ -151,30 +223,30 @@ export const Settings: React.FC<SettingsProps> = () => {
       setCurrentLocale(window.webos.i18n.getCurrentLocale());
       setLocales(window.webos.i18n.getAvailableLocales());
     }
-    
+
     // 加载保存的设置
     const savedTimezone = localStorage.getItem('webos-timezone');
     if (savedTimezone) setTimezone(savedTimezone);
-    
+
     const savedDateFormat = localStorage.getItem('webos-dateFormat');
     if (savedDateFormat) setDateFormat(savedDateFormat);
-    
+
     const savedTimeFormat = localStorage.getItem('webos-timeFormat');
     if (savedTimeFormat) setTimeFormat(savedTimeFormat);
-    
+
     const savedTabletMode = localStorage.getItem('webos-tablet-mode');
     if (savedTabletMode) setTabletMode(savedTabletMode === 'true');
-    
+
     const savedTheme = localStorage.getItem('webos-theme') as 'light' | 'dark' | null;
     if (savedTheme) setTheme(savedTheme);
-    
+
     const savedFontSize = localStorage.getItem('webos-fontSize');
     if (savedFontSize) setFontSize(savedFontSize);
-    
+
     // 加载壁纸设置
     const savedWallpaperType = localStorage.getItem('webos-wallpaper-type') as WallpaperType;
     if (savedWallpaperType) setWallpaperType(savedWallpaperType);
-    
+
     const savedCustomWallpaper = localStorage.getItem('webos-wallpaper-custom');
     if (savedCustomWallpaper) {
       try {
@@ -183,11 +255,13 @@ export const Settings: React.FC<SettingsProps> = () => {
         // ignore
       }
     }
-    
+
     // 加载任务栏显示模式
-    const savedTaskbarMode = localStorage.getItem('webos-taskbar-display-mode') as TaskbarDisplayMode;
+    const savedTaskbarMode = localStorage.getItem(
+      'webos-taskbar-display-mode'
+    ) as TaskbarDisplayMode;
     if (savedTaskbarMode) setTaskbarDisplayMode(savedTaskbarMode);
-    
+
     // 加载自动更新设置
     const savedAutoUpdate = localStorage.getItem('webos-auto-update');
     if (savedAutoUpdate !== null) {
@@ -198,28 +272,41 @@ export const Settings: React.FC<SettingsProps> = () => {
       // 使用默认值
       setAutoUpdateEnabled(updateManager.getConfig().autoUpdate);
     }
-    
+
     // 加载上次检查更新时间
     const savedLastCheckTime = localStorage.getItem('webos-last-check-time');
     if (savedLastCheckTime) {
-      setUpdateStatus(prev => ({ ...prev, lastCheckTime: parseInt(savedLastCheckTime, 10) }));
+      setUpdateStatus((prev) => ({ ...prev, lastCheckTime: parseInt(savedLastCheckTime, 10) }));
     }
-    
+
     // 计算存储使用
     calculateStorage();
 
     // 初始化分辨率管理器
-    const resManager = (window as unknown as { webosResolutionManager?: {
-      getCurrentMode: () => { resolution: { width: number; height: number }; scaling: number };
-      getAvailablePresets: () => { name: string; resolution: { width: number; height: number }; recommended?: boolean }[];
-      getAvailableScaling: () => { value: number; label: string; description: string }[];
-      isAutoAdjust: () => boolean;
-      subscribe: (callback: (mode: { resolution: { width: number; height: number }; scaling: number }) => void) => () => void;
-      setPresetResolution: (preset: { resolution: { width: number; height: number } }) => void;
-      setScaling: (scaling: number) => void;
-      setAutoAdjust: (enabled: boolean) => void;
-      detectAndSetResolution: () => void;
-    } }).webosResolutionManager;
+    const resManager = (
+      window as unknown as {
+        webosResolutionManager?: {
+          getCurrentMode: () => { resolution: { width: number; height: number }; scaling: number };
+          getAvailablePresets: () => {
+            name: string;
+            resolution: { width: number; height: number };
+            recommended?: boolean;
+          }[];
+          getAvailableScaling: () => { value: number; label: string; description: string }[];
+          isAutoAdjust: () => boolean;
+          subscribe: (
+            callback: (mode: {
+              resolution: { width: number; height: number };
+              scaling: number;
+            }) => void
+          ) => () => void;
+          setPresetResolution: (preset: { resolution: { width: number; height: number } }) => void;
+          setScaling: (scaling: number) => void;
+          setAutoAdjust: (enabled: boolean) => void;
+          detectAndSetResolution: () => void;
+        };
+      }
+    ).webosResolutionManager;
 
     if (resManager) {
       resManagerRef.current = resManager;
@@ -312,7 +399,7 @@ export const Settings: React.FC<SettingsProps> = () => {
       small: '14px',
       medium: '16px',
       large: '18px',
-      xlarge: '20px'
+      xlarge: '20px',
     };
     document.documentElement.style.fontSize = sizes[size] || '16px';
   };
@@ -324,43 +411,50 @@ export const Settings: React.FC<SettingsProps> = () => {
     localStorage.setItem('webos-wallpaper-type', type);
     localStorage.removeItem('webos-wallpaper-custom');
     // 触发壁纸更新事件
-    window.dispatchEvent(new CustomEvent('wallpaper:change', { 
-      detail: { type } 
-    }));
+    window.dispatchEvent(
+      new CustomEvent('wallpaper:change', {
+        detail: { type },
+      })
+    );
   };
 
-  const handleFileUpload = (type: 'image' | 'video') => (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const handleFileUpload =
+    (type: 'image' | 'video') => (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const url = event.target?.result as string;
-      const customWallpaperData = { type, url };
-      setCustomWallpaper(customWallpaperData);
-      setWallpaperType('image'); // 使用 image 类型，但 URL 可能是视频
-      localStorage.setItem('webos-wallpaper-type', type === 'video' ? 'video' : 'image');
-      localStorage.setItem('webos-wallpaper-custom', JSON.stringify(customWallpaperData));
-      
-      // 触发壁纸更新事件
-      window.dispatchEvent(new CustomEvent('wallpaper:change', { 
-        detail: { 
-          type: type === 'video' ? 'video' : 'image', 
-          url 
-        } 
-      }));
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const url = event.target?.result as string;
+        const customWallpaperData = { type, url };
+        setCustomWallpaper(customWallpaperData);
+        setWallpaperType('image'); // 使用 image 类型，但 URL 可能是视频
+        localStorage.setItem('webos-wallpaper-type', type === 'video' ? 'video' : 'image');
+        localStorage.setItem('webos-wallpaper-custom', JSON.stringify(customWallpaperData));
+
+        // 触发壁纸更新事件
+        window.dispatchEvent(
+          new CustomEvent('wallpaper:change', {
+            detail: {
+              type: type === 'video' ? 'video' : 'image',
+              url,
+            },
+          })
+        );
+      };
+      reader.readAsDataURL(file);
     };
-    reader.readAsDataURL(file);
-  };
 
   const handleRemoveCustomWallpaper = () => {
     setCustomWallpaper(null);
     setWallpaperType('soft');
     localStorage.setItem('webos-wallpaper-type', 'soft');
     localStorage.removeItem('webos-wallpaper-custom');
-    window.dispatchEvent(new CustomEvent('wallpaper:change', { 
-      detail: { type: 'soft' } 
-    }));
+    window.dispatchEvent(
+      new CustomEvent('wallpaper:change', {
+        detail: { type: 'soft' },
+      })
+    );
   };
 
   // 任务栏显示模式设置
@@ -368,16 +462,18 @@ export const Settings: React.FC<SettingsProps> = () => {
     setTaskbarDisplayMode(mode);
     localStorage.setItem('webos-taskbar-display-mode', mode);
     // 触发任务栏显示模式更新事件
-    window.dispatchEvent(new CustomEvent('taskbar:display-mode-change', { 
-      detail: { mode } 
-    }));
+    window.dispatchEvent(
+      new CustomEvent('taskbar:display-mode-change', {
+        detail: { mode },
+      })
+    );
   };
 
   const handleCheckUpdate = async () => {
     if (updateStatus.isChecking) return;
-    
-    setUpdateStatus(prev => ({ ...prev, isChecking: true }));
-    
+
+    setUpdateStatus((prev) => ({ ...prev, isChecking: true }));
+
     try {
       await updateManager.checkForUpdate();
     } finally {
@@ -389,27 +485,35 @@ export const Settings: React.FC<SettingsProps> = () => {
 
   const handleClearCache = () => {
     // 清除缓存但保留重要设置
-    const importantKeys = ['webos-boot', 'webos-config', 'webos-timezone', 'webos-theme', 'webos-tablet-mode', 'webos-wallpaper-type', 'webos-wallpaper-custom'];
+    const importantKeys = [
+      'webos-boot',
+      'webos-config',
+      'webos-timezone',
+      'webos-theme',
+      'webos-tablet-mode',
+      'webos-wallpaper-type',
+      'webos-wallpaper-custom',
+    ];
     const preserved: Record<string, string> = {};
-    
-    importantKeys.forEach(key => {
+
+    importantKeys.forEach((key) => {
       const value = localStorage.getItem(key);
       if (value) preserved[key] = value;
     });
-    
+
     localStorage.clear();
-    
+
     Object.entries(preserved).forEach(([key, value]) => {
       localStorage.setItem(key, value);
     });
-    
+
     // 清除 caches
     if ('caches' in window) {
-      caches.keys().then(names => {
-        names.forEach(name => caches.delete(name));
+      caches.keys().then((names) => {
+        names.forEach((name) => caches.delete(name));
       });
     }
-    
+
     calculateStorage();
     window.webos?.notify.show(t('settings.cacheCleared'), t('settings.cacheClearedDesc'));
   };
@@ -418,19 +522,19 @@ export const Settings: React.FC<SettingsProps> = () => {
     // 清除所有数据
     localStorage.clear();
     sessionStorage.clear();
-    
+
     if ('caches' in window) {
       const cacheNames = await caches.keys();
-      await Promise.all(cacheNames.map(name => caches.delete(name)));
+      await Promise.all(cacheNames.map((name) => caches.delete(name)));
     }
-    
+
     if ('serviceWorker' in navigator) {
       const registration = await navigator.serviceWorker.getRegistration();
       if (registration) {
         await registration.unregister();
       }
     }
-    
+
     setShowConfirmReset(false);
     window.location.reload();
   };
@@ -453,7 +557,7 @@ export const Settings: React.FC<SettingsProps> = () => {
     { id: 'about', icon: <AboutIcon />, label: t('settings.about') },
   ];
 
-  const renderNavItem = (item: typeof navItems[0]) => (
+  const renderNavItem = (item: (typeof navItems)[0]) => (
     <div
       key={item.id}
       onClick={() => setCurrentSection(item.id)}
@@ -464,8 +568,11 @@ export const Settings: React.FC<SettingsProps> = () => {
         padding: '12px 16px',
         cursor: 'pointer',
         background: currentSection === item.id ? 'rgba(0, 120, 212, 0.1)' : 'transparent',
-        borderLeft: currentSection === item.id ? '3px solid var(--os-color-primary)' : '3px solid transparent',
-        transition: 'all 0.15s ease'
+        borderLeft:
+          currentSection === item.id
+            ? '3px solid var(--os-color-primary)'
+            : '3px solid transparent',
+        transition: 'all 0.15s ease',
       }}
     >
       {item.icon}
@@ -477,7 +584,7 @@ export const Settings: React.FC<SettingsProps> = () => {
   const renderSystemSection = () => (
     <div className="settings-section">
       <h2 className="settings-title">{t('settings.system')}</h2>
-      
+
       <div className="settings-group">
         <label className="settings-label">{t('settings.systemName')}</label>
         <input
@@ -485,7 +592,7 @@ export const Settings: React.FC<SettingsProps> = () => {
           className="settings-input"
           value={systemName}
           onChange={(e) => handleSystemNameChange(e.target.value)}
-          placeholder={__OS_NAME__}
+          placeholder={OS_NAME}
         />
         <p className="settings-hint">{t('settings.systemNameHint')}</p>
       </div>
@@ -496,40 +603,51 @@ export const Settings: React.FC<SettingsProps> = () => {
           <div className={`toggle-track ${tabletMode ? 'active' : ''}`}>
             <div className="toggle-thumb" />
           </div>
-          <span className="toggle-label">{tabletMode ? t('common.enabled') : t('common.disabled')}</span>
+          <span className="toggle-label">
+            {tabletMode ? t('common.enabled') : t('common.disabled')}
+          </span>
         </div>
         <p className="settings-hint">{t('settings.tabletModeHint')}</p>
       </div>
 
       <div className="settings-group">
         <label className="settings-label">{t('settings.autoUpdate')}</label>
-        <div className="settings-toggle" onClick={() => {
-          const newEnabled = !autoUpdateEnabled;
-          setAutoUpdateEnabled(newEnabled);
-          updateManager.setAutoUpdate(newEnabled);
-        }}>
+        <div
+          className="settings-toggle"
+          onClick={() => {
+            const newEnabled = !autoUpdateEnabled;
+            setAutoUpdateEnabled(newEnabled);
+            updateManager.setAutoUpdate(newEnabled);
+          }}
+        >
           <div className={`toggle-track ${autoUpdateEnabled ? 'active' : ''}`}>
             <div className="toggle-thumb" />
           </div>
-          <span className="toggle-label">{autoUpdateEnabled ? t('common.enabled') : t('common.disabled')}</span>
+          <span className="toggle-label">
+            {autoUpdateEnabled ? t('common.enabled') : t('common.disabled')}
+          </span>
         </div>
         <p className="settings-hint">{t('settings.autoUpdateHint')}</p>
       </div>
 
       <div className="settings-group">
         <label className="settings-label">{t('settings.currentVersion')}</label>
-        <div style={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          gap: '12px',
-          marginTop: '8px'
-        }}>
-          <span style={{ 
-            fontFamily: 'monospace',
-            fontSize: '14px',
-            color: 'var(--os-color-text)'
-          }}>
-            v{__OS_VERSION__}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            marginTop: '8px',
+          }}
+        >
+          <span
+            style={{
+              fontFamily: 'monospace',
+              fontSize: '14px',
+              color: 'var(--os-color-text)',
+            }}
+          >
+            v{OS_VERSION}
           </span>
           <button
             className="settings-button secondary"
@@ -537,7 +655,7 @@ export const Settings: React.FC<SettingsProps> = () => {
             disabled={updateStatus.isChecking}
             style={{
               padding: '6px 12px',
-              fontSize: '13px'
+              fontSize: '13px',
             }}
           >
             {updateStatus.isChecking ? t('settings.checking') : t('settings.checkUpdate')}
@@ -556,7 +674,7 @@ export const Settings: React.FC<SettingsProps> = () => {
   const renderLanguageSection = () => (
     <div className="settings-section">
       <h2 className="settings-title">{t('settings.language')}</h2>
-      
+
       <div className="settings-group">
         <label className="settings-label">{t('settings.selectLanguage')}</label>
         <div className="language-list">
@@ -582,7 +700,7 @@ export const Settings: React.FC<SettingsProps> = () => {
   const renderDateTimeSection = () => (
     <div className="settings-section">
       <h2 className="settings-title">{t('settings.dateTime')}</h2>
-      
+
       <div className="settings-group">
         <label className="settings-label">{t('settings.timezone')}</label>
         <select
@@ -590,7 +708,7 @@ export const Settings: React.FC<SettingsProps> = () => {
           value={timezone}
           onChange={(e) => handleTimezoneChange(e.target.value)}
         >
-          {TIMEZONES.map(tz => (
+          {TIMEZONES.map((tz) => (
             <option key={tz.id} value={tz.id}>
               {tz.name} - {tz.label}
             </option>
@@ -601,7 +719,7 @@ export const Settings: React.FC<SettingsProps> = () => {
       <div className="settings-group">
         <label className="settings-label">{t('settings.dateFormat')}</label>
         <div className="radio-group">
-          {DATE_FORMATS.map(format => (
+          {DATE_FORMATS.map((format) => (
             <div
               key={format.id}
               className={`radio-item ${dateFormat === format.id ? 'selected' : ''}`}
@@ -617,7 +735,7 @@ export const Settings: React.FC<SettingsProps> = () => {
       <div className="settings-group">
         <label className="settings-label">{t('settings.timeFormat')}</label>
         <div className="radio-group">
-          {TIME_FORMATS.map(format => (
+          {TIME_FORMATS.map((format) => (
             <div
               key={format.id}
               className={`radio-item ${timeFormat === format.id ? 'selected' : ''}`}
@@ -632,9 +750,7 @@ export const Settings: React.FC<SettingsProps> = () => {
 
       <div className="settings-group">
         <label className="settings-label">{t('settings.currentTime')}</label>
-        <div className="time-preview">
-          {formatCurrentTime()}
-        </div>
+        <div className="time-preview">{formatCurrentTime()}</div>
       </div>
     </div>
   );
@@ -645,10 +761,10 @@ export const Settings: React.FC<SettingsProps> = () => {
       .replace('YYYY', now.getFullYear().toString())
       .replace('MM', (now.getMonth() + 1).toString().padStart(2, '0'))
       .replace('DD', now.getDate().toString().padStart(2, '0'));
-    
+
     const hours = now.getHours();
     const minutes = now.getMinutes().toString().padStart(2, '0');
-    
+
     if (timeFormat === '24h') {
       return `${dateStr} ${hours}:${minutes}`;
     } else {
@@ -674,196 +790,260 @@ export const Settings: React.FC<SettingsProps> = () => {
     };
 
     return (
-    <div className="settings-section">
-      <h2 className="settings-title">{t('settings.display')}</h2>
+      <div className="settings-section">
+        <h2 className="settings-title">{t('settings.display')}</h2>
 
-      {/* 分辨率设置 */}
-      <div className="settings-group">
-        <label className="settings-label">{t('settings.resolution') || '分辨率'}</label>
-        <p className="settings-hint">{t('settings.resolutionHint') || '选择显示分辨率或自动调整'}</p>
-        
-        {/* 自动调整开关 */}
-        <div className="settings-toggle" onClick={() => handleAutoAdjustChange(!autoAdjust)} style={{ marginTop: '12px' }}>
-          <div className={`toggle-track ${autoAdjust ? 'active' : ''}`}>
-            <div className="toggle-thumb" />
-          </div>
-          <span className="toggle-label">{autoAdjust ? (t('settings.autoAdjustEnabled') || '自动调整已启用') : (t('settings.autoAdjustDisabled') || '自动调整已禁用')}</span>
-        </div>
-        <p className="settings-hint" style={{ marginTop: '4px', fontSize: '12px' }}>
-          {autoAdjust ? (t('settings.autoAdjustHint') || '窗口大小改变时自动调整分辨率') : (t('settings.manualResolutionHint') || '手动选择固定分辨率')}
-        </p>
+        {/* 分辨率设置 */}
+        <div className="settings-group">
+          <label className="settings-label">{t('settings.resolution') || '分辨率'}</label>
+          <p className="settings-hint">
+            {t('settings.resolutionHint') || '选择显示分辨率或自动调整'}
+          </p>
 
-        {/* 当前分辨率显示 */}
-        <div style={{ 
-          marginTop: '16px', 
-          padding: '12px', 
-          background: 'var(--os-color-bg-secondary)', 
-          borderRadius: '8px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between'
-        }}>
-          <div>
-            <div style={{ fontSize: '18px', fontWeight: 600 }}>
-              {currentResolution.width} × {currentResolution.height}
+          {/* 自动调整开关 */}
+          <div
+            className="settings-toggle"
+            onClick={() => handleAutoAdjustChange(!autoAdjust)}
+            style={{ marginTop: '12px' }}
+          >
+            <div className={`toggle-track ${autoAdjust ? 'active' : ''}`}>
+              <div className="toggle-thumb" />
             </div>
-            <div style={{ fontSize: '12px', color: 'var(--os-color-text-secondary)' }}>
-              {t('settings.currentResolution') || '当前分辨率'}
-            </div>
+            <span className="toggle-label">
+              {autoAdjust
+                ? t('settings.autoAdjustEnabled') || '自动调整已启用'
+                : t('settings.autoAdjustDisabled') || '自动调整已禁用'}
+            </span>
           </div>
-          {autoAdjust && (
-            <button 
-              className="settings-button secondary"
-              onClick={() => resManagerRef.current?.detectAndSetResolution()}
-              style={{ padding: '6px 12px', fontSize: '12px' }}
-            >
-              {t('settings.fitToWindow') || '适应窗口'}
-            </button>
+          <p className="settings-hint" style={{ marginTop: '4px', fontSize: '12px' }}>
+            {autoAdjust
+              ? t('settings.autoAdjustHint') || '窗口大小改变时自动调整分辨率'
+              : t('settings.manualResolutionHint') || '手动选择固定分辨率'}
+          </p>
+
+          {/* 当前分辨率显示 */}
+          <div
+            style={{
+              marginTop: '16px',
+              padding: '12px',
+              background: 'var(--os-color-bg-secondary)',
+              borderRadius: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <div>
+              <div style={{ fontSize: '18px', fontWeight: 600 }}>
+                {currentResolution.width} × {currentResolution.height}
+              </div>
+              <div style={{ fontSize: '12px', color: 'var(--os-color-text-secondary)' }}>
+                {t('settings.currentResolution') || '当前分辨率'}
+              </div>
+            </div>
+            {autoAdjust && (
+              <button
+                className="settings-button secondary"
+                onClick={() => resManagerRef.current?.detectAndSetResolution()}
+                style={{ padding: '6px 12px', fontSize: '12px' }}
+              >
+                {t('settings.fitToWindow') || '适应窗口'}
+              </button>
+            )}
+          </div>
+
+          {/* 分辨率预设 */}
+          {!autoAdjust && resolutionPresets.length > 0 && (
+            <div style={{ marginTop: '16px' }}>
+              <label className="settings-label" style={{ fontSize: '13px' }}>
+                {t('settings.resolutionPresets') || '预设分辨率'}
+              </label>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))',
+                  gap: '8px',
+                  marginTop: '8px',
+                }}
+              >
+                {resolutionPresets.map((preset) => (
+                  <div
+                    key={`${preset.resolution.width}x${preset.resolution.height}`}
+                    onClick={() => handleResolutionChange(preset)}
+                    style={{
+                      padding: '10px 12px',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      border:
+                        currentResolution.width === preset.resolution.width &&
+                        currentResolution.height === preset.resolution.height
+                          ? '2px solid var(--os-color-primary)'
+                          : '1px solid var(--os-color-border)',
+                      background:
+                        currentResolution.width === preset.resolution.width &&
+                        currentResolution.height === preset.resolution.height
+                          ? 'rgba(0, 120, 212, 0.1)'
+                          : 'transparent',
+                      transition: 'all 0.15s ease',
+                    }}
+                  >
+                    <div style={{ fontSize: '14px', fontWeight: 500 }}>{preset.name}</div>
+                    <div style={{ fontSize: '11px', color: 'var(--os-color-text-secondary)' }}>
+                      {preset.resolution.width}×{preset.resolution.height}
+                    </div>
+                    {preset.recommended && (
+                      <div
+                        style={{
+                          fontSize: '10px',
+                          color: 'var(--os-color-primary)',
+                          marginTop: '2px',
+                        }}
+                      >
+                        {t('settings.recommended') || '推荐'}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
           )}
         </div>
 
-        {/* 分辨率预设 */}
-        {!autoAdjust && resolutionPresets.length > 0 && (
-          <div style={{ marginTop: '16px' }}>
-            <label className="settings-label" style={{ fontSize: '13px' }}>{t('settings.resolutionPresets') || '预设分辨率'}</label>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: '8px', marginTop: '8px' }}>
-              {resolutionPresets.map((preset) => (
-                <div
-                  key={`${preset.resolution.width}x${preset.resolution.height}`}
-                  onClick={() => handleResolutionChange(preset)}
-                  style={{
-                    padding: '10px 12px',
-                    borderRadius: '8px',
-                    cursor: 'pointer',
-                    border: currentResolution.width === preset.resolution.width && currentResolution.height === preset.resolution.height 
-                      ? '2px solid var(--os-color-primary)' 
+        {/* 缩放设置 */}
+        <div className="settings-group">
+          <label className="settings-label">{t('settings.scaling') || '缩放'}</label>
+          <p className="settings-hint">{t('settings.scalingHint') || '调整界面元素大小'}</p>
+          <div style={{ display: 'flex', gap: '8px', marginTop: '12px', flexWrap: 'wrap' }}>
+            {scalingPresets.map((scale) => (
+              <div
+                key={scale.value}
+                onClick={() => handleScalingChange(scale.value)}
+                style={{
+                  padding: '8px 16px',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  border:
+                    currentScaling === scale.value
+                      ? '2px solid var(--os-color-primary)'
                       : '1px solid var(--os-color-border)',
-                    background: currentResolution.width === preset.resolution.width && currentResolution.height === preset.resolution.height 
-                      ? 'rgba(0, 120, 212, 0.1)' 
-                      : 'transparent',
-                    transition: 'all 0.15s ease'
-                  }}
-                >
-                  <div style={{ fontSize: '14px', fontWeight: 500 }}>{preset.name}</div>
-                  <div style={{ fontSize: '11px', color: 'var(--os-color-text-secondary)' }}>
-                    {preset.resolution.width}×{preset.resolution.height}
-                  </div>
-                  {preset.recommended && (
-                    <div style={{ fontSize: '10px', color: 'var(--os-color-primary)', marginTop: '2px' }}>
-                      {t('settings.recommended') || '推荐'}
-                    </div>
+                  background:
+                    currentScaling === scale.value ? 'rgba(0, 120, 212, 0.1)' : 'transparent',
+                  transition: 'all 0.15s ease',
+                  textAlign: 'center',
+                }}
+              >
+                <div style={{ fontSize: '14px', fontWeight: 500 }}>{scale.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="settings-group">
+          <label className="settings-label">{t('settings.theme')}</label>
+          <div className="theme-options">
+            {(['light', 'dark'] as const).map((themeValue) => (
+              <div
+                key={themeValue}
+                className={`theme-item ${theme === themeValue ? 'selected' : ''}`}
+                onClick={() => handleThemeChange(themeValue)}
+              >
+                <div className={`theme-preview ${themeValue}`}>
+                  {themeValue === 'light' && (
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <circle cx="12" cy="12" r="5" />
+                      <line x1="12" y1="1" x2="12" y2="3" />
+                      <line x1="12" y1="21" x2="12" y2="23" />
+                      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                      <line x1="1" y1="12" x2="3" y2="12" />
+                      <line x1="21" y1="12" x2="23" y2="12" />
+                      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                    </svg>
+                  )}
+                  {themeValue === 'dark' && (
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                    </svg>
                   )}
                 </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* 缩放设置 */}
-      <div className="settings-group">
-        <label className="settings-label">{t('settings.scaling') || '缩放'}</label>
-        <p className="settings-hint">{t('settings.scalingHint') || '调整界面元素大小'}</p>
-        <div style={{ display: 'flex', gap: '8px', marginTop: '12px', flexWrap: 'wrap' }}>
-          {scalingPresets.map((scale) => (
-            <div
-              key={scale.value}
-              onClick={() => handleScalingChange(scale.value)}
-              style={{
-                padding: '8px 16px',
-                borderRadius: '6px',
-                cursor: 'pointer',
-                border: currentScaling === scale.value 
-                  ? '2px solid var(--os-color-primary)' 
-                  : '1px solid var(--os-color-border)',
-                background: currentScaling === scale.value 
-                  ? 'rgba(0, 120, 212, 0.1)' 
-                  : 'transparent',
-                transition: 'all 0.15s ease',
-                textAlign: 'center'
-              }}
-            >
-              <div style={{ fontSize: '14px', fontWeight: 500 }}>{scale.label}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-      
-      <div className="settings-group">
-        <label className="settings-label">{t('settings.theme')}</label>
-        <div className="theme-options">
-          {(['light', 'dark'] as const).map(themeValue => (
-            <div
-              key={themeValue}
-              className={`theme-item ${theme === themeValue ? 'selected' : ''}`}
-              onClick={() => handleThemeChange(themeValue)}
-            >
-              <div className={`theme-preview ${themeValue}`}>
-                {themeValue === 'light' && (
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <circle cx="12" cy="12" r="5"/>
-                    <line x1="12" y1="1" x2="12" y2="3"/>
-                    <line x1="12" y1="21" x2="12" y2="23"/>
-                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-                    <line x1="1" y1="12" x2="3" y2="12"/>
-                    <line x1="21" y1="12" x2="23" y2="12"/>
-                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-                  </svg>
-                )}
-                {themeValue === 'dark' && (
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-                  </svg>
-                )}
+                <span>
+                  {t('settings.theme' + themeValue.charAt(0).toUpperCase() + themeValue.slice(1))}
+                </span>
               </div>
-              <span>{t('settings.theme' + themeValue.charAt(0).toUpperCase() + themeValue.slice(1))}</span>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
 
-      <div className="settings-group">
-        <label className="settings-label">{t('settings.fontSize')}</label>
-        <div className="font-size-options">
-          {(['small', 'medium', 'large', 'xlarge'] as const).map(size => (
-            <div
-              key={size}
-              className={`font-size-item ${fontSize === size ? 'selected' : ''}`}
-              onClick={() => handleFontSizeChange(size)}
-            >
-              <span style={{ fontSize: size === 'small' ? '12px' : size === 'large' ? '18px' : size === 'xlarge' ? '22px' : '16px' }}>
-                Aa
-              </span>
-              <span className="font-size-label">{t('settings.fontSize' + size.charAt(0).toUpperCase() + size.slice(1))}</span>
-            </div>
-          ))}
+        <div className="settings-group">
+          <label className="settings-label">{t('settings.fontSize')}</label>
+          <div className="font-size-options">
+            {(['small', 'medium', 'large', 'xlarge'] as const).map((size) => (
+              <div
+                key={size}
+                className={`font-size-item ${fontSize === size ? 'selected' : ''}`}
+                onClick={() => handleFontSizeChange(size)}
+              >
+                <span
+                  style={{
+                    fontSize:
+                      size === 'small'
+                        ? '12px'
+                        : size === 'large'
+                          ? '18px'
+                          : size === 'xlarge'
+                            ? '22px'
+                            : '16px',
+                  }}
+                >
+                  Aa
+                </span>
+                <span className="font-size-label">
+                  {t('settings.fontSize' + size.charAt(0).toUpperCase() + size.slice(1))}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
 
-      {/* 任务栏显示模式 */}
-      <div className="settings-group">
-        <label className="settings-label">{t('settings.taskbarDisplayMode')}</label>
-        <p className="settings-hint">{t('settings.taskbarDisplayModeHint')}</p>
-        <div className="radio-group" style={{ marginTop: '12px' }}>
-          {([
-            { id: 'icon-name', label: t('settings.taskbarModeIconName') },
-            { id: 'icon-only', label: t('settings.taskbarModeIconOnly') },
-            { id: 'name-only', label: t('settings.taskbarModeNameOnly') }
-          ] as const).map(mode => (
-            <div
-              key={mode.id}
-              className={`radio-item ${taskbarDisplayMode === mode.id ? 'selected' : ''}`}
-              onClick={() => handleTaskbarDisplayModeChange(mode.id)}
-            >
-              <div className={`radio ${taskbarDisplayMode === mode.id ? 'checked' : ''}`} />
-              <span>{mode.label}</span>
-            </div>
-          ))}
+        {/* 任务栏显示模式 */}
+        <div className="settings-group">
+          <label className="settings-label">{t('settings.taskbarDisplayMode')}</label>
+          <p className="settings-hint">{t('settings.taskbarDisplayModeHint')}</p>
+          <div className="radio-group" style={{ marginTop: '12px' }}>
+            {(
+              [
+                { id: 'icon-name', label: t('settings.taskbarModeIconName') },
+                { id: 'icon-only', label: t('settings.taskbarModeIconOnly') },
+                { id: 'name-only', label: t('settings.taskbarModeNameOnly') },
+              ] as const
+            ).map((mode) => (
+              <div
+                key={mode.id}
+                className={`radio-item ${taskbarDisplayMode === mode.id ? 'selected' : ''}`}
+                onClick={() => handleTaskbarDisplayModeChange(mode.id)}
+              >
+                <div className={`radio ${taskbarDisplayMode === mode.id ? 'checked' : ''}`} />
+                <span>{mode.label}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
-    </div>
     );
   };
 
@@ -874,12 +1054,12 @@ export const Settings: React.FC<SettingsProps> = () => {
       <p className="settings-hint" style={{ marginTop: '-8px', marginBottom: '16px' }}>
         {t('settings.wallpaperDesc')}
       </p>
-      
+
       {/* 预设壁纸 */}
       <div className="settings-group">
         <label className="settings-label">{t('settings.wallpaperPreset')}</label>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginTop: '8px' }}>
-          {PRESET_WALLPAPERS.map(wp => (
+          {PRESET_WALLPAPERS.map((wp) => (
             <div
               key={wp.id}
               className={`wallpaper-thumbnail ${wp.thumbnailClass} ${wallpaperType === wp.id && !customWallpaper ? 'selected' : ''}`}
@@ -895,17 +1075,24 @@ export const Settings: React.FC<SettingsProps> = () => {
       <div className="settings-group">
         <label className="settings-label">{t('settings.wallpaperCustom')}</label>
         <p className="settings-hint">{t('settings.wallpaperSupportedFormats')}</p>
-        
+
         <div style={{ display: 'flex', gap: '12px', marginTop: '12px' }}>
           {/* 上传图片按钮 */}
-          <div 
+          <div
             className="wallpaper-thumbnail wallpaper-thumbnail-custom"
             onClick={() => imageInputRef.current?.click()}
           >
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-              <circle cx="8.5" cy="8.5" r="1.5"/>
-              <polyline points="21 15 16 10 5 21"/>
+            <svg
+              width="32"
+              height="32"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <polyline points="21 15 16 10 5 21" />
             </svg>
             <span className="wallpaper-thumbnail-label">{t('settings.wallpaperUploadImage')}</span>
           </div>
@@ -916,15 +1103,22 @@ export const Settings: React.FC<SettingsProps> = () => {
             style={{ display: 'none' }}
             onChange={handleFileUpload('image')}
           />
-          
+
           {/* 上传视频按钮 */}
-          <div 
+          <div
             className="wallpaper-thumbnail wallpaper-thumbnail-custom"
             onClick={() => videoInputRef.current?.click()}
           >
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <polygon points="23 7 16 12 23 17 23 7"/>
-              <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+            <svg
+              width="32"
+              height="32"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <polygon points="23 7 16 12 23 17 23 7" />
+              <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
             </svg>
             <span className="wallpaper-thumbnail-label">{t('settings.wallpaperUploadVideo')}</span>
           </div>
@@ -942,25 +1136,28 @@ export const Settings: React.FC<SettingsProps> = () => {
           <div style={{ marginTop: '16px' }}>
             <label className="settings-label">{t('settings.wallpaperCurrent')}</label>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '8px' }}>
-              <div 
+              <div
                 className="wallpaper-thumbnail selected"
-                style={{ 
-                  backgroundImage: customWallpaper.type === 'image' ? `url(${customWallpaper.url})` : 'none',
+                style={{
+                  backgroundImage:
+                    customWallpaper.type === 'image' ? `url(${customWallpaper.url})` : 'none',
                   backgroundSize: 'cover',
-                  backgroundPosition: 'center'
+                  backgroundPosition: 'center',
                 }}
               >
                 {customWallpaper.type === 'video' && (
-                  <div style={{ 
-                    width: '100%', 
-                    height: '100%', 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'center',
-                    background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)'
-                  }}>
+                  <div
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
+                    }}
+                  >
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
-                      <polygon points="5 3 19 12 5 21 5 3"/>
+                      <polygon points="5 3 19 12 5 21 5 3" />
                     </svg>
                   </div>
                 )}
@@ -968,10 +1165,7 @@ export const Settings: React.FC<SettingsProps> = () => {
                   {customWallpaper.type === 'image' ? 'Image' : 'Video'}
                 </span>
               </div>
-              <button 
-                className="settings-button secondary"
-                onClick={handleRemoveCustomWallpaper}
-              >
+              <button className="settings-button secondary" onClick={handleRemoveCustomWallpaper}>
                 {t('settings.wallpaperRemove')}
               </button>
             </div>
@@ -985,18 +1179,22 @@ export const Settings: React.FC<SettingsProps> = () => {
   const renderStorageSection = () => (
     <div className="settings-section">
       <h2 className="settings-title">{t('settings.storage')}</h2>
-      
+
       <div className="settings-group">
         <label className="settings-label">{t('settings.storageUsage')}</label>
         <div className="storage-bar">
-          <div 
-            className="storage-used" 
+          <div
+            className="storage-used"
             style={{ width: `${(storageInfo.used / storageInfo.total) * 100}%` }}
           />
         </div>
         <div className="storage-info">
-          <span>{t('settings.used')}: {formatBytes(storageInfo.used)}</span>
-          <span>{t('settings.available')}: {formatBytes(storageInfo.total - storageInfo.used)}</span>
+          <span>
+            {t('settings.used')}: {formatBytes(storageInfo.used)}
+          </span>
+          <span>
+            {t('settings.available')}: {formatBytes(storageInfo.total - storageInfo.used)}
+          </span>
         </div>
       </div>
 
@@ -1014,11 +1212,11 @@ export const Settings: React.FC<SettingsProps> = () => {
   const renderRecoverySection = () => (
     <div className="settings-section">
       <h2 className="settings-title">{t('settings.recovery')}</h2>
-      
+
       <div className="settings-group warning">
         <label className="settings-label">{t('settings.resetSystem')}</label>
         <p className="settings-hint">{t('settings.resetWarning')}</p>
-        
+
         {!showConfirmReset ? (
           <button className="settings-button danger" onClick={() => setShowConfirmReset(true)}>
             {t('settings.resetSystem')}
@@ -1027,7 +1225,10 @@ export const Settings: React.FC<SettingsProps> = () => {
           <div className="confirm-reset">
             <p className="confirm-text">{t('settings.resetConfirm')}</p>
             <div className="confirm-buttons">
-              <button className="settings-button secondary" onClick={() => setShowConfirmReset(false)}>
+              <button
+                className="settings-button secondary"
+                onClick={() => setShowConfirmReset(false)}
+              >
                 {t('common.cancel')}
               </button>
               <button className="settings-button danger" onClick={handleResetSystem}>
@@ -1052,13 +1253,13 @@ export const Settings: React.FC<SettingsProps> = () => {
   const renderAboutSection = () => (
     <div className="settings-section">
       <h2 className="settings-title">{t('settings.about')}</h2>
-      
+
       <div className="about-header">
         <svg width="64" height="24" viewBox="0 0 64 24">
-          <text 
-            x="50%" 
-            y="50%" 
-            dominantBaseline="middle" 
+          <text
+            x="50%"
+            y="50%"
+            dominantBaseline="middle"
             textAnchor="middle"
             fill="currentColor"
             fontSize="20"
@@ -1101,15 +1302,24 @@ export const Settings: React.FC<SettingsProps> = () => {
 
   const renderContent = () => {
     switch (currentSection) {
-      case 'system': return renderSystemSection();
-      case 'language': return renderLanguageSection();
-      case 'datetime': return renderDateTimeSection();
-      case 'display': return renderDisplaySection();
-      case 'wallpaper': return renderWallpaperSection();
-      case 'storage': return renderStorageSection();
-      case 'recovery': return renderRecoverySection();
-      case 'about': return renderAboutSection();
-      default: return null;
+      case 'system':
+        return renderSystemSection();
+      case 'language':
+        return renderLanguageSection();
+      case 'datetime':
+        return renderDateTimeSection();
+      case 'display':
+        return renderDisplaySection();
+      case 'wallpaper':
+        return renderWallpaperSection();
+      case 'storage':
+        return renderStorageSection();
+      case 'recovery':
+        return renderRecoverySection();
+      case 'about':
+        return renderAboutSection();
+      default:
+        return null;
     }
   };
 
@@ -1118,21 +1328,24 @@ export const Settings: React.FC<SettingsProps> = () => {
       {/* 左侧导航 */}
       <div className="settings-nav">
         <div className="settings-nav-header">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <circle cx="12" cy="12" r="3"/>
-            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <circle cx="12" cy="12" r="3" />
+            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
           </svg>
           <span>{t('app.settings')}</span>
         </div>
-        <div className="settings-nav-list">
-          {navItems.map(renderNavItem)}
-        </div>
+        <div className="settings-nav-list">{navItems.map(renderNavItem)}</div>
       </div>
 
       {/* 右侧内容 */}
-      <div className="settings-content">
-        {renderContent()}
-      </div>
+      <div className="settings-content">{renderContent()}</div>
     </div>
   );
 };
@@ -1140,63 +1353,63 @@ export const Settings: React.FC<SettingsProps> = () => {
 // 图标组件
 const SystemIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-    <line x1="8" y1="21" x2="16" y2="21"/>
-    <line x1="12" y1="17" x2="12" y2="21"/>
+    <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+    <line x1="8" y1="21" x2="16" y2="21" />
+    <line x1="12" y1="17" x2="12" y2="21" />
   </svg>
 );
 
 const LanguageIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <circle cx="12" cy="12" r="10"/>
-    <line x1="2" y1="12" x2="22" y2="12"/>
-    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+    <circle cx="12" cy="12" r="10" />
+    <line x1="2" y1="12" x2="22" y2="12" />
+    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
   </svg>
 );
 
 const DateTimeIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <circle cx="12" cy="12" r="10"/>
-    <polyline points="12 6 12 12 16 14"/>
+    <circle cx="12" cy="12" r="10" />
+    <polyline points="12 6 12 12 16 14" />
   </svg>
 );
 
 const DisplayIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-    <line x1="8" y1="21" x2="16" y2="21"/>
-    <line x1="12" y1="17" x2="12" y2="21"/>
+    <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+    <line x1="8" y1="21" x2="16" y2="21" />
+    <line x1="12" y1="17" x2="12" y2="21" />
   </svg>
 );
 
 const WallpaperIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-    <circle cx="8.5" cy="8.5" r="1.5"/>
-    <polyline points="21 15 16 10 5 21"/>
+    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+    <circle cx="8.5" cy="8.5" r="1.5" />
+    <polyline points="21 15 16 10 5 21" />
   </svg>
 );
 
 const StorageIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <ellipse cx="12" cy="5" rx="9" ry="3"/>
-    <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
-    <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+    <ellipse cx="12" cy="5" rx="9" ry="3" />
+    <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
+    <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
   </svg>
 );
 
 const RecoveryIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
-    <path d="M3 3v5h5"/>
+    <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+    <path d="M3 3v5h5" />
   </svg>
 );
 
 const AboutIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <circle cx="12" cy="12" r="10"/>
-    <line x1="12" y1="16" x2="12" y2="12"/>
-    <line x1="12" y1="8" x2="12.01" y2="8"/>
+    <circle cx="12" cy="12" r="10" />
+    <line x1="12" y1="16" x2="12" y2="12" />
+    <line x1="12" y1="8" x2="12.01" y2="8" />
   </svg>
 );
 
@@ -1216,7 +1429,7 @@ export const appInfo: AppInfo = {
   minWidth: 600,
   minHeight: 400,
   resizable: true,
-  singleton: true
+  singleton: true,
 };
 
 export default Settings;

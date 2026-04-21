@@ -45,11 +45,7 @@ interface TabPanelProps {
 
 const TabPanel: React.FC<TabPanelProps> = ({ tab }) => {
   return (
-    <div
-      className="nav-tabs-panel"
-      role="tabpanel"
-      aria-labelledby={`nav-tab-${tab.key}`}
-    >
+    <div className="nav-tabs-panel" role="tabpanel" aria-labelledby={`nav-tab-${tab.key}`}>
       {tab.content}
     </div>
   );
@@ -83,16 +79,22 @@ export const Tabs: React.FC<TabsProps> = ({
 
   const activeKey = controlledActiveKey ?? internalActiveKey;
 
-  const handleChange = useCallback((key: string) => {
-    setInternalActiveKey(key);
-    onChange?.(key);
-  }, [onChange]);
+  const handleChange = useCallback(
+    (key: string) => {
+      setInternalActiveKey(key);
+      onChange?.(key);
+    },
+    [onChange]
+  );
 
-  const handleClose = useCallback((key: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    onClose?.(key);
-    onEdit?.('remove', key);
-  }, [onClose, onEdit]);
+  const handleClose = useCallback(
+    (key: string, e: React.MouseEvent) => {
+      e.stopPropagation();
+      onClose?.(key);
+      onEdit?.('remove', key);
+    },
+    [onClose, onEdit]
+  );
 
   const handleAdd = useCallback(() => {
     onEdit?.('add');
@@ -149,7 +151,9 @@ export const Tabs: React.FC<TabsProps> = ({
     if (!tabList) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      const tabs = Array.from(tabList.querySelectorAll<HTMLElement>('[role="tab"]:not([aria-disabled="true"])'));
+      const tabs = Array.from(
+        tabList.querySelectorAll<HTMLElement>('[role="tab"]:not([aria-disabled="true"])')
+      );
       const currentIndex = tabs.findIndex((tab) => tab.dataset.tabKey === activeKey);
 
       let nextIndex: number;
@@ -216,11 +220,7 @@ export const Tabs: React.FC<TabsProps> = ({
             </button>
           )}
 
-          <div
-            ref={tabNavRef}
-            className="nav-tabs-nav"
-            onScroll={checkScrollButtons}
-          >
+          <div ref={tabNavRef} className="nav-tabs-nav" onScroll={checkScrollButtons}>
             <div
               ref={tabListRef}
               className="nav-tabs-list"
@@ -264,9 +264,11 @@ export const Tabs: React.FC<TabsProps> = ({
             {animated && (
               <div
                 className="nav-tabs-indicator"
-                style={{
-                  // Position will be set by CSS based on active tab
-                }}
+                style={
+                  {
+                    // Position will be set by CSS based on active tab
+                  }
+                }
               />
             )}
           </div>
@@ -282,11 +284,7 @@ export const Tabs: React.FC<TabsProps> = ({
           )}
 
           {showAddButton && (
-            <button
-              className="nav-tabs-add-btn"
-              onClick={handleAdd}
-              aria-label="Add tab"
-            >
+            <button className="nav-tabs-add-btn" onClick={handleAdd} aria-label="Add tab">
               +
             </button>
           )}

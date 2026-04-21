@@ -29,27 +29,27 @@ function mdToHtml(md: string): string {
 
   // 表格
   html = html.replace(/\|(.+)\|/g, (match) => {
-    const cells = match.split('|').filter(c => c.trim());
-    if (cells.some(c => c.match(/^[\s-]+$/))) return '';
-    const cellHtml = cells.map(c => `<td>${c.trim()}</td>`).join('');
+    const cells = match.split('|').filter((c) => c.trim());
+    if (cells.some((c) => c.match(/^[\s-]+$/))) return '';
+    const cellHtml = cells.map((c) => `<td>${c.trim()}</td>`).join('');
     return `<tr>${cellHtml}</tr>`;
   });
   html = html.replace(/(<tr>.*<\/tr>\n?)+/g, '<table>$&</table>');
 
   // 段落
-  html = html.split('\n\n').map(block => {
-    if (block.match(/^<(h[1-6]|ul|ol|pre|table|hr)/)) return block;
-    if (block.trim()) return `<p>${block}</p>`;
-    return '';
-  }).join('\n');
+  html = html
+    .split('\n\n')
+    .map((block) => {
+      if (block.match(/^<(h[1-6]|ul|ol|pre|table|hr)/)) return block;
+      if (block.trim()) return `<p>${block}</p>`;
+      return '';
+    })
+    .join('\n');
 
   return html;
 }
 
-export async function GET(
-  request: Request,
-  { params }: { params: Promise<{ slug: string }> }
-) {
+export async function GET(request: Request, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
 
   const docFiles: Record<string, string> = {

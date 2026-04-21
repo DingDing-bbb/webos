@@ -23,7 +23,7 @@ export function createNode(
     createdAt: now,
     modifiedAt: now,
     content: type === 'file' ? content : undefined,
-    children: type === 'directory' ? new Map() : undefined
+    children: type === 'directory' ? new Map() : undefined,
   };
 }
 
@@ -37,7 +37,7 @@ export function toDirEntry(node: FSNode): DirEntry {
     permissions: node.permissions,
     owner: node.owner,
     size: node.size,
-    modifiedAt: node.modifiedAt
+    modifiedAt: node.modifiedAt,
   };
 }
 
@@ -48,9 +48,9 @@ export function calculateDirSize(node: FSNode): number {
   if (node.type !== 'directory' || !node.children) {
     return node.size;
   }
-  
+
   let total = 0;
-  node.children.forEach(child => {
+  node.children.forEach((child) => {
     total += child.size;
   });
   return total;
@@ -63,16 +63,16 @@ export function cloneNode(node: FSNode, deep: boolean = false): FSNode {
   const clone: FSNode = {
     ...node,
     createdAt: new Date(node.createdAt),
-    modifiedAt: new Date(node.modifiedAt)
+    modifiedAt: new Date(node.modifiedAt),
   };
-  
+
   if (deep && node.children) {
     clone.children = new Map();
     node.children.forEach((child, name) => {
       clone.children!.set(name, cloneNode(child, true));
     });
   }
-  
+
   return clone;
 }
 

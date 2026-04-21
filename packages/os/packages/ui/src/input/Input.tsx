@@ -28,8 +28,7 @@ import React, {
 export type InputStatus = 'error' | 'warning' | 'success' | 'default';
 export type InputSize = 'sm' | 'md' | 'lg';
 
-export interface InputProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size' | 'prefix'> {
+export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size' | 'prefix'> {
   /** 输入框状态 */
   status?: InputStatus;
   /** 输入框尺寸 */
@@ -136,9 +135,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     const id = propId || autoId;
     const helperId = `${id}-helper`;
 
-    const [internalValue, setInternalValue] = useState<string>(
-      (defaultValue as string) || ''
-    );
+    const [internalValue, setInternalValue] = useState<string>((defaultValue as string) || '');
     const [showPassword, setShowPassword] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
 
@@ -239,11 +236,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className={wrapperClasses}>
         {label && (
-          <label
-            htmlFor={id}
-            className="webos-input-label"
-            style={{ color: getStatusColor() }}
-          >
+          <label htmlFor={id} className="webos-input-label" style={{ color: getStatusColor() }}>
             {label}
           </label>
         )}
@@ -300,11 +293,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         </div>
 
         {helperText && (
-          <span
-            id={helperId}
-            className="webos-input-helper"
-            style={{ color: getStatusColor() }}
-          >
+          <span id={helperId} className="webos-input-helper" style={{ color: getStatusColor() }}>
             {helperText}
           </span>
         )}

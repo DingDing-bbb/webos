@@ -24,8 +24,7 @@ import React, {
 // Types
 // ============================================================================
 
-export interface TextAreaProps
-  extends TextareaHTMLAttributes<HTMLTextAreaElement> {
+export interface TextAreaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   /** 自动调整高度 */
   autoHeight?: boolean;
   /** 最小行数 */
@@ -82,9 +81,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
     const internalRef = useRef<HTMLTextAreaElement>(null);
     const textareaRef = (ref as React.RefObject<HTMLTextAreaElement>) || internalRef;
 
-    const [internalValue, setInternalValue] = useState<string>(
-      (defaultValue as string) || ''
-    );
+    const [internalValue, setInternalValue] = useState<string>((defaultValue as string) || '');
 
     const isControlled = value !== undefined;
     const currentValue = isControlled ? (value as string) : internalValue;
@@ -97,8 +94,9 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
       textarea.style.height = 'auto';
 
       const lineHeight = parseInt(getComputedStyle(textarea).lineHeight) || 20;
-      const padding = parseInt(getComputedStyle(textarea).paddingTop) +
-                      parseInt(getComputedStyle(textarea).paddingBottom);
+      const padding =
+        parseInt(getComputedStyle(textarea).paddingTop) +
+        parseInt(getComputedStyle(textarea).paddingBottom);
 
       const minHeight = lineHeight * minRows + padding;
       const maxHeight = lineHeight * maxRows + padding;
@@ -143,17 +141,16 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
     };
 
     // Build class names
-    const wrapperClasses = [
-      'webos-textarea-wrapper',
-      className,
-    ].filter(Boolean).join(' ');
+    const wrapperClasses = ['webos-textarea-wrapper', className].filter(Boolean).join(' ');
 
     const textareaClasses = [
       'webos-textarea',
       autoHeight && 'webos-textarea--auto-height',
       noResize && 'webos-textarea--no-resize',
       status !== 'default' && `webos-textarea--${status}`,
-    ].filter(Boolean).join(' ');
+    ]
+      .filter(Boolean)
+      .join(' ');
 
     // Count display
     const currentLength = currentValue.length;
@@ -162,11 +159,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
     return (
       <div className={wrapperClasses}>
         {label && (
-          <label
-            htmlFor={id}
-            className="webos-textarea-label"
-            style={{ color: getStatusColor() }}
-          >
+          <label htmlFor={id} className="webos-textarea-label" style={{ color: getStatusColor() }}>
             {label}
           </label>
         )}
@@ -187,21 +180,17 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
 
         {showCount && (
           <span
-            className={[
-              'webos-textarea-counter',
-              isExceeded && 'webos-textarea-counter--exceeded',
-            ].filter(Boolean).join(' ')}
+            className={['webos-textarea-counter', isExceeded && 'webos-textarea-counter--exceeded']
+              .filter(Boolean)
+              .join(' ')}
           >
-            {currentLength}{maxLength && ` / ${maxLength}`}
+            {currentLength}
+            {maxLength && ` / ${maxLength}`}
           </span>
         )}
 
         {helperText && (
-          <span
-            id={helperId}
-            className="webos-textarea-helper"
-            style={{ color: getStatusColor() }}
-          >
+          <span id={helperId} className="webos-textarea-helper" style={{ color: getStatusColor() }}>
             {helperText}
           </span>
         )}

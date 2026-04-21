@@ -26,6 +26,23 @@ class OSWindow extends HTMLElement {
   private onMaximizeCallback: (() => void) | null = null;
   private onFocusCallback: (() => void) | null = null;
 
+  // Touch support
+  private touchStartX = 0;
+  private touchStartY = 0;
+  private touchStartWindowX = 0;
+  private touchStartWindowY = 0;
+  private isTouchDragging = false;
+  private lastTapTime = 0;
+  private lastTapX = 0;
+  private lastTapY = 0;
+  private touchResizeDirection = '';
+  private touchResizeStartX = 0;
+  private touchResizeStartY = 0;
+  private touchResizeStartWidth = 0;
+  private touchResizeStartHeight = 0;
+  private touchResizeStartX_pos = 0;
+  private touchResizeStartY_pos = 0;
+
   static get observedAttributes() {
     return ['data-window-id', 'data-active'];
   }
@@ -52,7 +69,7 @@ class OSWindow extends HTMLElement {
       resizable: true,
       minimizable: true,
       maximizable: true,
-      closable: true
+      closable: true,
     };
   }
 
@@ -60,7 +77,7 @@ class OSWindow extends HTMLElement {
     this.render();
     this.attachEventListeners();
     this.isRendered = true;
-    
+
     // 恢复待处理的内容
     if (this.pendingContent && this.contentEl) {
       if (typeof this.pendingContent === 'string') {
@@ -80,7 +97,7 @@ class OSWindow extends HTMLElement {
 
   private render() {
     const s = this.state;
-    
+
     this.className = 'os-window';
     this.style.cssText = `
       position: absolute;
@@ -103,7 +120,9 @@ class OSWindow extends HTMLElement {
         <div class="os-window-title">${s.title}</div>
       </div>
       <div class="os-window-content" part="content"></div>
-      ${s.resizable ? `
+      ${
+        s.resizable
+          ? `
         <div class="os-window-resize-handle nw" data-dir="nw"></div>
         <div class="os-window-resize-handle n" data-dir="n"></div>
         <div class="os-window-resize-handle ne" data-dir="ne"></div>
@@ -112,12 +131,14 @@ class OSWindow extends HTMLElement {
         <div class="os-window-resize-handle s" data-dir="s"></div>
         <div class="os-window-resize-handle sw" data-dir="sw"></div>
         <div class="os-window-resize-handle w" data-dir="w"></div>
-      ` : ''}
+      `
+          : ''
+      }
     `;
 
     this.headerEl = this.querySelector('.os-window-header');
     this.contentEl = this.querySelector('.os-window-content');
-    
+
     if (s.isActive) {
       this.classList.add('active');
       this.setAttribute('data-active', 'true');
@@ -125,73 +146,97 @@ class OSWindow extends HTMLElement {
   }
 
   private attachEventListeners() {
-    // 拖拽标题栏
+    // 拖拽标题栏 - 鼠标事件
     this.headerEl?.addEventListener('mousedown', this.handleDragStart);
-    
+
+    // 拖拽标题栏 - 触摸事件
+    this.headerEl?.addEventListener('touchstart', this.handleTouchStart, { passive: false });
+
     // 控制按钮
     this.querySelector('.os-window-btn.close')?.addEventListener('click', (e) => {
       e.stopPropagation();
       this.onCloseCallback?.();
     });
-    
+
     this.querySelector('.os-window-btn.minimize')?.addEventListener('click', (e) => {
       e.stopPropagation();
       this.onMinimizeCallback?.();
     });
-    
+
     this.querySelector('.os-window-btn.maximize')?.addEventListener('click', (e) => {
       e.stopPropagation();
       this.onMaximizeCallback?.();
     });
 
-    // 缩放手柄
-    this.querySelectorAll('.os-window-resize-handle').forEach(handle => {
+    // 缩放手柄 - 鼠标事件
+    this.querySelectorAll('.os-window-resize-handle').forEach((handle) => {
       handle.addEventListener('mousedown', this.handleResizeStart as EventListener);
+      // 触摸事件
+      handle.addEventListener('touchstart', this.handleTouchResizeStart as EventListener, {
+        passive: false,
+      });
     });
 
-    // 焦点
+    // 焦点 - 鼠标事件
     this.addEventListener('mousedown', () => {
       this.onFocusCallback?.();
     });
+
+    // 焦点 - 触摸事件
+    this.addEventListener(
+      'touchstart',
+      () => {
+        this.onFocusCallback?.();
+      },
+      { passive: true }
+    );
   }
 
   private removeEventListeners() {
+    // 鼠标事件
     this.headerEl?.removeEventListener('mousedown', this.handleDragStart);
     document.removeEventListener('mousemove', this.handleDragMove);
     document.removeEventListener('mouseup', this.handleDragEnd);
     document.removeEventListener('mousemove', this.handleResizeMove);
     document.removeEventListener('mouseup', this.handleResizeEnd);
+
+    // 触摸事件
+    this.headerEl?.removeEventListener('touchstart', this.handleTouchStart);
+    document.removeEventListener('touchmove', this.handleTouchMove);
+    document.removeEventListener('touchend', this.handleTouchEnd);
+    document.removeEventListener('touchmove', this.handleTouchResizeMove);
+    document.removeEventListener('touchend', this.handleTouchResizeEnd);
   }
 
   private handleDragStart = (e: MouseEvent) => {
     if ((e.target as HTMLElement).classList.contains('os-window-btn')) return;
     if (this.state.isMaximized) return;
-    
+
     this.isDragging = true;
     this.dragStartX = e.clientX;
     this.dragStartY = e.clientY;
     this.dragStartWindowX = this.state.x;
     this.dragStartWindowY = this.state.y;
-    
+
     // 添加拖动样式类，禁用 transition
     this.classList.add('dragging');
-    
+
     // 绑定全局事件
     document.addEventListener('mousemove', this.handleDragMove, { passive: true });
     document.addEventListener('mouseup', this.handleDragEnd);
-    
+
     e.preventDefault();
   };
 
   private handleDragMove = (e: MouseEvent) => {
     if (!this.isDragging) return;
-    
+
     const dx = e.clientX - this.dragStartX;
     const dy = e.clientY - this.dragStartY;
-    
+
     this.state.x = this.dragStartWindowX + dx;
     this.state.y = Math.max(0, this.dragStartWindowY + dy);
-    
+
     // 直接更新样式，不触发重排
     this.style.left = `${this.state.x}px`;
     this.style.top = `${this.state.y}px`;
@@ -199,17 +244,17 @@ class OSWindow extends HTMLElement {
 
   private handleDragEnd = () => {
     if (!this.isDragging) return;
-    
+
     this.isDragging = false;
     this.classList.remove('dragging');
-    
+
     document.removeEventListener('mousemove', this.handleDragMove);
     document.removeEventListener('mouseup', this.handleDragEnd);
   };
 
   private handleResizeStart = (e: MouseEvent) => {
     if (this.state.isMaximized) return;
-    
+
     const target = e.target as HTMLElement;
     this.resizeDirection = target.dataset.dir || '';
     this.resizeStartX = e.clientX;
@@ -218,32 +263,32 @@ class OSWindow extends HTMLElement {
     this.resizeStartHeight = this.state.height;
     this.resizeStartX_pos = this.state.x;
     this.resizeStartY_pos = this.state.y;
-    
+
     // 添加拖动样式类，禁用 transition
     this.classList.add('resizing');
-    
+
     // 绑定全局事件
     document.addEventListener('mousemove', this.handleResizeMove, { passive: true });
     document.addEventListener('mouseup', this.handleResizeEnd);
-    
+
     e.preventDefault();
     e.stopPropagation();
   };
 
   private handleResizeMove = (e: MouseEvent) => {
     if (!this.resizeDirection) return;
-    
+
     const dx = e.clientX - this.resizeStartX;
     const dy = e.clientY - this.resizeStartY;
     const dir = this.resizeDirection;
     const minW = this.state.minWidth;
     const minH = this.state.minHeight;
-    
+
     let newWidth = this.resizeStartWidth;
     let newHeight = this.resizeStartHeight;
     let newX = this.resizeStartX_pos;
     let newY = this.resizeStartY_pos;
-    
+
     // 根据方向计算新尺寸
     if (dir.includes('e')) newWidth = Math.max(minW, this.resizeStartWidth + dx);
     if (dir.includes('w')) {
@@ -255,12 +300,12 @@ class OSWindow extends HTMLElement {
       newHeight = Math.max(minH, this.resizeStartHeight - dy);
       if (newHeight > minH) newY = Math.max(0, this.resizeStartY_pos + dy);
     }
-    
+
     this.state.width = newWidth;
     this.state.height = newHeight;
     this.state.x = newX;
     this.state.y = newY;
-    
+
     this.style.width = `${newWidth}px`;
     this.style.height = `${newHeight}px`;
     this.style.left = `${newX}px`;
@@ -269,24 +314,177 @@ class OSWindow extends HTMLElement {
 
   private handleResizeEnd = () => {
     if (!this.resizeDirection) return;
-    
+
     this.resizeDirection = '';
     this.classList.remove('resizing');
-    
+
     document.removeEventListener('mousemove', this.handleResizeMove);
     document.removeEventListener('mouseup', this.handleResizeEnd);
+  };
+
+  // ========================================
+  // Touch Event Handlers
+  // ========================================
+
+  private handleTouchStart = (e: TouchEvent) => {
+    if ((e.target as HTMLElement).classList.contains('os-window-btn')) return;
+    if (this.state.isMaximized) return;
+
+    const touch = e.touches[0];
+    if (!touch) return;
+
+    e.preventDefault();
+
+    this.touchStartX = touch.clientX;
+    this.touchStartY = touch.clientY;
+    this.touchStartWindowX = this.state.x;
+    this.touchStartWindowY = this.state.y;
+    this.isTouchDragging = false;
+
+    // Check for double tap to maximize
+    const now = Date.now();
+    const timeDiff = now - this.lastTapTime;
+
+    if (
+      timeDiff < 300 &&
+      Math.abs(touch.clientX - this.lastTapX) < 30 &&
+      Math.abs(touch.clientY - this.lastTapY) < 30
+    ) {
+      // Double tap - toggle maximize
+      if (this.state.maximizable) {
+        this.onMaximizeCallback?.();
+      }
+      this.lastTapTime = 0;
+      return;
+    }
+
+    this.lastTapTime = now;
+    this.lastTapX = touch.clientX;
+    this.lastTapY = touch.clientY;
+
+    this.classList.add('dragging');
+
+    document.addEventListener('touchmove', this.handleTouchMove, { passive: false });
+    document.addEventListener('touchend', this.handleTouchEnd);
+  };
+
+  private handleTouchMove = (e: TouchEvent) => {
+    const touch = e.touches[0];
+    if (!touch) return;
+
+    const dx = touch.clientX - this.touchStartX;
+    const dy = touch.clientY - this.touchStartY;
+
+    // Start dragging only after moving a bit (to distinguish from tap)
+    if (!this.isTouchDragging && (Math.abs(dx) > 5 || Math.abs(dy) > 5)) {
+      this.isTouchDragging = true;
+    }
+
+    if (!this.isTouchDragging) return;
+
+    e.preventDefault();
+
+    this.state.x = this.touchStartWindowX + dx;
+    this.state.y = Math.max(0, this.touchStartWindowY + dy);
+
+    this.style.left = `${this.state.x}px`;
+    this.style.top = `${this.state.y}px`;
+  };
+
+  private handleTouchEnd = () => {
+    this.isTouchDragging = false;
+    this.classList.remove('dragging');
+
+    document.removeEventListener('touchmove', this.handleTouchMove);
+    document.removeEventListener('touchend', this.handleTouchEnd);
+  };
+
+  private handleTouchResizeStart = (e: TouchEvent) => {
+    if (this.state.isMaximized) return;
+
+    const touch = e.touches[0];
+    if (!touch) return;
+
+    const target = e.target as HTMLElement;
+    this.touchResizeDirection = target.dataset.dir || '';
+
+    if (!this.touchResizeDirection) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    this.touchResizeStartX = touch.clientX;
+    this.touchResizeStartY = touch.clientY;
+    this.touchResizeStartWidth = this.state.width;
+    this.touchResizeStartHeight = this.state.height;
+    this.touchResizeStartX_pos = this.state.x;
+    this.touchResizeStartY_pos = this.state.y;
+
+    this.classList.add('resizing');
+
+    document.addEventListener('touchmove', this.handleTouchResizeMove, { passive: false });
+    document.addEventListener('touchend', this.handleTouchResizeEnd);
+  };
+
+  private handleTouchResizeMove = (e: TouchEvent) => {
+    if (!this.touchResizeDirection) return;
+
+    const touch = e.touches[0];
+    if (!touch) return;
+
+    e.preventDefault();
+
+    const dx = touch.clientX - this.touchResizeStartX;
+    const dy = touch.clientY - this.touchResizeStartY;
+    const dir = this.touchResizeDirection;
+    const minW = this.state.minWidth;
+    const minH = this.state.minHeight;
+
+    let newWidth = this.touchResizeStartWidth;
+    let newHeight = this.touchResizeStartHeight;
+    let newX = this.touchResizeStartX_pos;
+    let newY = this.touchResizeStartY_pos;
+
+    if (dir.includes('e')) newWidth = Math.max(minW, this.touchResizeStartWidth + dx);
+    if (dir.includes('w')) {
+      newWidth = Math.max(minW, this.touchResizeStartWidth - dx);
+      if (newWidth > minW) newX = this.touchResizeStartX_pos + dx;
+    }
+    if (dir.includes('s')) newHeight = Math.max(minH, this.touchResizeStartHeight + dy);
+    if (dir.includes('n')) {
+      newHeight = Math.max(minH, this.touchResizeStartHeight - dy);
+      if (newHeight > minH) newY = Math.max(0, this.touchResizeStartY_pos + dy);
+    }
+
+    this.state.width = newWidth;
+    this.state.height = newHeight;
+    this.state.x = newX;
+    this.state.y = newY;
+
+    this.style.width = `${newWidth}px`;
+    this.style.height = `${newHeight}px`;
+    this.style.left = `${newX}px`;
+    this.style.top = `${newY}px`;
+  };
+
+  private handleTouchResizeEnd = () => {
+    this.touchResizeDirection = '';
+    this.classList.remove('resizing');
+
+    document.removeEventListener('touchmove', this.handleTouchResizeMove);
+    document.removeEventListener('touchend', this.handleTouchResizeEnd);
   };
 
   // 公共 API
   setState(newState: Partial<WindowState>) {
     Object.assign(this.state, newState);
-    
+
     // 只有在 DOM 已渲染后才更新样式，避免覆盖内容
     if (this.isRendered) {
       this.updateStyles();
     }
   }
-  
+
   private updateStyles() {
     const s = this.state;
     this.style.left = `${s.x}px`;
@@ -295,7 +493,7 @@ class OSWindow extends HTMLElement {
     this.style.height = `${s.height}px`;
     this.style.zIndex = String(s.zIndex);
     this.style.display = s.isMinimized ? 'none' : 'flex';
-    
+
     if (s.isActive) {
       this.classList.add('active');
       this.setAttribute('data-active', 'true');
@@ -315,7 +513,7 @@ class OSWindow extends HTMLElement {
       this.pendingContent = content;
       return;
     }
-    
+
     if (typeof content === 'string') {
       this.contentEl.innerHTML = content;
     } else {
@@ -330,21 +528,29 @@ class OSWindow extends HTMLElement {
 
   on(event: 'close' | 'minimize' | 'maximize' | 'focus', callback: () => void) {
     switch (event) {
-      case 'close': this.onCloseCallback = callback; break;
-      case 'minimize': this.onMinimizeCallback = callback; break;
-      case 'maximize': this.onMaximizeCallback = callback; break;
-      case 'focus': this.onFocusCallback = callback; break;
+      case 'close':
+        this.onCloseCallback = callback;
+        break;
+      case 'minimize':
+        this.onMinimizeCallback = callback;
+        break;
+      case 'maximize':
+        this.onMaximizeCallback = callback;
+        break;
+      case 'focus':
+        this.onFocusCallback = callback;
+        break;
     }
   }
 
   minimize() {
     this.state.isMinimized = true;
-    
+
     // 添加最小化动画
     this.classList.add('minimizing');
     this.style.transform = 'scale(0.1)';
     this.style.opacity = '0';
-    
+
     // 动画结束后隐藏
     setTimeout(() => {
       this.style.display = 'none';
@@ -357,18 +563,18 @@ class OSWindow extends HTMLElement {
   restore() {
     this.state.isMinimized = false;
     this.style.display = 'flex';
-    
+
     // 添加恢复动画
     this.classList.add('restoring');
     this.style.transform = 'scale(0.1)';
     this.style.opacity = '0';
-    
+
     // 触发重绘
     void this.offsetWidth;
-    
+
     this.style.transform = '';
     this.style.opacity = '';
-    
+
     setTimeout(() => {
       this.classList.remove('restoring');
     }, 200);
@@ -377,23 +583,23 @@ class OSWindow extends HTMLElement {
   maximize() {
     // 添加动画类
     this.classList.add('animating');
-    
+
     if (this.state.isMaximized) {
       // 恢复 - 圆角从 0 恢复到 8px
       this.classList.remove('maximized');
       this.classList.add('unmaximizing');
-      
+
       this.state.isMaximized = false;
       this.state.x = this.state.restoreX || 100;
       this.state.y = this.state.restoreY || 100;
       this.state.width = this.state.restoreWidth || 600;
       this.state.height = this.state.restoreHeight || 400;
-      
+
       this.style.left = `${this.state.x}px`;
       this.style.top = `${this.state.y}px`;
       this.style.width = `${this.state.width}px`;
       this.style.height = `${this.state.height}px`;
-      
+
       // 动画结束后清理
       setTimeout(() => {
         this.classList.remove('animating', 'unmaximizing');
@@ -401,7 +607,7 @@ class OSWindow extends HTMLElement {
     } else {
       // 最大化 - 圆角从 8px 变为 0
       this.classList.add('maximizing');
-      
+
       // 保存当前位置和大小
       this.state.restoreX = this.state.x;
       this.state.restoreY = this.state.y;
@@ -412,12 +618,12 @@ class OSWindow extends HTMLElement {
       this.state.y = 0;
       this.state.width = window.innerWidth;
       this.state.height = window.innerHeight - 48; // 减去任务栏高度
-      
+
       this.style.left = `${this.state.x}px`;
       this.style.top = `${this.state.y}px`;
       this.style.width = `${this.state.width}px`;
       this.style.height = `${this.state.height}px`;
-      
+
       // 延迟添加 maximized 类，让动画平滑
       setTimeout(() => {
         this.classList.add('maximized');
@@ -460,16 +666,16 @@ class WindowManager {
   open(options: WindowOptions): string {
     const id = options.id || `window-${++this.windowIdCounter}`;
     console.log('[WindowManager] Opening window:', id, options);
-    
+
     // 创建窗口实例
     const windowEl = document.createElement('os-window') as OSWindow;
     windowEl.setAttribute('data-window-id', id);
-    
+
     const state: WindowState = {
       id,
       title: options.title || 'Window',
-      x: options.x ?? 50 + (this.windows.size * 30) % 200,
-      y: options.y ?? 50 + (this.windows.size * 30) % 200,
+      x: options.x ?? 50 + ((this.windows.size * 30) % 200),
+      y: options.y ?? 50 + ((this.windows.size * 30) % 200),
       width: options.width || 600,
       height: options.height || 400,
       minWidth: options.minWidth || 200,
@@ -482,22 +688,22 @@ class WindowManager {
       minimizable: options.minimizable ?? true,
       maximizable: options.maximizable ?? true,
       closable: options.closable ?? true,
-      appId: options.appId
+      appId: options.appId,
     };
-    
+
     windowEl.setState(state);
-    
+
     // 设置内容
     if (options.content) {
       windowEl.setContent(options.content);
     }
-    
+
     // 绑定事件
     windowEl.on('close', () => this.close(id));
     windowEl.on('minimize', () => this.minimize(id));
     windowEl.on('maximize', () => this.maximize(id));
     windowEl.on('focus', () => this.focus(id));
-    
+
     // 添加到容器
     if (this.container) {
       console.log('[WindowManager] Appending window to container:', this.container);
@@ -505,10 +711,10 @@ class WindowManager {
     } else {
       console.error('[WindowManager] No container set! Window will not be visible.');
     }
-    
+
     this.windows.set(id, windowEl);
     this.focus(id);
-    
+
     return id;
   }
 
@@ -541,7 +747,7 @@ class WindowManager {
       const prevWindow = this.windows.get(this.activeWindowId);
       prevWindow?.blur();
     }
-    
+
     const windowEl = this.windows.get(windowId);
     if (windowEl) {
       windowEl.setState({ zIndex: this.nextZIndex++ });
@@ -551,7 +757,7 @@ class WindowManager {
   }
 
   getAll(): WindowState[] {
-    return Array.from(this.windows.values()).map(w => w.getState());
+    return Array.from(this.windows.values()).map((w) => w.getState());
   }
 
   getWindow(windowId: string): OSWindow | undefined {

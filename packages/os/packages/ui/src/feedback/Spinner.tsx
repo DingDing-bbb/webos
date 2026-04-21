@@ -101,7 +101,7 @@ const DotsSpinner: React.FC<{ size: number; color: string }> = ({ size, color })
   const dotSize = size / 4;
   return (
     <div className="spinner-dots">
-      {[0, 1, 2].map(i => (
+      {[0, 1, 2].map((i) => (
         <div
           key={i}
           className="spinner-dots__dot"
@@ -133,7 +133,7 @@ const BarsSpinner: React.FC<{ size: number; color: string }> = ({ size, color })
   const barHeight = size * 0.6;
   return (
     <div className="spinner-bars">
-      {[0, 1, 2, 3, 4].map(i => (
+      {[0, 1, 2, 3, 4].map((i) => (
         <div
           key={i}
           className="spinner-bars__bar"
@@ -232,10 +232,12 @@ export const FullscreenSpinner: React.FC<FullscreenSpinnerProps> = ({
   return (
     <div
       className="fullscreen-spinner"
-      style={{
-        '--background-opacity': backgroundOpacity,
-        zIndex: zIndex || 'var(--z-modal)',
-      } as React.CSSProperties}
+      style={
+        {
+          '--background-opacity': backgroundOpacity,
+          zIndex: zIndex || 'var(--z-modal)',
+        } as React.CSSProperties
+      }
       role="alertdialog"
       aria-modal="true"
       aria-busy="true"

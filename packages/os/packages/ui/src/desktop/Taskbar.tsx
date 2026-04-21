@@ -196,9 +196,7 @@ export const Taskbar: React.FC<TaskbarProps> = ({
             onClick={app.onClick}
             title={app.name}
           >
-            <span className="desktop-taskbar-app-icon">
-              {app.icon || <DefaultAppIcon />}
-            </span>
+            <span className="desktop-taskbar-app-icon">{app.icon || <DefaultAppIcon />}</span>
             {displayMode !== 'icon-only' && (
               <span className="desktop-taskbar-app-name">{app.name}</span>
             )}
@@ -228,7 +226,9 @@ export const Taskbar: React.FC<TaskbarProps> = ({
         {showClock && (
           <div className="desktop-taskbar-clock">
             <div className="desktop-taskbar-clock-time">{formatTime(currentTime)}</div>
-            {!isVertical && <div className="desktop-taskbar-clock-date">{formatDate(currentTime)}</div>}
+            {!isVertical && (
+              <div className="desktop-taskbar-clock-date">{formatDate(currentTime)}</div>
+            )}
           </div>
         )}
       </div>

@@ -115,7 +115,9 @@ const _spacingToCSS = (value: SpacingValue | undefined): string | undefined => {
 /**
  * Convert dimension to CSS
  */
-const dimensionToCSS = (value: string | number | 'full' | 'auto' | 'screen' | undefined): string | undefined => {
+const dimensionToCSS = (
+  value: string | number | 'full' | 'auto' | 'screen' | undefined
+): string | undefined => {
   if (value === undefined) return undefined;
   if (typeof value === 'number') return `${value}px`;
   if (value === 'full') return '100%';
@@ -265,11 +267,9 @@ Stack.displayName = 'Stack';
  * @param {VStackProps} props - Component props
  * @returns {JSX.Element} VStack container element
  */
-export const VStack = forwardRef<HTMLDivElement, VStackProps>(
-  (props, ref) => {
-    return <Stack ref={ref} direction="vertical" {...props} />;
-  }
-);
+export const VStack = forwardRef<HTMLDivElement, VStackProps>((props, ref) => {
+  return <Stack ref={ref} direction="vertical" {...props} />;
+});
 
 VStack.displayName = 'VStack';
 
@@ -283,11 +283,9 @@ VStack.displayName = 'VStack';
  * @param {HStackProps} props - Component props
  * @returns {JSX.Element} HStack container element
  */
-export const HStack = forwardRef<HTMLDivElement, HStackProps>(
-  (props, ref) => {
-    return <Stack ref={ref} direction="horizontal" {...props} />;
-  }
-);
+export const HStack = forwardRef<HTMLDivElement, HStackProps>((props, ref) => {
+  return <Stack ref={ref} direction="horizontal" {...props} />;
+});
 
 HStack.displayName = 'HStack';
 
@@ -314,15 +312,7 @@ export interface DividerProps extends Omit<React.HTMLAttributes<HTMLDivElement>,
  * @returns {JSX.Element} Divider element
  */
 export const Divider = forwardRef<HTMLDivElement, DividerProps>(
-  (
-    {
-      orientation = 'horizontal',
-      variant = 'default',
-      className = '',
-      ...rest
-    },
-    ref
-  ) => {
+  ({ orientation = 'horizontal', variant = 'default', className = '', ...rest }, ref) => {
     return (
       <div
         ref={ref}

@@ -63,8 +63,8 @@ export interface DesktopIconItem {
   name: string;
   /** Icon element */
   icon: React.ReactNode;
-  /** Handler when icon is opened (double-click) */
-  onOpen: () => void;
+  /** Handler when icon is opened (double-click) - optional if onIconOpen is provided */
+  onOpen?: () => void;
 }
 
 /**
@@ -119,6 +119,8 @@ interface DesktopProps {
   wallpaper?: WallpaperConfig;
   /** Children (typically windows) */
   children?: React.ReactNode;
+  /** Handler when icon is opened (double-click) - alternative to icon.onOpen */
+  onIconOpen?: (id: string) => void;
 }
 
 // ============================================================================
@@ -184,7 +186,10 @@ const Wallpaper: React.FC<{ config: WallpaperConfig }> = ({ config }) => {
     .filter(Boolean)
     .join(' ');
 
-  const imageStyle = isImageType && actualImageUrl ? ({ '--wallpaper-image': `url(${actualImageUrl})` } as React.CSSProperties) : {};
+  const imageStyle =
+    isImageType && actualImageUrl
+      ? ({ '--wallpaper-image': `url(${actualImageUrl})` } as React.CSSProperties)
+      : {};
 
   if (isVideoType && actualVideoUrl) {
     return (
@@ -296,7 +301,7 @@ interface DesktopIconProps {
   isSelected: boolean;
   onSelect: (id: string, e: React.MouseEvent) => void;
   onDragStart: (id: string, e: React.MouseEvent) => void;
-  onDoubleClick: () => void;
+  onDoubleClick?: () => void;
   onContextMenu: (e: React.MouseEvent) => void;
 }
 
@@ -325,7 +330,7 @@ const DesktopIcon: React.FC<DesktopIconProps> = ({
       }}
       onDoubleClick={(e) => {
         e.stopPropagation();
-        onDoubleClick();
+        onDoubleClick?.();
       }}
       onMouseDown={(e) => {
         if (e.button === 0) {
@@ -357,6 +362,7 @@ export const Desktop: React.FC<DesktopProps> = ({
   icons,
   wallpaper = { type: 'soft' },
   children,
+  onIconOpen,
 }) => {
   const displayIcons = useMemo(() => apps || icons || [], [apps, icons]);
   const desktopRef = useRef<HTMLDivElement>(null);
@@ -409,24 +415,21 @@ export const Desktop: React.FC<DesktopProps> = ({
   // ========================================
   // Icon Position Management
   // ========================================
-  const getAutoPosition = useCallback(
-    (index: number): IconPosition => {
-      if (!desktopRef.current) {
-        return { x: PADDING_X, y: PADDING_Y + index * GRID_SIZE };
-      }
+  const getAutoPosition = useCallback((index: number): IconPosition => {
+    if (!desktopRef.current) {
+      return { x: PADDING_X, y: PADDING_Y + index * GRID_SIZE };
+    }
 
-      const rect = desktopRef.current.getBoundingClientRect();
-      const cols = Math.floor((rect.width - PADDING_X * 2) / ICON_WIDTH);
-      const col = index % cols;
-      const row = Math.floor(index / cols);
+    const rect = desktopRef.current.getBoundingClientRect();
+    const cols = Math.floor((rect.width - PADDING_X * 2) / ICON_WIDTH);
+    const col = index % cols;
+    const row = Math.floor(index / cols);
 
-      return {
-        x: PADDING_X + col * ICON_WIDTH,
-        y: PADDING_Y + row * ICON_HEIGHT,
-      };
-    },
-    []
-  );
+    return {
+      x: PADDING_X + col * ICON_WIDTH,
+      y: PADDING_Y + row * ICON_HEIGHT,
+    };
+  }, []);
 
   const getIconPosition = useCallback(
     (id: string, index: number): IconPosition => {
@@ -443,10 +446,10 @@ export const Desktop: React.FC<DesktopProps> = ({
     (x: number, y: number, excludeId?: string): boolean => {
       for (const icon of displayIcons) {
         if (icon.id === excludeId) continue;
-        
+
         const pos = iconPositions[icon.id];
         if (!pos) continue;
-        
+
         // Check if positions overlap (with some tolerance)
         if (Math.abs(pos.x - x) < ICON_WIDTH - 10 && Math.abs(pos.y - y) < ICON_HEIGHT - 10) {
           return true;
@@ -473,8 +476,14 @@ export const Desktop: React.FC<DesktopProps> = ({
       const snappedY = Math.round((startY - PADDING_Y) / ICON_HEIGHT) * ICON_HEIGHT + PADDING_Y;
 
       // Clamp to desktop bounds
-      const clampedX = Math.max(PADDING_X, Math.min(snappedX, PADDING_X + (maxCols - 1) * ICON_WIDTH));
-      const clampedY = Math.max(PADDING_Y, Math.min(snappedY, PADDING_Y + (maxRows - 1) * ICON_HEIGHT));
+      const clampedX = Math.max(
+        PADDING_X,
+        Math.min(snappedX, PADDING_X + (maxCols - 1) * ICON_WIDTH)
+      );
+      const clampedY = Math.max(
+        PADDING_Y,
+        Math.min(snappedY, PADDING_Y + (maxRows - 1) * ICON_HEIGHT)
+      );
 
       if (!isPositionOccupied(clampedX, clampedY, excludeId)) {
         return { x: clampedX, y: clampedY };
@@ -485,7 +494,7 @@ export const Desktop: React.FC<DesktopProps> = ({
         for (let col = 0; col < maxCols; col++) {
           const x = PADDING_X + col * ICON_WIDTH;
           const y = PADDING_Y + row * ICON_HEIGHT;
-          
+
           if (!isPositionOccupied(x, y, excludeId)) {
             return { x, y };
           }
@@ -582,9 +591,9 @@ export const Desktop: React.FC<DesktopProps> = ({
           // 找到最近的空位
           // 优先向右找，然后向下找
           const directions = [
-            { dx: ICON_WIDTH, dy: 0 },   // 右
-            { dx: -ICON_WIDTH, dy: 0 },  // 左
-            { dx: 0, dy: ICON_HEIGHT },  // 下
+            { dx: ICON_WIDTH, dy: 0 }, // 右
+            { dx: -ICON_WIDTH, dy: 0 }, // 左
+            { dx: 0, dy: ICON_HEIGHT }, // 下
             { dx: 0, dy: -ICON_HEIGHT }, // 上
           ];
 
@@ -593,9 +602,7 @@ export const Desktop: React.FC<DesktopProps> = ({
             const newY = y + dir.dy;
 
             // 检查新位置是否有效
-            if (newX >= PADDING_X && newX <= maxX &&
-                newY >= PADDING_Y && newY <= maxY) {
-              
+            if (newX >= PADDING_X && newX <= maxX && newY >= PADDING_Y && newY <= maxY) {
               // 检查新位置是否也重叠
               let hasOverlap = false;
               for (const otherIcon of displayIcons) {
@@ -603,8 +610,10 @@ export const Desktop: React.FC<DesktopProps> = ({
                 const otherPos = iconPositions[otherIcon.id];
                 if (!otherPos) continue;
 
-                if (Math.abs(otherPos.x - newX) < ICON_WIDTH - 10 &&
-                    Math.abs(otherPos.y - newY) < ICON_HEIGHT - 10) {
+                if (
+                  Math.abs(otherPos.x - newX) < ICON_WIDTH - 10 &&
+                  Math.abs(otherPos.y - newY) < ICON_HEIGHT - 10
+                ) {
                   hasOverlap = true;
                   break;
                 }
@@ -691,18 +700,15 @@ export const Desktop: React.FC<DesktopProps> = ({
     });
   }, []);
 
-  const handleIconContextMenu = useCallback(
-    (iconId: string, e: React.MouseEvent) => {
-      setContextMenu({
-        isOpen: true,
-        x: e.clientX,
-        y: e.clientY,
-        target: 'icon',
-        iconId,
-      });
-    },
-    []
-  );
+  const handleIconContextMenu = useCallback((iconId: string, e: React.MouseEvent) => {
+    setContextMenu({
+      isOpen: true,
+      x: e.clientX,
+      y: e.clientY,
+      target: 'icon',
+      iconId,
+    });
+  }, []);
 
   const closeContextMenu = useCallback(() => {
     setContextMenu((prev) => ({ ...prev, isOpen: false }));
@@ -717,12 +723,36 @@ export const Desktop: React.FC<DesktopProps> = ({
       label: window.webos?.t('contextMenu.view') || '查看',
       icon: <ViewIcon />,
       submenu: [
-        { id: 'large-icons', label: window.webos?.t('contextMenu.largeIcons') || '大图标', onClick: () => console.log('Large icons') },
-        { id: 'small-icons', label: window.webos?.t('contextMenu.smallIcons') || '小图标', onClick: () => console.log('Small icons') },
-        { id: 'list', label: window.webos?.t('contextMenu.list') || '列表', onClick: () => console.log('List') },
-        { id: 'details', label: window.webos?.t('contextMenu.details') || '详细信息', onClick: () => console.log('Details') },
-        { id: 'tiles', label: window.webos?.t('contextMenu.tiles') || '平铺', onClick: () => console.log('Tiles') },
-        { id: 'content', label: window.webos?.t('contextMenu.content') || '内容', onClick: () => console.log('Content') },
+        {
+          id: 'large-icons',
+          label: window.webos?.t('contextMenu.largeIcons') || '大图标',
+          onClick: () => console.log('Large icons'),
+        },
+        {
+          id: 'small-icons',
+          label: window.webos?.t('contextMenu.smallIcons') || '小图标',
+          onClick: () => console.log('Small icons'),
+        },
+        {
+          id: 'list',
+          label: window.webos?.t('contextMenu.list') || '列表',
+          onClick: () => console.log('List'),
+        },
+        {
+          id: 'details',
+          label: window.webos?.t('contextMenu.details') || '详细信息',
+          onClick: () => console.log('Details'),
+        },
+        {
+          id: 'tiles',
+          label: window.webos?.t('contextMenu.tiles') || '平铺',
+          onClick: () => console.log('Tiles'),
+        },
+        {
+          id: 'content',
+          label: window.webos?.t('contextMenu.content') || '内容',
+          onClick: () => console.log('Content'),
+        },
       ],
     },
     {
@@ -730,14 +760,42 @@ export const Desktop: React.FC<DesktopProps> = ({
       label: window.webos?.t('contextMenu.sortBy') || '排序方式',
       icon: <SortIcon />,
       submenu: [
-        { id: 'name', label: window.webos?.t('contextMenu.name') || '名称', onClick: () => console.log('Sort by name') },
-        { id: 'date', label: window.webos?.t('contextMenu.modifiedDate') || '修改日期', onClick: () => console.log('Sort by date') },
-        { id: 'type', label: window.webos?.t('contextMenu.type') || '类型', onClick: () => console.log('Sort by type') },
-        { id: 'size', label: window.webos?.t('contextMenu.size') || '大小', onClick: () => console.log('Sort by size') },
-        { id: 'ascending', label: window.webos?.t('contextMenu.ascending') || '递增', onClick: () => console.log('Ascending') },
-        { id: 'descending', label: window.webos?.t('contextMenu.descending') || '递减', onClick: () => console.log('Descending') },
+        {
+          id: 'name',
+          label: window.webos?.t('contextMenu.name') || '名称',
+          onClick: () => console.log('Sort by name'),
+        },
+        {
+          id: 'date',
+          label: window.webos?.t('contextMenu.modifiedDate') || '修改日期',
+          onClick: () => console.log('Sort by date'),
+        },
+        {
+          id: 'type',
+          label: window.webos?.t('contextMenu.type') || '类型',
+          onClick: () => console.log('Sort by type'),
+        },
+        {
+          id: 'size',
+          label: window.webos?.t('contextMenu.size') || '大小',
+          onClick: () => console.log('Sort by size'),
+        },
+        {
+          id: 'ascending',
+          label: window.webos?.t('contextMenu.ascending') || '递增',
+          onClick: () => console.log('Ascending'),
+        },
+        {
+          id: 'descending',
+          label: window.webos?.t('contextMenu.descending') || '递减',
+          onClick: () => console.log('Descending'),
+        },
         { divider: true, id: 'divider-sort', label: '' },
-        { id: 'more', label: window.webos?.t('contextMenu.more') || '更多…', onClick: () => console.log('More sort options') },
+        {
+          id: 'more',
+          label: window.webos?.t('contextMenu.more') || '更多…',
+          onClick: () => console.log('More sort options'),
+        },
       ],
     },
     {
@@ -752,12 +810,32 @@ export const Desktop: React.FC<DesktopProps> = ({
       label: window.webos?.t('contextMenu.new') || '新建',
       icon: <NewIcon />,
       submenu: [
-        { id: 'new-folder', label: window.webos?.t('contextMenu.folder') || '文件夹', onClick: () => console.log('New folder') },
-        { id: 'new-shortcut', label: window.webos?.t('contextMenu.shortcut') || '快捷方式', onClick: () => console.log('New shortcut') },
+        {
+          id: 'new-folder',
+          label: window.webos?.t('contextMenu.folder') || '文件夹',
+          onClick: () => console.log('New folder'),
+        },
+        {
+          id: 'new-shortcut',
+          label: window.webos?.t('contextMenu.shortcut') || '快捷方式',
+          onClick: () => console.log('New shortcut'),
+        },
         { divider: true, id: 'divider-new', label: '' },
-        { id: 'new-text', label: window.webos?.t('contextMenu.textDocument') || '文本文档', onClick: () => console.log('New text') },
-        { id: 'new-zip', label: window.webos?.t('contextMenu.compressedFolder') || '压缩文件夹', onClick: () => console.log('New zip') },
-        { id: 'new-image', label: window.webos?.t('contextMenu.image') || '图像', onClick: () => console.log('New image') },
+        {
+          id: 'new-text',
+          label: window.webos?.t('contextMenu.textDocument') || '文本文档',
+          onClick: () => console.log('New text'),
+        },
+        {
+          id: 'new-zip',
+          label: window.webos?.t('contextMenu.compressedFolder') || '压缩文件夹',
+          onClick: () => console.log('New zip'),
+        },
+        {
+          id: 'new-image',
+          label: window.webos?.t('contextMenu.image') || '图像',
+          onClick: () => console.log('New image'),
+        },
       ],
     },
     {
@@ -770,12 +848,36 @@ export const Desktop: React.FC<DesktopProps> = ({
       label: window.webos?.t('contextMenu.personalize') || '个性化',
       icon: <PaletteIcon />,
       submenu: [
-        { id: 'theme', label: window.webos?.t('contextMenu.theme') || '主题', onClick: () => console.log('Theme') },
-        { id: 'background', label: window.webos?.t('contextMenu.background') || '背景', onClick: () => console.log('Background') },
-        { id: 'colors', label: window.webos?.t('contextMenu.colors') || '颜色', onClick: () => console.log('Colors') },
-        { id: 'lockscreen', label: window.webos?.t('contextMenu.lockScreen') || '锁屏界面', onClick: () => console.log('Lock screen') },
-        { id: 'fonts', label: window.webos?.t('contextMenu.fonts') || '字体', onClick: () => console.log('Fonts') },
-        { id: 'taskbar', label: window.webos?.t('contextMenu.taskbar') || '任务栏', onClick: () => console.log('Taskbar') },
+        {
+          id: 'theme',
+          label: window.webos?.t('contextMenu.theme') || '主题',
+          onClick: () => console.log('Theme'),
+        },
+        {
+          id: 'background',
+          label: window.webos?.t('contextMenu.background') || '背景',
+          onClick: () => console.log('Background'),
+        },
+        {
+          id: 'colors',
+          label: window.webos?.t('contextMenu.colors') || '颜色',
+          onClick: () => console.log('Colors'),
+        },
+        {
+          id: 'lockscreen',
+          label: window.webos?.t('contextMenu.lockScreen') || '锁屏界面',
+          onClick: () => console.log('Lock screen'),
+        },
+        {
+          id: 'fonts',
+          label: window.webos?.t('contextMenu.fonts') || '字体',
+          onClick: () => console.log('Fonts'),
+        },
+        {
+          id: 'taskbar',
+          label: window.webos?.t('contextMenu.taskbar') || '任务栏',
+          onClick: () => console.log('Taskbar'),
+        },
       ],
     },
     { id: 'divider-2', label: '', divider: true },
@@ -876,7 +978,13 @@ export const Desktop: React.FC<DesktopProps> = ({
             isSelected={selectedIcons.has(icon.id)}
             onSelect={handleIconSelect}
             onDragStart={handleDragStart}
-            onDoubleClick={icon.onOpen}
+            onDoubleClick={() => {
+              if (icon.onOpen) {
+                icon.onOpen();
+              } else if (onIconOpen) {
+                onIconOpen(icon.id);
+              }
+            }}
             onContextMenu={(e) => handleIconContextMenu(icon.id, e)}
           />
         ))}

@@ -104,7 +104,9 @@ const SidebarSubMenu: React.FC<SidebarSubMenuProps> = ({ item, level }) => {
             <span className="nav-sidebar-item-label">{item.label}</span>
             {item.badge && <span className="nav-sidebar-item-badge">{item.badge}</span>}
             {hasChildren && (
-              <span className={`nav-sidebar-item-arrow ${isOpen ? 'nav-sidebar-item-arrow-open' : ''}`}>
+              <span
+                className={`nav-sidebar-item-arrow ${isOpen ? 'nav-sidebar-item-arrow-open' : ''}`}
+              >
                 ▼
               </span>
             )}
@@ -220,10 +222,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
     onCollapse?.(newCollapsed);
   }, [collapsed, onCollapse]);
 
-  const handleSelect = useCallback((key: string, item: SidebarItem) => {
-    setInternalSelectedKey(key);
-    onSelect?.(key, item);
-  }, [onSelect]);
+  const handleSelect = useCallback(
+    (key: string, item: SidebarItem) => {
+      setInternalSelectedKey(key);
+      onSelect?.(key, item);
+    },
+    [onSelect]
+  );
 
   // Keyboard shortcut to toggle
   useEffect(() => {
@@ -266,11 +271,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         aria-label="Sidebar navigation"
       >
         {/* Header */}
-        {header && (
-          <div className="nav-sidebar-header">
-            {header}
-          </div>
-        )}
+        {header && <div className="nav-sidebar-header">{header}</div>}
 
         {/* Menu */}
         <nav className="nav-sidebar-nav">
@@ -286,11 +287,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </nav>
 
         {/* Footer */}
-        {footer && (
-          <div className="nav-sidebar-footer">
-            {footer}
-          </div>
-        )}
+        {footer && <div className="nav-sidebar-footer">{footer}</div>}
 
         {/* Toggle Button */}
         {showToggle && (
@@ -300,16 +297,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
             aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             title={collapsed ? 'Expand (Ctrl+B)' : 'Collapse (Ctrl+B)'}
           >
-            <span className={`nav-sidebar-toggle-icon ${collapsed ? 'nav-sidebar-toggle-icon-collapsed' : ''}`}>
+            <span
+              className={`nav-sidebar-toggle-icon ${collapsed ? 'nav-sidebar-toggle-icon-collapsed' : ''}`}
+            >
               {position === 'left' ? '◀' : '▶'}
             </span>
           </button>
         )}
 
         {/* Tooltip for collapsed items */}
-        {collapsed && (
-          <div className="nav-sidebar-tooltip" aria-hidden="true" />
-        )}
+        {collapsed && <div className="nav-sidebar-tooltip" aria-hidden="true" />}
       </aside>
     </SidebarContext.Provider>
   );
@@ -326,9 +323,7 @@ export const SidebarGroup: React.FC<SidebarGroupProps> = ({ title, children }) =
 
   return (
     <div className="nav-sidebar-group">
-      {title && !context?.collapsed && (
-        <div className="nav-sidebar-group-title">{title}</div>
-      )}
+      {title && !context?.collapsed && <div className="nav-sidebar-group-title">{title}</div>}
       {children}
     </div>
   );

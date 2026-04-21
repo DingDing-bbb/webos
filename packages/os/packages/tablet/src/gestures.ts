@@ -1,6 +1,22 @@
-// 触摸手势处理模块
+/**
+ * 手势识别模块
+ * 基于 Windows 触控手势指南
+ */
 
-export type GestureType = 'tap' | 'doubleTap' | 'longPress' | 'swipe' | 'pinch' | 'pan';
+export type GestureType =
+  | 'tap'
+  | 'doubleTap'
+  | 'longPress'
+  | 'pressAndHold'
+  | 'swipe'
+  | 'pinch'
+  | 'stretch'
+  | 'pan'
+  | 'rotate';
+
+export type SwipeDirection = 'left' | 'right' | 'up' | 'down';
+
+export type EdgePosition = 'left' | 'right' | 'top' | 'bottom' | null;
 
 export interface GestureEvent {
   type: GestureType;
@@ -12,240 +28,293 @@ export interface GestureEvent {
   deltaX: number;
   deltaY: number;
   velocity: number;
-  scale?: number;
-  direction?: 'left' | 'right' | 'up' | 'down';
+  scale: number;
+  rotation: number;
+  direction: SwipeDirection | null;
+  edge: EdgePosition;
   duration: number;
+  fingerCount: number;
+  timestamp: number;
 }
 
-export interface GestureOptions {
-  tapThreshold?: number;      // 点击判定距离阈值
-  tapTimeout?: number;        // 点击判定时间阈值
-  doubleTapTimeout?: number;  // 双击间隔时间
-  longPressTimeout?: number;  // 长按判定时间
-  swipeThreshold?: number;    // 滑动判定距离
-  swipeVelocity?: number;     // 滑动最小速度
+export interface GestureConfig {
+  tapThreshold: number;
+  tapTimeout: number;
+  doubleTapTimeout: number;
+  longPressTimeout: number;
+  pressAndHoldTimeout: number;
+  swipeThreshold: number;
+  swipeVelocity: number;
+  pinchThreshold: number;
+  rotateThreshold: number;
+  edgeThreshold: number;
 }
 
-const defaultOptions: GestureOptions = {
+const defaultConfig: GestureConfig = {
   tapThreshold: 10,
-  tapTimeout: 250,
+  tapTimeout: 200,
   doubleTapTimeout: 300,
-  longPressTimeout: 500,
+  longPressTimeout: 800,
+  pressAndHoldTimeout: 300,
   swipeThreshold: 50,
-  swipeVelocity: 0.3
+  swipeVelocity: 0.3,
+  pinchThreshold: 10,
+  rotateThreshold: 5,
+  edgeThreshold: 20,
+};
+
+type GestureCallbacks = {
+  onTap?: (e: GestureEvent) => void;
+  onDoubleTap?: (e: GestureEvent) => void;
+  onLongPress?: (e: GestureEvent) => void;
+  onPressAndHold?: (e: GestureEvent) => void;
+  onSwipe?: (e: GestureEvent) => void;
+  onPinch?: (e: GestureEvent) => void;
+  onStretch?: (e: GestureEvent) => void;
+  onRotate?: (e: GestureEvent) => void;
+  onPan?: (e: GestureEvent) => void;
+  onPanStart?: (e: GestureEvent) => void;
+  onPanEnd?: (e: GestureEvent) => void;
+  onEdgeSwipe?: (e: GestureEvent) => void;
 };
 
 class GestureDetector {
-  private options: GestureOptions;
-  private touchStart: { x: number; y: number; time: number } | null = null;
-  private lastTap: { x: number; y: number; time: number } | null = null;
-  private longPressTimer: number | null = null;
-  private isPanning = false;
-  private initialDistance = 0;
-  private currentScale = 1;
+  private config: GestureConfig;
 
-  constructor(options: Partial<GestureOptions> = {}) {
-    this.options = { ...defaultOptions, ...options };
+  constructor(config: Partial<GestureConfig> = {}) {
+    this.config = { ...defaultConfig, ...config };
   }
 
-  // 创建手势识别器
-  createRecognizer(element: HTMLElement, callbacks: {
-    onTap?: (e: GestureEvent) => void;
-    onDoubleTap?: (e: GestureEvent) => void;
-    onLongPress?: (e: GestureEvent) => void;
-    onSwipe?: (e: GestureEvent) => void;
-    onPinch?: (e: GestureEvent) => void;
-    onPan?: (e: GestureEvent) => void;
-    onPanStart?: (e: GestureEvent) => void;
-    onPanEnd?: (e: GestureEvent) => void;
-  }): () => void {
-    
-    const handleTouchStart = (e: TouchEvent) => {
-      const touch = e.touches[0];
+  createRecognizer(element: HTMLElement, callbacks: GestureCallbacks): () => void {
+    let touchStart: { x: number; y: number; time: number } | null = null;
+    let lastTap: { x: number; y: number; time: number } | null = null;
+    let longPressTimer: number | null = null;
+    let pressAndHoldTimer: number | null = null;
+    let isPanning = false;
+    let initialDistance = 0;
+    let initialAngle = 0;
+    let currentScale = 1;
+    let currentRotation = 0;
+
+    const getTouch = (e: TouchEvent): Touch | null => {
+      return e.touches[0] || e.changedTouches[0] || null;
+    };
+
+    const getEdgePosition = (x: number, y: number): EdgePosition => {
+      const threshold = this.config.edgeThreshold;
+      if (x <= threshold) return 'left';
+      if (x >= window.innerWidth - threshold) return 'right';
+      if (y <= threshold) return 'top';
+      if (y >= window.innerHeight - threshold) return 'bottom';
+      return null;
+    };
+
+    const getDistance = (x1: number, y1: number, x2: number, y2: number): number => {
+      return Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+    };
+
+    const getAngle = (x1: number, y1: number, x2: number, y2: number): number => {
+      return Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
+    };
+
+    const createEvent = (
+      type: GestureType,
+      originalEvent: TouchEvent,
+      overrides: Partial<GestureEvent> = {}
+    ): GestureEvent => {
+      const touch = getTouch(originalEvent);
+      const x = touch?.clientX ?? 0;
+      const y = touch?.clientY ?? 0;
+      const startTime = touchStart?.time ?? Date.now();
+
+      return {
+        type,
+        target: originalEvent.target,
+        startX: touchStart?.x ?? x,
+        startY: touchStart?.y ?? y,
+        currentX: x,
+        currentY: y,
+        deltaX: touchStart ? x - touchStart.x : 0,
+        deltaY: touchStart ? y - touchStart.y : 0,
+        velocity: 0,
+        scale: currentScale,
+        rotation: currentRotation,
+        direction: null,
+        edge: getEdgePosition(touchStart?.x ?? x, touchStart?.y ?? y),
+        duration: Date.now() - startTime,
+        fingerCount: originalEvent.touches.length || originalEvent.changedTouches.length,
+        timestamp: Date.now(),
+        ...overrides,
+      };
+    };
+
+    const getSwipeDirection = (deltaX: number, deltaY: number): SwipeDirection => {
+      if (Math.abs(deltaX) > Math.abs(deltaY)) {
+        return deltaX > 0 ? 'right' : 'left';
+      }
+      return deltaY > 0 ? 'down' : 'up';
+    };
+
+    const clearTimers = (): void => {
+      if (longPressTimer) {
+        clearTimeout(longPressTimer);
+        longPressTimer = null;
+      }
+      if (pressAndHoldTimer) {
+        clearTimeout(pressAndHoldTimer);
+        pressAndHoldTimer = null;
+      }
+    };
+
+    const handleTouchStart = (e: TouchEvent): void => {
+      const touch = getTouch(e);
       if (!touch) return;
-      
-      this.touchStart = {
+
+      touchStart = {
         x: touch.clientX,
         y: touch.clientY,
-        time: Date.now()
+        time: Date.now(),
       };
-      
-      this.isPanning = false;
-      this.currentScale = 1;
 
-      // 多指触摸 - 捏合手势
+      isPanning = false;
+      currentScale = 1;
+      currentRotation = 0;
+
       if (e.touches.length === 2) {
-        const touch0 = e.touches[0];
-        const touch1 = e.touches[1];
-        if (touch0 && touch1) {
-          this.initialDistance = this.getDistance(
-            touch0.clientX, touch0.clientY,
-            touch1.clientX, touch1.clientY
-          );
+        const t0 = e.touches[0];
+        const t1 = e.touches[1];
+        if (t0 && t1) {
+          initialDistance = getDistance(t0.clientX, t0.clientY, t1.clientX, t1.clientY);
+          initialAngle = getAngle(t0.clientX, t0.clientY, t1.clientX, t1.clientY);
         }
       }
 
-      // 长按检测
-      this.longPressTimer = window.setTimeout(() => {
-        if (this.touchStart && !this.isPanning) {
-          const event = this.createGestureEvent('longPress', e);
-          callbacks.onLongPress?.(event);
+      longPressTimer = window.setTimeout(() => {
+        if (touchStart && !isPanning) {
+          callbacks.onLongPress?.(createEvent('longPress', e));
         }
-      }, this.options.longPressTimeout);
+      }, this.config.longPressTimeout);
+
+      pressAndHoldTimer = window.setTimeout(() => {
+        if (touchStart && !isPanning) {
+          callbacks.onPressAndHold?.(createEvent('pressAndHold', e));
+        }
+      }, this.config.pressAndHoldTimeout);
     };
 
-    const handleTouchMove = (e: TouchEvent) => {
-      if (!this.touchStart) return;
+    const handleTouchMove = (e: TouchEvent): void => {
+      if (!touchStart) return;
 
-      const touch = e.touches[0];
+      const touch = getTouch(e);
       if (!touch) return;
-      
-      const deltaX = touch.clientX - this.touchStart.x;
-      const deltaY = touch.clientY - this.touchStart.y;
+
+      const deltaX = touch.clientX - touchStart.x;
+      const deltaY = touch.clientY - touchStart.y;
       const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
-      // 取消长按
-      if (distance > (this.options.tapThreshold || 10) && this.longPressTimer) {
-        clearTimeout(this.longPressTimer);
-        this.longPressTimer = null;
+      if (distance > this.config.tapThreshold) {
+        clearTimers();
       }
 
-      // 开始拖动
-      if (!this.isPanning && distance > (this.options.tapThreshold || 10)) {
-        this.isPanning = true;
-        const startEvent = this.createGestureEvent('pan', e);
-        callbacks.onPanStart?.(startEvent);
+      if (!isPanning && distance > this.config.tapThreshold) {
+        isPanning = true;
+        callbacks.onPanStart?.(createEvent('pan', e));
       }
 
-      // 拖动中
-      if (this.isPanning) {
-        const event = this.createGestureEvent('pan', e);
-        callbacks.onPan?.(event);
+      if (isPanning) {
+        callbacks.onPan?.(createEvent('pan', e));
       }
 
-      // 捏合手势
-      if (e.touches.length === 2 && this.initialDistance > 0) {
-        const touch0 = e.touches[0];
-        const touch1 = e.touches[1];
-        if (touch0 && touch1) {
-          const currentDistance = this.getDistance(
-            touch0.clientX, touch0.clientY,
-            touch1.clientX, touch1.clientY
-          );
-          this.currentScale = currentDistance / this.initialDistance;
-          
-          const event = this.createGestureEvent('pinch', e);
-          event.scale = this.currentScale;
-          callbacks.onPinch?.(event);
+      if (e.touches.length === 2 && initialDistance > 0) {
+        const t0 = e.touches[0];
+        const t1 = e.touches[1];
+        if (t0 && t1) {
+          const currentDistance = getDistance(t0.clientX, t0.clientY, t1.clientX, t1.clientY);
+          const currentAngle = getAngle(t0.clientX, t0.clientY, t1.clientX, t1.clientY);
+
+          currentScale = currentDistance / initialDistance;
+          currentRotation = currentAngle - initialAngle;
+
+          if (Math.abs(currentScale - 1) > this.config.pinchThreshold / 100) {
+            if (currentScale > 1) {
+              callbacks.onStretch?.(createEvent('stretch', e, { scale: currentScale }));
+            } else {
+              callbacks.onPinch?.(createEvent('pinch', e, { scale: currentScale }));
+            }
+          }
+
+          if (Math.abs(currentRotation) > this.config.rotateThreshold) {
+            callbacks.onRotate?.(createEvent('rotate', e, { rotation: currentRotation }));
+          }
         }
       }
     };
 
-    const handleTouchEnd = (e: TouchEvent) => {
-      if (this.longPressTimer) {
-        clearTimeout(this.longPressTimer);
-        this.longPressTimer = null;
-      }
+    const handleTouchEnd = (e: TouchEvent): void => {
+      clearTimers();
 
-      if (!this.touchStart) return;
+      if (!touchStart) return;
 
-      const touch = e.changedTouches[0];
+      const touch = getTouch(e);
       if (!touch) return;
-      
-      const deltaX = touch.clientX - this.touchStart.x;
-      const deltaY = touch.clientY - this.touchStart.y;
+
+      const deltaX = touch.clientX - touchStart.x;
+      const deltaY = touch.clientY - touchStart.y;
       const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-      const duration = Date.now() - this.touchStart.time;
+      const duration = Date.now() - touchStart.time;
       const velocity = distance / duration;
 
-      // 拖动结束
-      if (this.isPanning) {
-        const event = this.createGestureEvent('pan', e);
-        callbacks.onPanEnd?.(event);
-      }
-      // 滑动手势
-      else if (distance > (this.options.swipeThreshold || 50) || velocity > (this.options.swipeVelocity || 0.3)) {
-        const event = this.createGestureEvent('swipe', e);
-        event.direction = this.getSwipeDirection(deltaX, deltaY);
-        event.velocity = velocity;
-        callbacks.onSwipe?.(event);
-      }
-      // 点击手势
-      else if (distance < (this.options.tapThreshold || 10) && duration < (this.options.tapTimeout || 250)) {
+      if (isPanning) {
+        callbacks.onPanEnd?.(createEvent('pan', e));
+
+        if (distance > this.config.swipeThreshold || velocity > this.config.swipeVelocity) {
+          const direction = getSwipeDirection(deltaX, deltaY);
+          const event = createEvent('swipe', e, {
+            direction,
+            velocity,
+            edge: getEdgePosition(touchStart.x, touchStart.y),
+          });
+          callbacks.onSwipe?.(event);
+
+          if (event.edge) {
+            callbacks.onEdgeSwipe?.(event);
+          }
+        }
+      } else if (distance < this.config.tapThreshold && duration < this.config.tapTimeout) {
         const now = Date.now();
-        
-        // 双击检测
-        if (this.lastTap && 
-            now - this.lastTap.time < (this.options.doubleTapTimeout || 300) &&
-            Math.abs(touch.clientX - this.lastTap.x) < 30 &&
-            Math.abs(touch.clientY - this.lastTap.y) < 30) {
-          const event = this.createGestureEvent('doubleTap', e);
-          callbacks.onDoubleTap?.(event);
-          this.lastTap = null;
+
+        if (
+          lastTap &&
+          now - lastTap.time < this.config.doubleTapTimeout &&
+          Math.abs(touch.clientX - lastTap.x) < 30 &&
+          Math.abs(touch.clientY - lastTap.y) < 30
+        ) {
+          callbacks.onDoubleTap?.(createEvent('doubleTap', e));
+          lastTap = null;
         } else {
-          this.lastTap = { x: touch.clientX, y: touch.clientY, time: now };
-          const event = this.createGestureEvent('tap', e);
-          callbacks.onTap?.(event);
+          lastTap = { x: touch.clientX, y: touch.clientY, time: now };
+          callbacks.onTap?.(createEvent('tap', e));
         }
       }
 
-      this.touchStart = null;
-      this.isPanning = false;
-      this.initialDistance = 0;
+      touchStart = null;
+      isPanning = false;
+      initialDistance = 0;
+      initialAngle = 0;
     };
 
-    // 绑定事件
     element.addEventListener('touchstart', handleTouchStart, { passive: false });
     element.addEventListener('touchmove', handleTouchMove, { passive: false });
     element.addEventListener('touchend', handleTouchEnd, { passive: false });
+    element.addEventListener('touchcancel', handleTouchEnd, { passive: false });
 
-    // 返回清理函数
     return () => {
       element.removeEventListener('touchstart', handleTouchStart);
       element.removeEventListener('touchmove', handleTouchMove);
       element.removeEventListener('touchend', handleTouchEnd);
+      element.removeEventListener('touchcancel', handleTouchEnd);
+      clearTimers();
     };
-  }
-
-  private createGestureEvent(type: GestureType, originalEvent: TouchEvent): GestureEvent {
-    const touch = originalEvent.changedTouches[0] || originalEvent.touches[0];
-    if (!touch) {
-      return {
-        type,
-        target: originalEvent.target,
-        startX: 0,
-        startY: 0,
-        currentX: 0,
-        currentY: 0,
-        deltaX: 0,
-        deltaY: 0,
-        velocity: 0,
-        duration: 0
-      };
-    }
-    return {
-      type,
-      target: originalEvent.target,
-      startX: this.touchStart?.x || touch.clientX,
-      startY: this.touchStart?.y || touch.clientY,
-      currentX: touch.clientX,
-      currentY: touch.clientY,
-      deltaX: this.touchStart ? touch.clientX - this.touchStart.x : 0,
-      deltaY: this.touchStart ? touch.clientY - this.touchStart.y : 0,
-      velocity: 0,
-      duration: this.touchStart ? Date.now() - this.touchStart.time : 0
-    };
-  }
-
-  private getDistance(x1: number, y1: number, x2: number, y2: number): number {
-    return Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
-  }
-
-  private getSwipeDirection(deltaX: number, deltaY: number): 'left' | 'right' | 'up' | 'down' {
-    if (Math.abs(deltaX) > Math.abs(deltaY)) {
-      return deltaX > 0 ? 'right' : 'left';
-    }
-    return deltaY > 0 ? 'down' : 'up';
   }
 }
 

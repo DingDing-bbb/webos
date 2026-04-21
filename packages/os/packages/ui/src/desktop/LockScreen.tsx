@@ -180,9 +180,7 @@ export const LockScreen: React.FC<LockScreenProps> = ({
         {/* User & Password */}
         <div className={`desktop-lockscreen-user ${showPasswordField ? 'expanded' : ''}`}>
           {/* Avatar */}
-          <div className="desktop-lockscreen-avatar">
-            {userAvatar || <UserIcon />}
-          </div>
+          <div className="desktop-lockscreen-avatar">{userAvatar || <UserIcon />}</div>
 
           {/* Username */}
           <div className="desktop-lockscreen-username">{userName}</div>
@@ -200,16 +198,8 @@ export const LockScreen: React.FC<LockScreenProps> = ({
                   disabled={isLoading}
                   className="desktop-lockscreen-password-input"
                 />
-                <button
-                  type="submit"
-                  className="desktop-lockscreen-submit"
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <span className="desktop-lockscreen-spinner" />
-                  ) : (
-                    <ArrowIcon />
-                  )}
+                <button type="submit" className="desktop-lockscreen-submit" disabled={isLoading}>
+                  {isLoading ? <span className="desktop-lockscreen-spinner" /> : <ArrowIcon />}
                 </button>
               </div>
 

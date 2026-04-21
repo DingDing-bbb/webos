@@ -109,7 +109,8 @@
     border: none;
     border-radius: var(--os-radius-md);
     box-shadow: var(--os-shadow-notification);
-    transition: transform var(--os-transition-spring),
-                opacity var(--os-transition-spring);
+    transition:
+      transform var(--os-transition-spring),
+      opacity var(--os-transition-spring);
   }
 }

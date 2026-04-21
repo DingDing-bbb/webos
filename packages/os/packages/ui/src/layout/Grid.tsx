@@ -41,7 +41,18 @@ type SpacingValue = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
  * Grid columns options
  */
 export type GridColumns =
-  | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12
+  | 1
+  | 2
+  | 3
+  | 4
+  | 5
+  | 6
+  | 7
+  | 8
+  | 9
+  | 10
+  | 11
+  | 12
   | 'auto-fill'
   | 'auto-fit'
   | 'responsive';
@@ -130,7 +141,9 @@ const spacingToCSS = (value: SpacingValue | undefined): string | undefined => {
 /**
  * Convert dimension to CSS
  */
-const dimensionToCSS = (value: string | number | 'full' | 'auto' | 'screen' | undefined): string | undefined => {
+const dimensionToCSS = (
+  value: string | number | 'full' | 'auto' | 'screen' | undefined
+): string | undefined => {
   if (value === undefined) return undefined;
   if (typeof value === 'number') return `${value}px`;
   if (value === 'full') return '100%';
@@ -258,7 +271,19 @@ export const Grid = forwardRef<HTMLDivElement, GridProps>(
       }
 
       return style;
-    }, [columns, rowGap, columnGap, minItemWidth, flow, alignItems, justifyItems, width, height, responsiveColumns, propStyle]);
+    }, [
+      columns,
+      rowGap,
+      columnGap,
+      minItemWidth,
+      flow,
+      alignItems,
+      justifyItems,
+      width,
+      height,
+      responsiveColumns,
+      propStyle,
+    ]);
 
     return (
       <div

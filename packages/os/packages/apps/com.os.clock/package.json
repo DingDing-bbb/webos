@@ -1,6 +1,6 @@
 {
   "name": "@app/com.os.clock",
-  "version": "1.0.0",
+  "version": "0.0.1-alpha",
   "description": "WebOS Clock Application - Digital clock with alarm functionality",
   "private": true,
   "type": "module",
@@ -8,7 +8,12 @@
   "types": "./src/index.tsx",
   "author": "WebOS Team",
   "category": "utilities",
-  "keywords": ["webos", "app", "clock", "alarm"],
+  "keywords": [
+    "webos",
+    "app",
+    "clock",
+    "alarm"
+  ],
   "dependencies": {
     "@webos/apps": "workspace:*"
   }

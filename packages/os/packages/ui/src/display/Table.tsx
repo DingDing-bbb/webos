@@ -24,14 +24,7 @@
  * ```
  */
 
-import React, {
-  useState,
-  useMemo,
-  useCallback,
-  useRef,
-  useEffect,
-  memo,
-} from 'react';
+import React, { useState, useMemo, useCallback, useRef, useEffect, memo } from 'react';
 
 // ============================================================================
 // Types
@@ -158,11 +151,7 @@ function getRowKey<T>(
   return `row-${index}`;
 }
 
-function sortData<T>(
-  data: T[],
-  sortState: SortState,
-  columns: TableColumn<T>[]
-): T[] {
+function sortData<T>(data: T[], sortState: SortState, columns: TableColumn<T>[]): T[] {
   if (!sortState.key || !sortState.order) {
     return data;
   }
@@ -185,11 +174,7 @@ function sortData<T>(
   });
 }
 
-function filterData<T>(
-  data: T[],
-  filters: FilterState,
-  columns: TableColumn<T>[]
-): T[] {
+function filterData<T>(data: T[], filters: FilterState, columns: TableColumn<T>[]): T[] {
   const activeFilters = Object.entries(filters).filter(([, value]) => value);
   if (activeFilters.length === 0) {
     return data;
@@ -204,9 +189,7 @@ function filterData<T>(
         return column.filter(recordValue, filterValue);
       }
 
-      return String(recordValue)
-        .toLowerCase()
-        .includes(filterValue.toLowerCase());
+      return String(recordValue).toLowerCase().includes(filterValue.toLowerCase());
     });
   });
 }
@@ -320,105 +303,103 @@ interface TableRowProps<T> {
   onRowClick?: (record: T, index: number) => void;
 }
 
-const TableRow = memo(<T,>({
-  columns,
-  record,
-  index,
-  rowKey: _rowKey,
-  expanded,
-  expandable,
-  onExpand,
-  rowClassName,
-  onRowClick,
-}: TableRowProps<T>) => {
-  const isExpandable = expandable?.rowExpandable?.(record) ?? true;
-  const hasExpandRender = expandable?.expandedRowRender;
+const TableRow = memo(
+  <T,>({
+    columns,
+    record,
+    index,
+    rowKey: _rowKey,
+    expanded,
+    expandable,
+    onExpand,
+    rowClassName,
+    onRowClick,
+  }: TableRowProps<T>) => {
+    const isExpandable = expandable?.rowExpandable?.(record) ?? true;
+    const hasExpandRender = expandable?.expandedRowRender;
 
-  const handleRowClick = () => {
-    onRowClick?.(record, index);
-  };
+    const handleRowClick = () => {
+      onRowClick?.(record, index);
+    };
 
-  const handleExpand = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    onExpand?.(!expanded);
-  };
+    const handleExpand = (e: React.MouseEvent) => {
+      e.stopPropagation();
+      onExpand?.(!expanded);
+    };
 
-  const rowClasses = [
-    'ui-table-row',
-    typeof rowClassName === 'function'
-      ? rowClassName(record, index)
-      : rowClassName,
-    expanded ? 'expanded' : '',
-    hasExpandRender ? 'expandable' : '',
-  ]
-    .filter(Boolean)
-    .join(' ');
+    const rowClasses = [
+      'ui-table-row',
+      typeof rowClassName === 'function' ? rowClassName(record, index) : rowClassName,
+      expanded ? 'expanded' : '',
+      hasExpandRender ? 'expandable' : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
 
-  return (
-    <>
-      <tr className={rowClasses} onClick={handleRowClick}>
-        {hasExpandRender && (
-          <td className="ui-table-expand-cell">
-            {isExpandable && (
-              <button
-                className="ui-table-expand-btn"
-                onClick={handleExpand}
-                aria-expanded={expanded}
-              >
-                <span className={`expand-icon ${expanded ? 'expanded' : ''}`}>
-                  ▶
-                </span>
-              </button>
-            )}
-          </td>
-        )}
-        {columns.map((column) => {
-          const value = (record as Record<string, unknown>)[column.key];
-          const isFixedLeft = column.fixed === 'left';
-          const isFixedRight = column.fixed === 'right';
-
-          const cellStyle: React.CSSProperties = {
-            textAlign: column.align,
-          };
-
-          if (isFixedLeft) {
-            cellStyle.position = 'sticky';
-            cellStyle.left = hasExpandRender ? 40 : 0;
-            cellStyle.zIndex = 5;
-          }
-          if (isFixedRight) {
-            cellStyle.position = 'sticky';
-            cellStyle.right = 0;
-            cellStyle.zIndex = 5;
-          }
-
-          return (
-            <td
-              key={column.key}
-              className={`ui-table-cell ${column.ellipsis ? 'ellipsis' : ''}`}
-              style={cellStyle}
-            >
-              {column.render
-                ? column.render(value, record, index)
-                : value !== undefined
-                  ? String(value)
-                  : null}
+    return (
+      <>
+        <tr className={rowClasses} onClick={handleRowClick}>
+          {hasExpandRender && (
+            <td className="ui-table-expand-cell">
+              {isExpandable && (
+                <button
+                  className="ui-table-expand-btn"
+                  onClick={handleExpand}
+                  aria-expanded={expanded}
+                >
+                  <span className={`expand-icon ${expanded ? 'expanded' : ''}`}>▶</span>
+                </button>
+              )}
             </td>
-          );
-        })}
-      </tr>
-      {expanded && hasExpandRender && (
-        <tr className="ui-table-expanded-row">
-          <td colSpan={columns.length + (hasExpandRender ? 1 : 0)}>
-            <div className="ui-table-expanded-content">
-              {expandable.expandedRowRender(record, index)}
-            </div>
-          </td>
+          )}
+          {columns.map((column) => {
+            const value = (record as Record<string, unknown>)[column.key];
+            const isFixedLeft = column.fixed === 'left';
+            const isFixedRight = column.fixed === 'right';
+
+            const cellStyle: React.CSSProperties = {
+              textAlign: column.align,
+            };
+
+            if (isFixedLeft) {
+              cellStyle.position = 'sticky';
+              cellStyle.left = hasExpandRender ? 40 : 0;
+              cellStyle.zIndex = 5;
+            }
+            if (isFixedRight) {
+              cellStyle.position = 'sticky';
+              cellStyle.right = 0;
+              cellStyle.zIndex = 5;
+            }
+
+            return (
+              <td
+                key={column.key}
+                className={`ui-table-cell ${column.ellipsis ? 'ellipsis' : ''}`}
+                style={cellStyle}
+              >
+                {column.render
+                  ? column.render(value, record, index)
+                  : value !== undefined
+                    ? String(value)
+                    : null}
+              </td>
+            );
+          })}
         </tr>
-      )}
-    </>
-  );
-}) as <T>(props: TableRowProps<T>) => JSX.Element;
+        {expanded && hasExpandRender && (
+          <tr className="ui-table-expanded-row">
+            <td colSpan={columns.length + (hasExpandRender ? 1 : 0)}>
+              <div className="ui-table-expanded-content">
+                {expandable.expandedRowRender(record, index)}
+              </div>
+            </td>
+          </tr>
+        )}
+      </>
+    );
+  }
+) as <T>(props: TableRowProps<T>) => JSX.Element;
 
 interface PaginationProps {
   current: number;
@@ -485,8 +466,7 @@ function Pagination({
   return (
     <div className="ui-table-pagination">
       <div className="pagination-info">
-        Showing {(current - 1) * pageSize + 1} -{' '}
-        {Math.min(current * pageSize, total)} of {total}
+        Showing {(current - 1) * pageSize + 1} - {Math.min(current * pageSize, total)} of {total}
       </div>
 
       <div className="pagination-pages">
@@ -853,9 +833,7 @@ export function Table<T extends Record<string, unknown> = Record<string, unknown
 
   return (
     <div className={tableClasses} style={containerStyle}>
-      <div className="ui-table-wrapper">
-        {virtualScroll ? renderVirtualTable() : renderTable()}
-      </div>
+      <div className="ui-table-wrapper">{virtualScroll ? renderVirtualTable() : renderTable()}</div>
 
       {pagination !== false && (
         <Pagination

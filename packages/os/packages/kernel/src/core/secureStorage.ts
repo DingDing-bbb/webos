@@ -11,7 +11,7 @@ const STORES = {
   USERS: 'users',
   SETTINGS: 'settings',
   SESSION: 'session',
-  VAULT: 'vault' // 加密的数据存储
+  VAULT: 'vault', // 加密的数据存储
 } as const;
 
 /**
@@ -24,40 +24,40 @@ let db: IDBDatabase | null = null;
  */
 export async function initDatabase(): Promise<IDBDatabase> {
   if (db) return db;
-  
+
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, DB_VERSION);
-    
+
     request.onerror = () => {
       console.error('[SecureStorage] Failed to open database:', request.error);
       reject(request.error);
     };
-    
+
     request.onsuccess = () => {
       db = request.result;
       resolve(db);
     };
-    
+
     request.onupgradeneeded = (event) => {
       const database = (event.target as IDBOpenDBRequest).result;
-      
+
       // 用户存储
       if (!database.objectStoreNames.contains(STORES.USERS)) {
         const userStore = database.createObjectStore(STORES.USERS, { keyPath: 'username' });
         userStore.createIndex('role', 'role', { unique: false });
         userStore.createIndex('createdAt', 'createdAt', { unique: false });
       }
-      
+
       // 设置存储
       if (!database.objectStoreNames.contains(STORES.SETTINGS)) {
         database.createObjectStore(STORES.SETTINGS, { keyPath: 'key' });
       }
-      
+
       // 会话存储
       if (!database.objectStoreNames.contains(STORES.SESSION)) {
         database.createObjectStore(STORES.SESSION, { keyPath: 'id' });
       }
-      
+
       // 加密数据存储
       if (!database.objectStoreNames.contains(STORES.VAULT)) {
         const vaultStore = database.createObjectStore(STORES.VAULT, { keyPath: 'key' });
@@ -70,7 +70,10 @@ export async function initDatabase(): Promise<IDBDatabase> {
 /**
  * 通用存储操作
  */
-async function getStore(storeName: string, mode: IDBTransactionMode = 'readonly'): Promise<IDBObjectStore> {
+async function getStore(
+  storeName: string,
+  mode: IDBTransactionMode = 'readonly'
+): Promise<IDBObjectStore> {
   const database = await initDatabase();
   const transaction = database.transaction(storeName, mode);
   return transaction.objectStore(storeName);
@@ -81,7 +84,7 @@ async function getStore(storeName: string, mode: IDBTransactionMode = 'readonly'
  */
 async function putRecord<T extends object>(storeName: string, record: T): Promise<void> {
   const store = await getStore(storeName, 'readwrite');
-  
+
   return new Promise((resolve, reject) => {
     const request = store.put(record);
     request.onsuccess = () => resolve();
@@ -94,7 +97,7 @@ async function putRecord<T extends object>(storeName: string, record: T): Promis
  */
 async function getRecord<T>(storeName: string, key: string): Promise<T | null> {
   const store = await getStore(storeName);
-  
+
   return new Promise((resolve, reject) => {
     const request = store.get(key);
     request.onsuccess = () => resolve(request.result || null);
@@ -107,7 +110,7 @@ async function getRecord<T>(storeName: string, key: string): Promise<T | null> {
  */
 async function deleteRecord(storeName: string, key: string): Promise<void> {
   const store = await getStore(storeName, 'readwrite');
-  
+
   return new Promise((resolve, reject) => {
     const request = store.delete(key);
     request.onsuccess = () => resolve();
@@ -120,7 +123,7 @@ async function deleteRecord(storeName: string, key: string): Promise<void> {
  */
 async function getAllRecords<T>(storeName: string): Promise<T[]> {
   const store = await getStore(storeName);
-  
+
   return new Promise((resolve, reject) => {
     const request = store.getAll();
     request.onsuccess = () => resolve(request.result || []);
@@ -133,7 +136,7 @@ async function getAllRecords<T>(storeName: string): Promise<T[]> {
  */
 async function clearStore(storeName: string): Promise<void> {
   const store = await getStore(storeName, 'readwrite');
-  
+
   return new Promise((resolve, reject) => {
     const request = store.clear();
     request.onsuccess = () => resolve();
@@ -221,7 +224,7 @@ export interface VaultEntry {
 export async function saveToVault(entry: VaultEntry): Promise<void> {
   return putRecord(STORES.VAULT, {
     ...entry,
-    updatedAt: new Date().toISOString()
+    updatedAt: new Date().toISOString(),
   });
 }
 
@@ -231,7 +234,7 @@ export async function getFromVault(key: string): Promise<VaultEntry | null> {
 
 export async function getVaultByCategory(category: string): Promise<VaultEntry[]> {
   const store = await getStore(STORES.VAULT);
-  
+
   return new Promise((resolve, reject) => {
     const index = store.index('category');
     const request = index.getAll(category);
@@ -262,7 +265,7 @@ export async function saveSetting(key: string, value: unknown): Promise<void> {
   return putRecord(STORES.SETTINGS, {
     key,
     value,
-    updatedAt: new Date().toISOString()
+    updatedAt: new Date().toISOString(),
   });
 }
 
@@ -298,12 +301,12 @@ export async function resetDatabase(): Promise<void> {
   await clearUsers();
   await clearSession();
   await clearVault();
-  
+
   // 清除设置中的敏感数据
   const database = await initDatabase();
   const transaction = database.transaction(STORES.SETTINGS, 'readwrite');
   const store = transaction.objectStore(STORES.SETTINGS);
-  
+
   return new Promise((resolve, reject) => {
     const request = store.clear();
     request.onsuccess = () => resolve();
@@ -322,7 +325,7 @@ export async function exportAllData(): Promise<{
   return {
     users: await getAllUsers(),
     settings: await getAllRecords<SettingEntry>(STORES.SETTINGS),
-    vault: await getAllRecords<VaultEntry>(STORES.VAULT)
+    vault: await getAllRecords<VaultEntry>(STORES.VAULT),
   };
 }
 

@@ -45,7 +45,7 @@ class ResourceLoader {
       } catch (error: unknown) {
         task.error = (error as Error).message;
       }
-      
+
       loaded++;
       this.onProgress?.(loaded, total);
     }
@@ -54,9 +54,9 @@ class ResourceLoader {
   // 获取加载状态
   getStatus(): { loaded: number; total: number; tasks: LoadTask[] } {
     return {
-      loaded: this.tasks.filter(t => t.loaded).length,
+      loaded: this.tasks.filter((t) => t.loaded).length,
       total: this.tasks.length,
-      tasks: this.tasks
+      tasks: this.tasks,
     };
   }
 }

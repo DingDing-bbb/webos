@@ -35,6 +35,7 @@ Thumbs.db
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+bun-debug.log*
 
 # Database
 *.db
@@ -47,3 +48,26 @@ coverage/
 *.log
 *.tgz
 .npm
+
+# AI Skills
+skills/
+
+# Webpack 构建产物
+site/public/os/
+
+# Agent 工作日志
+worklog.md
+
+# 临时文件
+*.out.log
+daemon.log
+server.log
+dev.log
+
+# 进程文件
+.next.pid
+.server.pid
+.server-starting
+
+# 上传目录
+upload/

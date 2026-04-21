@@ -112,11 +112,11 @@
    柔色弥散壁纸 - 暗色模式
    ======================================== */
 
-[data-theme="dark"] .os-wallpaper-soft {
+[data-theme='dark'] .os-wallpaper-soft {
   background: linear-gradient(135deg, #0f1419 0%, #151b23 50%, #1a2029 100%);
 }
 
-[data-theme="dark"] .os-wallpaper-soft::before {
+[data-theme='dark'] .os-wallpaper-soft::before {
   background:
     /* 深蓝色色块 */
     radial-gradient(ellipse 60% 50% at 20% 30%, rgba(50, 80, 140, 0.5) 0%, transparent 60%),
@@ -131,7 +131,7 @@
   filter: blur(100px);
 }
 
-[data-theme="dark"] .os-wallpaper-soft::after {
+[data-theme='dark'] .os-wallpaper-soft::after {
   background:
     radial-gradient(ellipse 70% 60% at 40% 45%, rgba(70, 90, 130, 0.25) 0%, transparent 50%),
     radial-gradient(ellipse 60% 70% at 85% 40%, rgba(60, 70, 100, 0.3) 0%, transparent 55%);
@@ -169,7 +169,7 @@
 }
 
 /* 暗色模式图片壁纸覆盖 */
-[data-theme="dark"] .os-wallpaper-image::before {
+[data-theme='dark'] .os-wallpaper-image::before {
   background: linear-gradient(
     180deg,
     rgba(0, 0, 0, 0.2) 0%,
@@ -251,62 +251,97 @@
 
 /* 色块浮动动画 */
 @keyframes blobFloat1 {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  25% { transform: translate(5vw, 3vh) scale(1.1); }
-  50% { transform: translate(8vw, -2vh) scale(0.95); }
-  75% { transform: translate(3vw, 5vh) scale(1.05); }
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  25% {
+    transform: translate(5vw, 3vh) scale(1.1);
+  }
+  50% {
+    transform: translate(8vw, -2vh) scale(0.95);
+  }
+  75% {
+    transform: translate(3vw, 5vh) scale(1.05);
+  }
 }
 
 @keyframes blobFloat2 {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  33% { transform: translate(-4vw, 4vh) scale(1.08); }
-  66% { transform: translate(-7vw, -3vh) scale(0.92); }
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(-4vw, 4vh) scale(1.08);
+  }
+  66% {
+    transform: translate(-7vw, -3vh) scale(0.92);
+  }
 }
 
 @keyframes blobFloat3 {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(-6vw, -4vh) scale(1.12); }
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(-6vw, -4vh) scale(1.12);
+  }
 }
 
 @keyframes blobFloat4 {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  25% { transform: translate(-3vw, -5vh) scale(0.9); }
-  75% { transform: translate(4vw, 3vh) scale(1.1); }
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  25% {
+    transform: translate(-3vw, -5vh) scale(0.9);
+  }
+  75% {
+    transform: translate(4vw, 3vh) scale(1.1);
+  }
 }
 
 @keyframes blobFloat5 {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  33% { transform: translate(4vw, -3vh) scale(0.95); }
-  66% { transform: translate(-3vw, 4vh) scale(1.05); }
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(4vw, -3vh) scale(0.95);
+  }
+  66% {
+    transform: translate(-3vw, 4vh) scale(1.05);
+  }
 }
 
 /* 暗色模式动态壁纸 */
-[data-theme="dark"] .os-wallpaper-animated {
+[data-theme='dark'] .os-wallpaper-animated {
   background: linear-gradient(135deg, #0f1419 0%, #151b23 50%, #1a2029 100%);
 }
 
-[data-theme="dark"] .wallpaper-blob {
+[data-theme='dark'] .wallpaper-blob {
   opacity: 0.5;
   mix-blend-mode: screen;
 }
 
-[data-theme="dark"] .wallpaper-blob-1 {
+[data-theme='dark'] .wallpaper-blob-1 {
   background: radial-gradient(circle, rgba(50, 80, 140, 0.7) 0%, transparent 70%);
 }
 
-[data-theme="dark"] .wallpaper-blob-2 {
+[data-theme='dark'] .wallpaper-blob-2 {
   background: radial-gradient(circle, rgba(80, 60, 140, 0.65) 0%, transparent 70%);
 }
 
-[data-theme="dark"] .wallpaper-blob-3 {
+[data-theme='dark'] .wallpaper-blob-3 {
   background: radial-gradient(circle, rgba(40, 100, 100, 0.6) 0%, transparent 70%);
 }
 
-[data-theme="dark"] .wallpaper-blob-4 {
+[data-theme='dark'] .wallpaper-blob-4 {
   background: radial-gradient(circle, rgba(100, 70, 80, 0.55) 0%, transparent 70%);
 }
 
-[data-theme="dark"] .wallpaper-blob-5 {
+[data-theme='dark'] .wallpaper-blob-5 {
   background: radial-gradient(circle, rgba(60, 80, 120, 0.5) 0%, transparent 70%);
 }
 
@@ -349,13 +384,21 @@
 }
 
 @keyframes oobeBlobFlow {
-  0% { transform: translate(0, 0) rotate(0deg); }
-  100% { transform: translate(3%, 2%) rotate(1deg); }
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  100% {
+    transform: translate(3%, 2%) rotate(1deg);
+  }
 }
 
 @keyframes oobeBlobFlow2 {
-  0% { transform: translate(0, 0) rotate(0deg); }
-  100% { transform: translate(-2%, 3%) rotate(-0.5deg); }
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  100% {
+    transform: translate(-2%, 3%) rotate(-0.5deg);
+  }
 }
 
 /* ========================================
@@ -401,8 +444,12 @@
 }
 
 @keyframes oceanWave {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(5%); }
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(5%);
+  }
 }
 
 /* 森林主题 */
@@ -443,8 +490,13 @@
 }
 
 @keyframes wallpaperLoadingPulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.8; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
 }
 
 /* 壁纸过渡效果 */
@@ -507,7 +559,7 @@
 }
 
 /* 暗色模式视频壁纸覆盖 */
-[data-theme="dark"] .os-wallpaper-video::after {
+[data-theme='dark'] .os-wallpaper-video::after {
   background: linear-gradient(
     180deg,
     rgba(0, 0, 0, 0.3) 0%,

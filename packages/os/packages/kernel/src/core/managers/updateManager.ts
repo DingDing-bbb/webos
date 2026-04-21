@@ -3,6 +3,10 @@
  * 管理自动更新、版本检查和离线访问
  */
 
+// 系统配置（Turbopack 不支持 DefinePlugin）
+const VERSION = typeof __OS_VERSION__ !== 'undefined' ? __OS_VERSION__ : '0.0.1';
+declare const __OS_VERSION__: string | undefined;
+
 export interface UpdateConfig {
   autoUpdate: boolean;
   lastCheckTime: number | null;
@@ -26,16 +30,16 @@ class UpdateManager {
   private listeners: Set<(status: UpdateStatus) => void> = new Set();
   private status: UpdateStatus = {
     hasUpdate: false,
-    currentVersion: __OS_VERSION__,
+    currentVersion: VERSION,
     latestVersion: null,
     lastCheckTime: null,
     isChecking: false,
-    isUpdating: false
+    isUpdating: false,
   };
 
   constructor() {
     this.config = this.loadConfig();
-    this.status.currentVersion = __OS_VERSION__;
+    this.status.currentVersion = VERSION;
     this.status.lastCheckTime = this.config.lastCheckTime;
   }
 
@@ -51,8 +55,8 @@ class UpdateManager {
     return {
       autoUpdate: true,
       lastCheckTime: null,
-      currentVersion: __OS_VERSION__,
-      lastVersion: null
+      currentVersion: VERSION,
+      lastVersion: null,
     };
   }
 
@@ -79,7 +83,7 @@ class UpdateManager {
   }
 
   private notify(): void {
-    this.listeners.forEach(listener => listener(this.getStatus()));
+    this.listeners.forEach((listener) => listener(this.getStatus()));
   }
 
   /**
@@ -97,8 +101,8 @@ class UpdateManager {
       const response = await fetch(`/version.json?t=${timestamp}`, {
         cache: 'no-store',
         headers: {
-          'Cache-Control': 'no-cache'
-        }
+          'Cache-Control': 'no-cache',
+        },
       });
 
       if (!response.ok) {
@@ -112,14 +116,14 @@ class UpdateManager {
       this.config.lastVersion = latestVersion;
       this.saveConfig();
 
-      const hasUpdate = this.compareVersions(latestVersion, __OS_VERSION__) > 0;
+      const hasUpdate = this.compareVersions(latestVersion, VERSION) > 0;
 
       this.status = {
         ...this.status,
         hasUpdate,
         latestVersion,
         lastCheckTime: this.config.lastCheckTime,
-        isChecking: false
+        isChecking: false,
       };
 
       this.notify();
@@ -170,7 +174,7 @@ class UpdateManager {
       // 清除所有缓存
       if ('caches' in window) {
         const cacheNames = await caches.keys();
-        await Promise.all(cacheNames.map(name => caches.delete(name)));
+        await Promise.all(cacheNames.map((name) => caches.delete(name)));
       }
 
       // 注销旧的 Service Worker
@@ -226,7 +230,7 @@ class UpdateManager {
 
     try {
       const registration = await navigator.serviceWorker.register('/sw.js');
-      
+
       registration.addEventListener('updatefound', () => {
         const newWorker = registration.installing;
         if (newWorker) {
@@ -247,7 +251,6 @@ class UpdateManager {
       navigator.serviceWorker.addEventListener('controllerchange', () => {
         window.location.reload();
       });
-
     } catch (error) {
       console.error('Service Worker registration failed:', error);
     }

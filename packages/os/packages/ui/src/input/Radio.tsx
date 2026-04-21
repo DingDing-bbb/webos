@@ -28,8 +28,10 @@ import React, {
 
 export type RadioVariant = 'default' | 'button' | 'card';
 
-export interface RadioProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'checked' | 'onChange'> {
+export interface RadioProps extends Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  'type' | 'checked' | 'onChange'
+> {
   /** 是否选中 */
   checked?: boolean;
   /** 标签 */
@@ -149,7 +151,9 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
             isChecked && 'webos-radio-button--checked',
             isDisabled && 'webos-radio-button--disabled',
             className,
-          ].filter(Boolean).join(' ')}
+          ]
+            .filter(Boolean)
+            .join(' ')}
         >
           <input
             ref={ref}
@@ -176,7 +180,9 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
             isChecked && 'webos-radio-card--checked',
             isDisabled && 'webos-radio-card--disabled',
             className,
-          ].filter(Boolean).join(' ')}
+          ]
+            .filter(Boolean)
+            .join(' ')}
         >
           <input
             ref={ref}
@@ -192,9 +198,7 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
           />
           {icon && <div className="webos-radio-card-icon">{icon}</div>}
           {label && <div className="webos-radio-card-label">{label}</div>}
-          {description && (
-            <div className="webos-radio-card-description">{description}</div>
-          )}
+          {description && <div className="webos-radio-card-description">{description}</div>}
         </label>
       );
     }
@@ -205,7 +209,9 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
       isChecked && 'webos-radio-wrapper--checked',
       isDisabled && 'webos-radio-wrapper--disabled',
       className,
-    ].filter(Boolean).join(' ');
+    ]
+      .filter(Boolean)
+      .join(' ');
 
     return (
       <label className={wrapperClasses}>
@@ -247,9 +253,7 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
   name,
   className = '',
 }) => {
-  const [internalValue, setInternalValue] = useState<string | number | undefined>(
-    defaultValue
-  );
+  const [internalValue, setInternalValue] = useState<string | number | undefined>(defaultValue);
 
   const isControlled = propValue !== undefined;
   const currentValue = isControlled ? propValue : internalValue;
@@ -266,11 +270,9 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
   );
 
   // Build class names
-  const groupClasses = [
-    'webos-radio-group',
-    vertical && 'webos-radio-group--vertical',
-    className,
-  ].filter(Boolean).join(' ');
+  const groupClasses = ['webos-radio-group', vertical && 'webos-radio-group--vertical', className]
+    .filter(Boolean)
+    .join(' ');
 
   const contextValue: RadioGroupContextValue = {
     name,

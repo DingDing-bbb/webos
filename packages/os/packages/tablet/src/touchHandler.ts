@@ -1,234 +1,290 @@
-// 触摸交互处理器
+/**
+ * 触摸交互处理器
+ * 基于 Windows 触控交互 - 应用开发指南
+ */
 
 import { gestureDetector } from './gestures';
 import type { GestureEvent } from './gestures';
 
-export interface TouchWindowConfig {
+export interface TouchTargetConfig {
+  minSize: number;
+  minSpacing: number;
+  padding: number;
+}
+
+export interface WindowTouchConfig {
   enableDrag: boolean;
   enableResize: boolean;
   enableSwipeToClose: boolean;
+  enableSplitView: boolean;
   dragThreshold: number;
+  resizeHandleSize: number;
 }
 
-const defaultConfig: TouchWindowConfig = {
+const touchTargetDefaults: TouchTargetConfig = {
+  minSize: 44,
+  minSpacing: 8,
+  padding: 12,
+};
+
+const windowTouchDefaults: WindowTouchConfig = {
   enableDrag: true,
   enableResize: true,
   enableSwipeToClose: true,
-  dragThreshold: 5
+  enableSplitView: true,
+  dragThreshold: 5,
+  resizeHandleSize: 12,
 };
 
 class TouchHandler {
-  private config: TouchWindowConfig;
-  private activeWindow: HTMLElement | null = null;
-  private cleanupFns: Map<HTMLElement, () => void> = new Map();
+  private touchTargetConfig: TouchTargetConfig;
+  private windowConfig: WindowTouchConfig;
+  private activeWindows: Map<HTMLElement, () => void> = new Map();
+  private activeDrag: {
+    window: HTMLElement;
+    startX: number;
+    startY: number;
+    windowStartX: number;
+    windowStartY: number;
+  } | null = null;
 
-  constructor(config: Partial<TouchWindowConfig> = {}) {
-    this.config = { ...defaultConfig, ...config };
+  constructor(
+    touchTargetConfig: Partial<TouchTargetConfig> = {},
+    windowConfig: Partial<WindowTouchConfig> = {}
+  ) {
+    this.touchTargetConfig = { ...touchTargetDefaults, ...touchTargetConfig };
+    this.windowConfig = { ...windowTouchDefaults, ...windowConfig };
   }
 
-  // 为窗口添加触摸支持
   enableTouchForWindow(windowEl: HTMLElement): void {
-    if (this.cleanupFns.has(windowEl)) return;
-
-    const header = windowEl.querySelector('.os-window-header') as HTMLElement;
-    if (!header) return;
+    if (this.activeWindows.has(windowEl)) return;
 
     const cleanupFns: (() => void)[] = [];
+    const header = windowEl.querySelector('.os-window-header') as HTMLElement;
 
-    // 窗口拖动
-    if (this.config.enableDrag) {
-      cleanupFns.push(this.setupWindowDrag(windowEl, header));
+    if (header) {
+      if (this.windowConfig.enableDrag) {
+        cleanupFns.push(this.setupWindowDrag(windowEl, header));
+      }
+      cleanupFns.push(this.setupDoubleTapMaximize(windowEl, header));
     }
 
-    // 窗口缩放
-    if (this.config.enableResize) {
+    if (this.windowConfig.enableResize) {
       cleanupFns.push(this.setupWindowResize(windowEl));
     }
 
-    // 双击最大化
-    cleanupFns.push(this.setupDoubleTapMaximize(windowEl, header));
-
-    // 合并清理函数
-    this.cleanupFns.set(windowEl, () => cleanupFns.forEach(fn => fn()));
+    this.activeWindows.set(windowEl, () => cleanupFns.forEach((fn) => fn()));
   }
 
-  // 移除窗口触摸支持
   disableTouchForWindow(windowEl: HTMLElement): void {
-    const cleanup = this.cleanupFns.get(windowEl);
+    const cleanup = this.activeWindows.get(windowEl);
     if (cleanup) {
       cleanup();
-      this.cleanupFns.delete(windowEl);
+      this.activeWindows.delete(windowEl);
     }
   }
 
-  // 窗口拖动
   private setupWindowDrag(windowEl: HTMLElement, header: HTMLElement): () => void {
-    let startPos = { x: 0, y: 0 };
-    let windowStartPos = { x: 0, y: 0 };
+    return gestureDetector.createRecognizer(header, {
+      onPanStart: (e: GestureEvent) => {
+        if ((e.target as HTMLElement).closest('.os-window-controls')) return;
 
-    const handleStart = (e: GestureEvent) => {
-      if ((e.target as HTMLElement).closest('.os-window-controls')) return;
-      
-      startPos = { x: e.startX, y: e.startY };
-      windowStartPos = {
-        x: windowEl.offsetLeft,
-        y: windowEl.offsetTop
-      };
-      
-      windowEl.classList.add('os-window-dragging');
-      this.activeWindow = windowEl;
-    };
+        this.activeDrag = {
+          window: windowEl,
+          startX: e.currentX,
+          startY: e.currentY,
+          windowStartX: windowEl.offsetLeft,
+          windowStartY: windowEl.offsetTop,
+        };
 
-    const handleMove = (e: GestureEvent) => {
-      if (this.activeWindow !== windowEl) return;
-      
-      const newX = windowStartPos.x + e.currentX - startPos.x;
-      const newY = windowStartPos.y + e.currentY - startPos.y;
-      
-      // 边界限制
-      const maxX = window.innerWidth - 50;
-      const maxY = window.innerHeight - 50;
-      
-      windowEl.style.left = Math.max(-windowEl.offsetWidth + 100, Math.min(newX, maxX)) + 'px';
-      windowEl.style.top = Math.max(0, Math.min(newY, maxY)) + 'px';
-    };
+        windowEl.classList.add('os-window-dragging');
+      },
+      onPan: (e: GestureEvent) => {
+        if (!this.activeDrag || this.activeDrag.window !== windowEl) return;
 
-    const handleEnd = () => {
-      windowEl.classList.remove('os-window-dragging');
-      this.activeWindow = null;
-    };
+        const newX = this.activeDrag.windowStartX + e.deltaX;
+        const newY = this.activeDrag.windowStartY + e.deltaY;
 
-    const recognizer = gestureDetector.createRecognizer(header, {
-      onPanStart: handleStart,
-      onPan: handleMove,
-      onPanEnd: handleEnd
+        const maxX = window.innerWidth - 50;
+        const maxY = window.innerHeight - 50;
+        const clampedX = Math.max(-windowEl.offsetWidth + 100, Math.min(newX, maxX));
+        const clampedY = Math.max(0, Math.min(newY, maxY));
+
+        windowEl.style.left = `${clampedX}px`;
+        windowEl.style.top = `${clampedY}px`;
+      },
+      onPanEnd: () => {
+        windowEl.classList.remove('os-window-dragging');
+        this.activeDrag = null;
+      },
     });
-
-    return () => {
-      recognizer();
-      windowEl.classList.remove('os-window-dragging');
-    };
   }
 
-  // 窗口缩放
   private setupWindowResize(windowEl: HTMLElement): () => void {
-    const corners = ['se', 'sw', 'ne', 'nw'];
-    const edges = ['n', 's', 'e', 'w'];
+    const positions = ['n', 's', 'e', 'w', 'ne', 'nw', 'se', 'sw'];
     const handles: HTMLElement[] = [];
     const cleanupFns: (() => void)[] = [];
 
-    // 创建角落缩放手柄
-    corners.forEach(corner => {
-      const handle = this.createResizeHandle(windowEl, corner, true);
+    positions.forEach((pos) => {
+      const handle = this.createResizeHandle(pos);
+      windowEl.appendChild(handle);
       handles.push(handle);
-      cleanupFns.push(this.setupResizeGesture(windowEl, handle, corner));
-    });
-
-    // 创建边缘缩放手柄
-    edges.forEach(edge => {
-      const handle = this.createResizeHandle(windowEl, edge, false);
-      handles.push(handle);
-      cleanupFns.push(this.setupResizeGesture(windowEl, handle, edge));
+      cleanupFns.push(this.setupResizeGesture(windowEl, handle, pos));
     });
 
     return () => {
-      handles.forEach(h => h.remove());
-      cleanupFns.forEach(fn => fn());
+      handles.forEach((h) => h.remove());
+      cleanupFns.forEach((fn) => fn());
     };
   }
 
-  // 创建缩放手柄
-  private createResizeHandle(windowEl: HTMLElement, position: string, isCorner: boolean): HTMLElement {
+  private createResizeHandle(position: string): HTMLElement {
     const handle = document.createElement('div');
-    handle.className = `os-window-touch-resize-handle os-window-touch-resize-${position}`;
-    handle.style.cssText = `
-      position: absolute;
-      ${isCorner ? 'width: 32px; height: 32px;' : ''}
-      ${position.includes('n') ? 'top: 0;' : ''}
-      ${position.includes('s') ? 'bottom: 0;' : ''}
-      ${position.includes('e') ? 'right: 0;' : ''}
-      ${position.includes('w') ? 'left: 0;' : ''}
-      ${position === 'n' || position === 's' ? 'left: 32px; right: 32px; height: 16px;' : ''}
-      ${position === 'e' || position === 'w' ? 'top: 32px; bottom: 32px; width: 16px;' : ''}
-      z-index: 10;
-      touch-action: none;
-    `;
-    windowEl.appendChild(handle);
+    handle.className = `os-touch-resize-handle os-touch-resize-${position}`;
+    handle.dataset.resizeHandle = position;
+
+    const isCorner = position.length === 2;
+    const size = `${this.windowConfig.resizeHandleSize}px`;
+
+    Object.assign(handle.style, {
+      position: 'absolute',
+      zIndex: '10',
+      touchAction: 'none',
+      display: 'block',
+    });
+
+    if (isCorner) {
+      Object.assign(handle.style, {
+        width: size,
+        height: size,
+      });
+    } else {
+      if (position === 'n' || position === 's') {
+        Object.assign(handle.style, {
+          left: size,
+          right: size,
+          height: size,
+        });
+      } else {
+        Object.assign(handle.style, {
+          top: size,
+          bottom: size,
+          width: size,
+        });
+      }
+    }
+
+    if (position.includes('n')) handle.style.top = '0';
+    if (position.includes('s')) handle.style.bottom = '0';
+    if (position.includes('e')) handle.style.right = '0';
+    if (position.includes('w')) handle.style.left = '0';
+
     return handle;
   }
 
-  // 设置缩放手势
-  private setupResizeGesture(windowEl: HTMLElement, handle: HTMLElement, position: string): () => void {
-    let startPos = { x: 0, y: 0 };
+  private setupResizeGesture(
+    windowEl: HTMLElement,
+    handle: HTMLElement,
+    position: string
+  ): () => void {
     let startSize = { width: 0, height: 0 };
+    let startPos = { x: 0, y: 0 };
     let startOffset = { x: 0, y: 0 };
 
-    const handleStart = (e: GestureEvent) => {
-      startPos = { x: e.startX, y: e.startY };
-      startSize = {
-        width: windowEl.offsetWidth,
-        height: windowEl.offsetHeight
-      };
-      startOffset = {
-        x: windowEl.offsetLeft,
-        y: windowEl.offsetTop
-      };
-    };
-
-    const handleMove = (e: GestureEvent) => {
-      const deltaX = e.currentX - startPos.x;
-      const deltaY = e.currentY - startPos.y;
-      const minWidth = 200;
-      const minHeight = 150;
-
-      let newWidth = startSize.width;
-      let newHeight = startSize.height;
-      let newX = startOffset.x;
-      let newY = startOffset.y;
-
-      // 水平调整
-      if (position.includes('e')) {
-        newWidth = Math.max(minWidth, startSize.width + deltaX);
-      }
-      if (position.includes('w')) {
-        newWidth = Math.max(minWidth, startSize.width - deltaX);
-        newX = startOffset.x + startSize.width - newWidth;
-      }
-
-      // 垂直调整
-      if (position.includes('s')) {
-        newHeight = Math.max(minHeight, startSize.height + deltaY);
-      }
-      if (position.includes('n')) {
-        newHeight = Math.max(minHeight, startSize.height - deltaY);
-        newY = startOffset.y + startSize.height - newHeight;
-      }
-
-      windowEl.style.width = newWidth + 'px';
-      windowEl.style.height = newHeight + 'px';
-      windowEl.style.left = newX + 'px';
-      windowEl.style.top = newY + 'px';
-    };
-
     return gestureDetector.createRecognizer(handle, {
-      onPanStart: handleStart,
-      onPan: handleMove
+      onPanStart: (e: GestureEvent) => {
+        startSize = {
+          width: windowEl.offsetWidth,
+          height: windowEl.offsetHeight,
+        };
+        startPos = { x: e.currentX, y: e.currentY };
+        startOffset = {
+          x: windowEl.offsetLeft,
+          y: windowEl.offsetTop,
+        };
+        windowEl.classList.add('os-window-resizing');
+      },
+      onPan: (e: GestureEvent) => {
+        const deltaX = e.currentX - startPos.x;
+        const deltaY = e.currentY - startPos.y;
+        const minSize = this.touchTargetConfig.minSize * 3;
+
+        let newWidth = startSize.width;
+        let newHeight = startSize.height;
+        let newX = startOffset.x;
+        let newY = startOffset.y;
+
+        if (position.includes('e')) {
+          newWidth = Math.max(minSize, startSize.width + deltaX);
+        }
+        if (position.includes('w')) {
+          newWidth = Math.max(minSize, startSize.width - deltaX);
+          newX = startOffset.x + startSize.width - newWidth;
+        }
+        if (position.includes('s')) {
+          newHeight = Math.max(minSize, startSize.height + deltaY);
+        }
+        if (position.includes('n')) {
+          newHeight = Math.max(minSize, startSize.height - deltaY);
+          newY = startOffset.y + startSize.height - newHeight;
+        }
+
+        windowEl.style.width = `${newWidth}px`;
+        windowEl.style.height = `${newHeight}px`;
+        windowEl.style.left = `${newX}px`;
+        windowEl.style.top = `${newY}px`;
+      },
+      onPanEnd: () => {
+        windowEl.classList.remove('os-window-resizing');
+      },
     });
   }
 
-  // 双击最大化
   private setupDoubleTapMaximize(windowEl: HTMLElement, header: HTMLElement): () => void {
-    const handleDoubleTap = () => {
-      if (windowEl.classList.contains('os-window.maximized')) {
-        window.webos?.window.restore(windowEl.id);
-      } else {
-        window.webos?.window.maximize(windowEl.id);
-      }
-    };
-
     return gestureDetector.createRecognizer(header, {
-      onDoubleTap: handleDoubleTap
+      onDoubleTap: () => {
+        const isMaximized = windowEl.classList.contains('os-window-maximized');
+        if (isMaximized) {
+          window.webos?.window.restore(windowEl.id);
+        } else {
+          window.webos?.window.maximize(windowEl.id);
+        }
+      },
     });
+  }
+
+  optimizeTouchTarget(element: HTMLElement): void {
+    const rect = element.getBoundingClientRect();
+    const minSize = this.touchTargetConfig.minSize;
+
+    if (rect.width < minSize || rect.height < minSize) {
+      const paddingH = Math.max(0, (minSize - rect.width) / 2);
+      const paddingV = Math.max(0, (minSize - rect.height) / 2);
+
+      element.style.padding = `${paddingV}px ${paddingH}px`;
+      element.style.boxSizing = 'border-box';
+    }
+  }
+
+  optimizeAllTouchTargets(container: HTMLElement): void {
+    const interactiveElements = container.querySelectorAll(
+      'button, a, input, select, textarea, [role="button"], [tabindex]'
+    );
+
+    interactiveElements.forEach((el) => {
+      if (el instanceof HTMLElement) {
+        this.optimizeTouchTarget(el);
+      }
+    });
+  }
+
+  getTouchTargetConfig(): TouchTargetConfig {
+    return { ...this.touchTargetConfig };
+  }
+
+  destroy(): void {
+    this.activeWindows.forEach((cleanup) => cleanup());
+    this.activeWindows.clear();
   }
 }
 

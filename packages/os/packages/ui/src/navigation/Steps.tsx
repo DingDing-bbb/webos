@@ -129,16 +129,12 @@ const Step: React.FC<StepProps> = ({ item, index, total }) => {
       </div>
 
       {/* Connector line */}
-      {!isLast && (
-        <div className={`nav-steps-item-tail nav-steps-item-tail-${stepStatus}`} />
-      )}
+      {!isLast && <div className={`nav-steps-item-tail nav-steps-item-tail-${stepStatus}`} />}
 
       {/* Content */}
       <div className="nav-steps-item-content">
         <div className="nav-steps-item-title">{item.title}</div>
-        {item.description && (
-          <div className="nav-steps-item-description">{item.description}</div>
-        )}
+        {item.description && <div className="nav-steps-item-description">{item.description}</div>}
       </div>
     </div>
   );
@@ -186,12 +182,7 @@ export const Steps: React.FC<StepsProps> = ({
         aria-label="Progress steps"
       >
         {items.map((item, index) => (
-          <Step
-            key={item.key}
-            item={item}
-            index={index}
-            total={items.length}
-          />
+          <Step key={item.key} item={item} index={index} total={items.length} />
         ))}
       </div>
     </StepsContext.Provider>
@@ -205,11 +196,7 @@ export interface StepGroupProps {
 }
 
 export const StepGroup: React.FC<StepGroupProps> = ({ children, className = '' }) => {
-  return (
-    <div className={`nav-steps-group ${className}`}>
-      {children}
-    </div>
-  );
+  return <div className={`nav-steps-group ${className}`}>{children}</div>;
 };
 
 export default Steps;

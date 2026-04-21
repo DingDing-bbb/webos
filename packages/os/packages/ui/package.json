@@ -1,6 +1,6 @@
 {
   "name": "@webos/ui",
-  "version": "2.0.0",
+  "version": "0.0.1-alpha",
   "description": "WebOS UI System - Layered Architecture with Base + Skin",
   "main": "src/index.ts",
   "types": "src/index.ts",
@@ -17,6 +17,11 @@
     "react": ">=19.0.0",
     "react-dom": ">=19.0.0"
   },
-  "keywords": ["webos", "ui", "components", "layered"],
+  "keywords": [
+    "webos",
+    "ui",
+    "components",
+    "layered"
+  ],
   "license": "MIT"
 }

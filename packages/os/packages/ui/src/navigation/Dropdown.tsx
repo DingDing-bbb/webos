@@ -3,7 +3,15 @@
  * 支持触发方式 hover/click、位置 top/bottom/left/right、动画效果
  */
 
-import React, { useState, useCallback, useRef, useEffect, useLayoutEffect, cloneElement, isValidElement } from 'react';
+import React, {
+  useState,
+  useCallback,
+  useRef,
+  useEffect,
+  useLayoutEffect,
+  cloneElement,
+  isValidElement,
+} from 'react';
 
 // ========== Types ==========
 export interface DropdownItem {
@@ -164,12 +172,15 @@ export const Dropdown: React.FC<DropdownProps> = ({
     }
   }, [isOpen, handleOpen, handleClose]);
 
-  const handleItemClick = useCallback((item: DropdownItem) => {
-    if (item.disabled) return;
-    item.onClick?.();
-    onSelect?.(item.key, item);
-    handleClose();
-  }, [onSelect, handleClose]);
+  const handleItemClick = useCallback(
+    (item: DropdownItem) => {
+      if (item.disabled) return;
+      item.onClick?.();
+      onSelect?.(item.key, item);
+      handleClose();
+    },
+    [onSelect, handleClose]
+  );
 
   // Handle click outside
   useEffect(() => {
@@ -358,10 +369,7 @@ export const DropdownButton: React.FC<DropdownButtonProps> = ({
 }) => {
   return (
     <Dropdown {...props}>
-      <button
-        className="nav-dropdown-button"
-        disabled={props.disabled || loading}
-      >
+      <button className="nav-dropdown-button" disabled={props.disabled || loading}>
         {loading ? (
           <span className="nav-dropdown-button-loading">⟳</span>
         ) : (

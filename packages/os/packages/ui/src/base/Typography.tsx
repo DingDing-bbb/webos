@@ -12,19 +12,55 @@ import React, { forwardRef, useMemo } from 'react';
 export type HeadingLevel = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 export type TextSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl';
 export type TextWeight = 'light' | 'normal' | 'medium' | 'semibold' | 'bold';
-export type TextColor = 'primary' | 'secondary' | 'tertiary' | 'disabled' | 'success' | 'warning' | 'danger' | 'info' | 'inherit';
+export type TextColor =
+  | 'primary'
+  | 'secondary'
+  | 'tertiary'
+  | 'disabled'
+  | 'success'
+  | 'warning'
+  | 'danger'
+  | 'info'
+  | 'inherit';
 
 // ============================================
 // Constants
 // ============================================
 
-const headingStyles: Record<HeadingLevel, { fontSize: string; fontWeight: string; lineHeight: string }> = {
-  h1: { fontSize: 'var(--os-font-size-4xl)', fontWeight: 'var(--os-font-weight-bold)', lineHeight: 'var(--os-line-height-tight)' },
-  h2: { fontSize: 'var(--os-font-size-3xl)', fontWeight: 'var(--os-font-weight-bold)', lineHeight: 'var(--os-line-height-tight)' },
-  h3: { fontSize: 'var(--os-font-size-2xl)', fontWeight: 'var(--os-font-weight-semibold)', lineHeight: 'var(--os-line-height-tight)' },
-  h4: { fontSize: 'var(--os-font-size-xl)', fontWeight: 'var(--os-font-weight-semibold)', lineHeight: 'var(--os-line-height-normal)' },
-  h5: { fontSize: 'var(--os-font-size-lg)', fontWeight: 'var(--os-font-weight-medium)', lineHeight: 'var(--os-line-height-normal)' },
-  h6: { fontSize: 'var(--os-font-size-md)', fontWeight: 'var(--os-font-weight-medium)', lineHeight: 'var(--os-line-height-normal)' },
+const headingStyles: Record<
+  HeadingLevel,
+  { fontSize: string; fontWeight: string; lineHeight: string }
+> = {
+  h1: {
+    fontSize: 'var(--os-font-size-4xl)',
+    fontWeight: 'var(--os-font-weight-bold)',
+    lineHeight: 'var(--os-line-height-tight)',
+  },
+  h2: {
+    fontSize: 'var(--os-font-size-3xl)',
+    fontWeight: 'var(--os-font-weight-bold)',
+    lineHeight: 'var(--os-line-height-tight)',
+  },
+  h3: {
+    fontSize: 'var(--os-font-size-2xl)',
+    fontWeight: 'var(--os-font-weight-semibold)',
+    lineHeight: 'var(--os-line-height-tight)',
+  },
+  h4: {
+    fontSize: 'var(--os-font-size-xl)',
+    fontWeight: 'var(--os-font-weight-semibold)',
+    lineHeight: 'var(--os-line-height-normal)',
+  },
+  h5: {
+    fontSize: 'var(--os-font-size-lg)',
+    fontWeight: 'var(--os-font-weight-medium)',
+    lineHeight: 'var(--os-line-height-normal)',
+  },
+  h6: {
+    fontSize: 'var(--os-font-size-md)',
+    fontWeight: 'var(--os-font-weight-medium)',
+    lineHeight: 'var(--os-line-height-normal)',
+  },
 };
 
 const textSizeMap: Record<TextSize, string> = {
@@ -116,7 +152,9 @@ export const Heading = forwardRef<HTMLHeadingElement, HeadingProps>(
         lines && `webos-heading--lines-${lines}`,
         noMargin && 'webos-heading--no-margin',
         className,
-      ].filter(Boolean).join(' ');
+      ]
+        .filter(Boolean)
+        .join(' ');
 
       return classes;
     }, [level, truncate, lines, noMargin, className]);
@@ -142,12 +180,7 @@ export const Heading = forwardRef<HTMLHeadingElement, HeadingProps>(
     const Tag = level;
 
     return (
-      <Tag
-        ref={ref}
-        className={headingClasses}
-        style={headingStyle}
-        {...restProps}
-      >
+      <Tag ref={ref} className={headingClasses} style={headingStyle} {...restProps}>
         {children}
       </Tag>
     );
@@ -225,7 +258,9 @@ export const Text = forwardRef<HTMLSpanElement, TextProps>(
         truncate && 'webos-text--truncate',
         lines && `webos-text--lines-${lines}`,
         className,
-      ].filter(Boolean).join(' ');
+      ]
+        .filter(Boolean)
+        .join(' ');
 
       return classes;
     }, [size, truncate, lines, className]);
@@ -256,7 +291,21 @@ export const Text = forwardRef<HTMLSpanElement, TextProps>(
       }
 
       return mergedStyle;
-    }, [size, weight, color, align, bold, italic, underline, strike, smallCaps, letterSpacing, transform, truncate, style]);
+    }, [
+      size,
+      weight,
+      color,
+      align,
+      bold,
+      italic,
+      underline,
+      strike,
+      smallCaps,
+      letterSpacing,
+      transform,
+      truncate,
+      style,
+    ]);
 
     return (
       <Component
@@ -318,7 +367,9 @@ export const Paragraph = forwardRef<HTMLParagraphElement, ParagraphProps>(
         lines && `webos-paragraph--lines-${lines}`,
         !marginBottom && 'webos-paragraph--no-margin',
         className,
-      ].filter(Boolean).join(' ');
+      ]
+        .filter(Boolean)
+        .join(' ');
 
       return classes;
     }, [size, lines, marginBottom, className]);
@@ -337,12 +388,7 @@ export const Paragraph = forwardRef<HTMLParagraphElement, ParagraphProps>(
     }, [size, color, align, lineHeight, style]);
 
     return (
-      <p
-        ref={ref}
-        className={paragraphClasses}
-        style={paragraphStyle}
-        {...restProps}
-      >
+      <p ref={ref} className={paragraphClasses} style={paragraphStyle} {...restProps}>
         {children}
       </p>
     );
@@ -398,7 +444,9 @@ export const Link = forwardRef<HTMLAnchorElement, LinkProps>(
         disabled && 'webos-link--disabled',
         external && 'webos-link--external',
         className,
-      ].filter(Boolean).join(' ');
+      ]
+        .filter(Boolean)
+        .join(' ');
 
       return classes;
     }, [size, underline, disabled, external, className]);
@@ -497,7 +545,9 @@ export const Code = forwardRef<HTMLElement, CodeProps>(
         block && 'webos-code--block',
         language && `webos-code--language-${language}`,
         className,
-      ].filter(Boolean).join(' ');
+      ]
+        .filter(Boolean)
+        .join(' ');
 
       return classes;
     }, [size, block, language, className]);
@@ -541,28 +591,29 @@ Code.displayName = 'Code';
 export function withTruncation<P extends object>(
   Component: React.ComponentType<P>
 ): React.FC<P & { truncate?: boolean | number; lines?: number }> {
-  const TruncatedComponent = forwardRef<HTMLElement, P & { truncate?: boolean | number; lines?: number }>(
-    ({ truncate, lines, style, ...props }, ref) => {
-      const mergedStyle: React.CSSProperties = {
-        ...style,
-      };
+  const TruncatedComponent = forwardRef<
+    HTMLElement,
+    P & { truncate?: boolean | number; lines?: number }
+  >(({ truncate, lines, style, ...props }, ref) => {
+    const mergedStyle: React.CSSProperties = {
+      ...style,
+    };
 
-      if (truncate || lines) {
-        mergedStyle.overflow = 'hidden';
-        mergedStyle.textOverflow = 'ellipsis';
-      }
-
-      if (lines) {
-        mergedStyle.display = '-webkit-box';
-        mergedStyle.WebkitLineClamp = lines;
-        mergedStyle.WebkitBoxOrient = 'vertical';
-      } else {
-        mergedStyle.whiteSpace = 'nowrap';
-      }
-
-      return <Component ref={ref} style={mergedStyle} {...(props as P)} />;
+    if (truncate || lines) {
+      mergedStyle.overflow = 'hidden';
+      mergedStyle.textOverflow = 'ellipsis';
     }
-  );
+
+    if (lines) {
+      mergedStyle.display = '-webkit-box';
+      mergedStyle.WebkitLineClamp = lines;
+      mergedStyle.WebkitBoxOrient = 'vertical';
+    } else {
+      mergedStyle.whiteSpace = 'nowrap';
+    }
+
+    return <Component ref={ref} style={mergedStyle} {...(props as P)} />;
+  });
 
   TruncatedComponent.displayName = `WithTruncation(${Component.displayName || Component.name || 'Component'})`;
   return TruncatedComponent;

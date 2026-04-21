@@ -6,47 +6,89 @@ type Lang = 'zh' | 'zh-TW' | 'en';
 type Theme = 'light' | 'dark';
 
 const SunIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="18" height="18">
-    <circle cx="12" cy="12" r="4"/>
-    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    width="18"
+    height="18"
+  >
+    <circle cx="12" cy="12" r="4" />
+    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
   </svg>
 );
 
 const MoonIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="18" height="18">
-    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    width="18"
+    height="18"
+  >
+    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
   </svg>
 );
 
 const GitHubIcon = () => (
   <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
-    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
   </svg>
 );
 
 const MonitorIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="24" height="24">
-    <rect x="2" y="3" width="20" height="14" rx="2"/>
-    <path d="M8 21h8M12 17v4"/>
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    width="24"
+    height="24"
+  >
+    <rect x="2" y="3" width="20" height="14" rx="2" />
+    <path d="M8 21h8M12 17v4" />
   </svg>
 );
 
 const FolderIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="24" height="24">
-    <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    width="24"
+    height="24"
+  >
+    <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
   </svg>
 );
 
 const GlobeIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="24" height="24">
-    <circle cx="12" cy="12" r="10"/>
-    <path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    width="24"
+    height="24"
+  >
+    <circle cx="12" cy="12" r="10" />
+    <path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" />
   </svg>
 );
 
 const ShieldIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="24" height="24">
-    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    width="24"
+    height="24"
+  >
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
   </svg>
 );
 
@@ -100,7 +142,11 @@ const i18n = {
       secondary: 'Read Docs',
     },
     features: [
-      { icon: 'monitor', title: 'Desktop Environment', desc: 'Window management, taskbar, start menu' },
+      {
+        icon: 'monitor',
+        title: 'Desktop Environment',
+        desc: 'Window management, taskbar, start menu',
+      },
       { icon: 'folder', title: 'File System', desc: 'Virtual file system with local storage' },
       { icon: 'globe', title: 'i18n Support', desc: 'Built-in Chinese and English' },
       { icon: 'shield', title: 'Security', desc: 'Encrypted local storage' },
@@ -156,65 +202,262 @@ export default function IntroPage() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: bg, color: text, fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-      <header style={{ position: 'sticky', top: 0, zIndex: 100, background: headerBg, backdropFilter: 'saturate(180%) blur(20px)', WebkitBackdropFilter: 'saturate(180%) blur(20px)', borderBottom: `1px solid ${border}` }}>
-        <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 24px', height: '56px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+    <div
+      style={{
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        background: bg,
+        color: text,
+        fontFamily: 'system-ui, -apple-system, sans-serif',
+      }}
+    >
+      <header
+        style={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 100,
+          background: headerBg,
+          backdropFilter: 'saturate(180%) blur(20px)',
+          WebkitBackdropFilter: 'saturate(180%) blur(20px)',
+          borderBottom: `1px solid ${border}`,
+        }}
+      >
+        <div
+          style={{
+            maxWidth: '1100px',
+            margin: '0 auto',
+            padding: '0 24px',
+            height: '56px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
           <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
-            <a href="/" style={{ fontSize: '18px', fontWeight: 600, color: text, textDecoration: 'none' }}>WebOS</a>
+            <a
+              href="/"
+              style={{ fontSize: '18px', fontWeight: 600, color: text, textDecoration: 'none' }}
+            >
+              WebOS
+            </a>
             <nav style={{ display: 'flex', gap: '24px' }}>
               <span style={{ fontSize: '14px', fontWeight: 500, color: text }}>{t.nav.intro}</span>
-              <a href="/docs" style={{ fontSize: '14px', color: textMuted, textDecoration: 'none' }}>{t.nav.docs}</a>
-              <a href="/app" style={{ fontSize: '14px', color: textMuted, textDecoration: 'none' }}>{t.nav.app}</a>
+              <a
+                href="/docs"
+                style={{ fontSize: '14px', color: textMuted, textDecoration: 'none' }}
+              >
+                {t.nav.docs}
+              </a>
+              <a href="/app" style={{ fontSize: '14px', color: textMuted, textDecoration: 'none' }}>
+                {t.nav.app}
+              </a>
             </nav>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <a href="https://github.com/webos/webos" target="_blank" rel="noopener noreferrer" style={{ color: textMuted, display: 'flex', alignItems: 'center', textDecoration: 'none' }} title={t.nav.github}>
+            <a
+              href="https://github.com/webos/webos"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                color: textMuted,
+                display: 'flex',
+                alignItems: 'center',
+                textDecoration: 'none',
+              }}
+              title={t.nav.github}
+            >
               <GitHubIcon />
             </a>
-            <button onClick={handleThemeChange} style={{ padding: '8px', background: 'transparent', border: 'none', color: textMuted, cursor: 'pointer', borderRadius: '8px' }}>
+            <button
+              onClick={handleThemeChange}
+              style={{
+                padding: '8px',
+                background: 'transparent',
+                border: 'none',
+                color: textMuted,
+                cursor: 'pointer',
+                borderRadius: '8px',
+              }}
+            >
               {isDark ? <SunIcon /> : <MoonIcon />}
             </button>
-            <select value={lang} onChange={(e) => handleLangChange(e.target.value as Lang)} style={{ padding: '6px 12px', background: cardBg, border: `1px solid ${border}`, borderRadius: '8px', color: text, fontSize: '13px', cursor: 'pointer', outline: 'none' }}>
-              <option value="zh" style={{ background: bg }}>简体中文</option>
-              <option value="zh-TW" style={{ background: bg }}>繁體中文</option>
-              <option value="en" style={{ background: bg }}>English</option>
+            <select
+              value={lang}
+              onChange={(e) => handleLangChange(e.target.value as Lang)}
+              style={{
+                padding: '6px 12px',
+                background: cardBg,
+                border: `1px solid ${border}`,
+                borderRadius: '8px',
+                color: text,
+                fontSize: '13px',
+                cursor: 'pointer',
+                outline: 'none',
+              }}
+            >
+              <option value="zh" style={{ background: bg }}>
+                简体中文
+              </option>
+              <option value="zh-TW" style={{ background: bg }}>
+                繁體中文
+              </option>
+              <option value="en" style={{ background: bg }}>
+                English
+              </option>
             </select>
           </div>
         </div>
       </header>
 
       <main style={{ flex: 1 }}>
-        <section style={{ maxWidth: '800px', margin: '0 auto', padding: '100px 24px', textAlign: 'center' }}>
-          <div style={{ display: 'inline-block', padding: '6px 14px', background: cardBg, border: `1px solid ${border}`, borderRadius: '100px', fontSize: '13px', color: textMuted, marginBottom: '24px' }}>
+        <section
+          style={{
+            maxWidth: '800px',
+            margin: '0 auto',
+            padding: '100px 24px',
+            textAlign: 'center',
+          }}
+        >
+          <div
+            style={{
+              display: 'inline-block',
+              padding: '6px 14px',
+              background: cardBg,
+              border: `1px solid ${border}`,
+              borderRadius: '100px',
+              fontSize: '13px',
+              color: textMuted,
+              marginBottom: '24px',
+            }}
+          >
             {t.hero.badge}
           </div>
-          <h1 style={{ fontSize: '64px', fontWeight: 700, letterSpacing: '-2px', marginBottom: '16px' }}>{t.hero.title}</h1>
-          <p style={{ fontSize: '24px', color: textMuted, marginBottom: '12px', fontWeight: 400 }}>{t.hero.subtitle}</p>
-          <p style={{ fontSize: '16px', color: textMuted, maxWidth: '480px', margin: '0 auto 40px', lineHeight: 1.6 }}>{t.hero.desc}</p>
+          <h1
+            style={{
+              fontSize: '64px',
+              fontWeight: 700,
+              letterSpacing: '-2px',
+              marginBottom: '16px',
+            }}
+          >
+            {t.hero.title}
+          </h1>
+          <p style={{ fontSize: '24px', color: textMuted, marginBottom: '12px', fontWeight: 400 }}>
+            {t.hero.subtitle}
+          </p>
+          <p
+            style={{
+              fontSize: '16px',
+              color: textMuted,
+              maxWidth: '480px',
+              margin: '0 auto 40px',
+              lineHeight: 1.6,
+            }}
+          >
+            {t.hero.desc}
+          </p>
 
           <div style={{ display: 'flex', justifyContent: 'center', gap: '16px' }}>
-            <a href="/app" style={{ padding: '14px 32px', background: accent, color: isDark ? '#000' : '#fff', fontSize: '15px', fontWeight: 500, borderRadius: '12px', textDecoration: 'none' }}>{t.hero.primary}</a>
-            <a href="/docs" style={{ padding: '14px 32px', background: 'transparent', border: `1px solid ${border}`, color: text, fontSize: '15px', fontWeight: 500, borderRadius: '12px', textDecoration: 'none' }}>{t.hero.secondary}</a>
+            <a
+              href="/app"
+              style={{
+                padding: '14px 32px',
+                background: accent,
+                color: isDark ? '#000' : '#fff',
+                fontSize: '15px',
+                fontWeight: 500,
+                borderRadius: '12px',
+                textDecoration: 'none',
+              }}
+            >
+              {t.hero.primary}
+            </a>
+            <a
+              href="/docs"
+              style={{
+                padding: '14px 32px',
+                background: 'transparent',
+                border: `1px solid ${border}`,
+                color: text,
+                fontSize: '15px',
+                fontWeight: 500,
+                borderRadius: '12px',
+                textDecoration: 'none',
+              }}
+            >
+              {t.hero.secondary}
+            </a>
           </div>
         </section>
 
         <section style={{ maxWidth: '900px', margin: '0 auto', padding: '0 24px 80px' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px' }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+              gap: '20px',
+            }}
+          >
             {t.features.map((feature, i) => (
-              <div key={i} style={{ padding: '28px', background: cardBg, borderRadius: '16px', border: `1px solid ${border}` }}>
-                <div style={{ color: textMuted, marginBottom: '16px' }}>{iconMap[feature.icon]}</div>
-                <h3 style={{ fontSize: '17px', fontWeight: 600, marginBottom: '8px' }}>{feature.title}</h3>
-                <p style={{ fontSize: '14px', color: textMuted, lineHeight: 1.5 }}>{feature.desc}</p>
+              <div
+                key={i}
+                style={{
+                  padding: '28px',
+                  background: cardBg,
+                  borderRadius: '16px',
+                  border: `1px solid ${border}`,
+                }}
+              >
+                <div style={{ color: textMuted, marginBottom: '16px' }}>
+                  {iconMap[feature.icon]}
+                </div>
+                <h3 style={{ fontSize: '17px', fontWeight: 600, marginBottom: '8px' }}>
+                  {feature.title}
+                </h3>
+                <p style={{ fontSize: '14px', color: textMuted, lineHeight: 1.5 }}>
+                  {feature.desc}
+                </p>
               </div>
             ))}
           </div>
         </section>
 
-        <section style={{ maxWidth: '800px', margin: '0 auto', padding: '0 24px 80px', textAlign: 'center' }}>
-          <p style={{ fontSize: '12px', color: textMuted, textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '20px', fontWeight: 500 }}>{t.tech.title}</p>
+        <section
+          style={{
+            maxWidth: '800px',
+            margin: '0 auto',
+            padding: '0 24px 80px',
+            textAlign: 'center',
+          }}
+        >
+          <p
+            style={{
+              fontSize: '12px',
+              color: textMuted,
+              textTransform: 'uppercase',
+              letterSpacing: '1.5px',
+              marginBottom: '20px',
+              fontWeight: 500,
+            }}
+          >
+            {t.tech.title}
+          </p>
           <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', flexWrap: 'wrap' }}>
             {t.tech.items.map((item, i) => (
-              <span key={i} style={{ padding: '10px 18px', background: cardBg, border: `1px solid ${border}`, borderRadius: '8px', fontSize: '14px', color: textMuted }}>{item}</span>
+              <span
+                key={i}
+                style={{
+                  padding: '10px 18px',
+                  background: cardBg,
+                  border: `1px solid ${border}`,
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  color: textMuted,
+                }}
+              >
+                {item}
+              </span>
             ))}
           </div>
         </section>

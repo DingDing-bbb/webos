@@ -4,13 +4,13 @@
  */
 
 import React, { useState } from 'react';
-import { useTheme, AccentColor, ThemeMode, BlurIntensity } from '@webos/ui/theme';
-import { Button, Icon, Heading, Text, Divider, Spacer } from '@webos/ui/base';
-import { Stack, Flex, Box, Container, Grid } from '@webos/ui/layout';
-import { Menu, Breadcrumb } from '@webos/ui/navigation';
-import { Select, Switch, Slider } from '@webos/ui/input';
-import { Card } from '@webos/ui/display';
-import { Modal } from '@webos/ui/feedback';
+import { useTheme, AccentColor, ThemeMode, BlurIntensity } from '@ui/theme';
+import { Button, Icon, Heading, Text, Divider, Spacer } from '@ui/base';
+import { Stack, Flex, Box, Container, Grid } from '@ui/layout';
+import { Menu, Breadcrumb } from '@ui/navigation';
+import { Select, Switch, Slider } from '@ui/input';
+import { Card } from '@ui/display';
+import { Modal } from '@ui/feedback';
 import { VisualEffectsPanel } from './panes/VisualEffects';
 import './styles.css';
 
@@ -59,7 +59,7 @@ export const SettingsApp: React.FC = () => {
           <Heading level="h2">设置</Heading>
         </div>
         <Menu
-          items={settingsCategories.map(cat => ({
+          items={settingsCategories.map((cat) => ({
             id: cat.id,
             label: cat.label,
             icon: cat.icon,
@@ -72,9 +72,7 @@ export const SettingsApp: React.FC = () => {
 
       {/* 主内容区 */}
       <main className="settings-main">
-        <Container maxWidth="lg">
-          {renderContent()}
-        </Container>
+        <Container size="lg">{renderContent()}</Container>
       </main>
     </div>
   );
@@ -94,22 +92,32 @@ const SystemSettings: React.FC = () => {
 
       {/* 快速操作 */}
       <Grid columns={3} gap="md">
-        <Card variant="glass" className="quick-action-card" onClick={() => setShowVisualEffects(true)}>
+        <Card
+          variant="glass"
+          className="quick-action-card"
+          onClick={() => setShowVisualEffects(true)}
+        >
           <Icon name="Sparkles" size="lg" />
           <Heading level="h4">视觉效果</Heading>
-          <Text size="sm" color="secondary">调整系统动画和效果</Text>
+          <Text size="sm" color="secondary">
+            调整系统动画和效果
+          </Text>
         </Card>
 
         <Card variant="glass" className="quick-action-card">
           <Icon name="Monitor" size="lg" />
           <Heading level="h4">显示</Heading>
-          <Text size="sm" color="secondary">分辨率、亮度、缩放</Text>
+          <Text size="sm" color="secondary">
+            分辨率、亮度、缩放
+          </Text>
         </Card>
 
         <Card variant="glass" className="quick-action-card">
           <Icon name="Volume2" size="lg" />
           <Heading level="h4">声音</Heading>
-          <Text size="sm" color="secondary">音量、输出设备</Text>
+          <Text size="sm" color="secondary">
+            音量、输出设备
+          </Text>
         </Card>
       </Grid>
 
@@ -121,24 +129,34 @@ const SystemSettings: React.FC = () => {
             <Text weight="medium">设备名称</Text>
             <Text color="secondary">DESKTOP-WEBOS</Text>
           </Box>
-          <Button variant="ghost" size="sm">重命名</Button>
+          <Button variant="ghost" size="sm">
+            重命名
+          </Button>
         </Flex>
         <Divider />
         <Grid columns={2} gap="md">
           <Box>
-            <Text size="sm" color="secondary">处理器</Text>
+            <Text size="sm" color="secondary">
+              处理器
+            </Text>
             <Text>Virtual CPU @ 2.4GHz</Text>
           </Box>
           <Box>
-            <Text size="sm" color="secondary">内存</Text>
+            <Text size="sm" color="secondary">
+              内存
+            </Text>
             <Text>8 GB RAM</Text>
           </Box>
           <Box>
-            <Text size="sm" color="secondary">系统类型</Text>
+            <Text size="sm" color="secondary">
+              系统类型
+            </Text>
             <Text>WebOS x64</Text>
           </Box>
           <Box>
-            <Text size="sm" color="secondary">版本</Text>
+            <Text size="sm" color="secondary">
+              版本
+            </Text>
             <Text>WebOS 1.0.0</Text>
           </Box>
         </Grid>
@@ -221,12 +239,7 @@ const DisplaySettings: React.FC = () => {
             <Text>{brightness}%</Text>
           </Flex>
           <Spacer size="sm" />
-          <Slider
-            value={brightness}
-            onChange={setBrightness}
-            min={0}
-            max={100}
-          />
+          <Slider value={brightness} onChange={setBrightness} min={0} max={100} />
         </Card>
 
         {/* 夜间模式 */}
@@ -234,7 +247,9 @@ const DisplaySettings: React.FC = () => {
           <Flex justify="space-between" align="center">
             <Box>
               <Heading level="h4">夜间模式</Heading>
-              <Text size="sm" color="secondary">减少蓝光，保护眼睛</Text>
+              <Text size="sm" color="secondary">
+                减少蓝光，保护眼睛
+              </Text>
             </Box>
             <Switch checked={nightLight} onChange={setNightLight} />
           </Flex>
@@ -285,13 +300,11 @@ const PersonalizationSettings: React.FC = () => {
               className="theme-option-card"
               onClick={() => updateConfig({ mode: mode as ThemeMode })}
             >
-              <Icon 
-                name={mode === 'light' ? 'Sun' : mode === 'dark' ? 'Moon' : 'Laptop'} 
-                size="lg" 
+              <Icon
+                name={mode === 'light' ? 'Sun' : mode === 'dark' ? 'Moon' : 'Laptop'}
+                size="lg"
               />
-              <Text>
-                {mode === 'light' ? '浅色' : mode === 'dark' ? '深色' : '跟随系统'}
-              </Text>
+              <Text>{mode === 'light' ? '浅色' : mode === 'dark' ? '深色' : '跟随系统'}</Text>
             </Card>
           ))}
         </Grid>
@@ -323,7 +336,9 @@ const PersonalizationSettings: React.FC = () => {
         <Flex justify="space-between" align="center">
           <Box>
             <Heading level="h4">透明度</Heading>
-            <Text size="sm" color="secondary">调整窗口和面板的透明度</Text>
+            <Text size="sm" color="secondary">
+              调整窗口和面板的透明度
+            </Text>
           </Box>
           <Text>{config.transparency}%</Text>
         </Flex>
@@ -350,7 +365,13 @@ const PersonalizationSettings: React.FC = () => {
               onClick={() => updateConfig({ blurIntensity: intensity as BlurIntensity })}
               block
             >
-              {intensity === 'low' ? '低' : intensity === 'medium' ? '中' : intensity === 'high' ? '高' : '超高'}
+              {intensity === 'low'
+                ? '低'
+                : intensity === 'medium'
+                  ? '中'
+                  : intensity === 'high'
+                    ? '高'
+                    : '超高'}
             </Button>
           ))}
         </Grid>

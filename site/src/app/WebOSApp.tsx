@@ -16,7 +16,7 @@ import {
   ErrorDialogContainer,
   BlueScreenContainer,
   UpdateNotification,
-  BootScreen
+  BootScreen,
 } from '@ui';
 import type { WallpaperConfig, WallpaperType } from '@ui';
 import type { TaskbarDisplayMode } from '@ui';
@@ -86,7 +86,9 @@ const WebOSApp: React.FC = () => {
   // 用户认证状态
   const [showLockScreen, setShowLockScreen] = React.useState(false);
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
-  const [lockScreenUsers, setLockScreenUsers] = React.useState<Array<{ username: string; displayName: string }>>([]);
+  const [lockScreenUsers, setLockScreenUsers] = React.useState<
+    Array<{ username: string; displayName: string }>
+  >([]);
 
   // 恢复模式状态
   const [showRecovery, setShowRecovery] = React.useState(false);
@@ -98,7 +100,8 @@ const WebOSApp: React.FC = () => {
 
   // 壁纸状态
   const [wallpaperConfig, setWallpaperConfig] = React.useState<WallpaperConfig>({ type: 'soft' });
-  const [taskbarDisplayMode, setTaskbarDisplayMode] = React.useState<TaskbarDisplayMode>('icon-name');
+  const [taskbarDisplayMode, setTaskbarDisplayMode] =
+    React.useState<TaskbarDisplayMode>('icon-name');
 
   // 更新状态
   const [updateStatus, setUpdateStatus] = React.useState<UpdateStatus>(() => {
@@ -175,7 +178,7 @@ const WebOSApp: React.FC = () => {
 
   // 监听开始菜单滑动事件
   React.useEffect(() => {
-    const handleToggle = () => setIsStartMenuOpen(prev => !prev);
+    const handleToggle = () => setIsStartMenuOpen((prev) => !prev);
     window.addEventListener('startmenu:toggle', handleToggle);
     return () => window.removeEventListener('startmenu:toggle', handleToggle);
   }, []);
@@ -202,21 +205,25 @@ const WebOSApp: React.FC = () => {
       const savedDisplayName = localStorage.getItem('webos-last-displayname') || savedUsername;
 
       // 检查安全用户管理器
-      const secure = (window.webos?.user as unknown as {
-        secure?: {
-          isReady: () => boolean;
-          isInitialized: () => Promise<boolean>;
-          isLocked: () => boolean;
-          getCurrentUser: () => { username: string; displayName?: string } | null;
+      const secure = (
+        window.webos?.user as unknown as {
+          secure?: {
+            isReady: () => boolean;
+            isInitialized: () => Promise<boolean>;
+            isLocked: () => boolean;
+            getCurrentUser: () => { username: string; displayName?: string } | null;
+          };
         }
-      }).secure;
+      ).secure;
 
       if (secure && secure.isReady()) {
         const hasUsers = await secure.isInitialized();
 
         if (hasUsers) {
           if (savedUsername) {
-            setLockScreenUsers([{ username: savedUsername, displayName: savedDisplayName || savedUsername }]);
+            setLockScreenUsers([
+              { username: savedUsername, displayName: savedDisplayName || savedUsername },
+            ]);
           }
 
           if (secure.isLocked()) {
@@ -235,7 +242,9 @@ const WebOSApp: React.FC = () => {
         }
       } else {
         if (savedUsername) {
-          setLockScreenUsers([{ username: savedUsername, displayName: savedDisplayName || savedUsername }]);
+          setLockScreenUsers([
+            { username: savedUsername, displayName: savedDisplayName || savedUsername },
+          ]);
           setShowLockScreen(true);
         } else {
           setIsLoggedIn(true);
@@ -263,7 +272,7 @@ const WebOSApp: React.FC = () => {
           setWallpaperConfig({
             type: custom.type,
             imageUrl: custom.type === 'image' ? custom.url : undefined,
-            videoUrl: custom.type === 'video' ? custom.url : undefined
+            videoUrl: custom.type === 'video' ? custom.url : undefined,
           });
         } catch {
           setWallpaperConfig({ type: savedType });
@@ -287,7 +296,8 @@ const WebOSApp: React.FC = () => {
       }
     };
     window.addEventListener('wallpaper:change', handleWallpaperChange as EventListener);
-    return () => window.removeEventListener('wallpaper:change', handleWallpaperChange as EventListener);
+    return () =>
+      window.removeEventListener('wallpaper:change', handleWallpaperChange as EventListener);
   }, []);
 
   // 监听任务栏显示模式更改事件
@@ -296,7 +306,8 @@ const WebOSApp: React.FC = () => {
       setTaskbarDisplayMode(e.detail.mode);
     };
     window.addEventListener('taskbar:mode-change', handleTaskbarModeChange as EventListener);
-    return () => window.removeEventListener('taskbar:mode-change', handleTaskbarModeChange as EventListener);
+    return () =>
+      window.removeEventListener('taskbar:mode-change', handleTaskbarModeChange as EventListener);
   }, []);
 
   // 更新窗口列表
@@ -320,7 +331,7 @@ const WebOSApp: React.FC = () => {
     language: string;
     systemName?: string;
     tabletMode?: boolean;
-    theme?: 'light' | 'dark'
+    theme?: 'light' | 'dark';
   }) => {
     console.log('[WebOS] OOBE completing...');
 
@@ -355,16 +366,24 @@ const WebOSApp: React.FC = () => {
     console.log('[WebOS] OOBE complete, showing lock screen');
   };
 
-  const handleLogin = async (username: string, password: string): Promise<{ success: boolean; error?: string }> => {
+  const handleLogin = async (
+    username: string,
+    password: string
+  ): Promise<{ success: boolean; error?: string }> => {
     if (!window.webos) {
       return { success: false, error: 'System not ready' };
     }
 
-    const secure = (window.webos.user as unknown as {
-      secure?: {
-        login: (username: string, password: string) => Promise<{ success: boolean; error?: string }>;
+    const secure = (
+      window.webos.user as unknown as {
+        secure?: {
+          login: (
+            username: string,
+            password: string
+          ) => Promise<{ success: boolean; error?: string }>;
+        };
       }
-    }).secure;
+    ).secure;
 
     if (secure) {
       console.log('[WebOS] Attempting secure login for:', username);
@@ -388,7 +407,7 @@ const WebOSApp: React.FC = () => {
 
   const openApp = (appId: string) => {
     console.log('[WebOS] openApp called:', appId);
-    const appInfo = registeredApps.find(app => app.id === appId);
+    const appInfo = registeredApps.find((app) => app.id === appId);
     if (!appInfo) {
       console.error('[WebOS] App not found:', appId);
       return;
@@ -421,7 +440,7 @@ const WebOSApp: React.FC = () => {
         width,
         height,
         appId,
-        content: container
+        content: container,
       });
       console.log('[WebOS] Window opened:', windowId);
     });
@@ -429,7 +448,7 @@ const WebOSApp: React.FC = () => {
 
   const handleWindowClick = (windowId: string) => {
     window.webos?.window.focus(windowId);
-    const win = windows.find(w => w.id === windowId);
+    const win = windows.find((w) => w.id === windowId);
     if (win?.isMinimized) {
       window.webos?.window.restore(windowId);
     }
@@ -459,11 +478,11 @@ const WebOSApp: React.FC = () => {
   };
 
   // 开始菜单应用列表
-  const startMenuApps = registeredApps.map(app => ({
+  const startMenuApps = registeredApps.map((app) => ({
     id: app.id,
     name: window.webos?.t(app.nameKey) || app.name,
     icon: React.createElement(app.icon, { size: 24 }),
-    onClick: () => openApp(app.id)
+    onClick: () => openApp(app.id),
   }));
 
   // ----------------------------------------
@@ -523,16 +542,16 @@ const WebOSApp: React.FC = () => {
           right: 0,
           bottom: taskbarHeight,
           overflow: 'hidden',
-          pointerEvents: 'none'
+          pointerEvents: 'none',
         }}
       />
 
       <Desktop
-        apps={registeredApps.map(app => ({
+        apps={registeredApps.map((app) => ({
           id: app.id,
           name: window.webos?.t(app.nameKey) || app.name,
           icon: React.createElement(app.icon, { size: 48 }),
-          onOpen: () => openApp(app.id)
+          onOpen: () => openApp(app.id),
         }))}
         wallpaper={wallpaperConfig}
       />

@@ -4,6 +4,12 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { TerminalIcon } from './icon';
 import type { AppInfo } from '../../types';
 
+// 系统配置（Turbopack 不支持 DefinePlugin）
+const OS_NAME = typeof __OS_NAME__ !== 'undefined' ? __OS_NAME__ : 'WebOS';
+const OS_VERSION = typeof __OS_VERSION__ !== 'undefined' ? __OS_VERSION__ : '0.0.1';
+declare const __OS_NAME__: string | undefined;
+declare const __OS_VERSION__: string | undefined;
+
 interface TerminalProps {
   windowId?: string;
 }
@@ -28,10 +34,10 @@ export const Terminal: React.FC<TerminalProps> = () => {
   useEffect(() => {
     // 显示欢迎信息
     setLines([
-      { type: 'output', content: `${__OS_NAME__} Terminal v${__OS_VERSION__}` },
+      { type: 'output', content: `${OS_NAME} Terminal v${OS_VERSION}` },
       { type: 'output', content: t('terminal.welcome') },
       { type: 'output', content: t('terminal.prompt') },
-      { type: 'output', content: '' }
+      { type: 'output', content: '' },
     ]);
   }, [t]);
 
@@ -43,7 +49,7 @@ export const Terminal: React.FC<TerminalProps> = () => {
   }, [lines]);
 
   const getPrompt = () => {
-    const user = isRoot ? 'root' : (window.webos?.user.getCurrentUser()?.username || 'user');
+    const user = isRoot ? 'root' : window.webos?.user.getCurrentUser()?.username || 'user';
     const host = 'webos';
     return `${user}@${host}:${currentPath}$ `;
   };
@@ -52,7 +58,9 @@ export const Terminal: React.FC<TerminalProps> = () => {
     if (path.startsWith('/')) return path;
     if (path === '~') return '/home/' + (window.webos?.user.getCurrentUser()?.username || 'user');
     if (path.startsWith('~/')) {
-      return '/home/' + (window.webos?.user.getCurrentUser()?.username || 'user') + path.substring(1);
+      return (
+        '/home/' + (window.webos?.user.getCurrentUser()?.username || 'user') + path.substring(1)
+      );
     }
     return currentPath === '/' ? `/${path}` : `${currentPath}/${path}`;
   };
@@ -81,11 +89,13 @@ export const Terminal: React.FC<TerminalProps> = () => {
           if (!files || files.length === 0) {
             return '';
           }
-          return files.map(f => {
-            const prefix = f.type === 'directory' ? 'd' : '-';
-            const perms = f.permissions.substring(1);
-            return `${prefix}${perms} ${f.owner.padEnd(8)} ${f.name}${f.type === 'directory' ? '/' : ''}`;
-          }).join('\n');
+          return files
+            .map((f) => {
+              const prefix = f.type === 'directory' ? 'd' : '-';
+              const perms = f.permissions.substring(1);
+              return `${prefix}${perms} ${f.owner.padEnd(8)} ${f.name}${f.type === 'directory' ? '/' : ''}`;
+            })
+            .join('\n');
         }
 
         case 'cat': {
@@ -110,7 +120,7 @@ export const Terminal: React.FC<TerminalProps> = () => {
             setCurrentPath(homePath);
             return '';
           }
-          
+
           let newPath: string;
           if (args[1] === '..') {
             const parts = currentPath.split('/').filter(Boolean);
@@ -197,20 +207,20 @@ export const Terminal: React.FC<TerminalProps> = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!currentInput.trim()) return;
 
     // 添加输入行
-    setLines(prev => [...prev, { type: 'input', content: getPrompt() + currentInput }]);
+    setLines((prev) => [...prev, { type: 'input', content: getPrompt() + currentInput }]);
 
     // 执行命令
     const output = await executeCommand(currentInput);
-    
+
     if (output || currentInput.trim().toLowerCase() !== 'clear') {
       if (currentInput.trim().toLowerCase() === 'clear') {
         // clear 命令已在 executeCommand 中处理
       } else if (output) {
-        setLines(prev => [...prev, { type: 'output', content: output }]);
+        setLines((prev) => [...prev, { type: 'output', content: output }]);
       }
     }
 
@@ -236,27 +246,25 @@ export const Terminal: React.FC<TerminalProps> = () => {
         fontSize: '14px',
         padding: '8px',
         overflow: 'auto',
-        cursor: 'text'
+        cursor: 'text',
       }}
     >
       {lines.map((line, index) => (
-        <div 
+        <div
           key={index}
           style={{
-            color: line.type === 'input' ? '#4ec9b0' : 
-                   line.type === 'error' ? '#f14c4c' : '#d4d4d4',
+            color:
+              line.type === 'input' ? '#4ec9b0' : line.type === 'error' ? '#f14c4c' : '#d4d4d4',
             whiteSpace: 'pre-wrap',
-            wordBreak: 'break-all'
+            wordBreak: 'break-all',
           }}
         >
           {line.content}
         </div>
       ))}
-      
+
       <div style={{ display: 'flex', alignItems: 'center' }}>
-        <span style={{ color: isRoot ? '#f14c4c' : '#4ec9b0' }}>
-          {getPrompt()}
-        </span>
+        <span style={{ color: isRoot ? '#f14c4c' : '#4ec9b0' }}>{getPrompt()}</span>
         <input
           ref={inputRef}
           type="text"
@@ -272,7 +280,7 @@ export const Terminal: React.FC<TerminalProps> = () => {
             color: '#d4d4d4',
             fontFamily: 'inherit',
             fontSize: 'inherit',
-            caretColor: '#d4d4d4'
+            caretColor: '#d4d4d4',
           }}
         />
       </div>
@@ -296,7 +304,7 @@ export const appInfo: AppInfo = {
   minWidth: 400,
   minHeight: 300,
   resizable: true,
-  singleton: false
+  singleton: false,
 };
 
 export default Terminal;

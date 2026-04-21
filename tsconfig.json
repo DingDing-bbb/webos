@@ -16,6 +16,7 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "forceConsistentCasingInFileNames": true,
+    "ignoreDeprecations": "6.0",
     "baseUrl": ".",
     "paths": {
       "@kernel": ["packages/os/packages/kernel/src/index.ts"],
@@ -45,10 +46,6 @@
     },
     "types": ["webpack-env"]
   },
-  "include": [
-    "packages/**/*",
-    "site/**/*",
-    "global.d.ts"
-  ],
+  "include": ["packages/**/*", "site/**/*", "global.d.ts"],
   "exclude": ["node_modules", "dist", ".next"]
 }

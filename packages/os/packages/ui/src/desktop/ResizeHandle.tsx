@@ -1,32 +1,18 @@
 /**
- * @fileoverview Resize Handle Component
- * @module @ui/desktop/ResizeHandle
- *
+ * Resize Handle Component
  * Provides 8-direction resize handles for windows.
  */
 
 import React, { useCallback, useRef } from 'react';
 
-// ============================================================================
-// Types
-// ============================================================================
-
 export type ResizeDirection = 'n' | 's' | 'e' | 'w' | 'ne' | 'nw' | 'se' | 'sw';
 
 export interface ResizeHandleProps {
-  /** Resize direction */
   direction: ResizeDirection;
-  /** Called during resize with delta movement */
   onResize: (direction: ResizeDirection, delta: { x: number; y: number }) => void;
-  /** Called when resize ends */
   onResizeEnd: () => void;
-  /** Minimum distance before resize starts */
   threshold?: number;
 }
-
-// ============================================================================
-// Constants
-// ============================================================================
 
 const DIRECTION_STYLES: Record<ResizeDirection, React.CSSProperties> = {
   n: { top: 0, left: '10%', right: '10%', height: '6px', cursor: 'ns-resize' },
@@ -39,10 +25,6 @@ const DIRECTION_STYLES: Record<ResizeDirection, React.CSSProperties> = {
   sw: { bottom: 0, left: 0, width: '12px', height: '12px', cursor: 'nesw-resize' },
 };
 
-// ============================================================================
-// Component
-// ============================================================================
-
 export const ResizeHandle: React.FC<ResizeHandleProps> = ({
   direction,
   onResize,
@@ -51,6 +33,7 @@ export const ResizeHandle: React.FC<ResizeHandleProps> = ({
 }) => {
   const startRef = useRef<{ x: number; y: number } | null>(null);
 
+  // Mouse Handlers
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
       e.preventDefault();
@@ -84,17 +67,56 @@ export const ResizeHandle: React.FC<ResizeHandleProps> = ({
     [direction, onResize, onResizeEnd]
   );
 
+  // Touch Handlers
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    e.stopPropagation();
+
+    const touch = e.touches[0];
+    if (!touch) return;
+
+    startRef.current = { x: touch.clientX, y: touch.clientY };
+  }, []);
+
+  const handleTouchMove = useCallback(
+    (e: React.TouchEvent) => {
+      if (!startRef.current) return;
+
+      const touch = e.touches[0];
+      if (!touch) return;
+
+      e.preventDefault();
+
+      const delta = {
+        x: touch.clientX - startRef.current.x,
+        y: touch.clientY - startRef.current.y,
+      };
+
+      onResize(direction, delta);
+      startRef.current = { x: touch.clientX, y: touch.clientY };
+    },
+    [direction, onResize]
+  );
+
+  const handleTouchEnd = useCallback(() => {
+    startRef.current = null;
+    onResizeEnd();
+  }, [onResizeEnd]);
+
   const isCorner = ['ne', 'nw', 'se', 'sw'].includes(direction);
 
   return (
     <div
-      className={`desktop-resize-handle ${isCorner ? 'corner' : 'edge'}`}
+      className={`desktop-resize-handle os-window-resize-handle ${isCorner ? 'corner' : 'edge'}`}
       style={{
         position: 'absolute',
         zIndex: 10,
+        touchAction: 'none',
         ...DIRECTION_STYLES[direction],
       }}
       onMouseDown={handleMouseDown}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
     />
   );
 };

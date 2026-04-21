@@ -1,6 +1,6 @@
 {
   "name": "@kernel/fs",
-  "version": "1.0.0",
+  "version": "0.0.1-alpha",
   "description": "WebOS File System - Unix-like file system implementation",
   "main": "src/index.ts",
   "types": "src/index.ts",

@@ -81,7 +81,7 @@
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
   z-index: 100;
   cursor: grabbing;
-  transition: 
+  transition:
     transform 0.1s ease,
     box-shadow 0.1s ease,
     opacity 0.1s ease;
@@ -168,7 +168,13 @@
     0 12px 28px rgba(0, 0, 0, 0.3),
     0 0 0 1px rgba(255, 255, 255, 0.3) inset;
 
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    sans-serif;
   animation: context-menu-appear 0.12s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -323,7 +329,7 @@
    Dark Theme Context Menu
    ============================================ */
 
-[data-theme="dark"] .os-context-menu {
+[data-theme='dark'] .os-context-menu {
   background: rgba(40, 40, 50, 0.92);
   border-color: rgba(255, 255, 255, 0.1);
   box-shadow:
@@ -331,37 +337,37 @@
     0 0 0 1px rgba(0, 0, 0, 0.2) inset;
 }
 
-[data-theme="dark"] .os-context-menu-item {
+[data-theme='dark'] .os-context-menu-item {
   color: rgba(255, 255, 255, 0.9);
 }
 
-[data-theme="dark"] .os-context-menu-item:hover:not(.disabled) {
+[data-theme='dark'] .os-context-menu-item:hover:not(.disabled) {
   background: rgba(66, 165, 245, 0.2);
 }
 
-[data-theme="dark"] .os-context-menu-item:active:not(.disabled) {
+[data-theme='dark'] .os-context-menu-item:active:not(.disabled) {
   background: rgba(66, 165, 245, 0.3);
 }
 
-[data-theme="dark"] .os-context-menu-icon,
-[data-theme="dark"] .os-context-menu-arrow {
+[data-theme='dark'] .os-context-menu-icon,
+[data-theme='dark'] .os-context-menu-arrow {
   color: rgba(255, 255, 255, 0.6);
 }
 
-[data-theme="dark"] .os-context-menu-item:hover:not(.disabled) .os-context-menu-icon,
-[data-theme="dark"] .os-context-menu-item:hover:not(.disabled) .os-context-menu-arrow {
+[data-theme='dark'] .os-context-menu-item:hover:not(.disabled) .os-context-menu-icon,
+[data-theme='dark'] .os-context-menu-item:hover:not(.disabled) .os-context-menu-arrow {
   color: rgba(66, 165, 245, 1);
 }
 
-[data-theme="dark"] .os-context-menu-shortcut {
+[data-theme='dark'] .os-context-menu-shortcut {
   color: rgba(255, 255, 255, 0.5);
 }
 
-[data-theme="dark"] .os-context-menu-divider {
+[data-theme='dark'] .os-context-menu-divider {
   background: rgba(255, 255, 255, 0.12);
 }
 
-[data-theme="dark"] .os-context-menu-submenu {
+[data-theme='dark'] .os-context-menu-submenu {
   background: rgba(50, 50, 60, 0.95);
   border-color: rgba(255, 255, 255, 0.1);
 }
@@ -444,7 +450,7 @@
    Dark Theme Adjustments
    ============================================ */
 
-[data-theme="dark"] .os-context-menu {
+[data-theme='dark'] .os-context-menu {
   background: rgba(30, 30, 40, 0.95);
 }
 
@@ -452,11 +458,11 @@
    Light Theme Adjustments
    ============================================ */
 
-[data-theme="light"] .os-desktop-icon-label {
+[data-theme='light'] .os-desktop-icon-label {
   text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
 }
 
-[data-theme="light"] .os-context-menu {
+[data-theme='light'] .os-context-menu {
   background: rgba(255, 255, 255, 0.95);
   border-color: rgba(0, 0, 0, 0.1);
   box-shadow:
@@ -464,15 +470,15 @@
     0 0 0 1px rgba(0, 0, 0, 0.05);
 }
 
-[data-theme="light"] .os-context-menu-item {
+[data-theme='light'] .os-context-menu-item {
   color: rgba(0, 0, 0, 0.85);
 }
 
-[data-theme="light"] .os-context-menu-item:hover:not(:disabled) {
+[data-theme='light'] .os-context-menu-item:hover:not(:disabled) {
   background: rgba(0, 0, 0, 0.05);
 }
 
-[data-theme="light"] .os-context-menu-divider {
+[data-theme='light'] .os-context-menu-divider {
   background: rgba(0, 0, 0, 0.1);
 }
 
@@ -481,8 +487,13 @@
    ============================================ */
 
 @keyframes icon-bounce {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
 }
 
 .os-desktop-icon.bouncing {

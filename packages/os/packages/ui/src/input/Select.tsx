@@ -187,28 +187,21 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
     );
 
     // Determine current value
-    const isControlled = multiple
-      ? propValues !== undefined
-      : propValue !== undefined;
+    const isControlled = multiple ? propValues !== undefined : propValue !== undefined;
 
     // eslint-disable-next-line react-hooks/exhaustive-deps -- currentValue needs to be stable for useCallback dependencies, wrapping in useMemo would add unnecessary complexity
-    const currentValue = isControlled
-      ? multiple
-        ? propValues || []
-        : propValue
-      : internalValue;
+    const currentValue = isControlled ? (multiple ? propValues || [] : propValue) : internalValue;
 
     // Flatten options for searching
-    const allOptions = propGroups
-      ? propGroups.flatMap((group) => group.options)
-      : propOptions;
+    const allOptions = propGroups ? propGroups.flatMap((group) => group.options) : propOptions;
 
     // Filter options based on search
-    const filteredOptions = searchable && searchQuery
-      ? allOptions.filter((option) =>
-          String(option.label).toLowerCase().includes(searchQuery.toLowerCase())
-        )
-      : allOptions;
+    const filteredOptions =
+      searchable && searchQuery
+        ? allOptions.filter((option) =>
+            String(option.label).toLowerCase().includes(searchQuery.toLowerCase())
+          )
+        : allOptions;
 
     // Get selected option(s)
     const getSelectedOption = useCallback(
@@ -217,9 +210,7 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
     );
 
     const selectedOptions = multiple
-      ? ((currentValue as Array<string | number>) || [])
-          .map(getSelectedOption)
-          .filter(Boolean)
+      ? ((currentValue as Array<string | number>) || []).map(getSelectedOption).filter(Boolean)
       : getSelectedOption(currentValue as string | number);
 
     // Handle selection
@@ -293,9 +284,7 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
             if (!isOpen) {
               setIsOpen(true);
             } else {
-              setHighlightedIndex((prev) =>
-                Math.min(prev + 1, filteredOptions.length - 1)
-              );
+              setHighlightedIndex((prev) => Math.min(prev + 1, filteredOptions.length - 1));
             }
             break;
           case 'ArrowUp':
@@ -316,10 +305,7 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
     // Close dropdown when clicking outside
     useEffect(() => {
       const handleClickOutside = (event: MouseEvent) => {
-        if (
-          wrapperRef.current &&
-          !wrapperRef.current.contains(event.target as Node)
-        ) {
+        if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
           setIsOpen(false);
           setIsFocused(false);
         }
@@ -341,13 +327,17 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
       'webos-select-wrapper',
       isOpen && 'webos-select-wrapper--open',
       className,
-    ].filter(Boolean).join(' ');
+    ]
+      .filter(Boolean)
+      .join(' ');
 
     const triggerClasses = [
       'webos-select-trigger',
       isFocused && 'webos-select-trigger--focused',
       disabled && 'webos-select-trigger--disabled',
-    ].filter(Boolean).join(' ');
+    ]
+      .filter(Boolean)
+      .join(' ');
 
     // Render option
     const renderOption = (option: SelectOption, index: number) => {
@@ -365,7 +355,9 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
             isSelected && 'webos-select-option--selected',
             option.disabled && 'webos-select-option--disabled',
             isHighlighted && 'webos-select-option--highlighted',
-          ].filter(Boolean).join(' ')}
+          ]
+            .filter(Boolean)
+            .join(' ')}
           onClick={() => handleSelect(option)}
           onMouseEnter={() => setHighlightedIndex(index)}
           role="option"
@@ -383,11 +375,7 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
     };
 
     return (
-      <div
-        ref={wrapperRef}
-        className={wrapperClasses}
-        onKeyDown={handleKeyDown}
-      >
+      <div ref={wrapperRef} className={wrapperClasses} onKeyDown={handleKeyDown}>
         <input type="hidden" name={name} value={String(currentValue)} />
 
         <div
@@ -404,7 +392,8 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
           aria-haspopup="listbox"
         >
           <div className="webos-select-value">
-            {!selectedOptions || (Array.isArray(selectedOptions) && selectedOptions.length === 0) ? (
+            {!selectedOptions ||
+            (Array.isArray(selectedOptions) && selectedOptions.length === 0) ? (
               <span className="webos-select-placeholder">{placeholder}</span>
             ) : multiple ? (
               (selectedOptions as SelectOption[]).map((option) => (
@@ -470,9 +459,10 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
                 <div key={group.label}>
                   <div className="webos-select-group-label">{group.label}</div>
                   {group.options
-                    .filter((opt) =>
-                      !searchQuery ||
-                      String(opt.label).toLowerCase().includes(searchQuery.toLowerCase())
+                    .filter(
+                      (opt) =>
+                        !searchQuery ||
+                        String(opt.label).toLowerCase().includes(searchQuery.toLowerCase())
                     )
                     .map((option, _index) => {
                       const globalIndex = filteredOptions.findIndex(

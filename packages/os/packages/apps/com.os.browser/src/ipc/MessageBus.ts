@@ -1,6 +1,6 @@
 /**
  * IPC Message Bus - 进程间通信消息总线
- * 
+ *
  * 基于EventTarget实现的进程间通信，确保消息序列化传输
  */
 
@@ -56,19 +56,19 @@ export class IPCBus extends EventTarget {
     }
 
     // 派发自定义事件
-    const event = new CustomEvent('ipc-message', { 
+    const event = new CustomEvent('ipc-message', {
       detail: message,
       bubbles: false,
-      cancelable: false
+      cancelable: false,
     });
-    
+
     this.dispatchEvent(event);
 
     // 同时派发特定类型的消息事件
     const typeEvent = new CustomEvent(`ipc-${message.type}`, {
       detail: message,
       bubbles: false,
-      cancelable: false
+      cancelable: false,
     });
     this.dispatchEvent(typeEvent);
   }
@@ -89,7 +89,7 @@ export class IPCBus extends EventTarget {
       this.pendingRequests.set(id, {
         resolve: resolve as (result: unknown) => void,
         reject,
-        timeout
+        timeout,
       });
 
       this.send(message);
@@ -149,7 +149,7 @@ export class IPCBus extends EventTarget {
    */
   once(type: string, handler: MessageHandler): () => void {
     let unsubscribe: (() => void) | null = null;
-    
+
     const wrappedHandler = (message: IPCMessage) => {
       if (unsubscribe) {
         unsubscribe();

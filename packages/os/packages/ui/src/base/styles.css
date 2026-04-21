@@ -21,23 +21,23 @@
   align-items: center;
   justify-content: center;
   gap: var(--spacing-sm);
-  
+
   /* Typography */
   font-family: var(--font-family);
   font-weight: var(--font-weight-medium);
   line-height: 1;
   text-decoration: none;
   white-space: nowrap;
-  
+
   /* Appearance */
   border: 1px solid transparent;
   border-radius: var(--radius-md);
   cursor: pointer;
   outline: none;
   user-select: none;
-  
+
   /* Transitions */
-  transition: 
+  transition:
     background-color var(--duration-fast) var(--easing-default),
     border-color var(--duration-fast) var(--easing-default),
     box-shadow var(--duration-fast) var(--easing-default),
@@ -118,11 +118,21 @@
 }
 
 /* Button Sizes */
-.webos-button--xs { border-radius: var(--radius-xs); }
-.webos-button--sm { border-radius: var(--radius-sm); }
-.webos-button--md { border-radius: var(--radius-md); }
-.webos-button--lg { border-radius: var(--radius-lg); }
-.webos-button--xl { border-radius: var(--radius-lg); }
+.webos-button--xs {
+  border-radius: var(--radius-xs);
+}
+.webos-button--sm {
+  border-radius: var(--radius-sm);
+}
+.webos-button--md {
+  border-radius: var(--radius-md);
+}
+.webos-button--lg {
+  border-radius: var(--radius-lg);
+}
+.webos-button--xl {
+  border-radius: var(--radius-lg);
+}
 
 /* Icon Only Button */
 .webos-button--icon-only {
@@ -159,8 +169,12 @@
 }
 
 @keyframes webos-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Disabled State */
@@ -256,8 +270,13 @@
 }
 
 @keyframes webos-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
 
 /* Icon Stack */
@@ -302,10 +321,18 @@
   overflow: hidden;
 }
 
-.webos-heading--lines-2 { -webkit-line-clamp: 2; }
-.webos-heading--lines-3 { -webkit-line-clamp: 3; }
-.webos-heading--lines-4 { -webkit-line-clamp: 4; }
-.webos-heading--lines-5 { -webkit-line-clamp: 5; }
+.webos-heading--lines-2 {
+  -webkit-line-clamp: 2;
+}
+.webos-heading--lines-3 {
+  -webkit-line-clamp: 3;
+}
+.webos-heading--lines-4 {
+  -webkit-line-clamp: 4;
+}
+.webos-heading--lines-5 {
+  -webkit-line-clamp: 5;
+}
 
 /* Text */
 .webos-text {
@@ -329,10 +356,18 @@
   overflow: hidden;
 }
 
-.webos-text--lines-2 { -webkit-line-clamp: 2; }
-.webos-text--lines-3 { -webkit-line-clamp: 3; }
-.webos-text--lines-4 { -webkit-line-clamp: 4; }
-.webos-text--lines-5 { -webkit-line-clamp: 5; }
+.webos-text--lines-2 {
+  -webkit-line-clamp: 2;
+}
+.webos-text--lines-3 {
+  -webkit-line-clamp: 3;
+}
+.webos-text--lines-4 {
+  -webkit-line-clamp: 4;
+}
+.webos-text--lines-5 {
+  -webkit-line-clamp: 5;
+}
 
 /* Paragraph */
 .webos-paragraph {
@@ -354,10 +389,18 @@
   overflow: hidden;
 }
 
-.webos-paragraph--lines-2 { -webkit-line-clamp: 2; }
-.webos-paragraph--lines-3 { -webkit-line-clamp: 3; }
-.webos-paragraph--lines-4 { -webkit-line-clamp: 4; }
-.webos-paragraph--lines-5 { -webkit-line-clamp: 5; }
+.webos-paragraph--lines-2 {
+  -webkit-line-clamp: 2;
+}
+.webos-paragraph--lines-3 {
+  -webkit-line-clamp: 3;
+}
+.webos-paragraph--lines-4 {
+  -webkit-line-clamp: 4;
+}
+.webos-paragraph--lines-5 {
+  -webkit-line-clamp: 5;
+}
 
 /* Link */
 .webos-link {
@@ -424,8 +467,9 @@
   align-items: center;
   justify-content: center;
   position: relative;
-  transition: transform var(--duration-fast) var(--easing-default),
-              box-shadow var(--duration-fast) var(--easing-default);
+  transition:
+    transform var(--duration-fast) var(--easing-default),
+    box-shadow var(--duration-fast) var(--easing-default);
 }
 
 .webos-color-swatch--rounded {
@@ -567,8 +611,16 @@
   width: 100%;
   height: 12px;
   border-radius: var(--radius-sm);
-  background: linear-gradient(to right, 
-    #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000);
+  background: linear-gradient(
+    to right,
+    #ff0000,
+    #ffff00,
+    #00ff00,
+    #00ffff,
+    #0000ff,
+    #ff00ff,
+    #ff0000
+  );
   margin-bottom: var(--spacing-sm);
   position: relative;
   cursor: pointer;
@@ -887,20 +939,20 @@
    Dark Mode Adjustments
    ============================================ */
 
-[data-theme="light"] .webos-button--secondary {
+[data-theme='light'] .webos-button--secondary {
   background: var(--bg-acrylic-light);
   border-color: var(--border-default);
 }
 
-[data-theme="light"] .webos-button--secondary:hover:not(:disabled) {
+[data-theme='light'] .webos-button--secondary:hover:not(:disabled) {
   background: var(--bg-acrylic);
 }
 
-[data-theme="light"] .webos-code {
+[data-theme='light'] .webos-code {
   background: var(--bg-solid-tertiary);
 }
 
-[data-theme="light"] .webos-color-picker__dropdown {
+[data-theme='light'] .webos-color-picker__dropdown {
   background: var(--bg-acrylic);
 }
 
@@ -925,7 +977,7 @@
   .webos-divider {
     transition: none !important;
   }
-  
+
   .webos-icon--spin,
   .webos-button__spinner {
     animation: none !important;
@@ -937,11 +989,11 @@
   .webos-button {
     border: 2px solid currentColor;
   }
-  
+
   .webos-color-swatch--border {
     box-shadow: inset 0 0 0 1px currentColor;
   }
-  
+
   .webos-divider__line {
     border-top: 2px solid currentColor;
   }

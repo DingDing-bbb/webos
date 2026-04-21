@@ -18,11 +18,7 @@
   "category": "system",
   "author": "OS Team",
   "license": "MIT",
-  "permissions": [
-    "system.config",
-    "system.locale",
-    "user.manage"
-  ],
+  "permissions": ["system.config", "system.locale", "user.manage"],
   "minPlatformVersion": "1.0.0",
   "window": {
     "defaultWidth": 800,

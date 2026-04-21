@@ -19,7 +19,7 @@ const CACHE_PATTERNS = [
   /\.gif$/,
   /\.webp$/,
   /\.ico$/,
-  /\/locales\/.*\.json$/
+  /\/locales\/.*\.json$/,
 ];
 
 // 安装事件
@@ -32,13 +32,16 @@ self.addEventListener('install', () => {
 self.addEventListener('activate', (event) => {
   console.log('[SW] Activating service worker version:', VERSION);
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames
-          .filter(name => name.startsWith('webos-cache') && name !== CACHE_NAME)
-          .map(name => caches.delete(name))
-      );
-    }).then(() => self.clients.claim())
+    caches
+      .keys()
+      .then((cacheNames) => {
+        return Promise.all(
+          cacheNames
+            .filter((name) => name.startsWith('webos-cache') && name !== CACHE_NAME)
+            .map((name) => caches.delete(name))
+        );
+      })
+      .then(() => self.clients.claim())
   );
 });
 
@@ -53,7 +56,7 @@ self.addEventListener('fetch', (event) => {
   }
 
   // 检查是否需要缓存
-  const shouldCache = CACHE_PATTERNS.some(pattern => pattern.test(url.pathname));
+  const shouldCache = CACHE_PATTERNS.some((pattern) => pattern.test(url.pathname));
 
   if (!shouldCache) {
     return;
@@ -61,10 +64,10 @@ self.addEventListener('fetch', (event) => {
 
   event.respondWith(
     fetch(request)
-      .then(response => {
+      .then((response) => {
         if (response.ok) {
           const cache = caches.open(CACHE_NAME);
-          cache.then(c => c.put(request, response.clone()));
+          cache.then((c) => c.put(request, response.clone()));
         }
         return response;
       })
@@ -84,11 +87,14 @@ self.addEventListener('message', (event) => {
 
   if (event.data && event.data.type === 'CLEAR_CACHE') {
     event.waitUntil(
-      caches.keys().then(cacheNames => {
-        return Promise.all(cacheNames.map(name => caches.delete(name)));
-      }).then(() => {
-        event.ports[0].postMessage({ success: true });
-      })
+      caches
+        .keys()
+        .then((cacheNames) => {
+          return Promise.all(cacheNames.map((name) => caches.delete(name)));
+        })
+        .then(() => {
+          event.ports[0].postMessage({ success: true });
+        })
     );
   }
 });

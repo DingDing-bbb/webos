@@ -595,8 +595,12 @@
 }
 
 @keyframes switch-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .webos-switch-label {
@@ -1359,8 +1363,16 @@
   width: 100%;
   height: 16px;
   margin-top: var(--os-spacing-sm);
-  background: linear-gradient(to right, 
-    #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000);
+  background: linear-gradient(
+    to right,
+    #ff0000,
+    #ffff00,
+    #00ff00,
+    #00ffff,
+    #0000ff,
+    #ff00ff,
+    #ff0000
+  );
   border-radius: var(--radius-full);
   cursor: pointer;
 }
@@ -1384,12 +1396,17 @@
   margin-top: var(--os-spacing-sm);
   border-radius: var(--radius-full);
   cursor: pointer;
-  background: linear-gradient(45deg, #ccc 25%, transparent 25%),
-              linear-gradient(-45deg, #ccc 25%, transparent 25%),
-              linear-gradient(45deg, transparent 75%, #ccc 75%),
-              linear-gradient(-45deg, transparent 75%, #ccc 75%);
+  background:
+    linear-gradient(45deg, #ccc 25%, transparent 25%),
+    linear-gradient(-45deg, #ccc 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #ccc 75%),
+    linear-gradient(-45deg, transparent 75%, #ccc 75%);
   background-size: 8px 8px;
-  background-position: 0 0, 0 4px, 4px -4px, -4px 0;
+  background-position:
+    0 0,
+    0 4px,
+    4px -4px,
+    -4px 0;
 }
 
 .webos-colorpicker-alpha-gradient {

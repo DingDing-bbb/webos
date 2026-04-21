@@ -7,10 +7,10 @@ type ClassValue = string | number | boolean | undefined | null | ClassValue[];
 
 export function cn(...inputs: ClassValue[]): string {
   const classes: string[] = [];
-  
+
   for (const input of inputs) {
     if (!input) continue;
-    
+
     if (typeof input === 'string') {
       classes.push(input);
     } else if (typeof input === 'number') {
@@ -24,7 +24,7 @@ export function cn(...inputs: ClassValue[]): string {
       }
     }
   }
-  
+
   return classes.join(' ');
 }
 
@@ -117,7 +117,7 @@ export function hexToRgb(hex: string): { r: number; g: number; b: number } | nul
 
 // ========== RGB to Hex ==========
 export function rgbToHex(r: number, g: number, b: number): string {
-  return '#' + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('');
+  return '#' + [r, g, b].map((x) => x.toString(16).padStart(2, '0')).join('');
 }
 
 // ========== Create Alpha Color ==========
@@ -144,13 +144,13 @@ export function getContrastColor(hexcolor: string): 'black' | 'white' {
 
 // ========== Sleep ==========
 export function sleep(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 // ========== Deep Clone ==========
 export function deepClone<T>(obj: T): T {
   if (obj === null || typeof obj !== 'object') return obj;
-  if (Array.isArray(obj)) return obj.map(item => deepClone(item)) as unknown as T;
+  if (Array.isArray(obj)) return obj.map((item) => deepClone(item)) as unknown as T;
   const cloned = {} as T;
   for (const key in obj) {
     if (Object.prototype.hasOwnProperty.call(obj, key)) {
@@ -186,7 +186,11 @@ function isObject(item: unknown): item is object {
 }
 
 // ========== Object Path Get ==========
-export function getByPath<T = unknown>(obj: Record<string, unknown>, path: string, defaultValue?: T): T {
+export function getByPath<T = unknown>(
+  obj: Record<string, unknown>,
+  path: string,
+  defaultValue?: T
+): T {
   const keys = path.split('.');
   let result: unknown = obj;
 

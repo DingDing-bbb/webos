@@ -1,7 +1,7 @@
 import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
-import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
+import eslintConfigPrettier from 'eslint-config-prettier';
 
 export default tseslint.config(
   // 忽略目录必须放在最前面
@@ -11,9 +11,16 @@ export default tseslint.config(
       'node_modules/**',
       '.next/**',
       'site/.next/**',
+      'site/public/**', // 构建输出
       '**/*.config.js',
       '**/*.config.ts',
       '**/next-env.d.ts',
+      // Skills 目录的脚本文件（独立工具，非核心代码）
+      'skills/**/*.js',
+      'skills/**/*.ts',
+      // packages/os 可能存在老的脚本
+      'packages/os/**/*.js',
+      'upload/**',
     ],
   },
   js.configs.recommended,
@@ -21,7 +28,6 @@ export default tseslint.config(
   {
     files: ['**/*.{ts,tsx}'],
     plugins: {
-      react,
       'react-hooks': reactHooks,
     },
     languageOptions: {
@@ -70,17 +76,15 @@ export default tseslint.config(
       },
     },
     rules: {
-      'react/react-in-jsx-scope': 'off',
+      ...eslintConfigPrettier.rules,
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
-      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+      ],
       '@typescript-eslint/no-explicit-any': 'warn',
       'no-console': 'off',
-    },
-    settings: {
-      react: {
-        version: 'detect',
-      },
     },
   },
   {

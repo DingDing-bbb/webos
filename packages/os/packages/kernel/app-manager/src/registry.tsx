@@ -2,11 +2,7 @@
 // 这确保所有模块使用同一个应用注册表实例
 
 // 从 apps 包导入共享的注册表和类型
-export {
-  appRegistry,
-  CATEGORIES,
-  CategoryIcons
-} from '../../../apps/registry';
+export { appRegistry, CATEGORIES, CategoryIcons } from '../../../apps/registry';
 
 // 重导出类型
 export type {
@@ -19,5 +15,5 @@ export type {
   AppEvent,
   LaunchOptions,
   AppStatus,
-  AppPermission
+  AppPermission,
 } from '../../../apps/types';

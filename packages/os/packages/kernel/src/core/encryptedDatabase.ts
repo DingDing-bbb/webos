@@ -203,11 +203,7 @@ async function loadEncryptedDb(): Promise<{ encrypted: string; iv: string; salt:
  *
  * @internal
  */
-async function saveEncryptedDb(
-  encrypted: string,
-  iv: string,
-  salt: string
-): Promise<void> {
+async function saveEncryptedDb(encrypted: string, iv: string, salt: string): Promise<void> {
   const db = await getIndexedDB();
 
   return new Promise((resolve, reject) => {
@@ -527,7 +523,10 @@ export function getDatabase(): Database | null {
  * console.log('Rows updated:', changes);
  * ```
  */
-export function runSql(sql: string, params: unknown[] = []): { changes: number; lastInsertRowId: number } {
+export function runSql(
+  sql: string,
+  params: unknown[] = []
+): { changes: number; lastInsertRowId: number } {
   if (!database) {
     throw new Error('Database not initialized');
   }

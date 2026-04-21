@@ -1,75 +1,38 @@
 /**
  * @fileoverview Window Component
  * @module @ui/desktop/Window
- *
- * A professional window component with:
- * - Title bar with window controls
- * - Minimize/Maximize/Close buttons
- * - Resizable (8 directions)
- * - Draggable
- * - Acrylic/Mica blur effect
- * - Window shadows
  */
 
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { ResizeHandle, ResizeDirection } from './ResizeHandle';
 
-// ============================================================================
-// Types
-// ============================================================================
-
 export type WindowState = 'normal' | 'minimized' | 'maximized';
 
 export interface WindowProps {
-  /** Window ID */
   id: string;
-  /** Window title */
   title: string;
-  /** Window icon */
   icon?: React.ReactNode;
-  /** Initial position */
   initialPosition?: { x: number; y: number };
-  /** Initial size */
   initialSize?: { width: number; height: number };
-  /** Minimum size */
   minSize?: { width: number; height: number };
-  /** Maximum size */
   maxSize?: { width: number; height: number };
-  /** Z-index for layering */
   zIndex?: number;
-  /** Is window active/focused */
   isActive?: boolean;
-  /** Window state */
   state?: WindowState;
-  /** Whether window can be resized */
   resizable?: boolean;
-  /** Whether window can be dragged */
   draggable?: boolean;
-  /** Whether window shows minimize button */
   showMinimize?: boolean;
-  /** Whether window shows maximize button */
   showMaximize?: boolean;
-  /** Acrylic effect intensity (0-1) */
   acrylicIntensity?: number;
-  /** Window content */
   children: React.ReactNode;
-  /** Called when window is closed */
   onClose?: () => void;
-  /** Called when window is minimized */
   onMinimize?: () => void;
-  /** Called when window is maximized/restored */
   onMaximize?: () => void;
-  /** Called when window gains focus */
   onFocus?: () => void;
-  /** Called when position changes */
   onPositionChange?: (position: { x: number; y: number }) => void;
-  /** Called when size changes */
   onSizeChange?: (size: { width: number; height: number }) => void;
-  /** Called when drag starts */
   onDragStart?: () => void;
-  /** Called when drag ends */
   onDragEnd?: () => void;
-  /** Custom className */
   className?: string;
 }
 
@@ -82,10 +45,6 @@ interface Size {
   width: number;
   height: number;
 }
-
-// ============================================================================
-// Icons
-// ============================================================================
 
 const MinimizeIcon = () => (
   <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
@@ -107,14 +66,17 @@ const RestoreIcon = () => (
 );
 
 const CloseIcon = () => (
-  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5">
+  <svg
+    width="12"
+    height="12"
+    viewBox="0 0 12 12"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+  >
     <path d="M2 2l8 8M10 2l-8 8" />
   </svg>
 );
-
-// ============================================================================
-// Component
-// ============================================================================
 
 export const Window: React.FC<WindowProps> = ({
   id: _id,
@@ -143,9 +105,6 @@ export const Window: React.FC<WindowProps> = ({
   onDragEnd,
   className = '',
 }) => {
-  // ========================================
-  // State
-  // ========================================
   const [position, setPosition] = useState<Position>(initialPosition);
   const [size, setSize] = useState<Size>(initialSize);
   const [isDragging, setIsDragging] = useState(false);
@@ -155,14 +114,15 @@ export const Window: React.FC<WindowProps> = ({
 
   const windowRef = useRef<HTMLDivElement>(null);
   const dragStartRef = useRef<{ x: number; y: number; posX: number; posY: number } | null>(null);
+  const touchStartRef = useRef<{
+    x: number;
+    y: number;
+    posX: number;
+    posY: number;
+    time: number;
+  } | null>(null);
+  const lastTapRef = useRef<{ x: number; y: number; time: number } | null>(null);
 
-  // ========================================
-  // Effects
-  // ========================================
-
-  // Handle state changes (maximize/minimize)
-  // Note: We intentionally only run this when `state` changes, not when position/size changes
-  // This prevents infinite loops and ensures the effect only runs on actual state transitions
   useEffect(() => {
     if (state === 'maximized') {
       setRestorePosition(position);
@@ -170,7 +130,7 @@ export const Window: React.FC<WindowProps> = ({
       setPosition({ x: 0, y: 0 });
       setSize({
         width: window.innerWidth,
-        height: window.innerHeight - 48, // Account for taskbar
+        height: window.innerHeight - 48,
       });
     } else if (state === 'normal' && restorePosition && restoreSize) {
       setPosition(restorePosition);
@@ -179,9 +139,7 @@ export const Window: React.FC<WindowProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state]);
 
-  // ========================================
-  // Drag Handlers
-  // ========================================
+  // Mouse drag
   const handleDragMouseDown = useCallback(
     (e: React.MouseEvent) => {
       if (!draggable || state === 'maximized') return;
@@ -227,9 +185,104 @@ export const Window: React.FC<WindowProps> = ({
     [draggable, state, position, onFocus, onPositionChange, onDragStart, onDragEnd]
   );
 
-  // ========================================
-  // Resize Handlers
-  // ========================================
+  // Touch drag
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent) => {
+      if ((e.target as HTMLElement).closest('.desktop-window-controls')) return;
+      if (!draggable || state === 'maximized') return;
+
+      const touch = e.touches[0];
+      if (!touch) return;
+
+      e.preventDefault();
+      onFocus?.();
+
+      touchStartRef.current = {
+        x: touch.clientX,
+        y: touch.clientY,
+        posX: position.x,
+        posY: position.y,
+        time: Date.now(),
+      };
+    },
+    [draggable, state, position, onFocus]
+  );
+
+  const handleTouchMove = useCallback(
+    (e: React.TouchEvent) => {
+      if (!touchStartRef.current) return;
+
+      const touch = e.touches[0];
+      if (!touch) return;
+
+      e.preventDefault();
+
+      const deltaX = touch.clientX - touchStartRef.current.x;
+      const deltaY = touch.clientY - touchStartRef.current.y;
+
+      if (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
+        if (!isDragging) {
+          setIsDragging(true);
+          onDragStart?.();
+        }
+
+        const newX = touchStartRef.current.posX + deltaX;
+        const newY = Math.max(0, touchStartRef.current.posY + deltaY);
+
+        setPosition({ x: newX, y: newY });
+        onPositionChange?.({ x: newX, y: newY });
+      }
+    },
+    [isDragging, onDragStart, onPositionChange]
+  );
+
+  const handleTouchEnd = useCallback(
+    (e: React.TouchEvent) => {
+      const touch = e.changedTouches[0];
+      if (!touch || !touchStartRef.current) {
+        touchStartRef.current = null;
+        return;
+      }
+
+      const deltaX = touch.clientX - touchStartRef.current.x;
+      const deltaY = touch.clientY - touchStartRef.current.y;
+      const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+      const duration = Date.now() - touchStartRef.current.time;
+
+      // Double tap to maximize
+      if (distance < 10 && duration < 300) {
+        const now = Date.now();
+        const lastTap = lastTapRef.current;
+
+        if (
+          lastTap &&
+          now - lastTap.time < 300 &&
+          Math.abs(touch.clientX - lastTap.x) < 30 &&
+          Math.abs(touch.clientY - lastTap.y) < 30
+        ) {
+          if (showMaximize && draggable) {
+            onMaximize?.();
+          }
+          lastTapRef.current = null;
+        } else {
+          lastTapRef.current = {
+            x: touch.clientX,
+            y: touch.clientY,
+            time: now,
+          };
+        }
+      }
+
+      if (isDragging) {
+        setIsDragging(false);
+        onDragEnd?.();
+      }
+
+      touchStartRef.current = null;
+    },
+    [isDragging, showMaximize, draggable, onMaximize, onDragEnd]
+  );
+
   const handleResize = useCallback(
     (direction: ResizeDirection, delta: { x: number; y: number }) => {
       if (state === 'maximized') return;
@@ -240,23 +293,33 @@ export const Window: React.FC<WindowProps> = ({
         let newWidth = prev.width;
         let newHeight = prev.height;
 
-        // Horizontal resize
         if (direction.includes('e')) {
-          newWidth = Math.max(minSize.width, Math.min(maxSize?.width ?? Infinity, prev.width + delta.x));
+          newWidth = Math.max(
+            minSize.width,
+            Math.min(maxSize?.width ?? Infinity, prev.width + delta.x)
+          );
         }
         if (direction.includes('w')) {
-          newWidth = Math.max(minSize.width, Math.min(maxSize?.width ?? Infinity, prev.width - delta.x));
+          newWidth = Math.max(
+            minSize.width,
+            Math.min(maxSize?.width ?? Infinity, prev.width - delta.x)
+          );
           if (newWidth !== prev.width) {
             setPosition((p) => ({ ...p, x: p.x + delta.x }));
           }
         }
 
-        // Vertical resize
         if (direction.includes('s')) {
-          newHeight = Math.max(minSize.height, Math.min(maxSize?.height ?? Infinity, prev.height + delta.y));
+          newHeight = Math.max(
+            minSize.height,
+            Math.min(maxSize?.height ?? Infinity, prev.height + delta.y)
+          );
         }
         if (direction.includes('n')) {
-          newHeight = Math.max(minSize.height, Math.min(maxSize?.height ?? Infinity, prev.height - delta.y));
+          newHeight = Math.max(
+            minSize.height,
+            Math.min(maxSize?.height ?? Infinity, prev.height - delta.y)
+          );
           if (newHeight !== prev.height) {
             setPosition((p) => ({ ...p, y: Math.max(0, p.y + delta.y) }));
           }
@@ -274,9 +337,6 @@ export const Window: React.FC<WindowProps> = ({
     setIsResizing(false);
   }, []);
 
-  // ========================================
-  // Window Controls
-  // ========================================
   const handleClose = useCallback(() => {
     onClose?.();
   }, [onClose]);
@@ -289,18 +349,12 @@ export const Window: React.FC<WindowProps> = ({
     onMaximize?.();
   }, [onMaximize]);
 
-  // ========================================
-  // Double-click to maximize
-  // ========================================
   const handleTitleBarDoubleClick = useCallback(() => {
     if (showMaximize && draggable) {
       onMaximize?.();
     }
   }, [showMaximize, draggable, onMaximize]);
 
-  // ========================================
-  // Render
-  // ========================================
   if (state === 'minimized') {
     return null;
   }
@@ -311,35 +365,38 @@ export const Window: React.FC<WindowProps> = ({
     <div
       ref={windowRef}
       className={`desktop-window ${isActive ? 'active' : ''} ${isDragging ? 'dragging' : ''} ${isResizing ? 'resizing' : ''} ${className}`}
-      style={{
-        left: position.x,
-        top: position.y,
-        width: size.width,
-        height: size.height,
-        zIndex,
-        '--acrylic-intensity': acrylicIntensity,
-      } as React.CSSProperties}
+      style={
+        {
+          left: position.x,
+          top: position.y,
+          width: size.width,
+          height: size.height,
+          zIndex,
+          '--acrylic-intensity': acrylicIntensity,
+        } as React.CSSProperties
+      }
       onMouseDown={() => onFocus?.()}
     >
-      {/* Acrylic Background */}
       <div className="desktop-window-acrylic" />
-
-      {/* Window Shadow */}
       <div className="desktop-window-shadow" />
 
-      {/* Title Bar */}
       <div
-        className="desktop-window-titlebar"
+        className="desktop-window-titlebar os-window-header"
         onMouseDown={handleDragMouseDown}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
         onDoubleClick={handleTitleBarDoubleClick}
+        style={{
+          touchAction: 'none',
+          cursor: draggable ? (isDragging ? 'grabbing' : 'grab') : 'default',
+        }}
       >
-        {/* Title Bar Icon & Text */}
         <div className="desktop-window-titlebar-content">
           {icon && <span className="desktop-window-icon">{icon}</span>}
           <span className="desktop-window-title">{title}</span>
         </div>
 
-        {/* Window Controls */}
         <div className="desktop-window-controls">
           {showMinimize && (
             <button
@@ -369,10 +426,8 @@ export const Window: React.FC<WindowProps> = ({
         </div>
       </div>
 
-      {/* Window Content */}
       <div className="desktop-window-content">{children}</div>
 
-      {/* Resize Handles */}
       {resizable && !isMaximized && (
         <>
           <ResizeHandle direction="n" onResize={handleResize} onResizeEnd={handleResizeEnd} />

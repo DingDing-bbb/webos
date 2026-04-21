@@ -11,12 +11,12 @@
 
 ## 应用信息
 
-| 属性 | 值 |
-|------|-----|
-| ID | com.os.filemanager |
-| 版本 | 1.0.0 |
-| 分类 | utility |
-| 图标 | folder |
+| 属性 | 值                 |
+| ---- | ------------------ |
+| ID   | com.os.filemanager |
+| 版本 | 1.0.0              |
+| 分类 | utility            |
+| 图标 | folder             |
 
 ## 权限
 
@@ -35,5 +35,5 @@ src/
 ```tsx
 import { FileManager } from '@app/com.os.filemanager/src';
 
-<FileManager />
+<FileManager />;
 ```

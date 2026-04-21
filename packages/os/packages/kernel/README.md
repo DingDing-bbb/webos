@@ -9,6 +9,7 @@
 ## 功能模块
 
 ### 核心 (core/)
+
 - **api.ts** - `window.webos` 全局 API 实现
 - **windowManager.ts** - 基于 Custom Elements 的窗口管理器
 - **userManager.ts** - 用户管理
@@ -20,6 +21,7 @@
 - **errorHandler.ts** - 错误处理
 
 ### 管理器 (core/managers/)
+
 - **i18nManager.ts** - 国际化管理
 - **timeManager.ts** - 时间管理
 - **configManager.ts** - 配置管理
@@ -28,9 +30,11 @@
 - **notifyManager.ts** - 通知管理
 
 ### 显示 (core/display/)
+
 - **resolutionManager.ts** - 分辨率管理
 
 ### 子包
+
 - **fs/** - 类 Unix 内存文件系统，支持权限管理
 - **app-manager/** - 应用注册和管理
 
@@ -91,10 +95,19 @@ kernel/
 
 ```typescript
 // 类型导出
-export type { 
-  User, UserSession, UserRole, Permission,
-  FileSystemNode, WindowOptions, WindowState,
-  NotifyOptions, Alarm, LocaleConfig, SystemConfig, WebOSAPI
+export type {
+  User,
+  UserSession,
+  UserRole,
+  Permission,
+  FileSystemNode,
+  WindowOptions,
+  WindowState,
+  NotifyOptions,
+  Alarm,
+  LocaleConfig,
+  SystemConfig,
+  WebOSAPI,
 } from './types';
 
 // 功能导出
@@ -130,7 +143,7 @@ window.webos.user.getCurrentUser();
 interface WebOSAPI {
   t: (key: string, params?: Record<string, string>) => string;
   setWindowContainer: (element: HTMLDivElement) => void;
-  
+
   window: {
     open: (appId: string, options?: WindowOptions) => string;
     close: (windowId: string) => void;
@@ -140,14 +153,30 @@ interface WebOSAPI {
     restore: (windowId: string) => void;
     getAll: () => WindowState[];
   };
-  
-  fs: { /* 文件系统 API */ };
-  notify: { /* 通知 API */ };
-  time: { /* 时间 API */ };
-  user: { /* 用户 API */ };
-  i18n: { /* 国际化 API */ };
-  config: { /* 配置 API */ };
-  boot: { /* 启动 API */ };
-  apps: { /* 应用 API */ };
+
+  fs: {
+    /* 文件系统 API */
+  };
+  notify: {
+    /* 通知 API */
+  };
+  time: {
+    /* 时间 API */
+  };
+  user: {
+    /* 用户 API */
+  };
+  i18n: {
+    /* 国际化 API */
+  };
+  config: {
+    /* 配置 API */
+  };
+  boot: {
+    /* 启动 API */
+  };
+  apps: {
+    /* 应用 API */
+  };
 }
 ```

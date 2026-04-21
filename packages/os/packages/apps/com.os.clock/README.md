@@ -10,12 +10,12 @@
 
 ## 应用信息
 
-| 属性 | 值 |
-|------|-----|
-| ID | com.os.clock |
-| 版本 | 1.0.0 |
-| 分类 | utility |
-| 图标 | clock |
+| 属性 | 值           |
+| ---- | ------------ |
+| ID   | com.os.clock |
+| 版本 | 1.0.0        |
+| 分类 | utility      |
+| 图标 | clock        |
 
 ## 权限
 
@@ -34,5 +34,5 @@ src/
 ```tsx
 import { Clock } from '@app/com.os.clock/src';
 
-<Clock />
+<Clock />;
 ```

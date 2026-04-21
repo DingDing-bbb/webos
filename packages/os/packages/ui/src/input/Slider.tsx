@@ -11,13 +11,7 @@
  * - 无障碍支持
  */
 
-import React, {
-  forwardRef,
-  useState,
-  useCallback,
-  useRef,
-  useId,
-} from 'react';
+import React, { forwardRef, useState, useCallback, useRef, useId } from 'react';
 
 // ============================================================================
 // Types
@@ -94,24 +88,16 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
     const [hoveringThumb, setHoveringThumb] = useState<number | null>(null);
 
     // Handle value state
-    const [internalValue, setInternalValue] = useState<number | [number, number]>(
-      () => {
-        if (range) {
-          return Array.isArray(defaultValue)
-            ? defaultValue
-            : [min, max];
-        }
-        return defaultValue as number;
+    const [internalValue, setInternalValue] = useState<number | [number, number]>(() => {
+      if (range) {
+        return Array.isArray(defaultValue) ? defaultValue : [min, max];
       }
-    );
+      return defaultValue as number;
+    });
 
     // Determine current value
     const isControlled = range ? propValues !== undefined : propValue !== undefined;
-    const currentValue = isControlled
-      ? range
-        ? propValues!
-        : propValue!
-      : internalValue;
+    const currentValue = isControlled ? (range ? propValues! : propValue!) : internalValue;
 
     // Get individual values
     const getValue = (): [number, number] => {
@@ -122,9 +108,9 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
     };
 
     const [startValue, endValue] = getValue();
-    const percent = ((currentValue as number) - min) / (max - min) * 100;
-    const startPercent = (startValue - min) / (max - min) * 100;
-    const endPercent = (endValue - min) / (max - min) * 100;
+    const percent = (((currentValue as number) - min) / (max - min)) * 100;
+    const startPercent = ((startValue - min) / (max - min)) * 100;
+    const endPercent = ((endValue - min) / (max - min)) * 100;
 
     // Format value for display
     const formatValue = useCallback(
@@ -260,10 +246,14 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
             delta = -largeStep;
             break;
           case 'Home':
-            delta = min - (range ? (currentValue as [number, number])[thumbIndex] : (currentValue as number));
+            delta =
+              min -
+              (range ? (currentValue as [number, number])[thumbIndex] : (currentValue as number));
             break;
           case 'End':
-            delta = max - (range ? (currentValue as [number, number])[thumbIndex] : (currentValue as number));
+            delta =
+              max -
+              (range ? (currentValue as [number, number])[thumbIndex] : (currentValue as number));
             break;
           default:
             return;
@@ -317,7 +307,9 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
       'webos-slider-wrapper',
       disabled && 'webos-slider-wrapper--disabled',
       className,
-    ].filter(Boolean).join(' ');
+    ]
+      .filter(Boolean)
+      .join(' ');
 
     // Render thumb
     const renderThumb = (thumbIndex: number, value: number, position: number) => (
@@ -329,7 +321,9 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
           hoveringThumb === thumbIndex && 'webos-slider-thumb--focus',
           thumbIndex === 0 && 'webos-slider-thumb--start',
           thumbIndex === 1 && 'webos-slider-thumb--end',
-        ].filter(Boolean).join(' ')}
+        ]
+          .filter(Boolean)
+          .join(' ')}
         style={{ left: `${position}%` }}
         onMouseDown={handleMouseDown(thumbIndex)}
         onMouseEnter={() => setHoveringThumb(thumbIndex)}
@@ -343,21 +337,13 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
         aria-valuetext={formatValue(value)}
         aria-disabled={disabled}
       >
-        {showTooltip && (
-          <div className="webos-slider-tooltip">
-            {formatValue(value)}
-          </div>
-        )}
+        {showTooltip && <div className="webos-slider-tooltip">{formatValue(value)}</div>}
       </div>
     );
 
     return (
       <div ref={ref} id={id} className={wrapperClasses}>
-        <div
-          ref={sliderRef}
-          className="webos-slider"
-          onClick={handleTrackClick}
-        >
+        <div ref={sliderRef} className="webos-slider" onClick={handleTrackClick}>
           <div className="webos-slider-track" />
           <div
             className="webos-slider-fill"
@@ -380,7 +366,7 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
         {marks && (
           <div className="webos-slider-marks">
             {marks.map((mark) => {
-              const markPercent = (mark.value - min) / (max - min) * 100;
+              const markPercent = ((mark.value - min) / (max - min)) * 100;
               const isInRange = range
                 ? mark.value >= startValue && mark.value <= endValue
                 : mark.value <= (currentValue as number);
@@ -395,7 +381,9 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
                     className={[
                       'webos-slider-mark-dot',
                       isInRange && 'webos-slider-mark-dot--active',
-                    ].filter(Boolean).join(' ')}
+                    ]
+                      .filter(Boolean)
+                      .join(' ')}
                   />
                   {mark.label && <span>{mark.label}</span>}
                 </div>

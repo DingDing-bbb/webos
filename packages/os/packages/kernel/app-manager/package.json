@@ -1,6 +1,6 @@
 {
   "name": "@kernel/app-manager",
-  "version": "1.0.0",
+  "version": "0.0.1-alpha",
   "description": "WebOS Application Manager - manages app registration, installation, and lifecycle",
   "main": "src/index.ts",
   "types": "src/index.ts",

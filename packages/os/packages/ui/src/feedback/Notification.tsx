@@ -26,21 +26,20 @@
  * ```
  */
 
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-  useEffect,
-  useRef,
-} from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect, useRef } from 'react';
 
 // ============================================================================
 // Types
 // ============================================================================
 
 export type NotificationType = 'info' | 'success' | 'warning' | 'error';
-export type NotificationPosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'top-center' | 'bottom-center';
+export type NotificationPosition =
+  | 'top-left'
+  | 'top-right'
+  | 'bottom-left'
+  | 'bottom-right'
+  | 'top-center'
+  | 'bottom-center';
 
 export interface NotificationAction {
   label: string;
@@ -92,22 +91,38 @@ const NotificationContext = createContext<NotificationContextValue | null>(null)
 const DEFAULT_ICONS: Record<NotificationType, React.ReactNode> = {
   info: (
     <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+      <path
+        fillRule="evenodd"
+        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+        clipRule="evenodd"
+      />
     </svg>
   ),
   success: (
     <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+      <path
+        fillRule="evenodd"
+        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+        clipRule="evenodd"
+      />
     </svg>
   ),
   warning: (
     <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-      <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+      <path
+        fillRule="evenodd"
+        d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+        clipRule="evenodd"
+      />
     </svg>
   ),
   error: (
     <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+      <path
+        fillRule="evenodd"
+        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+        clipRule="evenodd"
+      />
     </svg>
   ),
 };
@@ -130,29 +145,32 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [position, setPosition] = useState<NotificationPosition>(defaultPosition);
 
-  const show = useCallback((options: NotificationOptions): string => {
-    const id = `notification-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    const notification: NotificationItem = {
-      ...options,
-      id,
-      type: options.type || 'info',
-      duration: options.duration ?? 5000,
-      createdAt: Date.now(),
-    };
+  const show = useCallback(
+    (options: NotificationOptions): string => {
+      const id = `notification-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const notification: NotificationItem = {
+        ...options,
+        id,
+        type: options.type || 'info',
+        duration: options.duration ?? 5000,
+        createdAt: Date.now(),
+      };
 
-    setNotifications(prev => {
-      const updated = [...prev, notification];
-      return updated.slice(-maxCount);
-    });
+      setNotifications((prev) => {
+        const updated = [...prev, notification];
+        return updated.slice(-maxCount);
+      });
 
-    return id;
-  }, [maxCount]);
+      return id;
+    },
+    [maxCount]
+  );
 
   const dismiss = useCallback((id: string) => {
-    setNotifications(prev => {
-      const notification = prev.find(n => n.id === id);
+    setNotifications((prev) => {
+      const notification = prev.find((n) => n.id === id);
       notification?.onClose?.();
-      return prev.filter(n => n.id !== id);
+      return prev.filter((n) => n.id !== id);
     });
   }, []);
 
@@ -182,7 +200,7 @@ const NotificationContainer: React.FC = () => {
 
   return (
     <div className={`notification-container notification-container--${position}`}>
-      {notifications.map(notification => (
+      {notifications.map((notification) => (
         <NotificationCard key={notification.id} notification={notification} />
       ))}
     </div>
@@ -248,21 +266,11 @@ const NotificationCard: React.FC<NotificationCardProps> = ({ notification }) => 
       role="alert"
       aria-live="polite"
     >
-      {icon && (
-        <div className={`notification__icon notification__icon--${type}`}>
-          {icon}
-        </div>
-      )}
+      {icon && <div className={`notification__icon notification__icon--${type}`}>{icon}</div>}
 
       <div className="notification__body">
-        {notification.title && (
-          <div className="notification__title">
-            {notification.title}
-          </div>
-        )}
-        <div className="notification__message">
-          {notification.message}
-        </div>
+        {notification.title && <div className="notification__title">{notification.title}</div>}
+        <div className="notification__message">{notification.message}</div>
 
         {notification.actions && notification.actions.length > 0 && (
           <div className="notification__actions">

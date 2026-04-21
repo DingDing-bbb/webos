@@ -20,14 +20,7 @@
  * ```
  */
 
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  useCallback,
-  useMemo,
-  memo,
-} from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo, memo } from 'react';
 
 // ============================================================================
 // Types
@@ -226,13 +219,7 @@ function VirtualList<T>({
       onScroll?.(currentScrollTop);
 
       // Infinite scroll logic
-      if (
-        infiniteScroll &&
-        hasMore &&
-        !loading &&
-        !isLoadingRef.current &&
-        onLoadMore
-      ) {
+      if (infiniteScroll && hasMore && !loading && !isLoadingRef.current && onLoadMore) {
         const scrollHeight = e.currentTarget.scrollHeight;
         const scrollBottom =
           currentScrollTop + e.currentTarget.clientHeight + (loadMoreThreshold || 0);
@@ -245,14 +232,7 @@ function VirtualList<T>({
         }
       }
     },
-    [
-      infiniteScroll,
-      hasMore,
-      loading,
-      onLoadMore,
-      loadMoreThreshold,
-      onScroll,
-    ]
+    [infiniteScroll, hasMore, loading, onLoadMore, loadMoreThreshold, onScroll]
   );
 
   return (
@@ -262,7 +242,10 @@ function VirtualList<T>({
       style={{ height, overflow: 'auto' }}
       onScroll={handleScroll}
     >
-      <div className="ui-list-virtual-content" style={{ height: totalHeight, position: 'relative' }}>
+      <div
+        className="ui-list-virtual-content"
+        style={{ height: totalHeight, position: 'relative' }}
+      >
         {visibleItems.map(({ item, index, style }) => (
           <div
             key={keyExtractor(item, index)}
@@ -276,9 +259,7 @@ function VirtualList<T>({
       </div>
 
       {loading && (
-        <div className="ui-list-loading-container">
-          {loadingIndicator || <LoadingSpinner />}
-        </div>
+        <div className="ui-list-loading-container">{loadingIndicator || <LoadingSpinner />}</div>
       )}
     </div>
   );
@@ -333,11 +314,7 @@ function RegularList<T>({
 
     observerRef.current = new IntersectionObserver(
       (entries) => {
-        if (
-          entries[0].isIntersecting &&
-          !isLoadingRef.current &&
-          onLoadMore
-        ) {
+        if (entries[0].isIntersecting && !isLoadingRef.current && onLoadMore) {
           isLoadingRef.current = true;
           Promise.resolve(onLoadMore()).finally(() => {
             isLoadingRef.current = false;
@@ -382,9 +359,7 @@ function RegularList<T>({
 
       {/* Loading indicator */}
       {loading && (
-        <div className="ui-list-loading-container">
-          {loadingIndicator || <LoadingSpinner />}
-        </div>
+        <div className="ui-list-loading-container">{loadingIndicator || <LoadingSpinner />}</div>
       )}
     </div>
   );
@@ -418,10 +393,7 @@ export function List<T>({
   onItemClick,
   onScroll,
 }: ListProps<T>): JSX.Element {
-  const defaultKeyExtractor = useCallback(
-    (item: T, index: number) => `list-item-${index}`,
-    []
-  );
+  const defaultKeyExtractor = useCallback((item: T, index: number) => `list-item-${index}`, []);
 
   const extractor = keyExtractor || defaultKeyExtractor;
 
@@ -518,10 +490,7 @@ export function GridList<T>({
   className = '',
   style,
 }: GridListProps<T>): JSX.Element {
-  const defaultKeyExtractor = useCallback(
-    (item: T, index: number) => `grid-item-${index}`,
-    []
-  );
+  const defaultKeyExtractor = useCallback((item: T, index: number) => `grid-item-${index}`, []);
 
   const extractor = keyExtractor || defaultKeyExtractor;
 

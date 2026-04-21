@@ -210,14 +210,17 @@ export const MenuBar: React.FC<MenuBarProps> = ({
     onMenuActive?.(null);
   }, [onMenuActive]);
 
-  const handleStatusClick = useCallback((statusId: string) => {
-    const item = statusItems.find((i) => i.id === statusId);
-    if (item?.panel) {
-      setActiveStatusPanel(activeStatusPanel === statusId ? null : statusId);
-    } else {
-      item?.onClick?.();
-    }
-  }, [statusItems, activeStatusPanel]);
+  const handleStatusClick = useCallback(
+    (statusId: string) => {
+      const item = statusItems.find((i) => i.id === statusId);
+      if (item?.panel) {
+        setActiveStatusPanel(activeStatusPanel === statusId ? null : statusId);
+      } else {
+        item?.onClick?.();
+      }
+    },
+    [statusItems, activeStatusPanel]
+  );
 
   // ========================================
   // Default App Menu

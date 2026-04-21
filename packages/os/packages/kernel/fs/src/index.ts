@@ -19,7 +19,7 @@ export {
   removeChild,
   getChild,
   getChildren,
-  isEmptyDir
+  isEmptyDir,
 } from './core/Node';
 
 // 导出权限工具
@@ -32,5 +32,5 @@ export {
   octalToPermission,
   DEFAULT_DIR_PERMS,
   DEFAULT_FILE_PERMS,
-  DEFAULT_EXEC_PERMS
+  DEFAULT_EXEC_PERMS,
 } from './core/Permissions';

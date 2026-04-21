@@ -203,7 +203,8 @@ export const SplitPanel = forwardRef<SplitPanelHandle, SplitPanelProps>(
 
     // Current values (controlled or uncontrolled)
     const currentSplit = controlledSplit !== undefined ? controlledSplit : internalSplit;
-    const currentCollapsed = controlledCollapsed !== undefined ? controlledCollapsed : internalCollapsed;
+    const currentCollapsed =
+      controlledCollapsed !== undefined ? controlledCollapsed : internalCollapsed;
 
     // Parse size constraints
     const parsedMinSize = useMemo(() => {
@@ -362,7 +363,15 @@ export const SplitPanel = forwardRef<SplitPanelHandle, SplitPanelProps>(
         e.preventDefault();
         updateSplit(newSplit);
       },
-      [currentSplit, currentCollapsed, direction, parsedMinSize, parsedMaxSize, toggleCollapse, updateSplit]
+      [
+        currentSplit,
+        currentCollapsed,
+        direction,
+        parsedMinSize,
+        parsedMaxSize,
+        toggleCollapse,
+        updateSplit,
+      ]
     );
 
     // Generate class names
@@ -435,19 +444,22 @@ export const SplitPanel = forwardRef<SplitPanelHandle, SplitPanelProps>(
               aria-label={currentCollapsed ? 'Expand' : 'Collapse'}
             >
               {direction === 'horizontal' ? (
-                currentCollapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />
+                currentCollapsed ? (
+                  <ChevronRightIcon />
+                ) : (
+                  <ChevronLeftIcon />
+                )
+              ) : currentCollapsed ? (
+                <ChevronDownIcon />
               ) : (
-                currentCollapsed ? <ChevronDownIcon /> : <ChevronUpIcon />
+                <ChevronUpIcon />
               )}
             </button>
           )}
         </div>
 
         {/* Second Panel */}
-        <div
-          className="layout-split__panel layout-split__panel--auto"
-          style={panelStyles.second}
-        >
+        <div className="layout-split__panel layout-split__panel--auto" style={panelStyles.second}>
           {secondChild}
         </div>
       </div>

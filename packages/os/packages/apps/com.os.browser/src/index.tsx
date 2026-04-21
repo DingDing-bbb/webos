@@ -1,9 +1,9 @@
 /**
  * Browser Application - 使用规范级内核
- * 
+ *
  * 严格遵循：
  * - HTML Living Standard
- * - CSS Specifications  
+ * - CSS Specifications
  * - DOM Living Standard
  */
 
@@ -45,7 +45,7 @@ interface Bookmark {
 const SEARCH_ENGINES = {
   bing: { name: 'Bing', url: 'https://www.bing.com/search?q=' },
   google: { name: 'Google', url: 'https://www.google.com/search?q=' },
-  baidu: { name: 'Baidu', url: 'https://www.baidu.com/s?wd=' }
+  baidu: { name: 'Baidu', url: 'https://www.baidu.com/s?wd=' },
 };
 
 const INTERNAL_PAGES: Record<string, string> = {
@@ -105,7 +105,8 @@ function loadBookmarks(): Bookmark[] {
   }
 }
 
-function _saveBookmark(bookmark: Bookmark): void {
+// Save bookmark to localStorage (exported for future use)
+export function saveBookmark(bookmark: Bookmark): void {
   const bookmarks = loadBookmarks();
   bookmarks.push(bookmark);
   localStorage.setItem('browser-bookmarks', JSON.stringify(bookmarks));
@@ -128,19 +129,19 @@ export const BrowserApp: React.FC = () => {
       history: ['about:blank'],
       historyIndex: 0,
       kernel: new BrowserKernel(800, 600),
-    }
+    },
   ]);
   const [activeTabId, setActiveTabId] = useState('tab-1');
   const [addressInput, setAddressInput] = useState('');
   const [_bookmarks] = useState<Bookmark[]>(loadBookmarks);
-  
+
   // Refs
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  
+
   // Active tab
-  const activeTab = useMemo(() => 
-    tabs.find(t => t.id === activeTabId) || tabs[0],
+  const activeTab = useMemo(
+    () => tabs.find((t) => t.id === activeTabId) || tabs[0],
     [tabs, activeTabId]
   );
 
@@ -151,22 +152,22 @@ export const BrowserApp: React.FC = () => {
   const renderToCanvas = useCallback(() => {
     const canvas = canvasRef.current;
     const container = containerRef.current;
-    
+
     if (!canvas || !container || !activeTab) return;
-    
+
     const width = container.clientWidth || 800;
     const height = container.clientHeight || 600;
-    
+
     canvas.width = width;
     canvas.height = height;
-    
+
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-    
+
     // Clear
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, width, height);
-    
+
     // Paint
     if (activeTab.renderResult?.layout) {
       activeTab.kernel.paint(ctx);
@@ -177,79 +178,88 @@ export const BrowserApp: React.FC = () => {
   // Navigation
   // ============================================
 
-  const navigateTo = useCallback(async (url: string) => {
-    let processedUrl = url.trim();
-    
-    if (processedUrl === '' || processedUrl === 'about:blank') {
-      setTabs(prev => prev.map(tab => 
-        tab.id === activeTabId 
-          ? { ...tab, url: 'about:blank', title: 'New Tab', isLoading: false }
-          : tab
-      ));
-      setAddressInput('');
-      return;
-    }
-    
-    // Internal pages
-    if (processedUrl.startsWith('browser://')) {
-      const content = INTERNAL_PAGES[processedUrl];
-      if (content) {
-        setTabs(prev => prev.map(tab => {
-          if (tab.id === activeTabId) {
-            const result = tab.kernel.render(content, processedUrl, 800, 600);
-            return {
-              ...tab,
-              url: processedUrl,
-              title: result.title,
-              isLoading: false,
-              renderResult: result,
-            };
-          }
-          return tab;
-        }));
+  const navigateTo = useCallback(
+    async (url: string) => {
+      let processedUrl = url.trim();
+
+      if (processedUrl === '' || processedUrl === 'about:blank') {
+        setTabs((prev) =>
+          prev.map((tab) =>
+            tab.id === activeTabId
+              ? { ...tab, url: 'about:blank', title: 'New Tab', isLoading: false }
+              : tab
+          )
+        );
+        setAddressInput('');
+        return;
+      }
+
+      // Internal pages
+      if (processedUrl.startsWith('browser://')) {
+        const content = INTERNAL_PAGES[processedUrl];
+        if (content) {
+          setTabs((prev) =>
+            prev.map((tab) => {
+              if (tab.id === activeTabId) {
+                const result = tab.kernel.render(content, processedUrl, 800, 600);
+                return {
+                  ...tab,
+                  url: processedUrl,
+                  title: result.title,
+                  isLoading: false,
+                  renderResult: result,
+                };
+              }
+              return tab;
+            })
+          );
+          setAddressInput(processedUrl);
+          return;
+        }
         setAddressInput(processedUrl);
         return;
       }
-      setAddressInput(processedUrl);
-      return;
-    }
-    
-    // Search or URL
-    if (!processedUrl.includes('.') && !processedUrl.startsWith('http')) {
-      processedUrl = `${SEARCH_ENGINES.bing.url}${encodeURIComponent(processedUrl)}`;
-    } else if (!processedUrl.startsWith('http')) {
-      processedUrl = 'https://' + processedUrl;
-    }
-    
-    // Update tab
-    setTabs(prev => prev.map(tab => ({
-      ...tab,
-      isLoading: tab.id === activeTabId,
-    })));
-    
-    setAddressInput(processedUrl);
-    
-    // Fetch
-    try {
-      const proxies = [
-        `https://api.allorigins.win/raw?url=${encodeURIComponent(processedUrl)}`,
-        `https://corsproxy.io/?${encodeURIComponent(processedUrl)}`,
-      ];
-      
-      let html = '';
-      for (const proxy of proxies) {
-        try {
-          const res = await fetch(proxy);
-          if (res.ok) {
-            html = await res.text();
-            break;
-          }
-        } catch { continue; }
+
+      // Search or URL
+      if (!processedUrl.includes('.') && !processedUrl.startsWith('http')) {
+        processedUrl = `${SEARCH_ENGINES.bing.url}${encodeURIComponent(processedUrl)}`;
+      } else if (!processedUrl.startsWith('http')) {
+        processedUrl = 'https://' + processedUrl;
       }
-      
-      if (!html) {
-        // Demo page
-        html = `
+
+      // Update tab
+      setTabs((prev) =>
+        prev.map((tab) => ({
+          ...tab,
+          isLoading: tab.id === activeTabId,
+        }))
+      );
+
+      setAddressInput(processedUrl);
+
+      // Fetch
+      try {
+        const proxies = [
+          `https://api.allorigins.win/raw?url=${encodeURIComponent(processedUrl)}`,
+          `https://corsproxy.io/?${encodeURIComponent(processedUrl)}`,
+        ];
+
+        let html = '';
+        for (const proxy of proxies) {
+          try {
+            const res = await fetch(proxy);
+            if (res.ok) {
+              html = await res.text();
+              break;
+            }
+          } catch {
+            continue;
+          }
+        }
+
+        if (!html) {
+          // Demo page
+          html = `
           <html>
             <head><title>${processedUrl}</title></head>
             <body style="font-family: system-ui, sans-serif; padding: 40px; background: #fff;">
@@ -258,31 +268,34 @@ export const BrowserApp: React.FC = () => {
             </body>
           </html>
         `;
-      }
-      
-      setTabs(prev => prev.map(tab => {
-        if (tab.id === activeTabId) {
-          const result = tab.kernel.render(html, processedUrl, 800, 600);
-          return {
-            ...tab,
-            url: processedUrl,
-            title: result.title,
-            isLoading: false,
-            renderResult: result,
-          };
         }
-        return tab;
-      }));
-      
-    } catch (error) {
-      console.error('Navigation error:', error);
-      setTabs(prev => prev.map(tab => 
-        tab.id === activeTabId 
-          ? { ...tab, isLoading: false, error: String(error) }
-          : tab
-      ));
-    }
-  }, [activeTabId]);
+
+        setTabs((prev) =>
+          prev.map((tab) => {
+            if (tab.id === activeTabId) {
+              const result = tab.kernel.render(html, processedUrl, 800, 600);
+              return {
+                ...tab,
+                url: processedUrl,
+                title: result.title,
+                isLoading: false,
+                renderResult: result,
+              };
+            }
+            return tab;
+          })
+        );
+      } catch (error) {
+        console.error('Navigation error:', error);
+        setTabs((prev) =>
+          prev.map((tab) =>
+            tab.id === activeTabId ? { ...tab, isLoading: false, error: String(error) } : tab
+          )
+        );
+      }
+    },
+    [activeTabId]
+  );
 
   // ============================================
   // Effects
@@ -309,7 +322,7 @@ export const BrowserApp: React.FC = () => {
       {/* Tab Bar */}
       <div className="browser-tab-bar">
         <div className="browser-tabs">
-          {tabs.map(tab => (
+          {tabs.map((tab) => (
             <div
               key={tab.id}
               className={`browser-tab ${tab.id === activeTabId ? 'active' : ''}`}
@@ -320,42 +333,63 @@ export const BrowserApp: React.FC = () => {
             </div>
           ))}
         </div>
-        <button className="browser-new-tab" onClick={() => {
-          const newTab: Tab = {
-            id: `tab-${Date.now()}`,
-            title: 'New Tab',
-            url: 'about:blank',
-            isLoading: false,
-            canGoBack: false,
-            canGoForward: false,
-            history: ['about:blank'],
-            historyIndex: 0,
-            kernel: new BrowserKernel(800, 600),
-          };
-          setTabs(prev => [...prev, newTab]);
-          setActiveTabId(newTab.id);
-        }}>+</button>
+        <button
+          className="browser-new-tab"
+          onClick={() => {
+            const newTab: Tab = {
+              id: `tab-${Date.now()}`,
+              title: 'New Tab',
+              url: 'about:blank',
+              isLoading: false,
+              canGoBack: false,
+              canGoForward: false,
+              history: ['about:blank'],
+              historyIndex: 0,
+              kernel: new BrowserKernel(800, 600),
+            };
+            setTabs((prev) => [...prev, newTab]);
+            setActiveTabId(newTab.id);
+          }}
+        >
+          +
+        </button>
       </div>
 
       {/* Toolbar */}
       <div className="browser-toolbar">
         <div className="browser-nav-buttons">
-          <button className="browser-nav-btn" onClick={() => {}} title="Back">←</button>
-          <button className="browser-nav-btn" onClick={() => {}} title="Forward">→</button>
-          <button className="browser-nav-btn" onClick={() => activeTab?.url && navigateTo(activeTab.url)} title="Refresh">↻</button>
+          <button className="browser-nav-btn" onClick={() => {}} title="Back">
+            ←
+          </button>
+          <button className="browser-nav-btn" onClick={() => {}} title="Forward">
+            →
+          </button>
+          <button
+            className="browser-nav-btn"
+            onClick={() => activeTab?.url && navigateTo(activeTab.url)}
+            title="Refresh"
+          >
+            ↻
+          </button>
         </div>
         <div className="browser-address-bar">
           <input
             type="text"
             value={addressInput}
-            onChange={e => setAddressInput(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && navigateTo(addressInput)}
+            onChange={(e) => setAddressInput(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && navigateTo(addressInput)}
             placeholder="Search with Bing or enter URL"
             className="browser-address-input"
           />
         </div>
         <div className="browser-toolbar-actions">
-          <button className="browser-toolbar-btn" onClick={() => navigateTo('browser://settings')} title="Settings">⚙</button>
+          <button
+            className="browser-toolbar-btn"
+            onClick={() => navigateTo('browser://settings')}
+            title="Settings"
+          >
+            ⚙
+          </button>
         </div>
       </div>
 
@@ -395,7 +429,7 @@ export const appInfo: AppInfo = {
   minWidth: 600,
   minHeight: 400,
   resizable: true,
-  singleton: false
+  singleton: false,
 };
 
 export default BrowserApp;
