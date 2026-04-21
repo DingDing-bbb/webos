@@ -1,6 +1,15 @@
 'use client';
 
-import { useState, useEffect, useCallback, useTransition, memo, useMemo, useRef } from 'react';
+import {
+  useState,
+  useEffect,
+  useCallback,
+  useTransition,
+  memo,
+  useMemo,
+  useRef,
+  Suspense,
+} from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 
 type DocID =
@@ -639,7 +648,15 @@ const TOC_ITEMS: Record<string, { id: string; titleKey: [string, string, string]
   ],
 };
 
-export default function DocsPage() {
+export default function DocsPageWrapper() {
+  return (
+    <Suspense fallback={<div style={{ padding: 40, color: '#888' }}>加载中...</div>}>
+      <DocsPage />
+    </Suspense>
+  );
+}
+
+function DocsPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();

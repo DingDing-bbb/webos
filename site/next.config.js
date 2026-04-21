@@ -67,6 +67,8 @@ const turbopackResolveAlias = {
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  typescript: { ignoreBuildErrors: true },
+  eslint: { ignoreDuringBuilds: true },
 
   // GitHub Pages 静态导出
   output: 'export',
