@@ -1,110 +1,78 @@
-# 应用配置
+# 应用配置 (app.json)
 
-每个 WebOS 应用都需要一个 `appinfo.json` 配置文件。
+每个 WebOS 应用需要在根目录提供 `app.json` 文件，定义元数据、权限和入口。
 
-## 基本结构
+## 示例
 
 ```json
 {
   "id": "com.example.myapp",
   "name": "My App",
   "version": "1.0.0",
-  "category": "productivity",
-  "main": "./dist/index.js",
-  "icon": "./dist/icon.js"
+  "icon": "/icons/app.png",
+  "entry": "./src/index.tsx",
+  "permissions": ["storage", "notifications"],
+  "settings": {
+    "fullscreen": false,
+    "resizable": true
+  }
 }
 ```
 
-## 配置项说明
+## 字段说明
 
-### 必填字段
+| 字段        | 类型     | 必填 | 说明                         |
+| ----------- | -------- | ---- | ---------------------------- |
+| id          | string   | 是   | 唯一标识符，反向域名格式     |
+| name        | string   | 是   | 显示名称                     |
+| version     | string   | 是   | 语义化版本                   |
+| icon        | string   | 否   | 图标路径（相对于应用根目录） |
+| entry       | string   | 是   | 入口文件（相对于应用根目录） |
+| permissions | string[] | 否   | 申请的权限列表               |
+| settings    | object   | 否   | 运行时配置                   |
 
-| 字段       | 类型   | 说明                                      |
-| ---------- | ------ | ----------------------------------------- |
-| `id`       | string | 应用唯一标识，格式：`com.company.appname` |
-| `name`     | string | 应用名称                                  |
-| `version`  | string | 版本号，遵循语义化版本                    |
-| `category` | string | 应用分类                                  |
-| `main`     | string | 入口文件路径                              |
-| `icon`     | string | 图标文件路径                              |
+## 可用权限
 
-### 可选字段
+| 权限          | 说明                       |
+| ------------- | -------------------------- |
+| storage       | 读写应用私有存储           |
+| notifications | 发送系统通知               |
+| network       | 发起网络请求               |
+| clipboard     | 读写剪贴板                 |
+| filesystem    | 访问用户文件（需用户授权） |
 
-| 字段            | 类型     | 默认值 | 说明               |
-| --------------- | -------- | ------ | ------------------ |
-| `description`   | string   | -      | 应用描述           |
-| `author`        | string   | -      | 作者信息           |
-| `defaultWidth`  | number   | 700    | 默认窗口宽度       |
-| `defaultHeight` | number   | 450    | 默认窗口高度       |
-| `minWidth`      | number   | 200    | 最小窗口宽度       |
-| `minHeight`     | number   | 150    | 最小窗口高度       |
-| `resizable`     | boolean  | true   | 是否可调整窗口大小 |
-| `singleton`     | boolean  | false  | 是否单例模式       |
-| `permissions`   | string[] | []     | 所需权限列表       |
+## 开发时配置
 
-## 应用分类
-
-```typescript
-type AppCategory =
-  | 'system' // 系统工具
-  | 'productivity' // 生产力
-  | 'media' // 媒体
-  | 'games' // 游戏
-  | 'network' // 网络
-  | 'development' // 开发
-  | 'utilities'; // 实用工具
-```
-
-## 权限配置
+在开发阶段，可以将 `app.json` 放在应用根目录，SDK 构建时会自动读取。如果未提供，SDK 会使用默认配置：
 
 ```json
 {
-  "permissions": [
-    "fs:read", // 文件系统读取
-    "fs:write", // 文件系统写入
-    "network", // 网络访问
-    "notification", // 通知权限
-    "clipboard", // 剪贴板访问
-    "storage" // 本地存储
-  ]
+  "id": "dev-app",
+  "name": "Dev App",
+  "version": "0.0.1",
+  "entry": "./src/index.tsx",
+  "permissions": []
 }
 ```
 
-## 示例配置
-
-### 文本编辑器
+## 完整配置示例
 
 ```json
 {
-  "id": "com.example.texteditor",
-  "name": "Text Editor",
-  "version": "1.0.0",
-  "category": "productivity",
-  "main": "./dist/index.js",
-  "icon": "./dist/icon.js",
-  "description": "A simple text editor",
-  "defaultWidth": 800,
-  "defaultHeight": 600,
-  "minWidth": 400,
-  "minHeight": 300,
-  "permissions": ["fs:read", "fs:write", "storage"]
-}
-```
-
-### 音乐播放器
-
-```json
-{
-  "id": "com.example.musicplayer",
-  "name": "Music Player",
-  "version": "1.0.0",
-  "category": "media",
-  "main": "./dist/index.js",
-  "icon": "./dist/icon.js",
-  "description": "Play your favorite music",
-  "defaultWidth": 400,
-  "defaultHeight": 500,
-  "resizable": false,
-  "permissions": ["fs:read", "notification"]
+  "id": "com.webos.texteditor",
+  "name": "文本编辑器",
+  "version": "1.2.0",
+  "icon": "./assets/icon.svg",
+  "entry": "./src/index.tsx",
+  "description": "轻量级文本编辑器",
+  "permissions": ["storage", "filesystem", "clipboard"],
+  "settings": {
+    "fullscreen": false,
+    "resizable": true,
+    "defaultWidth": 800,
+    "defaultHeight": 600,
+    "minWidth": 400,
+    "minHeight": 300
+  }
 }
 ```
