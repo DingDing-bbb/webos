@@ -9,15 +9,22 @@
     "start": "next start -p 3000"
   },
   "dependencies": {
+    "@webos/os": "workspace:*",
+    "clsx": "^2.1.1",
+    "gray-matter": "^4.0.3",
+    "highlight.js": "^11.11.1",
     "next": "^16.2.1",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
-    "sql.js": "^1.14.1",
-    "clsx": "^2.1.1",
-    "@webos/os": "workspace:*"
+    "react-markdown": "^10.1.0",
+    "rehype-highlight": "^7.0.2",
+    "rehype-slug": "^6.0.0",
+    "remark-gfm": "^4.0.1",
+    "sql.js": "^1.14.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.2.2",
+    "@tailwindcss/typography": "^0.5.19",
     "@types/node": "^25.5.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
