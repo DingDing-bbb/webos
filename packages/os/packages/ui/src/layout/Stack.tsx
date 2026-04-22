@@ -37,7 +37,7 @@ import React, { forwardRef, useMemo, Children, isValidElement } from 'react';
 // Types
 // ============================================================================
 
-type SpacingValue = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+type SpacingValue = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | string;
 
 /**
  * Stack direction options
@@ -109,7 +109,7 @@ export type HStackProps = Omit<StackProps, 'direction'>;
 const _spacingToCSS = (value: SpacingValue | undefined): string | undefined => {
   if (value === undefined) return undefined;
   if (value === 0) return '0';
-  return `var(--layout-spacing-${value}, ${value * 4}px)`;
+  return `var(--layout-spacing-${value}, ${(value as number) * 4}px)`;
 };
 
 /**

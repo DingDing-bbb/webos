@@ -46,7 +46,9 @@ export function useThrottle<T>(value: T, limit: number): T {
 }
 
 // ========== useClickOutside ==========
-export function useClickOutside<T extends HTMLElement>(callback: () => void): React.RefObject<T> {
+export function useClickOutside<T extends HTMLElement>(
+  callback: () => void
+): React.RefObject<T | null> {
   const ref = useRef<T>(null);
 
   useEffect(() => {
@@ -103,7 +105,7 @@ interface DragState {
 export function useDrag<T extends HTMLElement>(
   onDragEnd?: (state: DragState) => void
 ): {
-  ref: React.RefObject<T>;
+  ref: React.RefObject<T | null>;
   state: DragState;
 } {
   const ref = useRef<T>(null);
@@ -247,7 +249,7 @@ export function useScrollLock(lock: boolean): void {
 }
 
 // ========== useFocusTrap ==========
-export function useFocusTrap<T extends HTMLElement>(active: boolean): React.RefObject<T> {
+export function useFocusTrap<T extends HTMLElement>(active: boolean): React.RefObject<T | null> {
   const ref = useRef<T>(null);
 
   useEffect(() => {

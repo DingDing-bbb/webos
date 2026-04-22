@@ -159,7 +159,12 @@ const ContextMenuItemComponent: React.FC<ContextMenuItemComponentProps> = ({
 
       {/* Submenu */}
       {showSubmenu && item.submenu && (
-        <SubMenu items={item.submenu} onClose={onClose} position="right" parentRef={itemRef} />
+        <SubMenu
+          items={item.submenu}
+          onClose={onClose}
+          position="right"
+          parentRef={itemRef as any}
+        />
       )}
     </div>
   );

@@ -84,7 +84,7 @@ const SystemSettings: React.FC = () => {
 
   return (
     <div className="settings-section">
-      <Breadcrumb items={[{ label: '系统' }]} />
+      <Breadcrumb items={[{ key: 'system', title: '系统' }]} />
       <Heading level="h1">系统</Heading>
       <Text color="secondary">显示、声音、通知、电源</Text>
 
@@ -124,7 +124,7 @@ const SystemSettings: React.FC = () => {
       <Divider label="系统信息" />
 
       <Card variant="outline">
-        <Flex justify="space-between" align="center">
+        <Flex justify="between" align="center">
           <Box>
             <Text weight="medium">设备名称</Text>
             <Text color="secondary">DESKTOP-WEBOS</Text>
@@ -164,10 +164,10 @@ const SystemSettings: React.FC = () => {
 
       {/* 视觉效果弹窗 */}
       <Modal
-        open={showVisualEffects}
+        isOpen={showVisualEffects}
         onClose={() => setShowVisualEffects(false)}
         title="视觉效果"
-        size="lg"
+        size="large"
       >
         <VisualEffectsPanel />
       </Modal>
@@ -190,7 +190,12 @@ const DisplaySettings: React.FC = () => {
 
   return (
     <div className="settings-section">
-      <Breadcrumb items={[{ label: '系统' }, { label: '显示' }]} />
+      <Breadcrumb
+        items={[
+          { key: 'system', title: '系统' },
+          { key: 'display', title: '显示' },
+        ]}
+      />
       <Heading level="h1">显示</Heading>
       <Text color="secondary">显示器、亮度、夜间模式</Text>
 
@@ -203,22 +208,21 @@ const DisplaySettings: React.FC = () => {
           <Spacer size="sm" />
           <Select
             value={resolution}
-            onChange={setResolution}
+            onChange={(v) => setResolution(v as string)}
             options={resolutions}
-            style={{ width: '100%' }}
           />
         </Card>
 
         {/* 缩放 */}
         <Card variant="glass">
-          <Flex justify="space-between" align="center">
+          <Flex justify="between" align="center">
             <Heading level="h4">缩放</Heading>
             <Text>{scale}%</Text>
           </Flex>
           <Spacer size="sm" />
           <Slider
             value={scale}
-            onChange={setScale}
+            onChange={(v) => setScale(v as number)}
             min={75}
             max={200}
             step={25}
@@ -234,17 +238,22 @@ const DisplaySettings: React.FC = () => {
 
         {/* 亮度 */}
         <Card variant="glass">
-          <Flex justify="space-between" align="center">
+          <Flex justify="between" align="center">
             <Heading level="h4">亮度</Heading>
             <Text>{brightness}%</Text>
           </Flex>
           <Spacer size="sm" />
-          <Slider value={brightness} onChange={setBrightness} min={0} max={100} />
+          <Slider
+            value={brightness}
+            onChange={(v) => setBrightness(v as number)}
+            min={0}
+            max={100}
+          />
         </Card>
 
         {/* 夜间模式 */}
         <Card variant="glass">
-          <Flex justify="space-between" align="center">
+          <Flex justify="between" align="center">
             <Box>
               <Heading level="h4">夜间模式</Heading>
               <Text size="sm" color="secondary">
@@ -276,13 +285,18 @@ const PersonalizationSettings: React.FC = () => {
   ];
 
   const handleAccentChange = (accent: string) => {
-    setSelectedAccent(accent);
+    setSelectedAccent(accent as AccentColor);
     updateConfig({ accent: accent as AccentColor });
   };
 
   return (
     <div className="settings-section">
-      <Breadcrumb items={[{ label: '系统' }, { label: '个性化' }]} />
+      <Breadcrumb
+        items={[
+          { key: 'system', title: '系统' },
+          { key: 'personalization', title: '个性化' },
+        ]}
+      />
       <Heading level="h1">个性化</Heading>
       <Text color="secondary">背景、颜色、主题、锁屏</Text>
 
@@ -333,7 +347,7 @@ const PersonalizationSettings: React.FC = () => {
 
       {/* 透明度 */}
       <Card variant="glass">
-        <Flex justify="space-between" align="center">
+        <Flex justify="between" align="center">
           <Box>
             <Heading level="h4">透明度</Heading>
             <Text size="sm" color="secondary">
@@ -345,7 +359,7 @@ const PersonalizationSettings: React.FC = () => {
         <Spacer size="sm" />
         <Slider
           value={config.transparency}
-          onChange={(v) => updateConfig({ transparency: v })}
+          onChange={(v) => updateConfig({ transparency: v as number })}
           min={0}
           max={100}
         />

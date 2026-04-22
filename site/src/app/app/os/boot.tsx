@@ -1,5 +1,5 @@
 // 启动阶段 - 显示启动动画
-import { BootUI } from '@bootloader';
+import { BootUI } from '@ui/components/Boot';
 import '@ui/styles/index.css';
 
 interface BootStageProps {

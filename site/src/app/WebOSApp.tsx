@@ -15,12 +15,11 @@ import {
   NotificationContainer,
   ErrorDialogContainer,
   BlueScreenContainer,
-  UpdateNotification,
   BootScreen,
 } from '@ui';
+import { UpdateNotification, LockScreen } from '@ui';
 import type { WallpaperConfig, WallpaperType } from '@ui';
 import type { TaskbarDisplayMode } from '@ui';
-import { LockScreen } from '@ui';
 import { OOBE } from '@oobe';
 import { bootloader, setupGlobalErrorHandler } from '@bootloader';
 import { RecoveryMode } from '@recovery';
@@ -75,7 +74,8 @@ const WebOSApp: React.FC = () => {
   const windowContainerRef = React.useRef<HTMLDivElement | null>(null);
 
   const [bootStatus, setBootStatus] = React.useState<BootStatus>(() => {
-    if (typeof window === 'undefined') return { stage: 'booting', progress: 0 };
+    if (typeof window === 'undefined')
+      return { stage: 'booting', progress: 0 } as unknown as BootStatus;
     return bootloader.getStatus();
   });
   const [bootComplete, setBootComplete] = React.useState(false);
@@ -105,7 +105,7 @@ const WebOSApp: React.FC = () => {
 
   // 更新状态
   const [updateStatus, setUpdateStatus] = React.useState<UpdateStatus>(() => {
-    if (typeof window === 'undefined') return { hasUpdate: false };
+    if (typeof window === 'undefined') return { hasUpdate: false } as UpdateStatus;
     return updateManager.getStatus();
   });
   const [showUpdateNotification, setShowUpdateNotification] = React.useState(false);

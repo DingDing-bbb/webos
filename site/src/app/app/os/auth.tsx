@@ -51,7 +51,7 @@ export function AuthStage({
     <LockScreen
       users={users}
       systemName={systemName}
-      onLogin={async (username, password) => {
+      onLogin={async (username: string, password: string) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const secure = (window.webos?.user as any)?.secure;
 

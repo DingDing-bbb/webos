@@ -390,9 +390,9 @@ const TableRow = memo(
         </tr>
         {expanded && hasExpandRender && (
           <tr className="ui-table-expanded-row">
-            <td colSpan={columns.length + (hasExpandRender ? 1 : 0)}>
+            <td colSpan={columns.length + 1}>
               <div className="ui-table-expanded-content">
-                {expandable.expandedRowRender(record, index)}
+                {expandable.expandedRowRender!(record, index)}
               </div>
             </td>
           </tr>
@@ -621,8 +621,12 @@ export function Table<T extends Record<string, unknown> = Record<string, unknown
   // State
   const [sortState, setSortState] = useState<SortState>({ key: '', order: null });
   const [filters, setFilters] = useState<FilterState>({});
-  const [currentPage, setCurrentPage] = useState(pagination?.current || 1);
-  const [pageSize, setPageSize] = useState(pagination?.pageSize || DEFAULT_PAGE_SIZE);
+  const [currentPage, setCurrentPage] = useState(
+    pagination !== false ? pagination?.current || 1 : 1
+  );
+  const [pageSize, setPageSize] = useState(
+    pagination !== false ? pagination?.pageSize || DEFAULT_PAGE_SIZE : DEFAULT_PAGE_SIZE
+  );
   const [expandedKeys, setExpandedKeys] = useState<Set<string>>(
     new Set(expandable?.expandedRowKeys)
   );
@@ -696,7 +700,9 @@ export function Table<T extends Record<string, unknown> = Record<string, unknown
     (page: number, newPageSize: number) => {
       setCurrentPage(page);
       setPageSize(newPageSize);
-      pagination?.onChange?.(page, newPageSize);
+      if (pagination !== false) {
+        (pagination as TablePagination).onChange?.(page, newPageSize);
+      }
     },
     [pagination]
   );
@@ -723,14 +729,19 @@ export function Table<T extends Record<string, unknown> = Record<string, unknown
 
   // Update from controlled pagination
   useEffect(() => {
-    if (pagination?.current) {
-      setCurrentPage(pagination.current);
-    }
-    if (pagination?.pageSize) {
-      setPageSize(pagination.pageSize);
+    if (pagination !== false) {
+      if ((pagination as TablePagination).current) {
+        setCurrentPage((pagination as TablePagination).current!);
+      }
+      if ((pagination as TablePagination).pageSize) {
+        setPageSize((pagination as TablePagination).pageSize!);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- pagination object reference shouldn't trigger effect, only specific properties matter
-  }, [pagination?.current, pagination?.pageSize]);
+  }, [
+    pagination !== false ? (pagination as TablePagination).current : undefined,
+    pagination !== false ? (pagination as TablePagination).pageSize : undefined,
+  ]);
 
   // Update from controlled expanded keys
   useEffect(() => {

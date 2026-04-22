@@ -74,7 +74,7 @@ export function useOSState(): OSState {
       // 2. 运行启动控制器
       const controller = new BootController();
 
-      controller.setProgressHandler((task, progress) => {
+      controller.setProgressHandler((task: string, progress: number) => {
         if (mounted) {
           setBootMessage(task);
           setBootProgress(progress);
@@ -185,7 +185,7 @@ export function useOSState(): OSState {
     setBootMessage('Retrying...');
 
     const controller = new BootController();
-    controller.setProgressHandler((task, progress) => {
+    controller.setProgressHandler((task: string, progress: number) => {
       setBootMessage(task);
       setBootProgress(progress);
     });

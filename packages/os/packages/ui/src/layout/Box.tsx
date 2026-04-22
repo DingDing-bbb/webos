@@ -33,7 +33,7 @@ import type { JSX } from 'react';
 // Types
 // ============================================================================
 
-type SpacingValue = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 'auto';
+type SpacingValue = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 'auto' | string;
 
 type DimensionValue = number | string | 'full' | 'screen' | 'auto' | 'min' | 'max' | 'fit';
 
@@ -171,7 +171,7 @@ const spacingToCSS = (value: SpacingValue | undefined): string | undefined => {
   if (value === undefined) return undefined;
   if (value === 'auto') return 'auto';
   if (value === 0) return '0';
-  return `var(--layout-spacing-${value}, ${value * 4}px)`;
+  return `var(--layout-spacing-${value}, ${(value as number) * 4}px)`;
 };
 
 /**
@@ -389,16 +389,19 @@ export const Box = forwardRef<HTMLElement, BoxProps>(
       propStyle,
     ]);
 
-    return (
-      <Component
-        ref={ref as React.Ref<HTMLElement>}
-        className={`${classNames}${className ? ` ${className}` : ''}`}
-        style={styles}
-        data-testid={testId}
-        {...rest}
-      >
-        {children}
-      </Component>
+    // Polymorphic component renders as different HTML/SVG elements.
+    // The union type of all possible props is too complex for TS to check,
+    // so we use createElement to bypass the JSX type-checking.
+    return React.createElement(
+      Component,
+      {
+        ref,
+        className: `${classNames}${className ? ` ${className}` : ''}`,
+        style: styles,
+        'data-testid': testId,
+        ...rest,
+      } as any,
+      children
     );
   }
 );

@@ -312,10 +312,13 @@ export const Popover = forwardRef<PopoverRef, PopoverProps>(
     };
 
     // Clone child element with props
-    const triggerElement = React.cloneElement(children, {
-      'aria-haspopup': 'dialog' as const,
-      'aria-expanded': isVisible,
-    });
+    const triggerElement = React.cloneElement(
+      children as React.ReactElement<Record<string, unknown>>,
+      {
+        'aria-haspopup': 'dialog' as const,
+        'aria-expanded': isVisible,
+      }
+    );
 
     return (
       <>
@@ -409,7 +412,7 @@ export const DropdownPopover: React.FC<DropdownPopoverProps> = ({
         </div>
       }
     >
-      {React.cloneElement(children, {
+      {React.cloneElement(children as React.ReactElement<Record<string, unknown>>, {
         'aria-expanded': isOpen,
       })}
     </Popover>

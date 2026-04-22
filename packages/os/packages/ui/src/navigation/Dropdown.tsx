@@ -73,7 +73,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
 
   const triggerRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLUListElement>(null);
-  const hoverTimeoutRef = useRef<NodeJS.Timeout>();
+  const hoverTimeoutRef = useRef<NodeJS.Timeout>(undefined);
 
   // Calculate dropdown position
   useLayoutEffect(() => {
@@ -282,9 +282,9 @@ export const Dropdown: React.FC<DropdownProps> = ({
 
   // Clone child element with event handlers
   const triggerElement = isValidElement(children)
-    ? cloneElement(children, {
+    ? cloneElement(children as React.ReactElement<Record<string, unknown>>, {
         onClick: (e: React.MouseEvent) => {
-          children.props.onClick?.(e);
+          (children.props as any).onClick?.(e);
           if (trigger === 'click') handleToggle();
         },
         onContextMenu: handleContextMenu,

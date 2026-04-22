@@ -253,9 +253,12 @@ export const Tooltip = forwardRef<TooltipRef, TooltipProps>(
     };
 
     // Clone child element with props
-    const triggerElement = React.cloneElement(children, {
-      'aria-describedby': isVisible ? 'tooltip' : undefined,
-    });
+    const triggerElement = React.cloneElement(
+      children as React.ReactElement<Record<string, unknown>>,
+      {
+        'aria-describedby': isVisible ? 'tooltip' : undefined,
+      }
+    );
 
     return (
       <>

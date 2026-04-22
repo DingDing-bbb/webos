@@ -308,12 +308,7 @@ export const Text = forwardRef<HTMLSpanElement, TextProps>(
     ]);
 
     return (
-      <Component
-        ref={ref as React.Ref<HTMLSpanElement>}
-        className={textClasses}
-        style={textStyle}
-        {...restProps}
-      >
+      <Component ref={ref as any} className={textClasses} style={textStyle} {...restProps}>
         {children}
       </Component>
     );
@@ -569,12 +564,7 @@ export const Code = forwardRef<HTMLElement, CodeProps>(
     const Component = block ? 'pre' : 'code';
 
     return (
-      <Component
-        ref={ref as React.Ref<HTMLElement>}
-        className={codeClasses}
-        style={codeStyle}
-        {...restProps}
-      >
+      <Component ref={ref as any} className={codeClasses} style={codeStyle} {...restProps}>
         {block ? <code>{children}</code> : children}
       </Component>
     );
@@ -593,7 +583,7 @@ export function withTruncation<P extends object>(
 ): React.FC<P & { truncate?: boolean | number; lines?: number }> {
   const TruncatedComponent = forwardRef<
     HTMLElement,
-    P & { truncate?: boolean | number; lines?: number }
+    P & { truncate?: boolean | number; lines?: number; style?: React.CSSProperties }
   >(({ truncate, lines, style, ...props }, ref) => {
     const mergedStyle: React.CSSProperties = {
       ...style,
@@ -612,11 +602,13 @@ export function withTruncation<P extends object>(
       mergedStyle.whiteSpace = 'nowrap';
     }
 
-    return <Component ref={ref} style={mergedStyle} {...(props as P)} />;
+    return <Component ref={ref as any} style={mergedStyle} {...(props as P)} />;
   });
 
   TruncatedComponent.displayName = `WithTruncation(${Component.displayName || Component.name || 'Component'})`;
-  return TruncatedComponent;
+  return TruncatedComponent as unknown as React.FC<
+    P & { truncate?: boolean | number; lines?: number }
+  >;
 }
 
 // ============================================

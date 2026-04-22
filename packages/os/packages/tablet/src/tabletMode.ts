@@ -486,7 +486,7 @@ class TabletModeManager {
   }
 
   setEdgeConfig(config: Partial<EdgeGestureConfig>): void {
-    this.edgeConfig = { ...defaultEdgeConfig, ...edgeConfig, ...config };
+    this.edgeConfig = { ...defaultEdgeConfig, ...this.edgeConfig, ...config };
   }
 
   onChange(callback: TabletModeListener): () => void {

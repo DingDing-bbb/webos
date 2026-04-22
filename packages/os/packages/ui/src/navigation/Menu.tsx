@@ -66,12 +66,12 @@ const SubMenu: React.FC<SubMenuProps> = ({ item, level }) => {
   const context = useContext(MenuContext);
   const [hoverOpen, setHoverOpen] = useState(false);
   const subMenuRef = useRef<HTMLLIElement>(null);
-  const timeoutRef = useRef<NodeJS.Timeout>();
+  const timeoutRef = useRef<NodeJS.Timeout>(undefined);
 
   if (!context) return null;
 
   const { mode, selectedKey, openKeys, onToggle, onSelect } = context;
-  const isOpen = openKeys.includes(item.key) || hoverOpen;
+  const isOpen = openKeys.includes(item.key || '') || hoverOpen;
   const isHorizontal = mode === 'horizontal';
   const isInline = mode === 'inline';
 
@@ -93,9 +93,9 @@ const SubMenu: React.FC<SubMenuProps> = ({ item, level }) => {
   const handleClick = () => {
     if (item.disabled) return;
     if (item.children) {
-      onToggle(item.key);
+      onToggle(item.key || '');
     } else {
-      onSelect(item.key);
+      onSelect(item.key || '');
       item.onClick?.();
     }
   };
@@ -177,8 +177,7 @@ const MenuItem: React.FC<MenuItemSingleProps> = ({ item }) => {
 
   const handleClick = () => {
     if (item.disabled) return;
-    onSelect(item.key);
-    item.onClick?.();
+    onSelect(item.key || '');
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -312,7 +311,7 @@ export const Menu: React.FC<MenuProps> = ({
   const contextValue: MenuContextType = {
     selectedKey,
     openKeys,
-    mode,
+    mode: mode as 'horizontal' | 'vertical' | 'inline',
     onSelect: handleSelect,
     onToggle: handleToggle,
   };

@@ -148,9 +148,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
       // 如果是字符串，从 Lucide 图标库获取
       if (typeof icon === 'string') {
-        const IconComponent = (LucideIcons as Record<string, React.FC<LucideIcons.LucideProps>>)[
-          icon
-        ];
+        const IconComponent = (
+          LucideIcons as unknown as Record<string, React.FC<LucideIcons.LucideProps>>
+        )[icon];
         if (!IconComponent) {
           console.warn(`Icon "${icon}" not found in Lucide icons`);
           return null;

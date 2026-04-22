@@ -897,13 +897,13 @@ export const Desktop: React.FC<DesktopProps> = ({
           id: 'open',
           label: window.webos?.t('contextMenu.open') || '打开',
           icon: <OpenIcon />,
-          onClick: () => icon?.onOpen(),
+          onClick: () => icon?.onOpen?.(),
         },
         {
           id: 'run-as',
           label: window.webos?.t('contextMenu.runAs') || '运行方式',
           icon: <RunAsIcon />,
-          onClick: () => icon?.onOpen(),
+          onClick: () => icon?.onOpen?.(),
         },
         { id: 'divider-icon-1', label: '', divider: true },
         {

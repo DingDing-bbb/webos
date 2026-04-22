@@ -283,9 +283,27 @@ const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, onClose, items }) => {
   }, [onClose]);
 
   const defaultItems = items || [
-    { key: 'add', label: 'Add Child', icon: <PlusIcon /> },
-    { key: 'edit', label: 'Edit', icon: <EditIcon /> },
-    { key: 'delete', label: 'Delete', icon: <DeleteIcon /> },
+    {
+      key: 'add',
+      label: 'Add Child' as React.ReactNode,
+      icon: (<PlusIcon />) as React.ReactNode,
+      disabled: false,
+      onClick: undefined,
+    },
+    {
+      key: 'edit',
+      label: 'Edit' as React.ReactNode,
+      icon: (<EditIcon />) as React.ReactNode,
+      disabled: false,
+      onClick: undefined,
+    },
+    {
+      key: 'delete',
+      label: 'Delete' as React.ReactNode,
+      icon: (<DeleteIcon />) as React.ReactNode,
+      disabled: false,
+      onClick: undefined,
+    },
   ];
 
   return (

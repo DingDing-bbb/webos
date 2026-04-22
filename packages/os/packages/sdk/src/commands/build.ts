@@ -8,11 +8,11 @@ export async function buildApp(options: { watch?: boolean }) {
     entryPoints: ['src/index.tsx'],
     bundle: true,
     outfile: 'dist/app.js',
-    platform: 'browser',
-    format: 'esm',
+    platform: 'browser' as const,
+    format: 'esm' as const,
     sourcemap: true,
-    loader: { '.tsx': 'tsx', '.ts': 'ts' },
-  };
+    loader: { '.tsx': 'tsx' as const, '.ts': 'ts' as const },
+  } satisfies esbuild.BuildOptions;
 
   if (options.watch) {
     const ctx = await esbuild.context(buildOptions);

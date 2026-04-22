@@ -8,8 +8,10 @@ import {
   ErrorDialogContainer,
   BlueScreenContainer,
 } from '@ui';
-import { getRegisteredApps } from '@apps';
+import type { WallpaperType, WallpaperConfig } from '@ui';
 import type { WindowState } from '@kernel/types';
+import type { DesktopIconItem } from '@ui/components/Desktop';
+import { getRegisteredApps } from '@apps';
 import React from 'react';
 
 export function DesktopStage() {
@@ -20,7 +22,7 @@ export function DesktopStage() {
 
   const [windows, setWindows] = useState<WindowState[]>([]);
   const [startOpen, setStartOpen] = useState(false);
-  const [wallpaper, setWallpaper] = useState({ type: 'soft' as const });
+  const [wallpaper, setWallpaper] = useState<WallpaperConfig>({ type: 'soft' });
   const [containerReady, setContainerReady] = useState(false);
 
   // 获取应用列表
@@ -87,8 +89,7 @@ export function DesktopStage() {
   // 加载设置
   useEffect(() => {
     const saved = localStorage.getItem('webos-wallpaper-type');
-    if (saved)
-      setWallpaper({ type: saved as 'soft' | 'animated' | 'sunrise' | 'ocean' | 'forest' });
+    if (saved) setWallpaper({ type: saved as WallpaperType });
   }, []);
 
   // 打开应用
@@ -153,19 +154,19 @@ export function DesktopStage() {
 
   return (
     <>
-      <Desktop icons={desktopApps} wallpaper={wallpaper} onIconOpen={(id) => openApp(id)}>
-        <div
-          ref={containerRef}
-          id="webos-window-container"
-          style={{
-            position: 'absolute',
-            inset: 0,
-            bottom: taskbarHeight,
-            overflow: 'hidden',
-            pointerEvents: 'none',
-          }}
-        />
-      </Desktop>
+      <Desktop icons={desktopApps} wallpaper={wallpaper} onIconOpen={(id: string) => openApp(id)} />
+
+      <div
+        ref={containerRef}
+        id="webos-window-container"
+        style={{
+          position: 'absolute',
+          inset: 0,
+          bottom: taskbarHeight,
+          overflow: 'hidden',
+          pointerEvents: 'none',
+        }}
+      />
 
       <Taskbar
         windows={windows}

@@ -35,7 +35,7 @@ import React, { forwardRef, useMemo } from 'react';
 // Types
 // ============================================================================
 
-type SpacingValue = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+type SpacingValue = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | string;
 
 /**
  * Grid columns options
@@ -135,7 +135,7 @@ export interface GridItemProps extends Omit<React.HTMLAttributes<HTMLDivElement>
 const spacingToCSS = (value: SpacingValue | undefined): string | undefined => {
   if (value === undefined) return undefined;
   if (value === 0) return '0';
-  return `var(--layout-spacing-${value}, ${value * 4}px)`;
+  return `var(--layout-spacing-${value}, ${(value as number) * 4}px)`;
 };
 
 /**
@@ -235,7 +235,7 @@ export const Grid = forwardRef<HTMLDivElement, GridProps>(
       // Min item width for auto-fill/auto-fit
       if (columns === 'auto-fill' || columns === 'auto-fit') {
         const minWidth = typeof minItemWidth === 'number' ? `${minItemWidth}px` : minItemWidth;
-        style.setProperty('--grid-item-min', minWidth);
+        (style as Record<string, string>)['--grid-item-min'] = minWidth;
       }
 
       // Grid auto-flow

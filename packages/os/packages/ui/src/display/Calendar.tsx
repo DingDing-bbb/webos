@@ -17,7 +17,7 @@
  * ```
  */
 
-import React, { useState, useMemo, useCallback, forwardRef, memo } from 'react';
+import React, { useState, useMemo, useCallback, forwardRef, memo, useRef, useEffect } from 'react';
 
 // ============================================================================
 // Types

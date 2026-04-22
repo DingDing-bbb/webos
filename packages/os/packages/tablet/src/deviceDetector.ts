@@ -93,7 +93,7 @@ class DeviceDetector {
   }
 
   private hasKeyboard(): boolean {
-    return typeof navigator.keyboard !== 'undefined' || !('ontouchstart' in window);
+    return typeof (navigator as any).keyboard !== 'undefined' || !('ontouchstart' in window);
   }
 
   private hasAccelerometer(): boolean {

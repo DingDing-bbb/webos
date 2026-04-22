@@ -21,39 +21,6 @@ declare module '@kernel' {
   };
 }
 
-declare module '@ui' {
-  export const BootScreen: React.FC<{ onComplete: () => void | Promise<void> }>;
-  export const Desktop: React.FC<{
-    onOpenApp: (appId: string, title: string) => void;
-    wallpaper: import('./packages/ui/src/components/Desktop').WallpaperConfig;
-  }>;
-  export const Taskbar: React.FC<{
-    windows: import('./packages/kernel/src/types').WindowState[];
-    onWindowClick: (id: string) => void;
-    onStartClick: () => void;
-    isStartMenuOpen: boolean;
-  }>;
-  export const StartMenu: React.FC<{
-    isOpen: boolean;
-    onClose: () => void;
-    apps: { id: string; name: string; onClick: () => void }[];
-    onSettings: () => void;
-    onShutdown: () => void;
-  }>;
-  export const NotificationContainer: React.FC;
-  export const ErrorDialogContainer: React.FC;
-  export const BlueScreenContainer: React.FC;
-  export const Login: React.FC<{
-    users: import('./packages/kernel/src/types').User[];
-    onLogin: (username: string, password: string) => { success: boolean; error?: string };
-    onGuestLogin?: () => void;
-    isTemporarySession?: boolean;
-    temporaryUserInfo?: { username: string; password: string; reason: string } | null;
-  }>;
-  export type WallpaperConfig = import('./packages/ui/src/components/Desktop').WallpaperConfig;
-  export type WallpaperType = import('./packages/ui/src/components/Desktop').WallpaperType;
-}
-
 declare module '@oobe' {
   export const OOBE: React.FC<{
     onComplete: (data: {
@@ -62,6 +29,7 @@ declare module '@oobe' {
       language: string;
       systemName?: string;
       tabletMode?: boolean;
+      theme?: 'light' | 'dark';
     }) => void;
   }>;
 }
@@ -74,8 +42,25 @@ declare module '@bootloader' {
     ) => () => void;
     boot: () => Promise<boolean>;
     recoverFromCache: () => Promise<boolean>;
-    resetSystem: () => Promise<void>;
+    resetSystem: () => Promise<{ success: boolean; error?: string }>;
+    isRecoveryMode: () => boolean;
+    completeOOBE: () => void;
+    isOOBEComplete: () => boolean;
+    isOOBEMode: () => boolean;
+    addError: (error: Partial<import('./packages/bootloader/src').BootError>) => void;
+    enterRecoveryMode: () => void;
+    canResetSystem: () => boolean;
   };
+  export class BootController {
+    registerTask(task: {
+      id: string;
+      name: string;
+      weight: number;
+      execute: () => Promise<void>;
+    }): void;
+    setProgressHandler(handler: (name: string, progress: number) => void): void;
+    run(): Promise<{ success: boolean; error?: string }>;
+  }
   export function setupGlobalErrorHandler(): void;
   export type BootStatus = import('./packages/bootloader/src').BootStatus;
   export type BootError = import('./packages/bootloader/src').BootError;

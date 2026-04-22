@@ -38,14 +38,14 @@ export function useTranslation(namespace?: string) {
       // 如果有命名空间，先尝试带命名空间的键
       if (namespace) {
         const namespacedKey = `${namespace}.${key}`;
-        const namespacedResult = window.webos?.t(namespacedKey, params);
+        const namespacedResult = window.webos?.t(namespacedKey, params as Record<string, string>);
         if (namespacedResult && namespacedResult !== namespacedKey) {
           return namespacedResult;
         }
       }
 
       // 回退到直接使用键名
-      const result = window.webos?.t(key, params);
+      const result = window.webos?.t(key, params as Record<string, string>);
 
       // 如果找不到翻译，在开发模式下显示警告
       if (!result || result === key) {
@@ -99,7 +99,11 @@ export function useAvailableLocales() {
  */
 export function useHasTranslation(key: string): boolean {
   return useMemo(() => {
-    return window.webos?.i18n?.hasTranslation?.(key) ?? false;
+    const i18n = window.webos?.i18n;
+    if (i18n && typeof (i18n as any).hasTranslation === 'function') {
+      return (i18n as any).hasTranslation(key) ?? false;
+    }
+    return false;
   }, [key]);
 }
 

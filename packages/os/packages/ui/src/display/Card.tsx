@@ -28,6 +28,8 @@ import React, { forwardRef, useState, memo } from 'react';
 export interface CardProps {
   /** Card title */
   title?: React.ReactNode;
+  /** Card variant */
+  variant?: 'default' | 'outlined' | 'elevated' | 'glass' | 'selected' | 'outline';
   /** Card subtitle */
   subtitle?: React.ReactNode;
   /** Extra content in header (actions, etc.) */
