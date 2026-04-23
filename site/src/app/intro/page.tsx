@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 
-type Lang = 'zh' | 'zh-TW' | 'en';
+type Lang = 'zh' | 'zh-TW' | 'en' | 'ja' | 'ko' | 'ru';
 type Theme = 'light' | 'dark';
 
 const SunIcon = () => (
@@ -154,6 +154,79 @@ const i18n = {
     tech: { title: 'Tech Stack', items: ['React 19', 'TypeScript', 'Tailwind CSS', 'Next.js'] },
     footer: '© 2026 WebOS. MIT License.',
   },
+  ja: {
+    nav: { intro: '紹介', docs: 'ドキュメント', app: '起動', github: 'GitHub' },
+    hero: {
+      badge: 'オープンソース',
+      title: 'WebOS',
+      subtitle: 'ブラウザ上のオペレーティングシステム',
+      desc: 'Reactで構築されたウェブベースのオペレーティングシステム。デスクトップ環境、仮想ファイルシステム、マルチタスク機能を備えています。',
+      primary: '試してみる',
+      secondary: 'ドキュメント',
+    },
+    features: [
+      {
+        icon: 'monitor',
+        title: 'デスクトップ環境',
+        desc: 'ウィンドウ管理、タスクバー、スタートメニュー',
+      },
+      {
+        icon: 'folder',
+        title: 'ファイルシステム',
+        desc: '仮想ファイルシステム、ローカルストレージ',
+      },
+      { icon: 'globe', title: '多言語対応', desc: '内蔵の多言語インターフェース' },
+      { icon: 'shield', title: 'セキュリティ', desc: 'ローカルデータの暗号化保存' },
+    ],
+    tech: { title: '技術スタック', items: ['React 19', 'TypeScript', 'Tailwind CSS', 'Next.js'] },
+    footer: '© 2026 WebOS. MIT License.',
+  },
+  ko: {
+    nav: { intro: '소개', docs: '문서', app: '실행', github: 'GitHub' },
+    hero: {
+      badge: '오픈 소스',
+      title: 'WebOS',
+      subtitle: '브라우저 속 운영 체제',
+      desc: 'React로 구축된 웹 기반 운영 체제로, 완전한 데스크톱 환경, 가상 파일 시스템 및 멀티태스킹 기능을 제공합니다.',
+      primary: '시작하기',
+      secondary: '문서 보기',
+    },
+    features: [
+      { icon: 'monitor', title: '데스크톱 환경', desc: '창 관리, 작업 표시줄, 시작 메뉴' },
+      { icon: 'folder', title: '파일 시스템', desc: '가상 파일 시스템, 로컬 스토리지' },
+      { icon: 'globe', title: '다국어 지원', desc: '내장 다국어 인터페이스' },
+      { icon: 'shield', title: '보안', desc: '로컬 데이터 암호화 저장' },
+    ],
+    tech: { title: '기술 스택', items: ['React 19', 'TypeScript', 'Tailwind CSS', 'Next.js'] },
+    footer: '© 2026 WebOS. MIT License.',
+  },
+  ru: {
+    nav: { intro: 'Введение', docs: 'Документация', app: 'Запуск', github: 'GitHub' },
+    hero: {
+      badge: 'Открытый исходный код',
+      title: 'WebOS',
+      subtitle: 'Операционная система в браузере',
+      desc: 'Веб-операционная система на базе React с полноценной рабочей средой, виртуальной файловой системой и поддержкой многозадачности.',
+      primary: 'Попробовать',
+      secondary: 'Документация',
+    },
+    features: [
+      {
+        icon: 'monitor',
+        title: 'Рабочая среда',
+        desc: 'Управление окнами, панель задач, меню пуск',
+      },
+      {
+        icon: 'folder',
+        title: 'Файловая система',
+        desc: 'Виртуальная файловая система, локальное хранилище',
+      },
+      { icon: 'globe', title: 'Мультиязычность', desc: 'Встроенная многоязычная поддержка' },
+      { icon: 'shield', title: 'Безопасность', desc: 'Шифрование локальных данных' },
+    ],
+    tech: { title: 'Технологии', items: ['React 19', 'TypeScript', 'Tailwind CSS', 'Next.js'] },
+    footer: '© 2026 WebOS. MIT License.',
+  },
 };
 
 const iconMap: Record<string, React.ReactNode> = {
@@ -172,7 +245,8 @@ export default function IntroPage() {
   useEffect(() => {
     const savedLang = localStorage.getItem('webos-lang') as Lang;
     const savedTheme = localStorage.getItem('webos-theme') as Theme;
-    if (savedLang && ['zh', 'zh-TW', 'en'].includes(savedLang)) setLang(savedLang);
+    if (savedLang && ['zh', 'zh-TW', 'en', 'ja', 'ko', 'ru'].includes(savedLang))
+      setLang(savedLang);
     if (savedTheme && ['light', 'dark'].includes(savedTheme)) setTheme(savedTheme);
     setMounted(true);
   }, []);
@@ -304,6 +378,15 @@ export default function IntroPage() {
               </option>
               <option value="en" style={{ background: bg }}>
                 English
+              </option>
+              <option value="ja" style={{ background: bg }}>
+                日本語
+              </option>
+              <option value="ko" style={{ background: bg }}>
+                한국어
+              </option>
+              <option value="ru" style={{ background: bg }}>
+                Русский
               </option>
             </select>
           </div>
