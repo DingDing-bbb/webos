@@ -68,14 +68,10 @@ const turbopackResolveAlias = {
 const nextConfig = {
   reactStrictMode: true,
   typescript: { ignoreBuildErrors: true },
-  eslint: { ignoreDuringBuilds: true },
 
-  // GitHub Pages 静态导出
-  output: 'export',
-  basePath: process.env.GITHUB_PAGES ? '/webos' : undefined,
-  assetPrefix: process.env.GITHUB_PAGES ? '/webos' : undefined,
-  images: { unoptimized: true },
-  trailingSlash: true,
+  // Cloudflare Pages / Node.js 服务端渲染（默认模式）
+  // 部署到 CF Pages 时使用 @cloudflare/next-on-pages 适配器
+  // 本地开发/预览使用 next start
 
   // Turbopack 配置
   turbopack: {
