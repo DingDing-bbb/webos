@@ -7,95 +7,25 @@
  * - DOM Living Standard
  */
 
-import React, { useState, useCallback, useRef, useEffect, useMemo } from 'react';
+import React, { useState, useCallback, useRef, useEffect, useMemo, type FC } from 'react';
 import { BrowserIcon } from './icon';
+import { TabBar } from './components/TabBar';
+import { Toolbar } from './components/Toolbar';
+import { ContentArea } from './components/ContentArea';
 import type { AppInfo } from '../../types';
-import { BrowserKernel, RenderResult } from './kernel';
+import type { Tab, Bookmark } from './types';
+import { SEARCH_ENGINES, INTERNAL_PAGES } from './constants';
+import { BrowserKernel, type RenderResult } from './kernel';
 import './styles.css';
 
 // ============================================
-// Types
+// Component
 // ============================================
 
-interface Tab {
-  id: string;
-  title: string;
-  url: string;
-  isLoading: boolean;
-  canGoBack: boolean;
-  canGoForward: boolean;
-  history: string[];
-  historyIndex: number;
-  error?: string;
-  kernel: BrowserKernel;
-  renderResult?: RenderResult;
-}
 
-interface Bookmark {
-  id: string;
-  title: string;
-  url: string;
-  createdAt: number;
-}
-
-// ============================================
-// Constants
-// ============================================
-
-const SEARCH_ENGINES = {
-  bing: { name: 'Bing', url: 'https://www.bing.com/search?q=' },
-  google: { name: 'Google', url: 'https://www.google.com/search?q=' },
-  baidu: { name: 'Baidu', url: 'https://www.baidu.com/s?wd=' },
-};
-
-const INTERNAL_PAGES: Record<string, string> = {
-  'browser://newtab': `
-    <html>
-      <head><title>New Tab</title></head>
-      <body style="font-family: system-ui, sans-serif; padding: 40px; background: #f8f9fa; text-align: center;">
-        <h1 style="color: #333; font-size: 32px; margin-bottom: 16px;">WebOS Browser</h1>
-        <p style="color: #666; font-size: 16px; margin-bottom: 32px;">Enter a URL or search term to get started</p>
-        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
-          <a href="https://www.bing.com" style="padding: 12px 24px; background: #fff; border-radius: 8px; text-decoration: none; color: #333; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">Bing</a>
-          <a href="https://www.google.com" style="padding: 12px 24px; background: #fff; border-radius: 8px; text-decoration: none; color: #333; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">Google</a>
-          <a href="https://www.github.com" style="padding: 12px 24px; background: #fff; border-radius: 8px; text-decoration: none; color: #333; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">GitHub</a>
-        </div>
-      </body>
-    </html>
-  `,
-  'browser://settings': `
-    <html>
-      <head><title>Settings</title></head>
-      <body style="font-family: system-ui, sans-serif; padding: 24px; background: #fff;">
-        <h1 style="color: #333; font-size: 24px; border-bottom: 1px solid #e0e0e0; padding-bottom: 12px;">Browser Settings</h1>
-        <div style="margin-top: 24px;">
-          <h2 style="color: #555; font-size: 16px;">Search Engine</h2>
-          <p style="color: #666;">Default search engine: Bing</p>
-        </div>
-        <div style="margin-top: 24px;">
-          <h2 style="color: #555; font-size: 16px;">Privacy</h2>
-          <p style="color: #666;">Clear browsing data from the settings menu.</p>
-        </div>
-      </body>
-    </html>
-  `,
-  'browser://about': `
-    <html>
-      <head><title>About</title></head>
-      <body style="font-family: system-ui, sans-serif; padding: 40px; background: #fff; text-align: center;">
-        <div style="font-size: 64px; margin-bottom: 16px;">🌐</div>
-        <h1 style="color: #333; font-size: 28px;">WebOS Browser</h1>
-        <p style="color: #666; font-size: 14px; margin: 8px 0;">Version 1.0.0</p>
-        <p style="color: #999; font-size: 13px; margin-top: 24px;">Powered by specification-compliant rendering kernel</p>
-      </body>
-    </html>
-  `,
-};
-
-// ============================================
-// Helpers
-// ============================================
-
+/**
+ * 从本地存储加载书签
+ */
 function loadBookmarks(): Bookmark[] {
   try {
     const saved = localStorage.getItem('browser-bookmarks');
@@ -105,7 +35,9 @@ function loadBookmarks(): Bookmark[] {
   }
 }
 
-// Save bookmark to localStorage (exported for future use)
+/**
+ * 保存书签到本地存储
+ */
 export function saveBookmark(bookmark: Bookmark): void {
   const bookmarks = loadBookmarks();
   bookmarks.push(bookmark);
@@ -113,7 +45,7 @@ export function saveBookmark(bookmark: Bookmark): void {
 }
 
 // ============================================
-// Component
+// BrowserApp Component
 // ============================================
 
 export const BrowserApp: React.FC = () => {

@@ -1,64 +1,70 @@
-// 时钟应用
-
-import React, { useState, useEffect, useCallback } from 'react';
+/**
+ * 时钟应用主组件
+ * 显示当前时间并支持设置闹钟
+ */
+import React, { useState, useEffect, useCallback, type FC } from 'react';
 import { ClockIcon } from './icon';
+import { 
+  formatTime, 
+  formatDate, 
+  isValidHour, 
+  isValidMinute, 
+  padTimeValue,
+  calculateAlarmTime,
+  type AlarmItem,
+  type AlarmFormData
+} from './utils';
 import type { AppInfo } from '../../types';
+import styles from './Clock.module.css';
 
 interface ClockProps {
   windowId?: string;
 }
 
 export const Clock: React.FC<ClockProps> = () => {
-  const [time, setTime] = useState(new Date());
-  const [alarms, setAlarms] = useState<Array<{ id: string; time: Date }>>([]);
-  const [showAlarmForm, setShowAlarmForm] = useState(false);
-  const [alarmHour, setAlarmHour] = useState('08');
-  const [alarmMinute, setAlarmMinute] = useState('00');
+  const [time, setTime] = useState<Date>(new Date());
+  const [alarms, setAlarms] = useState<AlarmItem[]>([]);
+  const [showAlarmForm, setShowAlarmForm] = useState<boolean>(false);
+  const [alarmFormData, setAlarmFormData] = useState<AlarmFormData>({
+    hour: '08',
+    minute: '00'
+  });
 
-  const t = useCallback((key: string): string => {
-    return window.webos?.t(key) || key;
+  /**
+   * 翻译函数
+   */
+  const translate = useCallback((key: string): string => {
+    return window.webos?.i18n?.t(key) || key;
   }, []);
 
+  /**
+   * 更新时间
+   */
   useEffect(() => {
-    const timer = setInterval(() => {
+    const timerId = setInterval(() => {
       setTime(new Date());
     }, 1000);
 
-    return () => clearInterval(timer);
+    return () => clearInterval(timerId);
   }, []);
 
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString([], {
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false,
-    });
-  };
+  /**
+   * 设置闹钟
+   */
+  const handleSetAlarm = (): void => {
+    const { hour, minute } = alarmFormData;
+    if (!hour || !minute) return;
 
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString([], {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-  };
-
-  const handleSetAlarm = () => {
-    if (!alarmHour || !alarmMinute) return;
-
-    const now = new Date();
-    const alarmTime = new Date();
-    alarmTime.setHours(parseInt(alarmHour), parseInt(alarmMinute), 0, 0);
-
-    if (alarmTime <= now) {
-      alarmTime.setDate(alarmTime.getDate() + 1);
-    }
+    const alarmTime = calculateAlarmTime(hour, minute);
+    if (!alarmTime) return;
 
     const alarmId = window.webos?.time.setAlarm(alarmTime, () => {
-      window.webos?.notify.show(t('notify.alarm'), `${formatTime(alarmTime)}`, { duration: 10000 });
-      setAlarms((prev) => prev.filter((a) => a.id !== alarmId));
+      window.webos?.notify.show(
+        translate('notify.alarm'), 
+        `${formatTime(alarmTime)}`, 
+        { duration: 10000 }
+      );
+      setAlarms((prev) => prev.filter((alarm) => alarm.id !== alarmId));
     });
 
     if (alarmId) {
@@ -68,159 +74,106 @@ export const Clock: React.FC<ClockProps> = () => {
     setShowAlarmForm(false);
   };
 
-  const handleClearAlarm = (alarmId: string) => {
+  /**
+   * 清除闹钟
+   */
+  const handleClearAlarm = (alarmId: string): void => {
     window.webos?.time.clearAlarm(alarmId);
-    setAlarms((prev) => prev.filter((a) => a.id !== alarmId));
+    setAlarms((prev) => prev.filter((alarm) => alarm.id !== alarmId));
+  };
+
+  /**
+   * 处理时间输入变化
+   */
+  const handleHourChange = (value: string): void => {
+    const paddedValue = padTimeValue(value);
+    setAlarmFormData((prev) => ({
+      ...prev,
+      hour: paddedValue
+    }));
+  };
+
+  /**
+   * 处理分钟输入变化
+   */
+  const handleMinuteChange = (value: string): void => {
+    const paddedValue = padTimeValue(value);
+    setAlarmFormData((prev) => ({
+      ...prev,
+      minute: paddedValue
+    }));
   };
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100%',
-        padding: '24px',
-        gap: '24px',
-      }}
-    >
-      <div style={{ textAlign: 'center' }}>
-        <div
-          style={{
-            fontSize: '64px',
-            fontWeight: '200',
-            fontFamily: 'monospace',
-            letterSpacing: '4px',
-            color: 'var(--os-color-text)',
-          }}
-        >
+    <div className={styles.container}>
+      <div className={styles.timeDisplay}>
+        <div className={styles.time}>
           {formatTime(time)}
         </div>
-        <div
-          style={{
-            fontSize: '16px',
-            color: 'var(--os-color-text-secondary)',
-            marginTop: '8px',
-          }}
-        >
+        <div className={styles.date}>
           {formatDate(time)}
         </div>
       </div>
 
       {alarms.length > 0 && (
-        <div
-          style={{
-            width: '100%',
-            maxWidth: '300px',
-            borderTop: '1px solid var(--os-color-border)',
-            paddingTop: '16px',
-          }}
-        >
-          <h3
-            style={{
-              fontSize: '14px',
-              marginBottom: '8px',
-              color: 'var(--os-color-text-secondary)',
-            }}
-          >
-            {t('clock.setAlarm')}
+        <div className={styles.alarmsSection}>
+          <h3 className={styles.alarmsTitle}>
+            {translate('clock.setAlarm')}
           </h3>
-          {alarms.map((alarm) => (
-            <div
-              key={alarm.id}
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                padding: '8px',
-                background: 'var(--os-color-bg-secondary)',
-                marginBottom: '4px',
-              }}
-            >
-              <span style={{ fontFamily: 'monospace' }}>{formatTime(alarm.time)}</span>
-              <button
-                onClick={() => handleClearAlarm(alarm.id)}
-                style={{
-                  padding: '4px 8px',
-                  border: 'none',
-                  background: 'var(--os-color-danger)',
-                  color: 'white',
-                  cursor: 'pointer',
-                }}
-              >
-                ×
-              </button>
-            </div>
-          ))}
+          <div className={styles.alarmList}>
+            {alarms.map((alarm) => (
+              <div key={alarm.id} className={styles.alarmItem}>
+                <span className={styles.alarmTime}>
+                  {formatTime(alarm.time)}
+                </span>
+                <button
+                  onClick={() => handleClearAlarm(alarm.id)}
+                  className={styles.alarmDeleteButton}
+                  aria-label={translate('common.delete')}
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
       <button
         onClick={() => setShowAlarmForm(!showAlarmForm)}
-        style={{
-          padding: '8px 24px',
-          border: '1px solid var(--os-color-border)',
-          background: 'var(--os-color-bg-secondary)',
-          cursor: 'pointer',
-        }}
+        className={styles.alarmToggleButton}
       >
-        {t('clock.setAlarm')}
+        {translate('clock.setAlarm')}
       </button>
 
       {showAlarmForm && (
-        <div
-          style={{
-            display: 'flex',
-            gap: '8px',
-            alignItems: 'center',
-            padding: '16px',
-            background: 'var(--os-color-bg-secondary)',
-            border: '1px solid var(--os-color-border)',
-          }}
-        >
+        <div className={styles.alarmForm}>
           <input
             type="number"
             min="0"
             max="23"
-            value={alarmHour}
-            onChange={(e) => setAlarmHour(e.target.value.padStart(2, '0'))}
-            style={{
-              width: '50px',
-              padding: '8px',
-              textAlign: 'center',
-              border: '1px solid var(--os-color-border)',
-              background: 'var(--os-color-bg)',
-            }}
+            value={alarmFormData.hour}
+            onChange={(e) => handleHourChange(e.target.value)}
+            className={styles.timeInput}
             placeholder="HH"
+            aria-label="小时"
           />
-          <span>:</span>
+          <span className={styles.timeSeparator}>:</span>
           <input
             type="number"
             min="0"
             max="59"
-            value={alarmMinute}
-            onChange={(e) => setAlarmMinute(e.target.value.padStart(2, '0'))}
-            style={{
-              width: '50px',
-              padding: '8px',
-              textAlign: 'center',
-              border: '1px solid var(--os-color-border)',
-              background: 'var(--os-color-bg)',
-            }}
+            value={alarmFormData.minute}
+            onChange={(e) => handleMinuteChange(e.target.value)}
+            className={styles.timeInput}
             placeholder="MM"
+            aria-label="分钟"
           />
           <button
             onClick={handleSetAlarm}
-            style={{
-              padding: '8px 16px',
-              border: 'none',
-              background: 'var(--os-color-primary)',
-              color: 'white',
-              cursor: 'pointer',
-            }}
+            className={styles.saveButton}
           >
-            {t('common.save')}
+            {translate('common.save')}
           </button>
         </div>
       )}
