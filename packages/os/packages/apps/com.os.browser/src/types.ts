@@ -2,7 +2,7 @@
  * 浏览器应用类型定义
  */
 
-import { BrowserKernel, RenderResult } from './kernel';
+import { BrowserKernel, type RenderResult } from './kernel';
 
 /**
  * 标签页接口

@@ -4,8 +4,8 @@
  */
 
 import React, { useRef, useEffect, type FC } from 'react';
-import type { Tab, RenderResult } from '../types';
-import { BrowserKernel } from '../kernel';
+import type { Tab } from '../types';
+import { BrowserKernel, type RenderResult } from '../kernel';
 
 interface ContentAreaProps {
   activeTab?: Tab;
