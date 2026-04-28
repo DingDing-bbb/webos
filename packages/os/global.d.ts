@@ -5,6 +5,18 @@ declare const __OS_NAME__: string;
 declare const __OS_VERSION__: string;
 declare const __BUILD_TIME__: string;
 
+// 硬件能力检测结果
+declare global {
+  interface Window {
+    __HW_CAPS?: {
+      canvas2d: boolean;
+      indexedDB: boolean;
+      webAssembly: boolean;
+      localStorage: boolean;
+    };
+  }
+}
+
 // 模块声明
 declare module '@kernel' {
   export function initWebOS(): void;

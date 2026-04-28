@@ -11,7 +11,6 @@ import {
   BootScreen,
   bootloader,
   setupGlobalErrorHandler,
-  BootManager,
 } from '../../../../bootloader/src/index';
 
 import type {
@@ -26,7 +25,7 @@ import type {
 } from '../../../../bootloader/src/index';
 
 // 重新导出
-export { BootController, BootUI, BootScreen, bootloader, setupGlobalErrorHandler, BootManager };
+export { BootController, BootUI, BootScreen, bootloader, setupGlobalErrorHandler };
 
 export type {
   BootTask,

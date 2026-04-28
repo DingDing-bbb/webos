@@ -3,8 +3,8 @@
  *
  * 执行真正的系统初始化任务
  *
- * 注意：此控制器假设 window.webos 已经初始化
- * 内核初始化应该在创建此控制器之前完成
+ * 注意：此控制器由 Bootloader 在硬件探测和内核加载后调用
+ * 负责内核验证和系统服务初始化
  */
 
 // ============================================================================
@@ -58,14 +58,9 @@ export class BootController {
       name: 'Verifying kernel...',
       weight: 5,
       execute: async () => {
-        // 等待内核初始化完成
-        let retries = 0;
-        while (!window.webos && retries < 50) {
-          await this.delay(100);
-          retries++;
-        }
+        // 内核已由bootloader加载，直接验证
         if (!window.webos) {
-          throw new Error('Kernel not initialized');
+          throw new Error('Kernel not initialized by bootloader');
         }
       },
     });

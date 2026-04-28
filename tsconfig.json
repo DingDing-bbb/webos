@@ -62,6 +62,6 @@
       "@webos/sdk/*": ["packages/os/packages/sdk/src/*"]
     }
   },
-  "include": ["packages/**/*", "site/**/*", "global.d.ts"],
+  "include": ["packages/**/*", "site/**/*"],
   "exclude": ["node_modules", "dist", ".next"]
 }

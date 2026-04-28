@@ -14,6 +14,7 @@
 // ============================================================================
 
 // 控制器
+import { BootController } from './controller';
 export { BootController } from './controller';
 export type { BootTask, ProgressCallback, BootResult } from './controller';
 
@@ -55,72 +56,39 @@ export interface BootloaderPlugin {
 }
 
 // ============================================================================
-// Boot Manager - 启动状态管理
+// 轻量级 OOBE 状态检查（内核加载前使用）
 // ============================================================================
 
-export class BootManager {
-  private bootComplete = false;
-  private oobeComplete = false;
-  private storageKey = 'webos-boot';
-  private oobeStorageKey = 'webos-oobe-complete';
+// 这些常量用于在内核加载前检查OOBE状态
+const OOBE_STORAGE_KEY = 'webos-oobe-complete';
+const BOOT_STORAGE_KEY = 'webos-boot';
 
-  constructor() {
-    this.loadState();
+// 简单的OOBE状态检查函数
+function isOOBECompletePreKernel(): boolean {
+  try {
+    const backup = localStorage.getItem(OOBE_STORAGE_KEY);
+    return backup === 'true';
+  } catch (e) {
+    console.error('[Bootloader] Failed to check OOBE state:', e);
+    return false;
   }
+}
 
-  private loadState(): void {
-    try {
-      const saved = localStorage.getItem(this.storageKey);
-      const backup = localStorage.getItem(this.oobeStorageKey);
-
-      if (saved) {
-        const data = JSON.parse(saved);
-        this.oobeComplete = data.oobeComplete ?? false;
-        this.bootComplete = true;
-      }
-
-      if (backup === 'true') {
-        this.oobeComplete = true;
-        this.bootComplete = true;
-      }
-    } catch (e) {
-      console.error('[BootManager] Failed to load state:', e);
-    }
+function markOOBECompletePreKernel(): void {
+  try {
+    localStorage.setItem(OOBE_STORAGE_KEY, 'true');
+    localStorage.setItem(BOOT_STORAGE_KEY, JSON.stringify({ oobeComplete: true }));
+  } catch (e) {
+    console.error('[Bootloader] Failed to save OOBE state:', e);
   }
+}
 
-  private saveState(): void {
-    try {
-      const state = JSON.stringify({ oobeComplete: this.oobeComplete });
-      localStorage.setItem(this.storageKey, state);
-      localStorage.setItem(this.oobeStorageKey, String(this.oobeComplete));
-    } catch (e) {
-      console.error('[BootManager] Failed to save state:', e);
-    }
-  }
-
-  isComplete(): boolean {
-    return this.bootComplete;
-  }
-
-  isOOBEComplete(): boolean {
-    const backup = localStorage.getItem(this.oobeStorageKey);
-    if (backup === 'true') {
-      this.oobeComplete = true;
-    }
-    return this.oobeComplete;
-  }
-
-  completeOOBE(): void {
-    this.oobeComplete = true;
-    this.bootComplete = true;
-    this.saveState();
-  }
-
-  reset(): void {
-    this.bootComplete = false;
-    this.oobeComplete = false;
-    localStorage.removeItem(this.storageKey);
-    localStorage.removeItem(this.oobeStorageKey);
+function resetOOBEStatePreKernel(): void {
+  try {
+    localStorage.removeItem(OOBE_STORAGE_KEY);
+    localStorage.removeItem(BOOT_STORAGE_KEY);
+  } catch (e) {
+    console.error('[Bootloader] Failed to reset OOBE state:', e);
   }
 }
 
@@ -142,10 +110,8 @@ class Bootloader {
   private listeners: Set<(status: BootStatus) => void> = new Set();
   private recoveryMode = false;
   private plugins: Map<string, BootloaderPlugin> = new Map();
-  private bootManager: BootManager;
 
   constructor() {
-    this.bootManager = new BootManager();
     this.loadPlugins();
     this.checkInstallParameter();
   }
@@ -275,18 +241,29 @@ class Bootloader {
     return this.hasPluginPermission('system:reset');
   }
 
-  // ==================== Boot Manager 代理 ====================
+  // ==================== OOBE 状态管理 ====================
 
-  getBootManager(): BootManager {
-    return this.bootManager;
-  }
-
+  // 注意：这些方法在内核加载前使用轻量级检查
+  // 内核加载后，应使用 window.webos.boot 中的 BootManager
+  
   isOOBEComplete(): boolean {
-    return this.bootManager.isOOBEComplete();
+    return isOOBECompletePreKernel();
   }
 
   completeOOBE(): void {
-    this.bootManager.completeOOBE();
+    markOOBECompletePreKernel();
+    // 如果内核已加载，也更新内核的BootManager
+    if (window.webos?.boot?.completeOOBE) {
+      window.webos.boot.completeOOBE();
+    }
+  }
+
+  resetOOBE(): void {
+    resetOOBEStatePreKernel();
+    // 如果内核已加载，也更新内核的BootManager
+    if (window.webos?.boot?.reset) {
+      window.webos.boot.reset();
+    }
   }
 
   // ==================== 启动和错误处理 ====================
@@ -353,15 +330,44 @@ class Bootloader {
   }
 
   async boot(): Promise<boolean> {
-    this.updateStatus({ stage: 'checking', progress: 0, message: 'Quick system check...' });
+    this.updateStatus({ stage: 'checking', progress: 0, message: 'Initializing bootloader...' });
 
     try {
-      this.updateStatus({ progress: 30, message: 'Checking service worker...' });
-      this.checkServiceWorker();
+      // Stage 1: Hardware Probe (0-30%)
+      this.updateStatus({ progress: 10, message: 'Probing hardware capabilities...' });
+      const hwCaps = await this.hardwareProbe();
+      window.__HW_CAPS = hwCaps;
+      
+      if (!hwCaps.canvas2d || !hwCaps.indexedDB || !hwCaps.webAssembly || !hwCaps.localStorage) {
+        throw new Error('Essential hardware capability missing');
+      }
 
-      this.updateStatus({ progress: 60, message: 'Verifying kernel...' });
+      // Stage 2: Kernel Mount (30-70%)
+      this.updateStatus({ progress: 30, message: 'Mounting kernel...' });
+      await this.kernelMount();
+
+      // Stage 3: Kernel Verification (70-90%)
+      this.updateStatus({ progress: 70, message: 'Verifying kernel...' });
       if (typeof window.webos === 'undefined') {
         throw new Error('Kernel not loaded');
+      }
+
+      // Stage 4: BootController执行系统初始化 (90-100%)
+      this.updateStatus({ progress: 90, message: 'Initializing system services...' });
+      const controller = new BootController();
+      
+      // 设置进度回调
+      controller.setProgressHandler((taskName, progress) => {
+        const overallProgress = 90 + Math.round(progress * 0.1); // 90-100%
+        this.updateStatus({ 
+          progress: overallProgress, 
+          message: taskName 
+        });
+      });
+      
+      const result = await controller.run();
+      if (!result.success) {
+        throw new Error(`System initialization failed: ${result.error}`);
       }
 
       this.updateStatus({
@@ -379,6 +385,43 @@ class Bootloader {
         stack: err.stack,
       });
       return false;
+    }
+  }
+
+  private async hardwareProbe(): Promise<{
+    canvas2d: boolean;
+    indexedDB: boolean;
+    webAssembly: boolean;
+    localStorage: boolean;
+  }> {
+    return {
+      canvas2d: !!(document.createElement('canvas').getContext('2d')),
+      indexedDB: 'indexedDB' in window,
+      webAssembly: 'WebAssembly' in window,
+      localStorage: 'localStorage' in window,
+    };
+  }
+
+  private async kernelMount(): Promise<void> {
+    try {
+      // 动态导入内核模块
+      const kernelModule = await import('@kernel');
+      
+      // 初始化内核
+      if (kernelModule.initWebOS) {
+        kernelModule.initWebOS();
+      } else {
+        // 如果initWebOS不存在，尝试其他初始化方式
+        if (kernelModule.createWebOSAPI) {
+          const api = kernelModule.createWebOSAPI();
+          (window as any).webos = api;
+        } else {
+          throw new Error('Kernel API not found in @kernel package');
+        }
+      }
+    } catch (error: unknown) {
+      const err = error as Error;
+      throw new Error(`Kernel mount failed: ${err.message}`);
     }
   }
 

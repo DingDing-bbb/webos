@@ -35,7 +35,7 @@ import { updateManager, type UpdateStatus } from '@kernel/core/managers/updateMa
 // 设置全局错误处理
 if (typeof window !== 'undefined') {
   setupGlobalErrorHandler();
-  initWebOS();
+  // initWebOS() 现在由bootloader在启动过程中动态调用
   updateManager.init();
 }
 
