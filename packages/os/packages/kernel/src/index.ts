@@ -30,6 +30,9 @@ export * from './core/secureStorage';
 export { secureUserManager } from './core/secureUserManager';
 export type { SecureUserManagerState, LoginResult } from './core/secureUserManager';
 
+// IPC和进程管理
+export * from './core/ipc';
+
 // 导出文件系统包
 export * from '../fs/src';
 
