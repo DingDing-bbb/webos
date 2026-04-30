@@ -336,7 +336,7 @@ class Bootloader {
       // Stage 1: Hardware Probe (0-30%)
       this.updateStatus({ progress: 10, message: 'Probing hardware capabilities...' });
       const hwCaps = await this.hardwareProbe();
-      window.__HW_CAPS = hwCaps;
+      (window as any).__HW_CAPS = hwCaps;
       
       if (!hwCaps.canvas2d || !hwCaps.indexedDB || !hwCaps.webAssembly || !hwCaps.localStorage) {
         throw new Error('Essential hardware capability missing');

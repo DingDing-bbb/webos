@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { bootloader, BootController, type BootStatus } from '@bootloader';
+import { bootloader, type BootStatus } from '@bootloader';
 
 type Stage = 'boot' | 'recovery' | 'oobe' | 'lock' | 'desktop';
 
@@ -46,8 +46,14 @@ export function useOSState(): OSState {
   useEffect(() => {
     const unsubscribe = bootloader.subscribe((status) => {
       setBootStatus(status);
+      setBootProgress(status.progress);
+      setBootMessage(status.message || 'Starting...');
+      
       if (status.stage === 'recovery') {
         setStage('recovery');
+      } else if (status.stage === 'success') {
+        // Bootloader 启动成功，决定下一步阶段
+        determineNextStage();
       }
     });
     return unsubscribe;
@@ -60,116 +66,92 @@ export function useOSState(): OSState {
     return () => window.removeEventListener('bootloader:recovery', handleRecovery);
   }, []);
 
-  // 主启动流程
+  // 主启动流程：由Bootloader控制
   useEffect(() => {
     let mounted = true;
 
-    const boot = async () => {
-      // 1. 初始化 WebOS API
-      setBootMessage('Initializing kernel...');
-      const { initWebOS } = await import('@kernel');
-      if (!mounted) return;
-      initWebOS();
-
-      // 2. 运行启动控制器
-      const controller = new BootController();
-
-      controller.setProgressHandler((task: string, progress: number) => {
-        if (mounted) {
-          setBootMessage(task);
-          setBootProgress(progress);
+    const startBoot = async () => {
+      // 如果bootloader尚未启动，则启动它
+      const currentStatus = bootloader.getStatus();
+      if (currentStatus.stage === 'idle' || currentStatus.stage === 'checking') {
+        setBootMessage('Starting bootloader...');
+        const success = await bootloader.boot();
+        if (!success) {
+          // bootloader已处理错误并进入恢复模式
+          return;
         }
-      });
-
-      setBootMessage('Starting boot sequence...');
-      const result = await controller.run();
-
-      if (!mounted) return;
-
-      if (!result.success) {
-        console.error('[OS] Boot failed:', result.error);
-        if (bootloader.isRecoveryMode()) {
-          setStage('recovery');
-        } else {
-          setBootMessage(`Error: ${result.error}`);
-          await new Promise((r) => setTimeout(r, 2000));
-        }
-      }
-
-      // 3. 完成启动
-      setBootMessage('Welcome!');
-      setBootProgress(100);
-      await new Promise((r) => setTimeout(r, 300));
-
-      if (!mounted) return;
-
-      // 4. 检查是否有保存的会话状态
-      if (window.webos?.fs?.exists('/tmp/.session')) {
-        try {
-          const content = window.webos.fs.read('/tmp/.session');
-          if (content) {
-            const session = JSON.parse(content);
-            console.log('[OS] Restored session from /tmp:', session);
-
-            window.webos.fs.delete('/tmp/.session');
-
-            if (session.systemName) setSystemName(session.systemName);
-            if (session.username) {
-              setUsers([
-                {
-                  username: session.username,
-                  displayName: session.displayName || session.username,
-                },
-              ]);
-            }
-
-            if (session.theme) {
-              document.documentElement.setAttribute('data-theme', session.theme);
-            }
-            if (session.tabletMode) {
-              document.documentElement.classList.add('os-tablet-mode');
-            }
-            if (session.language && window.webos) {
-              window.webos.i18n.setLocale(session.language);
-            }
-
-            if (mounted) setStage(session.stage || 'desktop');
-            return;
-          }
-        } catch (error) {
-          console.error('[OS] Failed to restore session:', error);
-        }
-      }
-
-      // 5. 正常流程
-      if (!window.webos) {
-        setStage('desktop');
-        return;
-      }
-
-      if (!window.webos.boot.isOOBEComplete()) {
-        setStage('oobe');
-        return;
-      }
-
-      setSystemName(window.webos.config.getSystemName() || 'WebOS');
-
-      const savedUsername = localStorage.getItem('webos-last-username');
-      const savedDisplayName = localStorage.getItem('webos-last-displayname') || savedUsername;
-
-      if (savedUsername) {
-        setUsers([{ username: savedUsername, displayName: savedDisplayName || savedUsername }]);
-        setStage('lock');
-      } else {
-        setStage('desktop');
       }
     };
 
-    boot();
+    startBoot();
 
     return () => {
       mounted = false;
     };
+  }, []);
+
+  // 决定下一步阶段
+  const determineNextStage = useCallback(() => {
+    // 检查是否有保存的会话状态
+    if (window.webos?.fs?.exists('/tmp/.session')) {
+      try {
+        const content = window.webos.fs.read('/tmp/.session');
+        if (content) {
+          const session = JSON.parse(content);
+          console.log('[OS] Restored session from /tmp:', session);
+
+          window.webos.fs.delete('/tmp/.session');
+
+          if (session.systemName) setSystemName(session.systemName);
+          if (session.username) {
+            setUsers([
+              {
+                username: session.username,
+                displayName: session.displayName || session.username,
+              },
+            ]);
+          }
+
+          if (session.theme) {
+            document.documentElement.setAttribute('data-theme', session.theme);
+          }
+          if (session.tabletMode) {
+            document.documentElement.classList.add('os-tablet-mode');
+          }
+          if (session.language && window.webos) {
+            window.webos.i18n.setLocale(session.language);
+          }
+
+          setStage(session.stage || 'desktop');
+          return;
+        }
+      } catch (error) {
+        console.error('[OS] Failed to restore session:', error);
+      }
+    }
+
+    // 正常流程
+    if (!window.webos) {
+      setStage('desktop');
+      return;
+    }
+
+    if (!window.webos.boot.isOOBEComplete()) {
+      setStage('oobe');
+      return;
+    }
+
+    setSystemName(window.webos.config.getSystemName() || 'WebOS');
+
+    const savedUsername = localStorage.getItem('webos-last-username');
+    const savedDisplayName = localStorage.getItem('webos-last-displayname') || savedUsername;
+
+    if (savedUsername) {
+      setUsers([{ username: savedUsername, displayName: savedDisplayName || savedUsername }]);
+      setStage('lock');
+    } else {
+      setStage('desktop');
+    }
   }, []);
 
   // 登录成功回调 - 直接切换到桌面，不刷新页面
@@ -184,30 +166,12 @@ export function useOSState(): OSState {
     setBootProgress(0);
     setBootMessage('Retrying...');
 
-    const controller = new BootController();
-    controller.setProgressHandler((task: string, progress: number) => {
-      setBootMessage(task);
-      setBootProgress(progress);
-    });
-
-    const result = await controller.run();
-
-    if (result.success) {
-      if (window.webos && !window.webos.boot.isOOBEComplete()) {
-        setStage('oobe');
-      } else {
-        const savedUsername = localStorage.getItem('webos-last-username');
-        if (savedUsername) {
-          const savedDisplayName = localStorage.getItem('webos-last-displayname') || savedUsername;
-          setUsers([{ username: savedUsername, displayName: savedDisplayName || savedUsername }]);
-          setStage('lock');
-        } else {
-          setStage('desktop');
-        }
-      }
-    } else {
+    // 重新启动 bootloader
+    const success = await bootloader.boot();
+    if (!success) {
       setStage('recovery');
     }
+    // 如果成功，订阅回调会检测到 success 状态并调用 determineNextStage
   }, []);
 
   // 恢复模式 - 从缓存恢复
