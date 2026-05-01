@@ -24,8 +24,16 @@ export const Terminal: React.FC<TerminalProps> = () => {
   const [currentInput, setCurrentInput] = useState('');
   const [currentPath, setCurrentPath] = useState('/home/user');
   const [isRoot, setIsRoot] = useState(false);
+  const [commandHistory, setCommandHistory] = useState<string[]>([]);
+  const [historyIndex, setHistoryIndex] = useState(-1);
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  
+  // 可用命令列表（用于Tab补全）
+  const availableCommands = [
+    'help', 'time', 'clear', 'ls', 'cat', 'pwd', 'whoami', 'cd', 
+    'mkdir', 'touch', 'rm', 'echo', 'su', 'exit', 'date', 'hostname', 'env'
+  ];
 
   const t = useCallback((key: string): string => {
     return window.webos?.t(key) || key;
@@ -190,6 +198,24 @@ export const Terminal: React.FC<TerminalProps> = () => {
           return t('terminal.su.failed');
         }
 
+        case 'date':
+          return new Date().toLocaleString();
+          
+        case 'hostname':
+          return 'webos';
+          
+        case 'env':
+          // 显示一些环境信息
+          const envInfo = [
+            `USER=${window.webos?.user.getCurrentUser()?.username || 'user'}`,
+            `HOME=/home/${window.webos?.user.getCurrentUser()?.username || 'user'}`,
+            `PWD=${currentPath}`,
+            `SHELL=/bin/sh`,
+            `TERM=xterm-256color`,
+            `PATH=/bin:/usr/bin:/usr/local/bin`
+          ];
+          return envInfo.join('\n');
+          
         case 'exit':
           if (isRoot) {
             setIsRoot(false);
@@ -209,6 +235,23 @@ export const Terminal: React.FC<TerminalProps> = () => {
     e.preventDefault();
 
     if (!currentInput.trim()) return;
+    
+    const command = currentInput.trim();
+    
+    // 添加到命令历史
+    setCommandHistory(prev => {
+      const newHistory = [...prev];
+      // 如果与上一条命令不同，才添加
+      if (newHistory.length === 0 || newHistory[newHistory.length - 1] !== command) {
+        newHistory.push(command);
+      }
+      // 限制历史记录长度
+      if (newHistory.length > 100) {
+        newHistory.shift();
+      }
+      return newHistory;
+    });
+    setHistoryIndex(-1);
 
     // 添加输入行
     setLines((prev) => [...prev, { type: 'input', content: getPrompt() + currentInput }]);
@@ -230,6 +273,48 @@ export const Terminal: React.FC<TerminalProps> = () => {
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       handleSubmit(e);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (commandHistory.length > 0) {
+        let newIndex = historyIndex;
+        if (newIndex < 0) {
+          newIndex = commandHistory.length - 1;
+        } else if (newIndex > 0) {
+          newIndex--;
+        }
+        setHistoryIndex(newIndex);
+        setCurrentInput(commandHistory[newIndex]);
+      }
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (historyIndex >= 0) {
+        let newIndex = historyIndex;
+        if (newIndex < commandHistory.length - 1) {
+          newIndex++;
+          setHistoryIndex(newIndex);
+          setCurrentInput(commandHistory[newIndex]);
+        } else {
+          setHistoryIndex(-1);
+          setCurrentInput('');
+        }
+      }
+    } else if (e.key === 'Tab') {
+      e.preventDefault();
+      // 简单的Tab补全
+      if (currentInput.trim()) {
+        const partial = currentInput.trim();
+        const matches = availableCommands.filter(cmd => 
+          cmd.startsWith(partial.toLowerCase())
+        );
+        if (matches.length === 1) {
+          setCurrentInput(matches[0] + ' ');
+        }
+      }
+    } else if (e.key === 'l' && e.ctrlKey) {
+      e.preventDefault();
+      // Ctrl+L 清屏
+      setLines([]);
+      setLines(prev => [...prev, { type: 'output', content: getPrompt() }]);
     }
   };
 
