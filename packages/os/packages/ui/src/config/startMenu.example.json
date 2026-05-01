@@ -58,7 +58,7 @@
         "textColor": "#00ff00",
         "action": {
           "type": "app",
-          "target": "terminal",
+          "target": "com.os.terminal",
           "params": {}
         }
       },
@@ -73,7 +73,7 @@
         "textColor": "#ffffff",
         "action": {
           "type": "app",
-          "target": "web-browser",
+          "target": "com.os.browser",
           "params": {}
         }
       },

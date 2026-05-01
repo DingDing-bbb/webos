@@ -36,7 +36,7 @@ export const DEFAULT_START_MENU_CONFIG: StartMenuConfig = {
       textColor: '#ffffff',
       action: {
         type: 'app',
-        target: 'file-explorer',
+        target: 'com.os.filemanager',
         params: {}
       }
     },
@@ -52,7 +52,7 @@ export const DEFAULT_START_MENU_CONFIG: StartMenuConfig = {
       textColor: '#ffffff',
       action: {
         type: 'app',
-        target: 'settings',
+        target: 'com.os.settings',
         params: {}
       }
     },
@@ -68,7 +68,7 @@ export const DEFAULT_START_MENU_CONFIG: StartMenuConfig = {
       textColor: '#00ff00',
       action: {
         type: 'app',
-        target: 'terminal',
+        target: 'com.os.terminal',
         params: {}
       }
     },
@@ -165,7 +165,7 @@ export const DEFAULT_START_MENU_CONFIG: StartMenuConfig = {
       textColor: '#ffffff',
       action: {
         type: 'app',
-        target: 'web-browser',
+        target: 'com.os.browser',
         params: {}
       }
     },
