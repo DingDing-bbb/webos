@@ -57,6 +57,11 @@ export enum SyscallNumber {
   IPC_SEND = 0x0800,
   IPC_RECEIVE = 0x0801,
   IPC_CREATE_CHANNEL = 0x0802,
+  
+  // 通知调用 (0x0900-0x09FF)
+  NOTIFY_SHOW = 0x0900,
+  NOTIFY_CLOSE = 0x0901,
+  NOTIFY_LIST = 0x0902,
 }
 
 // 进程状态

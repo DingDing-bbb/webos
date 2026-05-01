@@ -37,6 +37,7 @@ export class SyscallHandler {
     this.register(SyscallNumber.FS_UNLINK, this.handleFsUnlink.bind(this));
     this.register(SyscallNumber.FS_MKDIR, this.handleFsMkdir.bind(this));
     this.register(SyscallNumber.FS_RMDIR, this.handleFsRmdir.bind(this));
+    this.registerPlaceholder(SyscallNumber.FS_SEEK, 'fs.seek');
 
     // 时间调用
     this.register(SyscallNumber.TIME_NOW, this.handleTimeNow.bind(this));
@@ -53,19 +54,34 @@ export class SyscallHandler {
     this.registerPlaceholder(SyscallNumber.PROCESS_EXIT, 'process.exit');
     this.registerPlaceholder(SyscallNumber.PROCESS_WAIT, 'process.wait');
     this.registerPlaceholder(SyscallNumber.PROCESS_KILL, 'process.kill');
+    this.registerPlaceholder(SyscallNumber.PROCESS_GETPID, 'process.getpid');
+    this.registerPlaceholder(SyscallNumber.PROCESS_GETPPID, 'process.getppid');
     
     this.registerPlaceholder(SyscallNumber.MEMORY_ALLOC, 'memory.alloc');
     this.registerPlaceholder(SyscallNumber.MEMORY_FREE, 'memory.free');
     this.registerPlaceholder(SyscallNumber.MEMORY_PROTECT, 'memory.protect');
+    this.registerPlaceholder(SyscallNumber.MEMORY_MAP, 'memory.map');
+    this.registerPlaceholder(SyscallNumber.MEMORY_UNMAP, 'memory.unmap');
     
     this.registerPlaceholder(SyscallNumber.IO_READ, 'io.read');
     this.registerPlaceholder(SyscallNumber.IO_WRITE, 'io.write');
     
     this.registerPlaceholder(SyscallNumber.NET_SOCKET, 'net.socket');
     this.registerPlaceholder(SyscallNumber.NET_CONNECT, 'net.connect');
+    this.registerPlaceholder(SyscallNumber.NET_BIND, 'net.bind');
+    this.registerPlaceholder(SyscallNumber.NET_LISTEN, 'net.listen');
+    this.registerPlaceholder(SyscallNumber.NET_ACCEPT, 'net.accept');
+    this.registerPlaceholder(SyscallNumber.NET_SEND, 'net.send');
+    this.registerPlaceholder(SyscallNumber.NET_RECV, 'net.recv');
     
     this.registerPlaceholder(SyscallNumber.IPC_SEND, 'ipc.send');
     this.registerPlaceholder(SyscallNumber.IPC_RECEIVE, 'ipc.receive');
+    this.registerPlaceholder(SyscallNumber.IPC_CREATE_CHANNEL, 'ipc.create_channel');
+    
+    // 通知调用（暂未实现）
+    this.registerPlaceholder(SyscallNumber.NOTIFY_SHOW, 'notify.show');
+    this.registerPlaceholder(SyscallNumber.NOTIFY_CLOSE, 'notify.close');
+    this.registerPlaceholder(SyscallNumber.NOTIFY_LIST, 'notify.list');
   }
 
   /**
