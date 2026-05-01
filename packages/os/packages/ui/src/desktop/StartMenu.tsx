@@ -10,6 +10,8 @@
  */
 
 import React, { useState, useCallback, useRef, useEffect } from 'react';
+import { useStartMenu } from '../hooks/useStartMenu';
+import { defaultConfigManager } from '../config/startMenu.config';
 
 // ============================================================================
 // Types
@@ -127,13 +129,74 @@ export const StartMenu: React.FC<StartMenuProps> = ({
   className = '',
 }) => {
   // ========================================
-  // State
+  // State & Configuration
   // ========================================
-  const [searchQuery, setSearchQuery] = useState('');
-  const [showPowerMenu, setShowPowerMenu] = useState(false);
-  const [showAllApps, setShowAllApps] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  
+  // 使用配置系统（如果未提供apps）
+  const useConfigSystem = apps.length === 0 || pinnedAppIds.length === 0;
+  const {
+    state: configState,
+    data: configData,
+    actions: configActions,
+    error: configError,
+    loading: configLoading
+  } = useStartMenu({
+    onAppLaunch,
+    onSettings,
+    onPower,
+    user
+  });
+  
+  // 本地状态（当使用配置系统时）
+  const [localSearchQuery, setLocalSearchQuery] = useState('');
+  const [localShowPowerMenu, setLocalShowPowerMenu] = useState(false);
+  const [localShowAllApps, setLocalShowAllApps] = useState(false);
+  
+  // 计算实际使用的值
+  const searchQuery = useConfigSystem ? configState.searchQuery : localSearchQuery;
+  const setSearchQuery = useConfigSystem ? configActions.setSearchQuery : setLocalSearchQuery;
+  const showPowerMenu = useConfigSystem ? configState.showPowerMenu : localShowPowerMenu;
+  const setShowPowerMenu = useConfigSystem ? configActions.togglePowerMenu : setLocalShowPowerMenu;
+  const showAllApps = useConfigSystem ? (configState.currentView === 'all') : localShowAllApps;
+  const setShowAllApps = useConfigSystem ? 
+    (show: boolean) => configActions.switchView(show ? 'all' : 'pinned') : 
+    setLocalShowAllApps;
+  
+  // 计算应用列表
+  const allApps = useConfigSystem ? configData.apps : apps;
+  const pinnedApps = useConfigSystem ? configData.pinnedApps : 
+    apps.filter((app) => pinnedAppIds.includes(app.id) || app.isPinned);
+  const recommendedApps = useConfigSystem ? configData.recommendedApps : [];
+  const recentApps = useConfigSystem ? configData.recentApps : [];
+  const searchResults = useConfigSystem ? configData.searchResults :
+    (searchQuery ? allApps.filter((app) => app.name.toLowerCase().includes(searchQuery.toLowerCase())) : null);
+  
+  // 处理程序
+  const handleAppClick = useCallback(
+    (appId: string) => {
+      if (useConfigSystem) {
+        configActions.launchApp(appId);
+      } else {
+        onAppLaunch?.(appId);
+        onClose();
+      }
+    },
+    [useConfigSystem, configActions, onAppLaunch, onClose]
+  );
+  
+  const handlePowerAction = useCallback(
+    (action: 'sleep' | 'restart' | 'shutdown') => {
+      if (useConfigSystem) {
+        configActions.performPowerAction(action);
+      } else {
+        onPower?.(action);
+        setLocalShowPowerMenu(false);
+      }
+    },
+    [useConfigSystem, configActions, onPower]
+  );
 
   // ========================================
   // Effects
@@ -142,10 +205,24 @@ export const StartMenu: React.FC<StartMenuProps> = ({
     if (isOpen) {
       setSearchQuery('');
       setShowPowerMenu(false);
-      setShowAllApps(false);
+      if (useConfigSystem) {
+        configActions.switchView('pinned');
+      } else {
+        setLocalShowAllApps(false);
+      }
       setTimeout(() => searchInputRef.current?.focus(), 100);
+      
+      // 如果使用配置系统，打开菜单时刷新数据
+      if (useConfigSystem) {
+        configActions.openMenu();
+      }
+    } else {
+      // 如果使用配置系统，关闭菜单时清理状态
+      if (useConfigSystem) {
+        configActions.closeMenu();
+      }
     }
-  }, [isOpen]);
+  }, [isOpen, useConfigSystem, configActions]);
 
   // Close on click outside
   useEffect(() => {
@@ -175,10 +252,7 @@ export const StartMenu: React.FC<StartMenuProps> = ({
   // ========================================
   // Computed Values
   // ========================================
-  const pinnedApps = apps.filter((app) => pinnedAppIds.includes(app.id) || app.isPinned);
-  const filteredApps = searchQuery
-    ? apps.filter((app) => app.name.toLowerCase().includes(searchQuery.toLowerCase()))
-    : null;
+  // 这些值已经在上面计算过了
 
   // ========================================
   // Handlers
@@ -228,13 +302,13 @@ export const StartMenu: React.FC<StartMenuProps> = ({
 
         {/* Content */}
         <div className="desktop-start-menu-content">
-          {filteredApps ? (
+          {searchResults ? (
             // Search Results
             <div className="desktop-start-menu-section">
               <div className="desktop-start-menu-section-title">Search Results</div>
               <div className="desktop-start-menu-apps">
-                {filteredApps.length > 0 ? (
-                  filteredApps.map((app) => (
+                {searchResults.length > 0 ? (
+                  searchResults.map((app) => (
                     <button
                       key={app.id}
                       className="desktop-start-menu-app"
@@ -259,7 +333,7 @@ export const StartMenu: React.FC<StartMenuProps> = ({
               </button>
               <div className="desktop-start-menu-section-title">All Apps</div>
               <div className="desktop-start-menu-apps all-apps">
-                {apps.map((app) => (
+                {allApps.map((app) => (
                   <button
                     key={app.id}
                     className="desktop-start-menu-app"

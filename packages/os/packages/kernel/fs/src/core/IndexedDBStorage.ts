@@ -9,7 +9,7 @@ import {
   runSql, 
   isUnlocked, 
   databaseExists 
-} from '../../../kernel/src/core/encryptedDatabase';
+} from '../../../../kernel/src/core/encryptedDatabase';
 
 /**
  * 数据库中的文件系统记录接口
@@ -251,12 +251,12 @@ export class IndexedDBStorage {
       );
 
       // 过滤出直接子节点
-      const directChildren = records.filter(record => {
+      const directChildren = records.filter((record: FSRecord) => {
         const remainingPath = record.path.substring(parentPath.length + 1);
         return !remainingPath.includes('/');
       });
 
-      return directChildren.map(record => this.recordToNode(record));
+      return directChildren.map((record: FSRecord) => this.recordToNode(record));
     } catch (error) {
       console.error('[IndexedDBStorage] Failed to list nodes:', error);
       return [];
@@ -272,7 +272,7 @@ export class IndexedDBStorage {
       if (!ready) return [];
 
       const records = querySql<FSRecord>('SELECT * FROM filesystem ORDER BY path');
-      return records.map(record => this.recordToNode(record));
+      return records.map((record: FSRecord) => this.recordToNode(record));
     } catch (error) {
       console.error('[IndexedDBStorage] Failed to load all nodes:', error);
       return [];
