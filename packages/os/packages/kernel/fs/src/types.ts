@@ -8,6 +8,10 @@ export interface UserInfo {
   username: string;
   role: UserRole;
   isRoot: boolean;
+  /** 用户所属的主要组 */
+  group: string;
+  /** 用户所属的附加组列表 */
+  groups: string[];
 }
 
 /** 权限位 */
@@ -27,6 +31,8 @@ export interface FSNode {
   type: 'file' | 'directory';
   permissions: string;
   owner: string;
+  /** 文件所属的组 */
+  group: string;
   size: number;
   createdAt: Date;
   modifiedAt: Date;
@@ -40,6 +46,8 @@ export interface DirEntry {
   type: 'file' | 'directory';
   permissions: string;
   owner: string;
+  /** 文件所属的组 */
+  group: string;
   size: number;
   modifiedAt: Date;
 }
@@ -108,6 +116,7 @@ export interface FileSystemAPI {
   // 权限
   chmod(path: string, mode: string): boolean;
   chown(path: string, owner: string): boolean;
+  chgrp(path: string, group: string): boolean;
 
   // 工具方法
   resolve(...paths: string[]): string;

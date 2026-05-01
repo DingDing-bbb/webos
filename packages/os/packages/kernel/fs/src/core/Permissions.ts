@@ -50,6 +50,7 @@ export function checkPermission(
   permissions: string,
   user: UserInfo | null,
   owner: string,
+  group: string,
   access: 'read' | 'write' | 'execute'
 ): boolean {
   // root 用户有所有权限
@@ -65,6 +66,11 @@ export function checkPermission(
   // 所有者权限
   if (owner === user.username) {
     return perms[0][access];
+  }
+
+  // 组权限 - 检查用户是否在文件所属的组中
+  if (user.group === group || user.groups.includes(group)) {
+    return perms[1][access];
   }
 
   // 其他人权限

@@ -13,6 +13,7 @@ import {
   isEmptyDir,
 } from './Node';
 import { checkPermission, DEFAULT_DIR_PERMS, DEFAULT_FILE_PERMS } from './Permissions';
+import { indexedDBStorage } from './IndexedDBStorage';
 
 /**
  * 文件系统类
@@ -23,9 +24,155 @@ export class FileSystem {
   private currentUser: UserInfo | null = null;
   private watchers: Map<string, Set<FSEventListener>> = new Map();
   private globalWatchers: Set<FSEventListener> = new Set();
+  private storageInitialized = false;
 
   constructor() {
+    // 先创建内存中的默认结构，确保文件系统立即可用
     this.root = this.createDefaultStructure();
+    
+    // 异步初始化持久化存储
+    this.initStorage().catch(error => {
+      console.error('[FileSystem] Failed to initialize storage:', error);
+    });
+  }
+
+  /**
+   * 初始化持久化存储
+   */
+  private async initStorage(): Promise<void> {
+    try {
+      // 检查存储是否可用
+      const available = await indexedDBStorage.isAvailable();
+      if (!available) {
+        console.warn('[FileSystem] IndexedDB storage not available, using in-memory only');
+        return;
+      }
+
+      // 尝试从存储加载所有节点
+      const storedNodes = await indexedDBStorage.loadAllNodes();
+
+      if (storedNodes.length === 0) {
+        // 存储为空，将当前内存结构保存到存储
+        console.log('[FileSystem] No stored data found, saving default structure to storage');
+        await this.saveAllToStorage();
+      } else {
+        // 用存储数据重建内存树
+        console.log(`[FileSystem] Loaded ${storedNodes.length} nodes from storage`);
+        await this.loadFromStorage(storedNodes);
+      }
+
+      this.storageInitialized = true;
+      console.log('[FileSystem] Storage initialized successfully');
+    } catch (error) {
+      console.error('[FileSystem] Storage initialization error:', error);
+      // 存储初始化失败不影响内存文件系统
+    }
+  }
+
+  /**
+   * 从存储数据重建内存树
+   */
+  private async loadFromStorage(nodes: FSNode[]): Promise<void> {
+    // 清空当前内存树（保留根节点）
+    const newRoot: FSNode = {
+      name: '/',
+      path: '/',
+      type: 'directory',
+      permissions: 'drwxr-xr-x',
+      owner: 'root',
+      group: 'root',
+      size: 0,
+      createdAt: new Date(),
+      modifiedAt: new Date(),
+      children: new Map(),
+    };
+
+    // 按路径排序，确保父节点在子节点之前
+    const sortedNodes = nodes.sort((a, b) => a.path.localeCompare(b.path));
+    
+    // 重建节点映射
+    const nodeMap = new Map<string, FSNode>();
+    nodeMap.set('/', newRoot);
+
+    for (const node of sortedNodes) {
+      if (node.path === '/') {
+        // 跳过根节点（已创建）
+        continue;
+      }
+
+      // 确保父节点存在
+      const parentPath = this.dirname(node.path);
+      const parent = nodeMap.get(parentPath);
+      if (!parent || parent.type !== 'directory' || !parent.children) {
+        console.warn(`[FileSystem] Parent not found for path: ${node.path}`);
+        continue;
+      }
+
+      // 设置节点路径并添加到父节点
+      node.children = node.type === 'directory' ? new Map() : undefined;
+      nodeMap.set(node.path, node);
+      parent.children.set(node.name, node);
+    }
+
+    // 计算目录大小
+    const recalcSize = (node: FSNode): number => {
+      if (node.type === 'file') {
+        return node.size;
+      } else {
+        let total = 0;
+        if (node.children) {
+          node.children.forEach(child => {
+            total += recalcSize(child);
+          });
+        }
+        node.size = total;
+        return total;
+      }
+    };
+
+    recalcSize(newRoot);
+    this.root = newRoot;
+  }
+
+  /**
+   * 保存所有节点到存储
+   */
+  private async saveAllToStorage(): Promise<boolean> {
+    // 收集所有节点
+    const nodes: FSNode[] = [];
+    const collect = (node: FSNode) => {
+      nodes.push(node);
+      if (node.type === 'directory' && node.children) {
+        node.children.forEach(child => collect(child));
+      }
+    };
+    collect(this.root);
+
+    // 保存到存储
+    return await indexedDBStorage.saveAllNodes(nodes);
+  }
+
+  /**
+   * 保存单个节点到存储（异步，不阻塞）
+   */
+  private saveNodeToStorage(node: FSNode): void {
+    if (!this.storageInitialized) return;
+    
+    // 异步保存，不等待完成
+    indexedDBStorage.saveNode(node).catch(error => {
+      console.error('[FileSystem] Failed to save node to storage:', error);
+    });
+  }
+
+  /**
+   * 从存储删除节点（异步，不阻塞）
+   */
+  private deleteNodeFromStorage(path: string): void {
+    if (!this.storageInitialized) return;
+    
+    indexedDBStorage.deleteNode(path).catch(error => {
+      console.error('[FileSystem] Failed to delete node from storage:', error);
+    });
   }
 
   /**
@@ -58,6 +205,7 @@ export class FileSystem {
       type: 'directory',
       permissions: 'drwxr-xr-x',
       owner: 'root',
+      group: 'root',
       size: 0,
       createdAt: now,
       modifiedAt: now,
@@ -68,6 +216,11 @@ export class FileSystem {
     const home = createNode('home', 'directory', DEFAULT_DIR_PERMS, 'root');
     home.path = '/home';
     addChild(root, home);
+
+    // /bin - 系统二进制目录
+    const bin = createNode('bin', 'directory', DEFAULT_DIR_PERMS, 'root');
+    bin.path = '/bin';
+    addChild(root, bin);
 
     // /etc - 系统配置
     const etc = createNode('etc', 'directory', DEFAULT_DIR_PERMS, 'root');
@@ -196,6 +349,11 @@ export class FileSystem {
 
       addChild(home, userHome);
       this.emitEvent({ type: 'create', path: userHome.path, timestamp: new Date() });
+      
+      // 保存所有新创建的节点到存储
+      [userHome, documents, downloads, pictures, desktop].forEach(node => {
+        this.saveNodeToStorage(node);
+      });
     }
   }
 
@@ -279,7 +437,7 @@ export class FileSystem {
    * 检查权限
    */
   private checkAccess(node: FSNode, access: 'read' | 'write' | 'execute'): boolean {
-    return checkPermission(node.permissions, this.currentUser, node.owner, access);
+    return checkPermission(node.permissions, this.currentUser, node.owner, node.group, access);
   }
 
   /**
@@ -331,6 +489,8 @@ export class FileSystem {
       if (!this.checkAccess(node, 'write')) return false;
       setContent(node, content);
       this.emitEvent({ type: 'write', path: normalized, timestamp: new Date() });
+      // 保存到存储
+      this.saveNodeToStorage(node);
     } else {
       // 文件不存在，创建新文件
       const parentInfo = this.getParentAndName(normalized);
@@ -347,6 +507,8 @@ export class FileSystem {
       node.path = normalized;
       addChild(parentInfo.parent, node);
       this.emitEvent({ type: 'create', path: normalized, timestamp: new Date() });
+      // 保存新节点到存储
+      this.saveNodeToStorage(node);
     }
 
     return true;
@@ -375,6 +537,8 @@ export class FileSystem {
 
     removeChild(parentInfo.parent, parentInfo.name);
     this.emitEvent({ type: 'delete', path: normalized, timestamp: new Date() });
+    // 从存储删除
+    this.deleteNodeFromStorage(normalized);
     return true;
   }
 
@@ -390,6 +554,7 @@ export class FileSystem {
       const parts = this.resolvePath(normalized);
       let current = this.root;
       let currentPath = '';
+      const createdNodes: FSNode[] = [];
 
       for (const part of parts) {
         currentPath += '/' + part;
@@ -406,6 +571,7 @@ export class FileSystem {
           child.path = this.normalizePath(currentPath);
           addChild(current, child);
           this.emitEvent({ type: 'create', path: child.path, timestamp: new Date() });
+          createdNodes.push(child);
         } else if (child.type !== 'directory') {
           return false;
         }
@@ -413,6 +579,8 @@ export class FileSystem {
         current = child;
       }
 
+      // 保存所有新创建的节点到存储
+      createdNodes.forEach(node => this.saveNodeToStorage(node));
       return true;
     } else {
       // 非递归，直接创建
@@ -429,6 +597,8 @@ export class FileSystem {
       node.path = normalized;
       addChild(parentInfo.parent, node);
       this.emitEvent({ type: 'create', path: normalized, timestamp: new Date() });
+      // 保存新节点到存储
+      this.saveNodeToStorage(node);
       return true;
     }
   }
@@ -491,6 +661,8 @@ export class FileSystem {
     node.permissions = mode;
     node.modifiedAt = new Date();
     this.emitEvent({ type: 'chmod', path: this.normalizePath(path), timestamp: new Date() });
+    // 保存到存储
+    this.saveNodeToStorage(node);
     return true;
   }
 
@@ -506,6 +678,38 @@ export class FileSystem {
 
     node.owner = owner;
     node.modifiedAt = new Date();
+    this.emitEvent({ type: 'chmod', path: this.normalizePath(path), timestamp: new Date() });
+    // 保存到存储
+    this.saveNodeToStorage(node);
+    return true;
+  }
+
+  /**
+   * 修改所属组
+   */
+  chgrp(path: string, group: string): boolean {
+    // root 用户可以修改任何文件的组
+    // 文件所有者也可以修改组（如果用户在该组中）
+    const node = this.getNode(path);
+    if (!node) return false;
+
+    if (this.currentUser?.isRoot) {
+      // root 有所有权限
+    } else if (node.owner === this.currentUser?.username) {
+      // 所有者可以修改组，但必须在新组中
+      if (!this.currentUser || (!this.currentUser.groups.includes(group) && this.currentUser.group !== group)) {
+        return false;
+      }
+    } else {
+      // 非所有者非 root 用户不能修改组
+      return false;
+    }
+
+    node.group = group;
+    node.modifiedAt = new Date();
+    this.emitEvent({ type: 'chmod', path: this.normalizePath(path), timestamp: new Date() });
+    // 保存到存储
+    this.saveNodeToStorage(node);
     return true;
   }
 
@@ -532,6 +736,10 @@ export class FileSystem {
     addChild(newParent.parent, node);
 
     this.emitEvent({ type: 'rename', path: oldPath, timestamp: new Date() });
+    
+    // 更新存储：删除旧记录，保存新记录
+    this.deleteNodeFromStorage(oldPath);
+    this.saveNodeToStorage(node);
     return true;
   }
 

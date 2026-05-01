@@ -10,7 +10,8 @@ export function createNode(
   type: 'file' | 'directory',
   permissions: string,
   owner: string,
-  content: string = ''
+  content: string = '',
+  group: string = owner // 默认组与所有者相同
 ): FSNode {
   const now = new Date();
   return {
@@ -19,6 +20,7 @@ export function createNode(
     type,
     permissions,
     owner,
+    group,
     size: type === 'file' ? content.length : 0,
     createdAt: now,
     modifiedAt: now,
@@ -36,6 +38,7 @@ export function toDirEntry(node: FSNode): DirEntry {
     type: node.type,
     permissions: node.permissions,
     owner: node.owner,
+    group: node.group,
     size: node.size,
     modifiedAt: node.modifiedAt,
   };

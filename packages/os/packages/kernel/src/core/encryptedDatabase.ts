@@ -300,6 +300,7 @@ function createTables(db: Database): void {
       type TEXT NOT NULL DEFAULT 'file',
       permissions TEXT NOT NULL DEFAULT '-rw-r--r--',
       owner TEXT NOT NULL DEFAULT 'root',
+      "group" TEXT NOT NULL DEFAULT 'root',
       content TEXT,
       size INTEGER NOT NULL DEFAULT 0,
       created_at TEXT NOT NULL,
