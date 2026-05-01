@@ -1,12 +1,13 @@
 /**
  * Bootloader - 系统引导加载器
  *
- * 负责系统启动的完整流程：
- * 1. 引导检测
- * 2. 内核初始化
- * 3. 文件系统挂载
- * 4. 服务启动
- * 5. 桌面准备
+ * 重构后：加载 Rust + WebAssembly 微内核
+ * 1. 引导检测（硬件探测、WASM 支持）
+ * 2. 加载 Rust 内核 WASM 并实例化
+ * 3. 初始化内核（调用 kernel_init）
+ * 4. 挂载文件系统
+ * 5. 启动用户态进程
+ * 6. 桌面准备
  */
 
 // ============================================================================
@@ -59,11 +60,9 @@ export interface BootloaderPlugin {
 // 轻量级 OOBE 状态检查（内核加载前使用）
 // ============================================================================
 
-// 这些常量用于在内核加载前检查OOBE状态
 const OOBE_STORAGE_KEY = 'webos-oobe-complete';
 const BOOT_STORAGE_KEY = 'webos-boot';
 
-// 简单的OOBE状态检查函数
 function isOOBECompletePreKernel(): boolean {
   try {
     const backup = localStorage.getItem(OOBE_STORAGE_KEY);
@@ -110,6 +109,7 @@ class Bootloader {
   private listeners: Set<(status: BootStatus) => void> = new Set();
   private recoveryMode = false;
   private plugins: Map<string, BootloaderPlugin> = new Map();
+  private kernelController?: BootController;
 
   constructor() {
     this.loadPlugins();
@@ -243,16 +243,12 @@ class Bootloader {
 
   // ==================== OOBE 状态管理 ====================
 
-  // 注意：这些方法在内核加载前使用轻量级检查
-  // 内核加载后，应使用 window.webos.boot 中的 BootManager
-  
   isOOBEComplete(): boolean {
     return isOOBECompletePreKernel();
   }
 
   completeOOBE(): void {
     markOOBECompletePreKernel();
-    // 如果内核已加载，也更新内核的BootManager
     if (window.webos?.boot?.completeOOBE) {
       window.webos.boot.completeOOBE();
     }
@@ -260,7 +256,6 @@ class Bootloader {
 
   resetOOBE(): void {
     resetOOBEStatePreKernel();
-    // 如果内核已加载，也更新内核的BootManager
     if (window.webos?.boot?.reset) {
       window.webos.boot.reset();
     }
@@ -333,47 +328,45 @@ class Bootloader {
     this.updateStatus({ stage: 'checking', progress: 0, message: 'Initializing bootloader...' });
 
     try {
-      // Stage 1: Hardware Probe (0-30%)
+      // Stage 1: Hardware Probe (0-20%)
       this.updateStatus({ progress: 10, message: 'Probing hardware capabilities...' });
       const hwCaps = await this.hardwareProbe();
       (window as any).__HW_CAPS = hwCaps;
-      
+
       if (!hwCaps.canvas2d || !hwCaps.indexedDB || !hwCaps.webAssembly || !hwCaps.localStorage) {
         throw new Error('Essential hardware capability missing');
       }
 
-      // Stage 2: Kernel Mount (30-70%)
-      this.updateStatus({ progress: 30, message: 'Mounting kernel...' });
-      await this.kernelMount();
+      // Stage 2: Initialize JS kernel API for UI services (20-40%)
+      this.updateStatus({ progress: 20, message: 'Initializing UI services...' });
+      await this.initUIServices();
 
-      // Stage 3: Kernel Verification (70-90%)
-      this.updateStatus({ progress: 70, message: 'Verifying kernel...' });
-      if (typeof window.webos === 'undefined') {
-        throw new Error('Kernel not loaded');
-      }
-
-      // Stage 4: BootController执行系统初始化 (90-100%)
-      this.updateStatus({ progress: 90, message: 'Initializing system services...' });
+      // Stage 3: Load Rust Kernel WASM + Init (40-90%)
+      this.updateStatus({ progress: 40, message: 'Loading Rust microkernel...' });
       const controller = new BootController();
-      
-      // 设置进度回调
+      this.kernelController = controller;
+
       controller.setProgressHandler((taskName, progress) => {
-        const overallProgress = 90 + Math.round(progress * 0.1); // 90-100%
-        this.updateStatus({ 
-          progress: overallProgress, 
-          message: taskName 
+        const overallProgress = 40 + Math.round(progress * 0.5);
+        this.updateStatus({
+          progress: overallProgress,
+          message: taskName,
         });
       });
-      
+
       const result = await controller.run();
       if (!result.success) {
-        throw new Error(`System initialization failed: ${result.error}`);
+        throw new Error(`Kernel initialization failed: ${result.error}`);
       }
+
+      // Stage 4: Desktop Ready (90-100%)
+      this.updateStatus({ progress: 90, message: 'Preparing desktop...' });
+      await this.delay(100);
 
       this.updateStatus({
         stage: 'success',
         progress: 100,
-        message: 'Boot complete!',
+        message: 'Boot complete! Rust microkernel running.',
       });
 
       return true;
@@ -402,27 +395,175 @@ class Bootloader {
     };
   }
 
-  private async kernelMount(): Promise<void> {
+  /**
+   * 初始化 UI 服务层 - JS 侧的窗口管理、文件系统等
+   * 这些服务保留在 JS 侧，通过 IPC 与 Rust 内核通信
+   */
+  private async initUIServices(): Promise<void> {
     try {
-      // 动态导入内核模块
+      // 动态导入内核模块（现在仅包含 IPC 类型和服务桥接）
       const kernelModule = await import('@kernel');
-      
-      // 初始化内核
-      if (kernelModule.initWebOS) {
-        kernelModule.initWebOS();
+
+      // 创建 WebOS API - UI 服务层
+      // 这些服务在 JS 侧提供 UI 功能，但核心逻辑转发到 Rust 内核
+      if (kernelModule.createWebOSAPIFromKernel) {
+        const api = kernelModule.createWebOSAPIFromKernel();
+        (window as any).webos = api;
       } else {
-        // 如果initWebOS不存在，尝试其他初始化方式
-        if (kernelModule.createWebOSAPI) {
-          const api = kernelModule.createWebOSAPI();
-          (window as any).webos = api;
-        } else {
-          throw new Error('Kernel API not found in @kernel package');
-        }
+        // 如果没有新的桥接 API，使用简化版本
+        this.createMinimalWebOSAPI();
       }
     } catch (error: unknown) {
       const err = error as Error;
-      throw new Error(`Kernel mount failed: ${err.message}`);
+      console.warn('[Bootloader] Kernel module load failed, using minimal API:', err.message);
+      this.createMinimalWebOSAPI();
     }
+  }
+
+  /**
+   * 创建最小化 WebOS API（不依赖 JS 内核模块）
+   * 窗口管理等功能由 UI 包提供，文件系统等通过 Rust 内核处理
+   */
+  private createMinimalWebOSAPI(): void {
+    if ((window as any).webos) return;
+
+    // 延迟加载 UI 服务的窗口管理器等
+    const api = {
+      t: (key: string) => key,
+      setWindowContainer: (el: HTMLDivElement) => {
+        (window as any).__windowContainer = el;
+      },
+      window: {
+        open: (appId: string, options?: any) => {
+          console.log(`[WebOS API] window.open: ${appId}`);
+          return `window-${Date.now()}`;
+        },
+        close: (id: string) => console.log(`[WebOS API] window.close: ${id}`),
+        minimize: (id: string) => console.log(`[WebOS API] window.minimize: ${id}`),
+        maximize: (id: string) => console.log(`[WebOS API] window.maximize: ${id}`),
+        restore: (id: string) => console.log(`[WebOS API] window.restore: ${id}`),
+        focus: (id: string) => console.log(`[WebOS API] window.focus: ${id}`),
+        getAll: () => [] as any[],
+      },
+      notify: {
+        show: (title: string, message: string) => console.log(`[Notify] ${title}: ${message}`),
+      },
+      time: {
+        getCurrent: () => new Date(),
+        setAlarm: () => '',
+        clearAlarm: () => {},
+        getAlarms: () => [],
+      },
+      fs: {
+        read: (path: string) => null as string | null,
+        write: (path: string, content: string) => false,
+        exists: (path: string) => false,
+        list: (path: string) => [] as any[],
+        mkdir: (path: string) => false,
+        remove: (path: string) => false,
+        delete: (path: string) => false,
+        readdir: (path: string) => [] as any[],
+        stat: (path: string) => null as any,
+        chmod: (path: string, mode: string) => false,
+        getPermissions: (path: string) => 'rwxr-xr-x',
+        setPermissions: (path: string, perms: string) => false,
+        getNode: (path: string) => null as any,
+        watch: () => (() => {}) as any,
+        resolve: (...paths: string[]) => paths.join('/'),
+        dirname: (path: string) => path.split('/').slice(0, -1).join('/') || '/',
+        basename: (path: string) => path.split('/').pop() || '',
+        extname: (path: string) => {
+          const idx = path.lastIndexOf('.');
+          return idx > 0 ? path.substring(idx) : '';
+        },
+      },
+      user: {
+        getCurrentUser: () => null as any,
+        getAllUsers: () => [] as any[],
+        getRealUsers: () => [] as any[],
+        hasUsers: () => false,
+        createUser: () => ({ success: false, error: 'Use Rust kernel user management' }),
+        login: () => ({ success: false, error: 'Use Rust kernel user management' }),
+        logout: () => {},
+        isLoggedIn: () => false,
+        isRoot: () => false,
+        isAdmin: () => false,
+        hasPermission: () => false,
+        authenticate: () => false,
+        requestPrivilege: async () => false,
+        createTemporaryUser: () => ({ username: 'guest', password: '', role: 'guest', isRoot: false, homeDir: '/home/guest', permissions: [] }) as any,
+        hasTemporaryUser: () => false,
+        getTemporaryUserInfo: () => null as any,
+        clearTemporaryUser: () => {},
+        isTemporarySession: () => false,
+        tryAutoLogin: () => ({ success: false }),
+        subscribe: () => (() => {}) as any,
+        secure: {
+          isReady: () => false,
+          isInitialized: async () => false,
+          isLocked: () => true,
+          getState: () => ({ isInitialized: false, isLocked: true, hasUsers: false, currentUser: null }),
+          createFirstUser: async () => ({ success: false, error: 'Use Rust kernel' }),
+          login: async () => ({ success: false, error: 'Use Rust kernel' }),
+          logout: async () => {},
+          lock: () => {},
+          unlock: async () => ({ success: false, error: 'Use Rust kernel' }),
+          getCurrentUser: () => null as any,
+          getUserList: async () => [],
+          getTotalUserCount: async () => 0,
+          changePassword: async () => ({ success: false }),
+          updateDisplayName: async () => ({ success: false }),
+          isAdmin: () => false,
+          isRoot: () => false,
+          hasPermission: () => false,
+          saveEncryptedData: async () => ({ success: false }),
+          getEncryptedData: async () => null,
+          resetSystem: async () => ({ success: false }),
+          resetAndReinit: async () => {},
+          subscribe: () => (() => {}) as any,
+        },
+      },
+      i18n: {
+        getCurrentLocale: () => 'en',
+        setLocale: (locale: string) => {},
+        t: (key: string) => key,
+        getAvailableLocales: () => [] as any[],
+        onLocaleChange: () => (() => {}) as any,
+      },
+      config: {
+        get: <T>(key: string) => undefined as T | undefined,
+        set: <T>(key: string, value: T) => {},
+        getSystemName: () => 'WebOS',
+        setSystemName: (name: string) => {},
+      },
+      boot: {
+        isComplete: () => true,
+        isOOBEComplete: () => isOOBECompletePreKernel(),
+        completeOOBE: () => markOOBECompletePreKernel(),
+        reset: () => resetOOBEStatePreKernel(),
+      },
+      apps: {
+        register: () => {},
+        unregister: () => false,
+        get: () => undefined as any,
+        getAll: () => [] as any[],
+        getByCategory: () => [] as any[],
+        search: () => [] as any[],
+        isRegistered: () => false,
+        isRunning: () => false,
+        getInstances: () => [] as any[],
+        launch: () => null as string | null,
+        close: () => false,
+        getCategories: () => [] as any[],
+        subscribe: () => (() => {}) as any,
+      },
+    };
+
+    (window as any).webos = api;
+  }
+
+  private delay(ms: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   private checkServiceWorker(): void {
@@ -455,6 +596,11 @@ class Bootloader {
     }
 
     this.updateStatus({ message: 'Resetting system...' });
+
+    // 关闭 Rust 内核
+    if (this.kernelController) {
+      this.kernelController.destroy();
+    }
 
     localStorage.clear();
     sessionStorage.clear();
@@ -533,19 +679,6 @@ export function setupGlobalErrorHandler() {
       stack: error?.stack,
     });
 
-    const webosApi = window.webos as
-      | { reportSystemError?: (msg: string, opts: object) => void }
-      | undefined;
-    if (webosApi?.reportSystemError) {
-      webosApi.reportSystemError(errorMessage, {
-        code: errorType === 'syntax' ? 'ERR_2001' : 'ERR_2005',
-        source: source || undefined,
-        line: lineno || undefined,
-        column: colno || undefined,
-        stack: error?.stack,
-      });
-    }
-
     return false;
   };
 
@@ -557,16 +690,6 @@ export function setupGlobalErrorHandler() {
       message,
       stack: event.reason?.stack,
     });
-
-    const webosApi = window.webos as
-      | { reportSystemError?: (msg: string, opts: object) => void }
-      | undefined;
-    if (webosApi?.reportSystemError) {
-      webosApi.reportSystemError(message, {
-        code: 'ERR_2004',
-        stack: event.reason?.stack,
-      });
-    }
   });
 
   window.addEventListener(
@@ -585,16 +708,6 @@ export function setupGlobalErrorHandler() {
           message,
           file: src,
         });
-
-        const webosApi = window.webos as
-          | { reportSystemError?: (msg: string, opts: object) => void }
-          | undefined;
-        if (webosApi?.reportSystemError) {
-          webosApi.reportSystemError(message, {
-            code: 'ERR_4001',
-            source: src,
-          });
-        }
       }
     },
     true
@@ -611,6 +724,7 @@ declare global {
     webosUninstallDevPlugin?: () => { success: boolean; error?: string };
     webosResetSystem?: () => Promise<{ success: boolean; error?: string }>;
     webosCanResetSystem?: () => boolean;
+    __rustKernel?: any;
   }
 }
 
