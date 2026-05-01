@@ -374,5 +374,16 @@
   "contextMenu.delete": "Delete",
   "contextMenu.rename": "Rename",
   "contextMenu.pinToTaskbar": "Pin to taskbar",
-  "contextMenu.properties": "Properties"
+  "contextMenu.properties": "Properties",
+
+  "menu.sleep": "Sleep",
+  "startMenu.searchResults": "Search Results",
+  "startMenu.noResults": "No results found",
+  "startMenu.back": "← Back",
+  "startMenu.pinned": "Pinned",
+  "startMenu.noPinnedApps": "No pinned apps",
+  "startMenu.recommended": "Recommended",
+  "startMenu.noRecentItems": "No recent items",
+  "startMenu.user": "User",
+  "startMenu.power": "Power"
 }

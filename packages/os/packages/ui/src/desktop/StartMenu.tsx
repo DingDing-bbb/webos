@@ -255,25 +255,6 @@ export const StartMenu: React.FC<StartMenuProps> = ({
   // 这些值已经在上面计算过了
 
   // ========================================
-  // Handlers
-  // ========================================
-  const handleAppClick = useCallback(
-    (appId: string) => {
-      onAppLaunch?.(appId);
-      onClose();
-    },
-    [onAppLaunch, onClose]
-  );
-
-  const handlePowerAction = useCallback(
-    (action: 'sleep' | 'restart' | 'shutdown') => {
-      onPower?.(action);
-      setShowPowerMenu(false);
-    },
-    [onPower]
-  );
-
-  // ========================================
   // Render
   // ========================================
   if (!isOpen) return null;
@@ -294,7 +275,7 @@ export const StartMenu: React.FC<StartMenuProps> = ({
           <input
             ref={searchInputRef}
             type="text"
-            placeholder="Search apps, settings, and files"
+            placeholder={window.webos?.t('taskbar.searchPlaceholder') || 'Search apps, settings, and files'}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -305,7 +286,7 @@ export const StartMenu: React.FC<StartMenuProps> = ({
           {searchResults ? (
             // Search Results
             <div className="desktop-start-menu-section">
-              <div className="desktop-start-menu-section-title">Search Results</div>
+              <div className="desktop-start-menu-section-title">{window.webos?.t('startMenu.searchResults') || 'Search Results'}</div>
               <div className="desktop-start-menu-apps">
                 {searchResults.length > 0 ? (
                   searchResults.map((app) => (
@@ -321,7 +302,7 @@ export const StartMenu: React.FC<StartMenuProps> = ({
                     </button>
                   ))
                 ) : (
-                  <div className="desktop-start-menu-no-results">No results found</div>
+                  <div className="desktop-start-menu-no-results">{window.webos?.t('startMenu.noResults') || 'No results found'}</div>
                 )}
               </div>
             </div>
@@ -329,9 +310,9 @@ export const StartMenu: React.FC<StartMenuProps> = ({
             // All Apps View
             <div className="desktop-start-menu-section">
               <button className="desktop-start-menu-back" onClick={() => setShowAllApps(false)}>
-                ← Back
+                {window.webos?.t('startMenu.back') || '← Back'}
               </button>
-              <div className="desktop-start-menu-section-title">All Apps</div>
+              <div className="desktop-start-menu-section-title">{window.webos?.t('menu.allApps') || 'All Apps'}</div>
               <div className="desktop-start-menu-apps all-apps">
                 {allApps.map((app) => (
                   <button
@@ -352,12 +333,12 @@ export const StartMenu: React.FC<StartMenuProps> = ({
             <>
               <div className="desktop-start-menu-section">
                 <div className="desktop-start-menu-section-header">
-                  <span className="desktop-start-menu-section-title">Pinned</span>
+                  <span className="desktop-start-menu-section-title">{window.webos?.t('startMenu.pinned') || 'Pinned'}</span>
                   <button
                     className="desktop-start-menu-all-apps-btn"
                     onClick={() => setShowAllApps(true)}
                   >
-                    All Apps →
+                    {window.webos?.t('menu.allApps') + ' →' || 'All Apps →'}
                   </button>
                 </div>
                 <div className="desktop-start-menu-apps pinned">
@@ -375,16 +356,16 @@ export const StartMenu: React.FC<StartMenuProps> = ({
                       </button>
                     ))
                   ) : (
-                    <div className="desktop-start-menu-empty">No pinned apps</div>
+                    <div className="desktop-start-menu-empty">{window.webos?.t('startMenu.noPinnedApps') || 'No pinned apps'}</div>
                   )}
                 </div>
               </div>
 
               <div className="desktop-start-menu-section">
-                <div className="desktop-start-menu-section-title">Recommended</div>
+                <div className="desktop-start-menu-section-title">{window.webos?.t('startMenu.recommended') || 'Recommended'}</div>
                 <div className="desktop-start-menu-recommended">
                   {/* Placeholder for recent files/apps */}
-                  <div className="desktop-start-menu-empty">No recent items</div>
+                  <div className="desktop-start-menu-empty">{window.webos?.t('startMenu.noRecentItems') || 'No recent items'}</div>
                 </div>
               </div>
             </>
@@ -396,7 +377,7 @@ export const StartMenu: React.FC<StartMenuProps> = ({
           {/* User Profile */}
           <button className="desktop-start-menu-user">
             <span className="desktop-start-menu-user-avatar">{user?.avatar || <UserIcon />}</span>
-            <span className="desktop-start-menu-user-name">{user?.name || 'User'}</span>
+            <span className="desktop-start-menu-user-name">{user?.name || window.webos?.t('startMenu.user') || 'User'}</span>
           </button>
 
           {/* Settings & Power */}
@@ -407,7 +388,7 @@ export const StartMenu: React.FC<StartMenuProps> = ({
                 onSettings?.();
                 onClose();
               }}
-              title="Settings"
+              title={window.webos?.t('menu.settings') || 'Settings'}
             >
               <SettingsIcon />
             </button>
@@ -416,7 +397,7 @@ export const StartMenu: React.FC<StartMenuProps> = ({
               <button
                 className="desktop-start-menu-footer-btn"
                 onClick={() => setShowPowerMenu(!showPowerMenu)}
-                title="Power"
+                title={window.webos?.t('startMenu.power') || 'Power'}
               >
                 <PowerIcon />
               </button>
@@ -425,15 +406,15 @@ export const StartMenu: React.FC<StartMenuProps> = ({
                 <div className="desktop-start-menu-power-menu">
                   <button onClick={() => handlePowerAction('sleep')}>
                     <SleepIcon />
-                    <span>Sleep</span>
+                    <span>{window.webos?.t('menu.sleep') || 'Sleep'}</span>
                   </button>
                   <button onClick={() => handlePowerAction('restart')}>
                     <RestartIcon />
-                    <span>Restart</span>
+                    <span>{window.webos?.t('menu.restart') || 'Restart'}</span>
                   </button>
                   <button onClick={() => handlePowerAction('shutdown')}>
                     <ShutdownIcon />
-                    <span>Shut Down</span>
+                    <span>{window.webos?.t('menu.shutdown') || 'Shut Down'}</span>
                   </button>
                 </div>
               )}

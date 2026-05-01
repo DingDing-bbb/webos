@@ -359,5 +359,16 @@
   "contextMenu.delete": "刪除",
   "contextMenu.rename": "重新命名",
   "contextMenu.pinToTaskbar": "釘選到工作列",
-  "contextMenu.properties": "內容"
+  "contextMenu.properties": "內容",
+
+  "menu.sleep": "睡眠",
+  "startMenu.searchResults": "搜尋結果",
+  "startMenu.noResults": "未找到結果",
+  "startMenu.back": "← 返回",
+  "startMenu.pinned": "已固定",
+  "startMenu.noPinnedApps": "沒有已固定的應用程式",
+  "startMenu.recommended": "推薦",
+  "startMenu.noRecentItems": "沒有最近使用",
+  "startMenu.user": "使用者",
+  "startMenu.power": "電源"
 }

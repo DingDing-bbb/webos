@@ -374,5 +374,16 @@
   "contextMenu.delete": "删除",
   "contextMenu.rename": "重命名",
   "contextMenu.pinToTaskbar": "固定到任务栏",
-  "contextMenu.properties": "属性"
+  "contextMenu.properties": "属性",
+
+  "menu.sleep": "睡眠",
+  "startMenu.searchResults": "搜索结果",
+  "startMenu.noResults": "未找到结果",
+  "startMenu.back": "← 返回",
+  "startMenu.pinned": "已固定",
+  "startMenu.noPinnedApps": "没有已固定的应用",
+  "startMenu.recommended": "推荐",
+  "startMenu.noRecentItems": "没有最近使用",
+  "startMenu.user": "用户",
+  "startMenu.power": "电源"
 }
