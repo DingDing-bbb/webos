@@ -25,10 +25,7 @@ export type {
 export * from './core/ipc/types';
 
 // Rust 内核桥接 API
-export { KernelBridge, kernelBridge, getKernelBridge } from './core/bridge';
-
-// 从 Rust 内核构建 WebOS API
-export { createWebOSAPIFromKernel, initWebOSFromKernel } from './core/bridge/api';
+export { KernelBridge, kernelBridge, getKernelBridge, createWebOSAPIFromKernel, initWebOSFromKernel } from './core/bridge';
 
 // 兼容旧代码
 export function createWebOSAPI() {

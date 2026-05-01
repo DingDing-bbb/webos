@@ -7,7 +7,9 @@
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { secureUserManager } from '@kernel/core/secureUserManager';
+
+// 通过 window.webos API 访问安全用户管理（由 Bootloader 在运行时创建）
+const getSecureUserManager = () => window.webos?.user?.secure;
 
 // 系统配置（Turbopack 不支持 DefinePlugin）
 const OS_NAME = typeof __OS_NAME__ !== 'undefined' ? __OS_NAME__ : 'WebOS';
@@ -77,8 +79,13 @@ export const SecureLoginScreen: React.FC<SecureLoginScreenProps> = ({ onLoginSuc
   const [isResetting, setIsResetting] = useState(false);
 
   const loadUsers = useCallback(async () => {
-    const userList = await secureUserManager.getUserList(false);
-    const totalCount = await secureUserManager.getTotalUserCount();
+    const secure = getSecureUserManager();
+    if (!secure) {
+      setVisibleUsers([]);
+      return;
+    }
+    const userList = await secure.getUserList(false);
+    const totalCount = await secure.getTotalUserCount();
 
     setVisibleUsers(userList);
     setAllUserCount(totalCount);
@@ -119,7 +126,13 @@ export const SecureLoginScreen: React.FC<SecureLoginScreenProps> = ({ onLoginSuc
       setError('');
 
       try {
-        const result = await secureUserManager.login(username, password);
+        const secure = getSecureUserManager();
+        if (!secure) {
+          setError('System not ready');
+          setIsLoading(false);
+          return;
+        }
+        const result = await secure.login(username, password);
 
         if (result.success) {
           onLoginSuccess();
@@ -166,7 +179,10 @@ export const SecureLoginScreen: React.FC<SecureLoginScreenProps> = ({ onLoginSuc
 
     try {
       // 清除所有 IndexedDB 数据
-      await secureUserManager.resetAndReinit();
+      const secure = getSecureUserManager();
+      if (secure) {
+        await secure.resetAndReinit();
+      }
 
       // 清除 localStorage
       localStorage.clear();

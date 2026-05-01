@@ -1,7 +1,14 @@
 // 系统蓝屏组件 - 连续三次系统错误后显示
 
 import React, { useState, useEffect } from 'react';
-import type { SystemError } from '@kernel/core/errorHandler';
+
+// SystemError 类型定义（原 @kernel/core/errorHandler 已移除）
+export interface SystemError {
+  code: string;
+  message: string;
+  source?: string;
+  line?: number;
+}
 
 // 系统配置（Turbopack 不支持 DefinePlugin）
 const OS_NAME = typeof __OS_NAME__ !== 'undefined' ? __OS_NAME__ : 'WebOS';

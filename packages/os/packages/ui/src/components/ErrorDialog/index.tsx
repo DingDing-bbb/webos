@@ -1,7 +1,17 @@
 // 应用错误弹窗组件
 
 import React, { useState, useEffect } from 'react';
-import type { AppError } from '@kernel/core/errorHandler';
+
+// AppError 类型定义（原 @kernel/core/errorHandler 已移除）
+export interface AppError {
+  id: string;
+  code: string;
+  message: string;
+  timestamp: Date;
+  appId?: string;
+  details?: string;
+  stack?: string;
+}
 
 interface ErrorDialogProps {
   error: AppError;

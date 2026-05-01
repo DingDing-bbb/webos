@@ -4,7 +4,9 @@
  */
 
 import React, { useState, useCallback } from 'react';
-import { secureUserManager } from '@kernel/core/secureUserManager';
+
+// 通过 window.webos API 访问安全用户管理（由 Bootloader 在运行时创建）
+const getSecureUserManager = () => window.webos?.user?.secure;
 
 interface PasswordSetupProps {
   onComplete: (success: boolean) => void;
@@ -92,7 +94,13 @@ export const PasswordSetup: React.FC<PasswordSetupProps> = ({
         // 如果没有设置密码，使用用户名作为默认密码（不推荐但允许）
         const actualPassword = password || username + '_default_' + Date.now();
 
-        const result = await secureUserManager.createFirstUser(username.trim(), actualPassword, {
+        const secure = getSecureUserManager();
+        if (!secure) {
+          setError('System not ready');
+          setIsLoading(false);
+          return;
+        }
+        const result = await secure.createFirstUser(username.trim(), actualPassword, {
           displayName: displayName.trim() || username.trim(),
         });
 
@@ -117,7 +125,13 @@ export const PasswordSetup: React.FC<PasswordSetupProps> = ({
       const defaultUsername = 'user';
       const defaultPassword = 'user_' + Date.now();
 
-      const result = await secureUserManager.createFirstUser(defaultUsername, defaultPassword, {
+      const secure = getSecureUserManager();
+      if (!secure) {
+        setError('System not ready');
+        setIsLoading(false);
+        return;
+      }
+      const result = await secure.createFirstUser(defaultUsername, defaultPassword, {
         displayName: 'User',
       });
 

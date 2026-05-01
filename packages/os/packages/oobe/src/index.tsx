@@ -5,7 +5,9 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { getOOBETranslation, getOOBELocales, type OOBETranslations } from '../locales';
-import { secureUserManager } from '@kernel/core/secureUserManager';
+
+// 通过 window.webos API 访问安全用户管理（由 Bootloader 在运行时创建）
+const getSecureUserManager = () => window.webos?.user?.secure;
 
 // 系统配置
 const OS_NAME = typeof __OS_NAME__ !== 'undefined' ? __OS_NAME__ : 'WebOS';
@@ -152,12 +154,17 @@ export const OOBE: React.FC<OOBEProps> = ({ onComplete }) => {
       // 创建用户
       if (formData.username.trim()) {
         try {
-          await secureUserManager.createFirstUser(
-            formData.username.trim(),
-            formData.password || '',
-            { displayName: formData.username.trim() }
-          );
-          console.log('[OOBE] User created successfully');
+          const secure = getSecureUserManager();
+          if (secure) {
+            await secure.createFirstUser(
+              formData.username.trim(),
+              formData.password || '',
+              { displayName: formData.username.trim() }
+            );
+            console.log('[OOBE] User created successfully');
+          } else {
+            console.warn('[OOBE] Secure user manager not available, skipping user creation');
+          }
         } catch (error) {
           console.error('[OOBE] Failed to create user:', error);
         }

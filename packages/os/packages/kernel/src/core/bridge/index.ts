@@ -2,7 +2,7 @@
  * Rust 内核桥接模块
  *
  * 将现有 UI 层的 API 调用转发到 Rust 内核 WASM 处理。
- * 窗口管理、文件系统操作等通过此桥接层与 Rust 内核通信。
+ * 窗口管理由 JS 侧直接管理（DOM 操作），文件系统/进程管理等通过 Rust 内核处理。
  */
 
 // 内核实例类型
@@ -30,158 +30,60 @@ interface KernelExports {
 export class KernelBridge {
   private kernel: KernelExports | null = null;
 
-  /**
-   * 设置内核实例（由 Bootloader 调用）
-   */
   setKernelInstance(instance: any): void {
     this.kernel = instance?.exports as unknown as KernelExports;
   }
 
-  /**
-   * 获取内核实例
-   */
   getKernel(): KernelExports | null {
     return this.kernel;
   }
 
-  /**
-   * 内核是否已初始化
-   */
   isReady(): boolean {
     return this.kernel !== null;
   }
 
-  // ===========================================================================
   // 进程管理
-  // ===========================================================================
-
-  /**
-   * 在 Rust 内核中创建新进程
-   */
   spawnProcess(name: string, parentPid: number = 0): number {
     if (!this.kernel) return 0;
-
     const nameBytes = new TextEncoder().encode(name);
-    const mem = new Uint8Array(this.kernel.memory.buffer);
-
-    // 在 WASM 内存中分配空间写入进程名
     const namePtr = this.writeToKernelMemory(nameBytes);
     if (namePtr === 0) return 0;
-
-    try {
-      return this.kernel.kernel_spawn_process(namePtr, nameBytes.length, parentPid);
-    } finally {
-      // 不需要特别释放，WASM 内存由内核管理
-    }
+    return this.kernel.kernel_spawn_process(namePtr, nameBytes.length, parentPid);
   }
 
-  /**
-   * 终止进程
-   */
   killProcess(pid: number, signal: number = 9): boolean {
     if (!this.kernel) return false;
     return this.kernel.kernel_kill_process(pid, signal) !== 0;
   }
 
-  /**
-   * 获取当前 PID
-   */
   getCurrentPid(): number {
     if (!this.kernel) return 0;
     return this.kernel.kernel_get_current_pid();
   }
 
-  /**
-   * 获取进程数量
-   */
   getProcessCount(): number {
     if (!this.kernel) return 0;
     return this.kernel.kernel_get_process_count();
   }
 
-  // ===========================================================================
   // 系统调用
-  // ===========================================================================
-
-  /**
-   * 执行系统调用
-   */
   syscall(pid: number, syscallNum: number, arg0: number, arg1: number, arg2: number, arg3: number): bigint {
     if (!this.kernel) return BigInt(0);
     return this.kernel.kernel_syscall(pid, syscallNum, arg0, arg1, arg2, arg3);
   }
 
-  /**
-   * 文件系统读（通过 syscall）
-   */
-  fsRead(pid: number, path: string, buf: Uint8Array): number {
-    if (!this.kernel) return -1;
-
-    const pathBytes = new TextEncoder().encode(path);
-    const pathPtr = this.writeToKernelMemory(pathBytes);
-    const bufPtr = this.writeToKernelMemory(buf);
-
-    try {
-      const result = this.kernel.kernel_syscall(pid, 0x0100, pathPtr, pathBytes.length, bufPtr, buf.length);
-      const errCode = Number(result >> 32n);
-      if (errCode !== 0) return -errCode;
-
-      // 从内核内存复制数据到 buf
-      const readLen = Number(result & 0xFFFFFFFFn);
-      const kernelMem = new Uint8Array(this.kernel.memory.buffer);
-      buf.set(kernelMem.slice(bufPtr, bufPtr + readLen));
-
-      return readLen;
-    } finally {
-      // 释放临时内存
-    }
-  }
-
-  /**
-   * 文件系统写（通过 syscall）
-   */
-  fsWrite(pid: number, path: string, data: string): number {
-    if (!this.kernel) return -1;
-
-    const pathBytes = new TextEncoder().encode(path);
-    const dataBytes = new TextEncoder().encode(data);
-    const pathPtr = this.writeToKernelMemory(pathBytes);
-    const dataPtr = this.writeToKernelMemory(dataBytes);
-
-    try {
-      const result = this.kernel.kernel_syscall(pid, 0x0101, pathPtr, pathBytes.length, dataPtr, dataBytes.length);
-      const errCode = Number(result >> 32n);
-      if (errCode !== 0) return -errCode;
-      return Number(result & 0xFFFFFFFFn);
-    } finally {
-      // 释放临时内存
-    }
-  }
-
-  // ===========================================================================
-  // IPC 消息
-  // ===========================================================================
-
-  /**
-   * IPC 发送消息
-   */
+  // IPC
   ipcSend(srcPid: number, dstPid: number, msgType: number, data: Uint8Array): boolean {
     if (!this.kernel) return false;
     const dataPtr = this.writeToKernelMemory(data);
     return this.kernel.kernel_ipc_send(srcPid, dstPid, msgType, dataPtr, data.length) !== 0;
   }
 
-  /**
-   * IPC 发送字符串消息
-   */
   ipcSendString(srcPid: number, dstPid: number, msgType: number, data: string): boolean {
     const bytes = new TextEncoder().encode(data);
     return this.ipcSend(srcPid, dstPid, msgType, bytes);
   }
 
-  /**
-   * IPC 接收消息
-   */
   ipcReceive(pid: number, buf: Uint8Array): number {
     if (!this.kernel) return 0;
     const bufPtr = this.writeToKernelMemory(buf);
@@ -193,79 +95,34 @@ export class KernelBridge {
     return len;
   }
 
-  // ===========================================================================
-  // 内存管理
-  // ===========================================================================
-
-  /**
-   * 获取内存统计
-   */
+  // 内存
   getMemoryStats(): { totalFrames: number; usedFrames: number; freeFrames: number } {
     if (!this.kernel) return { totalFrames: 0, usedFrames: 0, freeFrames: 0 };
-
     const stats = this.kernel.kernel_get_memory_stats();
     const totalFrames = Number(stats >> 32n);
     const usedFrames = Number(stats & 0xFFFFFFFFn);
-
-    return {
-      totalFrames,
-      usedFrames,
-      freeFrames: totalFrames - usedFrames,
-    };
+    return { totalFrames, usedFrames, freeFrames: totalFrames - usedFrames };
   }
 
-  // ===========================================================================
   // 调度器
-  // ===========================================================================
-
-  /**
-   * 触发调度器 tick
-   */
   tick(): void {
     if (!this.kernel) return;
     this.kernel.kernel_tick();
   }
 
-  // ===========================================================================
-  // 辅助方法
-  // ===========================================================================
-
-  /**
-   * 将字节数据写入内核 WASM 内存
-   * 返回写入的偏移量，0 表示失败
-   */
+  // 辅助
   private writeToKernelMemory(data: Uint8Array | number[]): number {
     if (!this.kernel) return 0;
-
     const mem = new Uint8Array(this.kernel.memory.buffer);
-    const offset = mem.length - data.length - 1; // 使用内存末尾
-
+    const offset = mem.length - data.length - 1;
     if (offset < 0) return 0;
-
     mem.set(data, offset);
     return offset;
   }
 
-  /**
-   * 从内核 WASM 内存读取字符串
-   */
-  private readStringFromKernel(ptr: number, len: number): string {
-    if (!this.kernel || ptr === 0 || len === 0) return '';
-
-    const mem = new Uint8Array(this.kernel.memory.buffer);
-    return new TextDecoder().decode(mem.slice(ptr, ptr + len));
-  }
-
-  /**
-   * 关闭内核
-   */
   shutdown(): void {
     if (this.kernel) {
-      try {
-        this.kernel.kernel_shutdown();
-      } catch (e) {
-        // 忽略
-      }
+      try { this.kernel.kernel_shutdown(); } catch (e) {}
       this.kernel = null;
     }
   }
@@ -274,9 +131,208 @@ export class KernelBridge {
 // 全局单例
 export const kernelBridge = new KernelBridge();
 
-/**
- * 获取内核桥接器
- */
 export function getKernelBridge(): KernelBridge {
   return kernelBridge;
+}
+
+// ============================================================================
+// WebOS API 构建
+// ============================================================================
+
+import type {
+  WebOSAPI,
+  WindowOptions,
+  WindowState,
+  NotifyOptions,
+  UserRole,
+  Permission,
+  FileSystemNode,
+  LocaleConfig,
+} from '../../types';
+
+/**
+ * 文件系统 - 通过 Rust 内核 syscall 实现
+ */
+class RustFileSystem {
+  private pid: number = 0;
+
+  read(path: string): string | null {
+    const kernel = kernelBridge.getKernel();
+    if (!kernel) return null;
+    const pathBytes = new TextEncoder().encode(path);
+    const mem = new Uint8Array(kernel.memory.buffer);
+    const pathPtr = kernel.memory.buffer.byteLength - pathBytes.length - 256;
+    if (pathPtr < 0) return null;
+    mem.set(pathBytes, pathPtr);
+    const bufPtr = pathPtr - 4096;
+    if (bufPtr < 0) return null;
+    const result = kernel.kernel_syscall(this.pid, 0x0100, pathPtr, pathBytes.length, bufPtr, 4096);
+    const errCode = Number(result >> 32n);
+    if (errCode !== 0) return null;
+    const readLen = Number(result & 0xFFFFFFFFn);
+    if (readLen === 0) return null;
+    return new TextDecoder().decode(mem.slice(bufPtr, bufPtr + readLen));
+  }
+
+  write(path: string, content: string): boolean {
+    const kernel = kernelBridge.getKernel();
+    if (!kernel) return false;
+    const pathBytes = new TextEncoder().encode(path);
+    const dataBytes = new TextEncoder().encode(content);
+    const mem = new Uint8Array(kernel.memory.buffer);
+    const dataPtr = kernel.memory.buffer.byteLength - dataBytes.length - 1;
+    const pathPtr = dataPtr - pathBytes.length - 1;
+    if (pathPtr < 0) return false;
+    mem.set(pathBytes, pathPtr);
+    mem.set(dataBytes, dataPtr);
+    const result = kernel.kernel_syscall(this.pid, 0x0101, pathPtr, pathBytes.length, dataPtr, dataBytes.length);
+    return Number(result >> 32n) === 0 && (Number(result & 0xFFFFFFFFn) > 0);
+  }
+
+  exists(path: string): boolean { return this.read(path) !== null; }
+  list(path: string): FileSystemNode[] { return []; }
+  mkdir(path: string, recursive?: boolean): boolean {
+    const kernel = kernelBridge.getKernel();
+    if (!kernel) return false;
+    const pathBytes = new TextEncoder().encode(path);
+    const mem = new Uint8Array(kernel.memory.buffer);
+    const pathPtr = kernel.memory.buffer.byteLength - pathBytes.length - 1;
+    if (pathPtr < 0) return false;
+    mem.set(pathBytes, pathPtr);
+    const result = kernel.kernel_syscall(this.pid, 0x0107, pathPtr, pathBytes.length, recursive ? 1 : 0, 0);
+    return Number(result & 0xFFFFFFFFn) !== 0;
+  }
+  delete(path: string): boolean {
+    const kernel = kernelBridge.getKernel();
+    if (!kernel) return false;
+    const pathBytes = new TextEncoder().encode(path);
+    const mem = new Uint8Array(kernel.memory.buffer);
+    const pathPtr = kernel.memory.buffer.byteLength - pathBytes.length - 1;
+    if (pathPtr < 0) return false;
+    mem.set(pathBytes, pathPtr);
+    const result = kernel.kernel_syscall(this.pid, 0x0106, pathPtr, pathBytes.length, 0, 0);
+    return Number(result & 0xFFFFFFFFn) !== 0;
+  }
+  remove(path: string): boolean { return this.delete(path); }
+  readdir(path: string): any[] { return []; }
+  stat(path: string): FileSystemNode | null { return null; }
+  chmod(path: string, mode: string): boolean { return false; }
+  getPermissions(path: string): string { return 'rwxr-xr-x'; }
+  setPermissions(path: string, permissions: string, requireAuth?: boolean): boolean {
+    if (requireAuth) return false;
+    return this.chmod(path, permissions);
+  }
+  getNode(path: string): FileSystemNode | null { return null; }
+  watch(path: string, listener: any): () => void { return () => {}; }
+  resolve(...paths: string[]): string { return paths.join('/').replace(/\/+/g, '/'); }
+  dirname(path: string): string { return path.split('/').slice(0, -1).join('/') || '/'; }
+  basename(path: string): string { return path.split('/').pop() || ''; }
+  extname(path: string): string { const idx = path.lastIndexOf('.'); return idx > 0 ? path.substring(idx) : ''; }
+}
+
+const rustFs = new RustFileSystem();
+
+/**
+ * 从 Rust 内核创建 WebOS API
+ */
+export function createWebOSAPIFromKernel(): WebOSAPI {
+  const api: WebOSAPI = {
+    t: (key: string) => key,
+    setWindowContainer: (element: HTMLDivElement) => { (window as any).__windowContainer = element; },
+    window: {
+      open: (appId: string, options?: WindowOptions) => `window-${Date.now()}`,
+      close: () => {},
+      minimize: () => {},
+      maximize: () => {},
+      restore: () => {},
+      focus: () => {},
+      getAll: () => [] as WindowState[],
+    },
+    notify: {
+      show: (title: string, message: string) => {
+        kernelBridge.ipcSendString(0, 0, 0x0900, JSON.stringify({ title, message }));
+      },
+    },
+    time: {
+      getCurrent: () => new Date(),
+      setAlarm: (date: Date, callback: () => void) => {
+        const delay = date.getTime() - Date.now();
+        if (delay > 0) setTimeout(callback, delay);
+        return `alarm-${Date.now()}`;
+      },
+      clearAlarm: () => {},
+      getAlarms: () => [],
+    },
+    fs: {
+      read: (path) => rustFs.read(path),
+      write: (path, content, requireAuth?) => { if (requireAuth) return false; return rustFs.write(path, content); },
+      exists: (path) => rustFs.exists(path),
+      list: (path) => rustFs.list(path),
+      mkdir: (path, recursive?) => rustFs.mkdir(path, recursive),
+      remove: (path) => rustFs.remove(path),
+      delete: (path) => rustFs.delete(path),
+      readdir: (path) => rustFs.readdir(path),
+      stat: (path) => rustFs.stat(path),
+      chmod: (path, mode) => rustFs.chmod(path, mode),
+      getPermissions: (path) => rustFs.getPermissions(path),
+      setPermissions: (path, perms, requireAuth?) => rustFs.setPermissions(path, perms, requireAuth),
+      getNode: (path) => rustFs.getNode(path),
+      watch: (path, listener) => rustFs.watch(path, listener),
+      resolve: (...paths) => rustFs.resolve(...paths),
+      dirname: (path) => rustFs.dirname(path),
+      basename: (path) => rustFs.basename(path),
+      extname: (path) => rustFs.extname(path),
+    },
+    user: {
+      getCurrentUser: () => null, getAllUsers: () => [], getRealUsers: () => [],
+      hasUsers: () => false,
+      createUser: () => ({ success: false, error: 'Use Rust kernel' }),
+      login: () => ({ success: false, error: 'Use Rust kernel' }),
+      logout: () => {}, isLoggedIn: () => false, isRoot: () => false,
+      isAdmin: () => false, hasPermission: () => false, authenticate: () => false,
+      requestPrivilege: async () => false,
+      createTemporaryUser: () => ({ username: 'guest', password: '', role: 'guest' as UserRole, isRoot: false, homeDir: '/home/guest', permissions: [] as Permission[] }),
+      hasTemporaryUser: () => false, getTemporaryUserInfo: () => null,
+      clearTemporaryUser: () => {}, isTemporarySession: () => false,
+      tryAutoLogin: () => ({ success: false }), subscribe: () => () => {},
+      secure: {
+        isReady: () => false, isInitialized: async () => false, isLocked: () => true,
+        getState: () => ({ isInitialized: false, isLocked: true, hasUsers: false, currentUser: null }),
+        createFirstUser: async () => ({ success: false, error: 'Use Rust kernel' }),
+        login: async () => ({ success: false, error: 'Use Rust kernel' }),
+        logout: async () => {}, lock: () => {},
+        unlock: async () => ({ success: false, error: 'Use Rust kernel' }),
+        getCurrentUser: () => null, getUserList: async () => [],
+        getTotalUserCount: async () => 0, changePassword: async () => ({ success: false }),
+        updateDisplayName: async () => ({ success: false }),
+        isAdmin: () => false, isRoot: () => false, hasPermission: () => false,
+        saveEncryptedData: async () => ({ success: false }), getEncryptedData: async () => null,
+        resetSystem: async () => ({ success: false }), resetAndReinit: async () => {},
+        subscribe: () => () => {},
+      },
+    },
+    i18n: {
+      getCurrentLocale: () => 'en', setLocale: () => {}, t: (key) => key,
+      getAvailableLocales: () => [] as LocaleConfig[], onLocaleChange: () => () => {},
+    },
+    config: {
+      get: <T>() => undefined as T | undefined, set: () => {},
+      getSystemName: () => 'WebOS', setSystemName: () => {},
+    },
+    boot: { isComplete: () => true, isOOBEComplete: () => true, completeOOBE: () => {}, reset: () => {} },
+    apps: {
+      register: () => {}, unregister: () => false, get: () => undefined,
+      getAll: () => [], getByCategory: () => [], search: () => [],
+      isRegistered: () => false, isRunning: () => false, getInstances: () => [],
+      launch: () => null, close: () => false, getCategories: () => [],
+      subscribe: () => () => {},
+    },
+  };
+  return api;
+}
+
+export function initWebOSFromKernel(): void {
+  if ((window as any).webos) return;
+  const api = createWebOSAPIFromKernel();
+  (window as any).webos = api;
 }
