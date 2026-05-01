@@ -3,8 +3,18 @@
  * 提供类Unix命令执行环境
  */
 
-import { FileSystem } from '../../fs/src/core/FileSystem';
-import { UserInfo } from '../../fs/src/types';
+// 简单接口代替完整的文件系统导入
+interface SimpleFileSystem {
+  // 简化文件系统接口
+}
+
+interface UserInfo {
+  username: string;
+  role: 'user' | 'admin';
+  isRoot: boolean;
+  group: string;
+  groups: string[];
+}
 
 // ============================================================================
 // Types
@@ -26,7 +36,7 @@ export interface ShellCommand {
     args: string[],
     cwd: string,
     env: ShellEnvironment,
-    fs: FileSystem,
+    fs: SimpleFileSystem,
     user: UserInfo
   ) => Promise<CommandResult>;
 }
@@ -36,7 +46,7 @@ export interface ShellEnvironment {
 }
 
 export interface ShellOptions {
-  fs: FileSystem;
+  fs: SimpleFileSystem;
   user: UserInfo;
   initialCwd?: string;
   hostname?: string;
@@ -263,10 +273,28 @@ const builtinCommands: ShellCommand[] = [
     description: '显示帮助信息',
     usage: 'help [命令]',
     aliases: ['?'],
-    execute: async (args, cwd, env, fs, user, commands) => {
+    execute: async (args, cwd, env, fs, user) => {
+      // 硬编码的命令列表
+      const commandList = [
+        { name: 'help', description: '显示帮助信息', usage: 'help [命令]' },
+        { name: 'echo', description: '显示一行文本', usage: 'echo [text...]' },
+        { name: 'pwd', description: '打印当前工作目录', usage: 'pwd' },
+        { name: 'ls', description: '列出目录内容', usage: 'ls [path]' },
+        { name: 'cd', description: '切换工作目录', usage: 'cd [directory]' },
+        { name: 'cat', description: '连接文件并打印', usage: 'cat [file...]' },
+        { name: 'mkdir', description: '创建目录', usage: 'mkdir [目录...]' },
+        { name: 'touch', description: '创建空文件或更新时间戳', usage: 'touch [文件...]' },
+        { name: 'rm', description: '删除文件或目录', usage: 'rm [文件...]' },
+        { name: 'whoami', description: '显示当前用户', usage: 'whoami' },
+        { name: 'hostname', description: '显示主机名', usage: 'hostname' },
+        { name: 'env', description: '显示环境变量', usage: 'env' },
+        { name: 'clear', description: '清空终端屏幕', usage: 'clear' },
+        { name: 'date', description: '显示当前日期和时间', usage: 'date' },
+      ];
+      
       if (args.length > 0) {
         const cmdName = args[0];
-        const cmd = commands.find(c => c.name === cmdName || c.aliases?.includes(cmdName));
+        const cmd = commandList.find(c => c.name === cmdName || c.name === cmdName.toLowerCase());
         
         if (cmd) {
           return {
@@ -283,7 +311,7 @@ const builtinCommands: ShellCommand[] = [
         };
       }
       
-      const commandsList = commands
+      const commandsList = commandList
         .map(cmd => `  ${cmd.name.padEnd(12)} ${cmd.description}`)
         .join('\n');
       
@@ -301,7 +329,7 @@ const builtinCommands: ShellCommand[] = [
 // ============================================================================
 
 export class ShellInterpreter {
-  private fs: FileSystem;
+  private fs: SimpleFileSystem;
   private user: UserInfo;
   private cwd: string;
   private hostname: string;
