@@ -1,7 +1,7 @@
 // WebOS Kernel 入口 - Rust + WebAssembly 微内核架构
 //
 // 旧的 JS 内核模拟代码已移除，核心逻辑由 Rust 编写编译为 WASM 在浏览器运行。
-// 此文件仅保留 IPC 类型定义（供 UI 层通信使用）和桥接层。
+// 此文件保留 IPC 类型定义（供 UI 层通信使用）和桥接层。
 //
 // 内核 WASM 模块由 Bootloader 加载，通过宿主函数桥接与 JS UI 通信。
 
@@ -25,7 +25,21 @@ export type {
 export * from './core/ipc/types';
 
 // Rust 内核桥接 API
-// 这些函数由 Rust 内核 WASM 导出，通过宿主环境提供给 JS
+export { KernelBridge, kernelBridge, getKernelBridge } from './core/bridge';
+
+// 从 Rust 内核构建 WebOS API
+export { createWebOSAPIFromKernel, initWebOSFromKernel } from './core/bridge/api';
+
+// 兼容旧代码
+export function createWebOSAPI() {
+  return createWebOSAPIFromKernel();
+}
+
+export function initWebOS() {
+  initWebOSFromKernel();
+}
+
+// Rust 内核桥接接口定义
 export interface RustKernelBridge {
   // 内核生命周期
   init(): void;
