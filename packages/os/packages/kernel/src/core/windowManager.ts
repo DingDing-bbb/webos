@@ -248,9 +248,101 @@ class OSWindow extends HTMLElement {
     this.isDragging = false;
     this.classList.remove('dragging');
 
+    // 检查窗口吸附
+    this.checkSnapToScreenEdge();
+
     document.removeEventListener('mousemove', this.handleDragMove);
     document.removeEventListener('mouseup', this.handleDragEnd);
   };
+
+  /**
+   * 检查并应用窗口屏幕边缘吸附
+   */
+  private checkSnapToScreenEdge(): void {
+    if (this.state.isMaximized) return;
+
+    const windowWidth = this.state.width;
+    const windowHeight = this.state.height;
+    const screenWidth = window.innerWidth;
+    const screenHeight = window.innerHeight;
+    const edgeThreshold = 32; // 吸附阈值，距离多少像素时触发吸附
+    const snapMargin = 8; // 吸附后与边缘的距离
+
+    let newX = this.state.x;
+    let newY = Math.max(0, this.state.y);
+    let snapped = false;
+
+    // 左侧吸附
+    if (Math.abs(this.state.x) <= edgeThreshold) {
+      newX = snapMargin;
+      snapped = true;
+    }
+    // 右侧吸附  
+    else if (Math.abs(this.state.x + windowWidth - screenWidth) <= edgeThreshold) {
+      newX = screenWidth - windowWidth - snapMargin;
+      snapped = true;
+    }
+    // 顶部吸附
+    if (Math.abs(this.state.y) <= edgeThreshold) {
+      newY = snapMargin;
+      snapped = true;
+    }
+
+    // 左右并排吸附（半屏宽度）
+    if (!snapped) {
+      const halfScreenWidth = Math.floor(screenWidth / 2);
+      const quarterScreenWidth = Math.floor(screenWidth / 4);
+      
+      // 检查窗口是否接近屏幕左半部分中心
+      if (Math.abs(this.state.x - quarterScreenWidth) <= edgeThreshold) {
+        newX = snapMargin;
+        newY = Math.max(0, this.state.y);
+        this.state.width = halfScreenWidth - snapMargin * 2;
+        this.state.height = Math.min(screenHeight - 48 - snapMargin, this.state.height);
+        snapped = true;
+      }
+      // 检查窗口是否接近屏幕右半部分中心
+      else if (Math.abs(this.state.x + windowWidth - (screenWidth - quarterScreenWidth)) <= edgeThreshold) {
+        newX = screenWidth - halfScreenWidth - snapMargin;
+        newY = Math.max(0, this.state.y);
+        this.state.width = halfScreenWidth - snapMargin * 2;
+        this.state.height = Math.min(screenHeight - 48 - snapMargin, this.state.height);
+        snapped = true;
+      }
+    }
+
+    // 全屏最大化吸附（拖到屏幕顶部）
+    if (this.state.y <= edgeThreshold && this.state.x <= edgeThreshold && 
+        this.state.x + windowWidth >= screenWidth - edgeThreshold) {
+      // 延迟执行最大化，避免与拖拽冲突
+      setTimeout(() => {
+        if (this.state.maximizable) {
+          this.onMaximizeCallback?.();
+        }
+      }, 50);
+      return;
+    }
+
+    // 如果有吸附，更新窗口位置和大小
+    if (snapped) {
+      this.state.x = newX;
+      this.state.y = newY;
+      
+      // 添加吸附动画类
+      this.classList.add('snapping');
+      
+      // 更新样式
+      this.style.left = `${newX}px`;
+      this.style.top = `${newY}px`;
+      this.style.width = `${this.state.width}px`;
+      this.style.height = `${this.state.height}px`;
+      
+      // 移除吸附动画类
+      setTimeout(() => {
+        this.classList.remove('snapping');
+      }, 200);
+    }
+  }
 
   private handleResizeStart = (e: MouseEvent) => {
     if (this.state.isMaximized) return;
@@ -392,8 +484,14 @@ class OSWindow extends HTMLElement {
   };
 
   private handleTouchEnd = () => {
+    const wasDragging = this.isTouchDragging;
     this.isTouchDragging = false;
     this.classList.remove('dragging');
+
+    // 检查窗口吸附（仅在拖拽后进行）
+    if (wasDragging) {
+      this.checkSnapToScreenEdge();
+    }
 
     document.removeEventListener('touchmove', this.handleTouchMove);
     document.removeEventListener('touchend', this.handleTouchEnd);
@@ -657,6 +755,39 @@ class WindowManager {
   private activeWindowId: string | null = null;
   private container: HTMLElement | null = null;
   private windowIdCounter = 0;
+  
+  // 层叠布局偏移步长
+  private CASCADE_OFFSET_X = 30;
+  private CASCADE_OFFSET_Y = 30;
+  private CASCADE_MAX_WINDOWS = 5; // 最大层叠窗口数
+  
+  /**
+   * 计算新窗口的层叠位置
+   * 返回 { x: number, y: number }
+   */
+  private calculateCascadePosition(): { x: number, y: number } {
+    const windowCount = this.windows.size;
+    
+    // 如果窗口太多，重置偏移（循环）
+    const cascadeIndex = windowCount % this.CASCADE_MAX_WINDOWS;
+    
+    // 基础位置
+    const baseX = 50 + Math.floor(windowCount / this.CASCADE_MAX_WINDOWS) * 100;
+    const baseY = 50 + Math.floor(windowCount / this.CASCADE_MAX_WINDOWS) * 100;
+    
+    // 计算偏移
+    const x = baseX + cascadeIndex * this.CASCADE_OFFSET_X;
+    const y = baseY + cascadeIndex * this.CASCADE_OFFSET_Y;
+    
+    // 确保不超过屏幕边界
+    const screenWidth = typeof window !== 'undefined' ? window.innerWidth : 1024;
+    const screenHeight = typeof window !== 'undefined' ? window.innerHeight : 768;
+    
+    return {
+      x: Math.min(x, screenWidth - 400), // 至少留400像素宽度
+      y: Math.min(y, screenHeight - 200), // 至少留200像素高度（减去任务栏）
+    };
+  }
 
   setContainer(element: HTMLElement) {
     this.container = element;
@@ -671,13 +802,37 @@ class WindowManager {
     const windowEl = document.createElement('os-window') as OSWindow;
     windowEl.setAttribute('data-window-id', id);
 
+    // 计算窗口位置：如果用户提供了x/y，使用用户设置，否则使用层叠布局
+    const screenWidth = typeof window !== 'undefined' ? window.innerWidth : 1024;
+    const screenHeight = typeof window !== 'undefined' ? window.innerHeight : 768;
+    
+    let x = options.x;
+    let y = options.y;
+    
+    if (x === undefined || y === undefined) {
+      const cascadePos = this.calculateCascadePosition();
+      x = cascadePos.x;
+      y = cascadePos.y;
+    }
+    
+    // 确保窗口在屏幕内
+    const width = options.width || 600;
+    const height = options.height || 400;
+    
+    if (x + width > screenWidth) {
+      x = Math.max(0, screenWidth - width - 50);
+    }
+    if (y + height > screenHeight) {
+      y = Math.max(0, screenHeight - height - 80); // 减去任务栏高度
+    }
+
     const state: WindowState = {
       id,
       title: options.title || 'Window',
-      x: options.x ?? 50 + ((this.windows.size * 30) % 200),
-      y: options.y ?? 50 + ((this.windows.size * 30) % 200),
-      width: options.width || 600,
-      height: options.height || 400,
+      x,
+      y,
+      width,
+      height,
       minWidth: options.minWidth || 200,
       minHeight: options.minHeight || 150,
       isMinimized: false,
@@ -769,6 +924,101 @@ class WindowManager {
       return this.windows.get(this.activeWindowId);
     }
     return undefined;
+  }
+
+  /**
+   * 层叠排列所有窗口
+   */
+  cascadeWindows(): void {
+    const windows = Array.from(this.windows.values());
+    const screenWidth = typeof window !== 'undefined' ? window.innerWidth : 1024;
+    const screenHeight = typeof window !== 'undefined' ? window.innerHeight : 768;
+    
+    const cols = Math.ceil(Math.sqrt(windows.length));
+    const rows = Math.ceil(windows.length / cols);
+    const baseWidth = Math.floor((screenWidth - 100) / cols);
+    const baseHeight = Math.floor((screenHeight - 150) / rows);
+    
+    windows.forEach((win, index) => {
+      const col = index % cols;
+      const row = Math.floor(index / cols);
+      
+      const x = 50 + col * (baseWidth + 10);
+      const y = 50 + row * (baseHeight + 10);
+      const width = Math.max(win.getState().minWidth || 200, baseWidth);
+      const height = Math.max(win.getState().minHeight || 150, baseHeight);
+      
+      win.setState({ x, y, width, height, isMaximized: false });
+      win.restore();
+    });
+  }
+
+  /**
+   * 平铺所有窗口（水平排列）
+   */
+  tileWindowsHorizontally(): void {
+    const windows = Array.from(this.windows.values());
+    if (windows.length === 0) return;
+    
+    const screenWidth = typeof window !== 'undefined' ? window.innerWidth : 1024;
+    const screenHeight = typeof window !== 'undefined' ? window.innerHeight : 768;
+    
+    const windowHeight = Math.floor((screenHeight - 100) / windows.length);
+    const windowWidth = screenWidth - 100;
+    
+    windows.forEach((win, index) => {
+      const x = 50;
+      const y = 50 + index * (windowHeight + 5);
+      const height = Math.max(win.getState().minHeight || 150, windowHeight);
+      
+      win.setState({ x, y, width: windowWidth, height, isMaximized: false });
+      win.restore();
+    });
+  }
+
+  /**
+   * 平铺所有窗口（垂直排列）
+   */
+  tileWindowsVertically(): void {
+    const windows = Array.from(this.windows.values());
+    if (windows.length === 0) return;
+    
+    const screenWidth = typeof window !== 'undefined' ? window.innerWidth : 1024;
+    const screenHeight = typeof window !== 'undefined' ? window.innerHeight : 768;
+    
+    const windowWidth = Math.floor((screenWidth - 100) / windows.length);
+    const windowHeight = screenHeight - 150;
+    
+    windows.forEach((win, index) => {
+      const x = 50 + index * (windowWidth + 5);
+      const y = 50;
+      const width = Math.max(win.getState().minWidth || 200, windowWidth);
+      
+      win.setState({ x, y, width, height: windowHeight, isMaximized: false });
+      win.restore();
+    });
+  }
+
+  /**
+   * 将所有窗口最小化
+   */
+  minimizeAll(): void {
+    this.windows.forEach((win) => {
+      if (win.getState().minimizable) {
+        win.minimize();
+      }
+    });
+  }
+
+  /**
+   * 将所有最小化窗口恢复
+   */
+  restoreAll(): void {
+    this.windows.forEach((win) => {
+      if (win.getState().isMinimized) {
+        win.restore();
+      }
+    });
   }
 }
 
