@@ -9,7 +9,7 @@
     "start": "next start -p 3000"
   },
   "dependencies": {
-    "@webos/os": "workspace:*",
+    "@webos/kernel": "workspace:*",
     "clsx": "^2.1.1",
     "gray-matter": "^4.0.3",
     "highlight.js": "^11.11.1",

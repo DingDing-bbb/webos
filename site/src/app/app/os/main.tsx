@@ -5,7 +5,7 @@ import { BootStage } from './boot';
 import { AuthStage } from './auth';
 import { DesktopStage } from './desktop';
 import { useOSState } from './state';
-import { RecoveryMode } from '@recovery';
+import { RecoveryMode } from '@webos/recovery';
 
 export default function OSMain() {
   const { stage, bootProgress, bootMessage, props } = useOSState();

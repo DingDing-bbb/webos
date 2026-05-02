@@ -8,7 +8,7 @@ import 'highlight.js/styles/github-dark.css';
 import DocsLayout from '../layout';
 
 // 文档根目录
-const DOCS_ROOT = path.join(process.cwd(), '../packages/os/packages/docs');
+const DOCS_ROOT = path.join(process.cwd(), '../docs');
 
 // 获取所有文档 slug（仍需用于静态参数生成）
 export function generateStaticParams() {

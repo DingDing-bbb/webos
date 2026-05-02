@@ -1,0 +1,8 @@
+{
+  "name": "@webos/oobe",
+  "version": "0.0.1-alpha",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts"
+}

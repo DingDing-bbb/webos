@@ -1,6 +1,6 @@
 // 认证阶段 - 自己导入需要的模块
-import { LockScreen } from '@ui';
-import { OOBE } from '@oobe';
+import { LockScreen } from '@webos/ui';
+import { OOBE } from '@webos/oobe';
 
 interface AuthStageProps {
   type: 'oobe' | 'lock';

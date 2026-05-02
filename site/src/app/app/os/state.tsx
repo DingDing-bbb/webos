@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { bootloader, type BootStatus } from '@bootloader';
+import { bootloader, type BootStatus } from '@webos/bootloader';
 
 type Stage = 'boot' | 'recovery' | 'oobe' | 'lock' | 'desktop';
 

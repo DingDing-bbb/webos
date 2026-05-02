@@ -1,7 +1,7 @@
 import { defineConfig } from 'vitest/config';
 import path from 'path';
 
-const PKG = (p: string) => path.resolve(__dirname, 'packages/os/packages', p);
+const PKG = (p: string) => path.resolve(__dirname, 'packages', p);
 
 export default defineConfig({
   test: {
@@ -15,28 +15,25 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@kernel': PKG('kernel/src'),
-      '@kernel/types': PKG('kernel/src/types.ts'),
-      '@kernel/core': PKG('kernel/src/core'),
-      '@ui': PKG('ui/src'),
-      '@ui/base': PKG('ui/src/base'),
-      '@ui/theme': PKG('ui/src/theme'),
-      '@ui/display': PKG('ui/src/display'),
-      '@ui/feedback': PKG('ui/src/feedback'),
-      '@ui/input': PKG('ui/src/input'),
-      '@ui/layout': PKG('ui/src/layout'),
-      '@ui/navigation': PKG('ui/src/navigation'),
-      '@ui/components': PKG('ui/src/components'),
-      '@ui/hooks': PKG('ui/src/hooks'),
-      '@ui/utils': PKG('ui/src/utils'),
+      '@webos/kernel': PKG('kernel/src'),
+      '@webos/kernel/types': PKG('kernel/src/types.ts'),
+      '@webos/kernel/core': PKG('kernel/src/core'),
       '@webos/ui': PKG('ui/src'),
-      '@i18n': PKG('i18n/src'),
-      '@oobe': PKG('oobe/src'),
-      '@bootloader': PKG('bootloader/src'),
-      '@recovery': PKG('recovery/src'),
-      '@tablet': PKG('tablet/src'),
-      '@apps': PKG('apps'),
-      '@app': PKG('apps'),
+      '@webos/ui/base': PKG('ui/src/base'),
+      '@webos/ui/theme': PKG('ui/src/theme'),
+      '@webos/ui/display': PKG('ui/src/display'),
+      '@webos/ui/feedback': PKG('ui/src/feedback'),
+      '@webos/ui/input': PKG('ui/src/input'),
+      '@webos/ui/layout': PKG('ui/src/layout'),
+      '@webos/ui/navigation': PKG('ui/src/navigation'),
+      '@webos/ui/components': PKG('ui/src/components'),
+      '@webos/ui/hooks': PKG('ui/src/hooks'),
+      '@webos/ui/utils': PKG('ui/src/utils'),
+      '@webos/bootloader': PKG('bootloader/src'),
+      '@webos/i18n': PKG('i18n/src'),
+      '@webos/oobe': PKG('oobe/src'),
+      '@webos/recovery': PKG('recovery/src'),
+      '@webos/apps': PKG('apps'),
       '@webos/sdk': PKG('sdk/src'),
     },
   },

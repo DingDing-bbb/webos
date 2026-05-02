@@ -26,7 +26,7 @@
   "bugs": {
     "url": "https://github.com/DingDing-bbb/webos/issues"
   },
-  "description": "WebOS - A web-based operating system",
+  "description": "WebOS - Rust + WebAssembly microkernel operating system",
   "engines": {
     "node": ">=18.0.0"
   },
@@ -35,9 +35,9 @@
   "private": true,
   "scripts": {
     "dev": "bun run --cwd site dev",
-    "dev:site": "bun run --cwd site dev",
     "build": "bun run --cwd site build",
-    "build:site": "bun run --cwd site build",
+    "build:kernel": "cd crates/kernel && cargo build --target wasm32-unknown-unknown --release",
+    "build:userland": "cd crates/userland/init && cargo build --target wasm32-unknown-unknown --release && cd ../shell && cargo build --target wasm32-unknown-unknown --release",
     "lint": "eslint . --ext .ts,.tsx --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "eslint . --ext .ts,.tsx --fix",
     "typecheck": "tsc --noEmit",
@@ -45,7 +45,7 @@
     "format:check": "prettier --check .",
     "test": "vitest",
     "test:coverage": "vitest run --coverage",
-    "clean": "rm -rf node_modules packages/*/node_modules site/node_modules packages/os/packages/*/node_modules && rm -rf .next site/.next",
+    "clean": "rm -rf node_modules packages/*/node_modules site/node_modules && rm -rf .next site/.next",
     "prepare": "husky"
   },
   "type": "module",

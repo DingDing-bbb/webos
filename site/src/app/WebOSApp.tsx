@@ -3,11 +3,11 @@
 import React from 'react';
 
 // 导入 WebOS UI 样式
-import '@ui/styles/index.css';
-import '@ui/theme/acrylic.css';
+import '@webos/ui/styles/index.css';
+import '@webos/ui/theme/acrylic.css';
 
 // 导入 WebOS 内核
-import { initWebOS } from '@kernel';
+import { initWebOS } from '@webos/kernel';
 import {
   Desktop,
   Taskbar,
@@ -16,17 +16,17 @@ import {
   ErrorDialogContainer,
   BlueScreenContainer,
   BootScreen,
-} from '@ui';
-import { UpdateNotification, LockScreen } from '@ui';
-import type { WallpaperConfig, WallpaperType } from '@ui';
-import type { TaskbarDisplayMode } from '@ui';
-import { OOBE } from '@oobe';
-import { bootloader, setupGlobalErrorHandler } from '@bootloader';
-import { RecoveryMode } from '@recovery';
-import type { WindowState } from '@kernel/types';
-import type { BootStatus } from '@bootloader';
-import { getRegisteredApps } from '@apps';
-import { updateManager, type UpdateStatus } from '@kernel/core/managers/updateManager';
+} from '@webos/ui';
+import { UpdateNotification, LockScreen } from '@webos/ui';
+import type { WallpaperConfig, WallpaperType } from '@webos/ui';
+import type { TaskbarDisplayMode } from '@webos/ui';
+import { OOBE } from '@webos/oobe';
+import { bootloader, setupGlobalErrorHandler } from '@webos/bootloader';
+import { RecoveryMode } from '@webos/recovery';
+import type { WindowState } from '@webos/kernel/types';
+import type { BootStatus } from '@webos/bootloader';
+import { getRegisteredApps } from '@webos/apps';
+import { updateManager, type UpdateStatus } from '@webos/kernel/core/managers/updateManager';
 
 // ============================================================================
 // 初始化

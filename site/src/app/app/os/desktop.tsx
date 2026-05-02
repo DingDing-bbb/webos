@@ -7,11 +7,11 @@ import {
   NotificationContainer,
   ErrorDialogContainer,
   BlueScreenContainer,
-} from '@ui';
-import type { WallpaperType, WallpaperConfig } from '@ui';
-import type { WindowState } from '@kernel/types';
-import type { DesktopIconItem } from '@ui/components/Desktop';
-import { getRegisteredApps } from '@apps';
+} from '@webos/ui';
+import type { WallpaperType, WallpaperConfig } from '@webos/ui';
+import type { WindowState } from '@webos/kernel/types';
+import type { DesktopIconItem } from '@webos/ui/components/Desktop';
+import { getRegisteredApps } from '@webos/apps';
 import React from 'react';
 
 export function DesktopStage() {

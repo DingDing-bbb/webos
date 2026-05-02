@@ -1,67 +1,56 @@
 const path = require('path');
 const webpack = require('webpack');
 
-// 系统配置
 const OS_NAME = 'WebOS';
 const OS_VERSION = '0.0.1-alpha';
 
-// 项目根目录
 const ROOT_DIR = path.resolve(__dirname, '..');
-const OS_DIR = path.resolve(ROOT_DIR, 'packages/os');
-const OS_PACKAGES = path.resolve(OS_DIR, 'packages');
+const PACKAGES = path.resolve(ROOT_DIR, 'packages');
 
-// Webpack 路径别名配置（使用绝对路径）
 const webpackResolveAlias = {
-  '@kernel': path.resolve(OS_PACKAGES, 'kernel/src'),
-  '@kernel/types': path.resolve(OS_PACKAGES, 'kernel/src/types.ts'),
-  '@kernel/core': path.resolve(OS_PACKAGES, 'kernel/src/core'),
-  '@ui': path.resolve(OS_PACKAGES, 'ui/src'),
-  '@ui/base': path.resolve(OS_PACKAGES, 'ui/src/base'),
-  '@ui/theme': path.resolve(OS_PACKAGES, 'ui/src/theme'),
-  '@ui/display': path.resolve(OS_PACKAGES, 'ui/src/display'),
-  '@ui/feedback': path.resolve(OS_PACKAGES, 'ui/src/feedback'),
-  '@ui/input': path.resolve(OS_PACKAGES, 'ui/src/input'),
-  '@ui/layout': path.resolve(OS_PACKAGES, 'ui/src/layout'),
-  '@ui/navigation': path.resolve(OS_PACKAGES, 'ui/src/navigation'),
-  '@ui/components': path.resolve(OS_PACKAGES, 'ui/src/components'),
-  '@ui/hooks': path.resolve(OS_PACKAGES, 'ui/src/hooks'),
-  '@ui/utils': path.resolve(OS_PACKAGES, 'ui/src/utils'),
-  '@webos/ui': path.resolve(OS_PACKAGES, 'ui/src'),
-  '@i18n': path.resolve(OS_PACKAGES, 'i18n/src'),
-  '@oobe': path.resolve(OS_PACKAGES, 'oobe/src'),
-  '@bootloader': path.resolve(OS_PACKAGES, 'bootloader/src'),
-  '@recovery': path.resolve(OS_PACKAGES, 'recovery/src'),
-  '@tablet': path.resolve(OS_PACKAGES, 'tablet/src'),
-  '@app': path.resolve(OS_PACKAGES, 'apps'),
-  '@apps': path.resolve(OS_PACKAGES, 'apps'),
-  '@webos/sdk': path.resolve(OS_PACKAGES, 'sdk/src'),
+  '@webos/kernel': path.resolve(PACKAGES, 'kernel/src'),
+  '@webos/kernel/types': path.resolve(PACKAGES, 'kernel/src/types.ts'),
+  '@webos/kernel/core': path.resolve(PACKAGES, 'kernel/src/core'),
+  '@webos/ui': path.resolve(PACKAGES, 'ui/src'),
+  '@webos/ui/base': path.resolve(PACKAGES, 'ui/src/base'),
+  '@webos/ui/theme': path.resolve(PACKAGES, 'ui/src/theme'),
+  '@webos/ui/display': path.resolve(PACKAGES, 'ui/src/display'),
+  '@webos/ui/feedback': path.resolve(PACKAGES, 'ui/src/feedback'),
+  '@webos/ui/input': path.resolve(PACKAGES, 'ui/src/input'),
+  '@webos/ui/layout': path.resolve(PACKAGES, 'ui/src/layout'),
+  '@webos/ui/navigation': path.resolve(PACKAGES, 'ui/src/navigation'),
+  '@webos/ui/components': path.resolve(PACKAGES, 'ui/src/components'),
+  '@webos/ui/hooks': path.resolve(PACKAGES, 'ui/src/hooks'),
+  '@webos/ui/utils': path.resolve(PACKAGES, 'ui/src/utils'),
+  '@webos/bootloader': path.resolve(PACKAGES, 'bootloader/src'),
+  '@webos/i18n': path.resolve(PACKAGES, 'i18n/src'),
+  '@webos/oobe': path.resolve(PACKAGES, 'oobe/src'),
+  '@webos/recovery': path.resolve(PACKAGES, 'recovery/src'),
+  '@webos/apps': path.resolve(PACKAGES, 'apps'),
+  '@webos/sdk': path.resolve(PACKAGES, 'sdk/src'),
 };
 
-// Turbopack 需要使用相对路径
 const turbopackResolveAlias = {
-  '@kernel': '../packages/os/packages/kernel/src',
-  '@kernel/types': '../packages/os/packages/kernel/src/types.ts',
-  '@kernel/core': '../packages/os/packages/kernel/src/core',
-  '@ui': '../packages/os/packages/ui/src',
-  '@ui/base': '../packages/os/packages/ui/src/base',
-  '@ui/theme': '../packages/os/packages/ui/src/theme',
-  '@ui/display': '../packages/os/packages/ui/src/display',
-  '@ui/feedback': '../packages/os/packages/ui/src/feedback',
-  '@ui/input': '../packages/os/packages/ui/src/input',
-  '@ui/layout': '../packages/os/packages/ui/src/layout',
-  '@ui/navigation': '../packages/os/packages/ui/src/navigation',
-  '@ui/components': '../packages/os/packages/ui/src/components',
-  '@ui/hooks': '../packages/os/packages/ui/src/hooks',
-  '@ui/utils': '../packages/os/packages/ui/src/utils',
-  '@webos/ui': '../packages/os/packages/ui/src',
-  '@i18n': '../packages/os/packages/i18n/src',
-  '@oobe': '../packages/os/packages/oobe/src',
-  '@bootloader': '../packages/os/packages/bootloader/src',
-  '@recovery': '../packages/os/packages/recovery/src',
-  '@tablet': '../packages/os/packages/tablet/src',
-  '@app': '../packages/os/packages/apps',
-  '@apps': '../packages/os/packages/apps',
-  '@webos/sdk': '../packages/os/packages/sdk/src',
+  '@webos/kernel': '../packages/kernel/src',
+  '@webos/kernel/types': '../packages/kernel/src/types.ts',
+  '@webos/kernel/core': '../packages/kernel/src/core',
+  '@webos/ui': '../packages/ui/src',
+  '@webos/ui/base': '../packages/ui/src/base',
+  '@webos/ui/theme': '../packages/ui/src/theme',
+  '@webos/ui/display': '../packages/ui/src/display',
+  '@webos/ui/feedback': '../packages/ui/src/feedback',
+  '@webos/ui/input': '../packages/ui/src/input',
+  '@webos/ui/layout': '../packages/ui/src/layout',
+  '@webos/ui/navigation': '../packages/ui/src/navigation',
+  '@webos/ui/components': '../packages/ui/src/components',
+  '@webos/ui/hooks': '../packages/ui/src/hooks',
+  '@webos/ui/utils': '../packages/ui/src/utils',
+  '@webos/bootloader': '../packages/bootloader/src',
+  '@webos/i18n': '../packages/i18n/src',
+  '@webos/oobe': '../packages/oobe/src',
+  '@webos/recovery': '../packages/recovery/src',
+  '@webos/apps': '../packages/apps',
+  '@webos/sdk': '../packages/sdk/src',
 };
 
 /** @type {import('next').NextConfig} */
@@ -69,23 +58,16 @@ const nextConfig = {
   reactStrictMode: true,
   typescript: { ignoreBuildErrors: true },
 
-  // Cloudflare Pages / Node.js 服务端渲染（默认模式）
-  // 部署到 CF Pages 时使用 @cloudflare/next-on-pages 适配器
-  // 本地开发/预览使用 next start
-
-  // Turbopack 配置
   turbopack: {
     resolveAlias: turbopackResolveAlias,
   },
 
-  // Webpack 配置（Next.js 生产构建使用）
   webpack: (config, { isServer }) => {
     config.resolve.alias = {
       ...config.resolve.alias,
       ...webpackResolveAlias,
     };
 
-    // 定义全局变量
     config.plugins.push(
       new webpack.DefinePlugin({
         __OS_NAME__: JSON.stringify(OS_NAME),
@@ -94,19 +76,16 @@ const nextConfig = {
       })
     );
 
-    // WebAssembly 支持
     config.experiments = {
       ...config.experiments,
       asyncWebAssembly: true,
     };
 
-    // WASM 文件处理
     config.module.rules.push({
       test: /\.wasm$/,
       type: 'asset/resource',
     });
 
-    // 忽略 sql.js 的 Node.js 特定导入
     if (!isServer) {
       config.resolve.fallback = {
         ...config.resolve.fallback,

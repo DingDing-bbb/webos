@@ -1,6 +1,6 @@
 // 启动阶段 - 显示启动动画
-import { BootUI } from '@ui/components/Boot';
-import '@ui/styles/index.css';
+import { BootUI } from '@webos/ui/components/Boot';
+import '@webos/ui/styles/index.css';
 
 interface BootStageProps {
   progress?: number;
