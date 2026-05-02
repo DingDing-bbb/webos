@@ -1,6 +1,6 @@
 {
-  "name": "webos-monorepo",
-  "version": "0.0.1-alpha",
+  "name": "webos",
+  "version": "0.1.0",
   "author": "DingDing-bbb",
   "repository": {
     "type": "git",
@@ -8,7 +8,6 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@vitest/coverage-v8": "^4.1.2",
     "eslint": "^10.1.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.31.0",
@@ -16,47 +15,37 @@
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
     "husky": "^9.1.7",
-    "jsdom": "^29.0.1",
     "lint-staged": "^16.4.0",
     "prettier": "^3.8.1",
     "typescript": "^6.0.2",
-    "typescript-eslint": "^8.57.2",
-    "vitest": "^4.1.2"
-  },
-  "bugs": {
-    "url": "https://github.com/DingDing-bbb/webos/issues"
+    "typescript-eslint": "^8.57.2"
   },
   "description": "WebOS - Rust + WebAssembly microkernel operating system",
-  "engines": {
-    "node": ">=18.0.0"
-  },
-  "homepage": "https://github.com/DingDing-bbb/webos#readme",
+  "engines": { "node": ">=18.0.0" },
   "license": "MIT",
   "private": true,
   "scripts": {
-    "dev": "bun run --cwd site dev",
-    "build": "bun run --cwd site build",
-    "build:kernel": "cd crates/kernel && cargo build --target wasm32-unknown-unknown --release",
-    "build:userland": "cd crates/userland/init && cargo build --target wasm32-unknown-unknown --release && cd ../shell && cargo build --target wasm32-unknown-unknown --release",
-    "lint": "eslint . --ext .ts,.tsx --report-unused-disable-directives --max-warnings 0",
-    "lint:fix": "eslint . --ext .ts,.tsx --fix",
-    "typecheck": "tsc --noEmit",
+    "dev": "cd site && npx next dev -p 3000 --turbopack",
+    "build": "make all",
+    "build:site": "cd site && npx next build",
+    "build:kernel": "cargo build --manifest-path kernel/Cargo.toml --target wasm32-unknown-unknown --release",
+    "build:userland": "cargo build --manifest-path userland/init/Cargo.toml --target wasm32-unknown-unknown --release && cargo build --manifest-path userland/shell/Cargo.toml --target wasm32-unknown-unknown --release",
+    "lint": "eslint . --ext .ts,.tsx",
     "format": "prettier --write .",
-    "format:check": "prettier --check .",
-    "test": "vitest",
-    "test:coverage": "vitest run --coverage",
-    "clean": "rm -rf node_modules packages/*/node_modules site/node_modules && rm -rf .next site/.next",
-    "prepare": "husky"
+    "clean": "make clean"
   },
   "type": "module",
   "workspaces": [
-    "packages/*",
+    "kernel",
+    "drivers",
+    "ui",
+    "apps",
+    "i18n",
+    "oobe",
+    "recovery",
     "site"
   ],
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,json,md}": [
-      "prettier --write",
-      "eslint --fix"
-    ]
+    "*.{js,jsx,ts,tsx,json,md}": ["prettier --write", "eslint --fix"]
   }
 }

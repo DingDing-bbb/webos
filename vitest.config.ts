@@ -1,23 +1,21 @@
 import { defineConfig } from 'vitest/config';
 import path from 'path';
 
-const PKG = (p: string) => path.resolve(__dirname, 'packages', p);
+const ROOT = path.resolve(__dirname);
+const PKG = (p: string) => path.resolve(ROOT, p);
 
 export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    include: ['packages/**/*.test.{ts,tsx}', 'site/**/*.test.{ts,tsx}'],
-    coverage: {
-      provider: 'v8',
-      reporter: ['text', 'json', 'html'],
-    },
+    include: ['**/*.test.{ts,tsx}'],
   },
   resolve: {
     alias: {
-      '@webos/kernel': PKG('kernel/src'),
-      '@webos/kernel/types': PKG('kernel/src/types.ts'),
-      '@webos/kernel/core': PKG('kernel/src/core'),
+      '@webos/kernel': PKG('kernel/bridge'),
+      '@webos/kernel/types': PKG('kernel/bridge/types.ts'),
+      '@webos/kernel/core': PKG('kernel/bridge/core'),
+      '@webos/drivers': PKG('drivers/src'),
       '@webos/ui': PKG('ui/src'),
       '@webos/ui/base': PKG('ui/src/base'),
       '@webos/ui/theme': PKG('ui/src/theme'),
@@ -29,12 +27,10 @@ export default defineConfig({
       '@webos/ui/components': PKG('ui/src/components'),
       '@webos/ui/hooks': PKG('ui/src/hooks'),
       '@webos/ui/utils': PKG('ui/src/utils'),
-      '@webos/bootloader': PKG('bootloader/src'),
+      '@webos/apps': PKG('apps'),
       '@webos/i18n': PKG('i18n/src'),
       '@webos/oobe': PKG('oobe/src'),
       '@webos/recovery': PKG('recovery/src'),
-      '@webos/apps': PKG('apps'),
-      '@webos/sdk': PKG('sdk/src'),
     },
   },
 });
